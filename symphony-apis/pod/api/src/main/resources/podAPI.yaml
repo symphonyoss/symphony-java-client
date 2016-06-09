@@ -1,0 +1,3550 @@
+swagger: '2.0'
+info:
+  version: '1.38.0'
+  title: Pod API
+  description: |
+    This document refers to Symphony API calls that do not need
+    encryption or decryption of content.
+
+    - sessionToken can be obtained by calling the
+    authenticationAPI on the symphony back end and the key manager
+    respectively. Refer to the methods described in authenticatorAPI.yaml.
+    - Actions are defined to be atomic, ie will succeed in their entirety
+    or fail and have changed nothing.
+    - If it returns a 40X status then it will have made no change to the
+    system even if ome subset of the request would have succeeded.
+    - If this contract cannot be met for any reason then this is an error
+    and the response code will be 50X.
+paths:
+  '/v1/sessioninfo':
+    get:
+      summary: Get information about the current user's session.
+      produces:
+        - application/json
+      parameters:
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+      tags:
+        - Session
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/SessionInfo'
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/user/{uid}/presence':
+    get:
+      summary: Get presence information about a particular user.
+      produces:
+        - application/json
+      parameters:
+        - name: uid
+          description: |
+            User ID as a decimal integer
+          in: path
+          required: true
+          type: integer
+          format: int64
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+      tags:
+        - Presence
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Presence'
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      summary: LIMITED RELEASE Set presence information for a particular user.
+      description: |
+        Only the following states can be set
+        AVAILABLE
+        BUSY
+        ON_THE_PHONE
+        AWAY
+
+        Attempts to set other states will result in a 403 FORBIDDEN response.
+
+        The UNDEFINED value is an error case used to represent the case if the value stored in the
+        system cannot be represented by the values known to the API.
+
+        The other states are reserved for future use.
+      produces:
+        - application/json
+      parameters:
+        - name: uid
+          description: |
+            User ID as a decimal integer
+          in: path
+          required: true
+          type: integer
+          format: int64
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: presence
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Presence'
+      tags:
+        - Presence
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Presence'
+        '400':
+          description: 'Client error.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/presence':
+    get:
+      summary: Get presence information about all company (pod) users.
+      description: |
+            The returned data is taken from the in-memory cache for performance
+            reasons which means inactive users may be omitted from the response.
+
+            All non-inactive users WILL be returned and some inactive users MAY
+            be included. Any omitted user IS inactive.
+      produces:
+        - application/json
+      parameters:
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+      tags:
+        - Presence
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/PresenceList'
+        '400':
+          description: 'Client error.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/user':
+    get:
+      summary: Get user information by email address.
+      produces:
+        - application/json
+      parameters:
+        - name: email
+          description: Email address
+          in: query
+          required: true
+          type: string
+          format: email
+        - name: local
+          description: |
+            If true then a local DB search will be performed and only local pod users will be
+            returned. If absent or false then a directory search will be performed and users
+            from other pods who are visible to the calling user will also be returned.
+          in: query
+          required: false
+          type: boolean
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+      tags:
+        - Users
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/User'
+        '204':
+          description: 'No user found.'
+        '400':
+          description: 'Client error.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/room/{id}/update':
+    post:
+      summary: Update the attributes of an existing chatroom.
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          description: Room stream
+          in: path
+          required: true
+          type: string
+        - name: payload
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/RoomAttributes'
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+      tags:
+        - Streams
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/RoomDetail'
+        '400':
+          description: 'Client error.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v2/room/{id}/update':
+    post:
+      summary: Update the attributes of an existing chatroom.
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          description: Room stream
+          in: path
+          required: true
+          type: string
+        - name: payload
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/V2RoomAttributes'
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+      tags:
+        - Streams
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/V2RoomDetail'
+        '400':
+          description: 'Client error.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/room/create':
+      post:
+        summary: Create a new chatroom.
+        description: |
+          Create a new chatroom.
+
+          If no attributes are specified, the room is created as a private chatroom.
+        consumes:
+          - application/json
+        produces:
+          - application/json
+        parameters:
+          - name: payload
+            in: body
+            required: true
+            schema:
+              $ref: '#/definitions/RoomCreate'
+          - name: sessionToken
+            description: Session authentication token.
+            in: header
+            required: true
+            type: string
+        tags:
+          - Streams
+        responses:
+          '200':
+            description: OK
+            schema:
+              $ref: '#/definitions/RoomDetail'
+          '400':
+            description: 'Client error.'
+            schema:
+              $ref: '#/definitions/Error'
+          '401':
+            description: 'Unauthorized: Session tokens invalid.'
+            schema:
+              $ref: '#/definitions/Error'
+          '403':
+            description: 'Forbidden: Caller lacks necessary entitlement.'
+            schema:
+              $ref: '#/definitions/Error'
+          '500':
+            description: 'Server error, see response body for further details.'
+            schema:
+              $ref: '#/definitions/Error'
+  '/v2/room/create':
+        post:
+          summary: Create a new chatroom.
+          description: |
+            Create a new chatroom.
+
+            If no  attributes are specified, the room is created as a public chatroom.
+          consumes:
+            - application/json
+          produces:
+            - application/json
+          parameters:
+            - name: payload
+              in: body
+              required: true
+              schema:
+                $ref: '#/definitions/V2RoomAttributes'
+            - name: sessionToken
+              description: Session authentication token.
+              in: header
+              required: true
+              type: string
+          tags:
+            - Streams
+          responses:
+            '200':
+              description: OK
+              schema:
+                $ref: '#/definitions/V2RoomDetail'
+            '400':
+              description: 'Client error.'
+              schema:
+                $ref: '#/definitions/Error'
+            '401':
+              description: 'Unauthorized: Session tokens invalid.'
+              schema:
+                $ref: '#/definitions/Error'
+            '403':
+              description: 'Forbidden: Caller lacks necessary entitlement.'
+              schema:
+                $ref: '#/definitions/Error'
+            '500':
+              description: 'Server error, see response body for further details.'
+              schema:
+                $ref: '#/definitions/Error'
+  '/v2/room/search':
+    post:
+      summary: Search rooms according to the specified criteria.
+      produces:
+        - application/json
+      consumes:
+        - application/json
+      parameters:
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: skip
+          description: |
+            No. of results to skip.
+          in: query
+          type: integer
+        - name: limit
+          description: |
+            Max no. of results to return. If no value is provided, 50 is the default.
+          in: query
+          type: integer
+          required: false
+        - name: query
+          description: The search query object.
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/RoomSearchCriteria'
+      tags:
+        - Streams
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/RoomSearchResults'
+        '400':
+          description: 'Client error.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/room/{id}/info':
+    get:
+      summary: Get information about a partcular chatroom.
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          description: Room stream
+          in: path
+          required: true
+          type: string
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+      tags:
+        - Streams
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/RoomDetail'
+        '400':
+          description: 'Client error.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v2/room/{id}/info':
+      get:
+        summary: Get information about a partcular chatroom.
+        produces:
+          - application/json
+        parameters:
+          - name: id
+            description: Room stream
+            in: path
+            required: true
+            type: string
+          - name: sessionToken
+            description: Session authentication token.
+            in: header
+            required: true
+            type: string
+        tags:
+          - Streams
+        responses:
+          '200':
+            description: OK
+            schema:
+              $ref: '#/definitions/V2RoomDetail'
+          '400':
+            description: 'Client error.'
+            schema:
+              $ref: '#/definitions/Error'
+          '401':
+            description: 'Unauthorized: Session tokens invalid.'
+            schema:
+              $ref: '#/definitions/Error'
+          '403':
+            description: 'Forbidden: Caller lacks necessary entitlement.'
+            schema:
+              $ref: '#/definitions/Error'
+          '500':
+            description: 'Server error, see response body for further details.'
+            schema:
+              $ref: '#/definitions/Error'
+  '/v1/room/{id}/setActive':
+    post:
+      summary: Deactivate or reactivate a chatroom. At creation, a new chatroom is active.
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          description: Room stream
+          in: path
+          required: true
+          type: string
+        - name: active
+          in: query
+          required: true
+          type: boolean
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+      tags:
+        - Streams
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/RoomDetail'
+        '400':
+          description: 'Client error.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/room/{id}/membership/add':
+    post:
+      summary: Adds new member to an existing room.
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          description: Room stream
+          in: path
+          required: true
+          type: string
+        - name: payload
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserId'
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+      tags:
+        - Room Membership
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        '400':
+          description: 'Client error.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/room/{id}/membership/remove':
+    post:
+      summary: Removes member from an existing room.
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          description: Room stream
+          in: path
+          required: true
+          type: string
+        - name: payload
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserId'
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+      tags:
+        - Room Membership
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        '400':
+          description: 'Client error.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/room/{id}/membership/promoteOwner':
+    post:
+      summary: Promotes user to owner.
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          description: Room stream
+          in: path
+          required: true
+          type: string
+        - name: payload
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserId'
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+      tags:
+        - Room Membership
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        '400':
+          description: 'Client error.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/room/{id}/membership/demoteOwner':
+    post:
+      summary: Demotes room owner.
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          description: Room stream
+          in: path
+          required: true
+          type: string
+        - name: payload
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserId'
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+      tags:
+        - Room Membership
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        '400':
+          description: 'Client error.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/room/{id}/membership/list':
+    get:
+      summary: Lists the members of an existing room.
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          description: Room stream
+          in: path
+          required: true
+          type: string
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+      tags:
+        - Room Membership
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/MembershipList'
+        '400':
+          description: 'Client error.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/im/create':
+    post:
+      summary: Create a new single or multi party instant message chat
+      description: |
+          At least one user ID must be provided or
+          an error response will be sent.
+
+          The caller is implicitly included in the members of the
+          created chat.
+
+          Duplicate users will be included in the membership of the chat but
+          the duplication will be silently ignored.
+
+          If there is an existing IM chat with the same set of participants then
+          the id of that existing stream will be returned.
+
+          This method was incorrectly specified to take a query parameter in
+          version 1.0 of this specification but now expects a JSON array of
+          user IDs in the body of the request.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: uidList
+          description: List of (integer) User IDs of participants
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserIdList'
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+      tags:
+        - Streams
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Stream'
+        '400':
+          description: 'Client error.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/admin/user/create':
+    post:
+      summary: Create a new user
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: payload
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserCreate'
+      tags:
+        - User
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/UserDetail'
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/admin/user/{uid}/update':
+    post:
+      summary: Update an existing user
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: uid
+          description: |
+            User ID as a decimal integer
+          in: path
+          required: true
+          type: integer
+          format: int64
+        - name: payload
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserAttributes'
+      tags:
+        - User
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/UserDetail'
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/admin/user/list':
+    get:
+      summary: Retreive a list of all users in the company (pod)
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+      tags:
+        - User
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/UserIdList'
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/admin/user/find':
+    post:
+      summary: PROVISIONAL Find a user based on attributes
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: payload
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserFilter'
+      tags:
+        - User
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/UserList'
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/admin/user/{uid}':
+    get:
+      summary: Retreive user details for a particular user
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: uid
+          description: |
+            User ID as a decimal integer
+          in: path
+          required: true
+          type: integer
+          format: int64
+      tags:
+        - User
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/UserDetail'
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/admin/user/{uid}/action/password_reset':
+    post:
+      summary: PROVISIONAL Send a password reset email to the email address of a particular user
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: uid
+          description: |
+            User ID as a decimal integer
+          in: path
+          required: true
+          type: integer
+          format: int64
+        - name: payload
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/PasswordReset'
+      tags:
+        - User
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/admin/user/{uid}/status':
+    get:
+      summary: Get the status, active or inactive, for a particular user
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: uid
+          description: |
+            User ID as a decimal integer
+          in: path
+          required: true
+          type: integer
+          format: int64
+      tags:
+        - User
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/UserStatus'
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/admin/user/{uid}/status/update':
+    post:
+      summary: Update the status of a particular user
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: uid
+          description: |
+            User ID as a decimal integer
+          in: path
+          required: true
+          type: integer
+          format: int64
+        - name: payload
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserStatus'
+      tags:
+        - User
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/admin/user/{uid}/features':
+    get:
+      summary: Get the list of Symphony feature entitlements enabled for a particular user
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: uid
+          description: |
+            User ID as a decimal integer
+          in: path
+          required: true
+          type: integer
+          format: int64
+      tags:
+        - User
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/FeatureList'
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/admin/user/{uid}/features/update':
+    post:
+      summary: Update the list of Symphony feature entitlements for a particular user
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: uid
+          description: |
+            User ID as a decimal integer
+          in: path
+          required: true
+          type: integer
+          format: int64
+        - name: payload
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/FeatureList'
+      tags:
+        - User
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/admin/app/entitlement/list':
+    get:
+      summary: Get the list of application entitlements for the company
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+      tags:
+        - AppEntitlement
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/PodAppEntitlementList'
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      summary: Update the application entitlements for the company
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: payload
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/PodAppEntitlementList'
+      tags:
+        - AppEntitlement
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/PodAppEntitlementList'
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/admin/user/{uid}/app/entitlement/list':
+    get:
+      summary: Get the list of application entitlements for this user
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: uid
+          description: User ID as a decimal integer
+          in: path
+          required: true
+          type: integer
+          format: int64
+      tags:
+        - AppEntitlement
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/UserAppEntitlementList'
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      summary: Update the application entitlements for this user
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: uid
+          description: User ID as a decimal integer
+          in: path
+          required: true
+          type: integer
+          format: int64
+        - name: payload
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserAppEntitlementList'
+      tags:
+        - AppEntitlement
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/UserAppEntitlementList'
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/admin/user/{uid}/roles':
+    get:
+      summary: PROVISIONAL Get the list of roles assigned to a user
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: uid
+          description: |
+            User ID as a decimal integer
+          in: path
+          required: true
+          type: integer
+          format: int64
+      tags:
+        - User
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/RoleList'
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/admin/user/{uid}/roles/update':
+    post:
+      summary: PROVISIONAL Update the list of roles assigned to a user
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: uid
+          description: |
+            User ID as a decimal integer
+          in: path
+          required: true
+          type: integer
+          format: int64
+        - name: payload
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/StringList'
+      tags:
+        - User
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/admin/user/{uid}/disclaimer/update':
+    post:
+      summary: Assign a disclaimer to a user
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: uid
+          description: |
+            User ID as a decimal integer
+          in: path
+          required: true
+          type: integer
+          format: int64
+        - name: payload
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/StringId'
+      tags:
+        - User
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/admin/user/{uid}/disclaimer':
+    get:
+      summary: Get the disclaimer assigned to a user
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: uid
+          description: |
+            User ID as a decimal integer
+          in: path
+          required: true
+          type: integer
+          format: int64
+      tags:
+        - User
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/Disclaimer'
+        '204':
+          description: No content. User doesn't have an assigned disclaimer
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/admin/user/{uid}/delegates':
+    get:
+      summary: Get the delegates assigned to a user
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: uid
+          description: |
+            User ID as a decimal integer
+          in: path
+          required: true
+          type: integer
+          format: int64
+      tags:
+        - User
+      responses:
+        '200':
+          description: The userid's of the delegates of this user.
+          schema:
+            $ref: '#/definitions/IntegerList'
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/admin/user/{uid}/delegates/update':
+    post:
+      summary: Update the delegates assigned to a user
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: uid
+          description: |
+            User ID as a decimal integer
+          in: path
+          required: true
+          type: integer
+          format: int64
+        - name: payload
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/DelegateAction'
+      tags:
+        - User
+      responses:
+        '200':
+          description: Sucesss.
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/admin/user/{uid}/avatar':
+    get:
+      summary: Get the URL of the avatar of a particular user
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: uid
+          description: |
+            User ID as a decimal integer
+          in: path
+          required: true
+          type: integer
+          format: int64
+      tags:
+        - User
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/AvatarList'
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/admin/user/{uid}/avatar/update':
+    post:
+      summary: Update the avatar of a particular user
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: uid
+          description: |
+            User ID as a decimal integer
+          in: path
+          required: true
+          type: integer
+          format: int64
+        - name: payload
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/AvatarUpdate'
+      tags:
+        - User
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/admin/disclaimer/create':
+    post:
+      summary: PROVISIONAL Create a new disclaimer. The id and timestamps should not be set, they will be assigned in the response.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: payload
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Disclaimer'
+      tags:
+        - Disclaimer
+      responses:
+        '200':
+          description: The created disclaimer
+          schema:
+            $ref: '#/definitions/Disclaimer'
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/admin/disclaimer/{did}/update':
+    post:
+      summary: PROVISIONAL Modify a disclaimer
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: did
+          in: path
+          type: string
+          description: The ID of the entity
+          required: true
+        - name: payload
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Disclaimer'
+      tags:
+        - Disclaimer
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/Disclaimer'
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/admin/disclaimer/{did}':
+    get:
+      summary: Get a disclaimer by disclaimer id
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: did
+          in: path
+          type: string
+          description: The ID of the entity
+          required: true
+      tags:
+        - Disclaimer
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/Disclaimer'
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/admin/disclaimer/list':
+    get:
+      summary: List all disclaimers for the company (pod)
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+      tags:
+        - Disclaimer
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/DisclaimerList'
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/admin/disclaimer/{did}/users':
+    get:
+      summary: List all users assigned to this disclaimer
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: did
+          in: path
+          type: string
+          description: The ID of the entity
+          required: true
+      tags:
+        - Disclaimer
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/UserIdList'
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/admin/system/features/list':
+    get:
+      summary: Get the full set of Symphony features available for this pod
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+      tags:
+        - System
+      responses:
+        '200':
+          description: The list of valid feature entitlement names.
+          schema:
+            $ref: '#/definitions/StringList'
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/admin/system/roles/list':
+    get:
+      summary: PROVISIONAL Get a list of all roles available in the company (pod)
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+      tags:
+        - System
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/StringList'
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/admin/group/list':
+    get:
+      summary: Get a list of all Information Barrier Groups
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+      tags:
+        - InfoBarriers
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/GroupList'
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/admin/group/{gid}/membership/list':
+    get:
+      summary: Get the list of userids in this Information Barrier Group
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: gid
+          description: URL-Safe encoded Group ID
+          in: path
+          required: true
+          type: string
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+      tags:
+        - InfoBarriers
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/IntegerList'
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/admin/group/{gid}/membership/add':
+    post:
+      summary: Add members to an Information Barrier group.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: gid
+          description: URL-Safe encoded Group ID
+          in: path
+          required: true
+          type: string
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: users
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/IntegerList'
+      tags:
+        - InfoBarriers
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/BulkActionResult'
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/admin/group/{gid}/membership/remove':
+    post:
+      summary: Remove members from an Information Barrier group
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: gid
+          description: URL-Safe encoded Group ID
+          in: path
+          required: true
+          type: string
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: users
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/IntegerList'
+      tags:
+        - InfoBarriers
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/BulkActionResult'
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/admin/policy/list':
+    get:
+      summary: Get all Information Policies
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+      tags:
+        - InfoBarriers
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/PolicyList'
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/companycert/create':
+      post:
+        summary: Create a company trusted or untrusted certificate
+        consumes:
+          - application/json
+        produces:
+          - application/json
+        parameters:
+          - name: sessionToken
+            description: Session authentication token.
+            in: header
+            required: true
+            type: string
+          - name: cert
+            in: body
+            required: true
+            schema:
+              $ref: '#/definitions/CompanyCert'
+        tags:
+          - Security
+        responses:
+          '200':
+            description: Success
+            schema:
+              $ref: '#/definitions/SuccessResponse'
+          '400':
+            description: 'Client error, see response body for further details.'
+            schema:
+              $ref: '#/definitions/Error'
+          '401':
+            description: 'Unauthorized: Session tokens invalid.'
+            schema:
+              $ref: '#/definitions/Error'
+          '403':
+            description: 'Forbidden: Caller lacks necessary entitlement.'
+            schema:
+              $ref: '#/definitions/Error'
+          '500':
+            description: 'Server error, see response body for further details.'
+            schema:
+              $ref: '#/definitions/Error'
+  '/v1/companycert/{fingerPrint}/get':
+      get:
+        summary: Get the details of a company certificate
+        consumes:
+          - application/json
+        produces:
+          - application/json
+        parameters:
+          - name: fingerPrint
+            description: Certificate fingerPrint (ID)
+            in: path
+            required: true
+            type: string
+          - name: sessionToken
+            description: Session authentication token.
+            in: header
+            required: true
+            type: string
+        tags:
+          - Security
+        responses:
+          '200':
+            description: Success
+            schema:
+              $ref: '#/definitions/CompanyCertDetail'
+          '400':
+            description: 'Client error, see response body for further details.'
+            schema:
+              $ref: '#/definitions/Error'
+          '401':
+            description: 'Unauthorized: Session tokens invalid.'
+            schema:
+              $ref: '#/definitions/Error'
+          '403':
+            description: 'Forbidden: Caller lacks necessary entitlement.'
+            schema:
+              $ref: '#/definitions/Error'
+          '500':
+            description: 'Server error, see response body for further details.'
+            schema:
+              $ref: '#/definitions/Error'
+  '/v1/companycert/{fingerPrint}/update':
+      post:
+        summary: Update a company certificate
+        consumes:
+          - application/json
+        produces:
+          - application/json
+        parameters:
+          - name: fingerPrint
+            description: Certificate fingerPrint (ID)
+            in: path
+            required: true
+            type: string
+          - name: sessionToken
+            description: Session authentication token.
+            in: header
+            required: true
+            type: string
+          - name: certAttributes
+            in: body
+            required: true
+            schema:
+              $ref: '#/definitions/CompanyCertAttributes'
+        tags:
+          - Security
+        responses:
+          '200':
+            description: Success
+            schema:
+              $ref: '#/definitions/SuccessResponse'
+          '400':
+            description: 'Client error, see response body for further details.'
+            schema:
+              $ref: '#/definitions/Error'
+          '401':
+            description: 'Unauthorized: Session tokens invalid.'
+            schema:
+              $ref: '#/definitions/Error'
+          '403':
+            description: 'Forbidden: Caller lacks necessary entitlement.'
+            schema:
+              $ref: '#/definitions/Error'
+          '500':
+            description: 'Server error, see response body for further details.'
+            schema:
+              $ref: '#/definitions/Error'
+  '/v1/companycert/delete':
+      post:
+        summary: Delete a company certificate
+        consumes:
+          - application/json
+        produces:
+          - application/json
+        parameters:
+          - name: sessionToken
+            description: Session authentication token.
+            in: header
+            required: true
+            type: string
+          - name: fingerPrint
+            in: body
+            required: true
+            schema:
+              $ref: '#/definitions/StringId'
+        tags:
+          - Security
+        responses:
+          '200':
+            description: Success
+            schema:
+              $ref: '#/definitions/SuccessResponse'
+          '400':
+            description: 'Client error, see response body for further details.'
+            schema:
+              $ref: '#/definitions/Error'
+          '401':
+            description: 'Unauthorized: Session tokens invalid.'
+            schema:
+              $ref: '#/definitions/Error'
+          '403':
+            description: 'Forbidden: Caller lacks necessary entitlement.'
+            schema:
+              $ref: '#/definitions/Error'
+          '500':
+            description: 'Server error, see response body for further details.'
+            schema:
+              $ref: '#/definitions/Error'
+  '/v1/companycert/list':
+      get:
+        summary: List all trusted certs
+        consumes:
+          - application/json
+        produces:
+          - application/json
+        parameters:
+          - name: sessionToken
+            description: Session authentication token.
+            in: header
+            required: true
+            type: string
+          - name: skip
+            description: Pagination start
+            in: query
+            required: false
+            type: integer
+          - name: limit
+            description: Row limit
+            in: query
+            required: false
+            type: integer
+        tags:
+          - Security
+        responses:
+          '200':
+            description: Success
+            schema:
+              $ref: '#/definitions/CompanyCertInfoList'
+          '400':
+            description: 'Client error, see response body for further details.'
+            schema:
+              $ref: '#/definitions/Error'
+          '401':
+            description: 'Unauthorized: Session tokens invalid.'
+            schema:
+              $ref: '#/definitions/Error'
+          '403':
+            description: 'Forbidden: Caller lacks necessary entitlement.'
+            schema:
+              $ref: '#/definitions/Error'
+          '500':
+            description: 'Server error, see response body for further details.'
+            schema:
+              $ref: '#/definitions/Error'
+  '/v1/companycert/podmanaged/list':
+      get:
+        summary: List all trusted certs
+        consumes:
+          - application/json
+        produces:
+          - application/json
+        parameters:
+          - name: sessionToken
+            description: Session authentication token.
+            in: header
+            required: true
+            type: string
+          - name: skip
+            description: Pagination start
+            in: query
+            required: false
+            type: integer
+          - name: limit
+            description: Row limit
+            in: query
+            required: false
+            type: integer
+        tags:
+          - Security
+        responses:
+          '200':
+            description: Success
+            schema:
+              $ref: '#/definitions/CompanyCertInfoList'
+          '400':
+            description: 'Client error, see response body for further details.'
+            schema:
+              $ref: '#/definitions/Error'
+          '401':
+            description: 'Unauthorized: Session tokens invalid.'
+            schema:
+              $ref: '#/definitions/Error'
+          '403':
+            description: 'Forbidden: Caller lacks necessary entitlement.'
+            schema:
+              $ref: '#/definitions/Error'
+          '500':
+            description: 'Server error, see response body for further details.'
+            schema:
+              $ref: '#/definitions/Error'
+  '/v1/companycert/type/list':
+        post:
+          summary: List all certs of the given types
+          consumes:
+            - application/json
+          produces:
+            - application/json
+          parameters:
+            - name: typeIdList
+              description: Certificate type list
+              in: body
+              required: true
+              schema:
+                $ref: '#/definitions/CompanyCertTypeList'
+            - name: sessionToken
+              description: Session authentication token.
+              in: header
+              required: true
+              type: string
+            - name: skip
+              description: Pagination start
+              in: query
+              required: false
+              type: integer
+            - name: limit
+              description: Row limit
+              in: query
+              required: false
+              type: integer
+          tags:
+            - Security
+          responses:
+            '200':
+              description: Success
+              schema:
+                $ref: '#/definitions/CompanyCertInfoList'
+            '400':
+              description: 'Client error, see response body for further details.'
+              schema:
+                $ref: '#/definitions/Error'
+            '401':
+              description: 'Unauthorized: Session tokens invalid.'
+              schema:
+                $ref: '#/definitions/Error'
+            '403':
+              description: 'Forbidden: Caller lacks necessary entitlement.'
+              schema:
+                $ref: '#/definitions/Error'
+            '500':
+              description: 'Server error, see response body for further details.'
+              schema:
+                $ref: '#/definitions/Error'
+  '/v1/companycert/{fingerPrint}/issuedBy':
+        get:
+          summary: |
+            Return a list of all certificates which were verified to the cert whose
+            fingerprint is passed.
+          consumes:
+            - application/json
+          produces:
+            - application/json
+          parameters:
+            - name: fingerPrint
+              description: Certificate fingerPrint (ID)
+              in: path
+              required: true
+              type: string
+            - name: sessionToken
+              description: Session authentication token.
+              in: header
+              required: true
+              type: string
+          tags:
+            - Security
+          responses:
+            '200':
+              description: Success
+              schema:
+                $ref: '#/definitions/CompanyCertInfoList'
+            '400':
+              description: 'Client error, see response body for further details.'
+              schema:
+                $ref: '#/definitions/Error'
+            '401':
+              description: 'Unauthorized: Session tokens invalid.'
+              schema:
+                $ref: '#/definitions/Error'
+            '403':
+              description: 'Forbidden: Caller lacks necessary entitlement.'
+              schema:
+                $ref: '#/definitions/Error'
+            '500':
+              description: 'Server error, see response body for further details.'
+              schema:
+                $ref: '#/definitions/Error'
+  '/v1/admin/messagesuppression/{id}/suppress':
+    post:
+      summary: Suppress a message
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          description: URL-Safe encoded Message ID
+          in: path
+          required: true
+          type: string
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+      tags:
+        - MessageSuppression
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/MessageSuppressionResponse'
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+definitions:
+  Error:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+  CompanyCert:
+      type: object
+      properties:
+        pem:
+          type: string
+          description: An X509 certificate in PEM format
+        attributes:
+          $ref: '#/definitions/CompanyCertAttributes'
+  CompanyCertDetail:
+    type: object
+    properties:
+      companyCertAttributes:
+        $ref: '#/definitions/CompanyCertAttributes'
+      companyCertInfo:
+        $ref: '#/definitions/CompanyCertInfo'
+      certInfo:
+        $ref: '#/definitions/CertInfo'
+  CompanyCertInfoList:
+    type: array
+    items:
+      type: object
+      properties:
+        companyCertAttributes:
+          $ref: '#/definitions/CompanyCertAttributes'
+        companyCertInfo:
+          $ref: '#/definitions/CompanyCertInfo'
+  CompanyCertType:
+    type: object
+    properties:
+      type:
+        type: string
+        enum:
+          - USERSIGNING
+          - USER
+          - OPERATIONSSIGNING
+          - OPERATIONSUSER
+  CompanyCertTypeList:
+    type: array
+    items:
+      $ref: '#/definitions/CompanyCertType'
+  CompanyCertStatus:
+    type: object
+    properties:
+      type:
+        type: string
+        enum:
+          - TRUSTED
+          - KNOWN
+          - REVOKED
+          - DISABLED
+  CompanyCertAttributes:
+    type: object
+    properties:
+      name:
+        type: string
+        description: Friendly name assigned by administrator
+      type:
+        $ref: '#/definitions/CompanyCertType'
+      status:
+        $ref: '#/definitions/CompanyCertStatus'
+  CompanyCertInfo:
+    type: object
+    properties:
+      fingerPrint:
+        type: string
+        description: Unique identifier
+      issuerFingerPrint:
+        type: string
+        description: Unique identifier of issuer cert if known
+      lastSeen:
+        type: integer
+        format: int64
+        description: Date when we last saw this certificate presented
+      updatedAt:
+        type: integer
+        format: int64
+        description: Date when this cert was last updated by administrator
+      updatedBy:
+        type: integer
+        format: int64
+        description: User ID of administrator who last updated this cert
+      commonName:
+        type: string
+        description: The Symphony account name which this certificate authenticates
+      expiryDate:
+        type: integer
+        format: int64
+        description: Expiry date of this cert
+  CertInfo:
+    type: array
+    items:
+      $ref: '#/definitions/CertInfoItem'
+  CertInfoItem:
+    type: object
+    properties:
+      name:
+        type: string
+      attributes:
+        type: array
+        items:
+          $ref: '#/definitions/NameValuePair'
+  NameValuePair:
+    type: object
+    properties:
+      name:
+        type: string
+      value:
+        type: string
+  Presence:
+    type: object
+    properties:
+      category:
+        type: string
+        enum:
+          - UNDEFINED
+          - AVAILABLE
+          - BUSY
+          - DO_NOT_DISTURB
+          - ON_THE_PHONE
+          - BE_RIGHT_BACK
+          - AWAY
+          - OFFLINE
+  UserPresence:
+    type: object
+    properties:
+      uid:
+        type: integer
+        format: int64
+      category:
+        type: string
+        enum:
+          - UNDEFINED
+          - AVAILABLE
+          - BUSY
+          - DO_NOT_DISTURB
+          - ON_THE_PHONE
+          - BE_RIGHT_BACK
+          - AWAY
+          - OFFLINE
+  PresenceList:
+    type: array
+    items:
+      $ref: '#/definitions/UserPresence'
+  Stream:
+    type: object
+    properties:
+      id:
+        type: string
+  User:
+    description: User record.
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      emailAddress:
+        type: string
+        format: email
+  UserIdList:
+    type: array
+    items:
+        type: integer
+        format: int64
+  UserId:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+  StringId:
+    type: object
+    properties:
+      id:
+        type: string
+  RoomAttributes:
+    type: object
+    properties:
+      name:
+        type: string
+        description: Room name.
+      description:
+        type: string
+        description: Room description.
+      membersCanInvite:
+        type: boolean
+        description: If true, any chatroom participant can add new participants. If false, only owners can add new participants.
+      discoverable:
+        type: boolean
+        description: If true, this chatroom (name, description and messages) can be searched and listed by non-participants. If false, only participants can search this room.
+  V2RoomAttributes:
+    type: object
+    properties:
+      name:
+        type: string
+        description: Room name.
+      keywords:
+        type: array
+        description: Keywords for search to use to find this room
+        items:
+          $ref: '#/definitions/RoomTag'
+      description:
+        type: string
+        description: Room description.
+      membersCanInvite:
+        type: boolean
+        description: If true, any chatroom participant can add new participants. If false, only owners can add new participants.
+      discoverable:
+        type: boolean
+        description: If true, this chatroom (name, description and messages) can be searched and listed by non-participants. If false, only participants can search this room.
+      public:
+        type: boolean
+        description: If true, this is a public chatroom. IF false, a private chatroom.
+      readOnly:
+        type: boolean
+        description: If true, only stream owners can send messages.
+      copyProtected:
+        type: boolean
+        description: If true, clients disable the clipboard copy for content in this stream.
+  RoomSearchCriteria:
+    description: Room Query Object. Used to specify the parameters for room search.
+    properties:
+      query:
+        description: The search query. Matches the room name and description.
+        type: string
+      labels:
+        description: A list of room tag labels whose values will be queried.
+        type: array
+        items:
+          type: string
+      active:
+        description: Restrict the search to active/inactive rooms. If unspecified, search all rooms.
+        type: boolean
+      private:
+        description: Restrict the search to private rooms. If unspecified, search all rooms.
+        type: boolean
+      owner:
+        description: Restrict the search to rooms owned by the specified user ID.
+        $ref: '#/definitions/UserId'
+      creator:
+        description: Restrict the search to rooms created by the specified user ID.
+        $ref: '#/definitions/UserId'
+      member:
+        description: Restrict the search to rooms having the specified user ID as member.
+        $ref: '#/definitions/UserId'
+    required:
+    - query
+  RoomSearchResults:
+    description: A list of search results and counts per search parameter.
+    properties:
+      found:
+        description: The total number of rooms matched by the search.
+        type: integer
+        format: int64
+      skip:
+        description: The number of skipped results.
+        type: integer
+      limit:
+        description: The number of returned results.
+        type: integer
+      query:
+        description: The search query that produced this result.
+        $ref: '#/definitions/RoomSearchCriteria'
+      hits:
+        description: A list of rooms matched by the query.
+        type: array
+        items:
+          $ref: '#/definitions/V2RoomDetail'
+      stats:
+        description: Detailed counts of matched rooms per search criterion.
+        type: array
+        items:
+          $ref: '#/definitions/FacetCount'
+  RoomTag:
+    description: Room Tag object. A key:value pair describing additional properties of the room.
+    properties:
+      key:
+        description: A unique label of the Tag.
+        type: string
+      value:
+        description: The value of this Tag's label.
+        type: string
+    required:
+    - key
+    - value
+  FacetCount:
+    description: An object respresenting the result count of faceted search.
+    properties:
+      facet:
+        description: The matched query.
+        type: string
+      count:
+        description: The result count.
+        type: integer
+  RoomCreate:
+    description: Room Creation Object. Once the chatroom is created, modify attributes and deactive/reactivate via the specific API calls.
+    type: object
+    properties:
+      roomAttributes:
+        $ref: '#/definitions/RoomAttributes'
+      immutableRoomAttributes:
+        $ref: '#/definitions/ImmutableRoomAttributes'
+  RoomSystemInfo:
+    type: object
+    properties:
+     id:
+        type: string
+     creationDate:
+        type: integer
+        format: int64
+        description: The datetime when the stream was originally created. Milliseconds since Jan 1 1970.
+     createdByUserId:
+        type: integer
+        format: int64
+     active:
+        type: boolean
+        description: If false, no messages can be sent in this stream, and membership is locked.
+  ImmutableRoomAttributes:
+    type: object
+    description: These attributes cannot be changed once the room has been created
+    properties:
+      public:
+        type: boolean
+        description: If true, this is a public chatroom. IF false, a private chatroom.
+      readOnly:
+        type: boolean
+        description: If true, only stream owners can send messages.
+      copyProtected:
+        type: boolean
+        description: If true, clients disable the clipboard copy for content in this stream.
+  RoomDetail:
+    type: object
+    properties:
+      roomAttributes:
+        $ref: '#/definitions/RoomAttributes'
+      roomSystemInfo:
+        $ref: '#/definitions/RoomSystemInfo'
+      immutableRoomAttributes:
+        $ref: '#/definitions/ImmutableRoomAttributes'
+  V2RoomDetail:
+    type: object
+    properties:
+      roomAttributes:
+        $ref: '#/definitions/V2RoomAttributes'
+      roomSystemInfo:
+        $ref: '#/definitions/RoomSystemInfo'
+  SuccessResponse:
+    type: object
+    properties:
+      format:
+        type: string
+        enum:
+          - TEXT
+          - XML
+      message:
+        type: string
+  AvatarUpdate:
+    type: object
+    properties:
+      image:
+        description: Base64 encoded image. Original image must be less than 2MB.
+        type: string
+  Avatar:
+    type: object
+    properties:
+      size:
+        description: 'The Avatar Size'
+        type: string
+      url:
+        description: 'Url of the image'
+        type: string
+  AvatarList:
+    type: array
+    items:
+     $ref: '#/definitions/Avatar'
+  UserStatus:
+    type: object
+    properties:
+      status:
+        type: string
+        enum:
+          - ENABLED
+          - DISABLED
+  UserFilter:
+    type: object
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      department:
+        type: string
+      title:
+        type: string
+      role:
+        type: string
+        format: long
+      status:
+        type: string
+        enum:
+          - ENABLED
+          - DISABLED
+      usertype:
+        type: string
+        enum:
+          - NORMAL
+          - SYSTEM
+          - TW
+      location:
+        type: string
+  PasswordReset:
+    type: object
+    properties:
+      type:
+        type: string
+        enum:
+          - EMAIL
+  FeatureList:
+    type: array
+    items:
+     $ref: '#/definitions/Feature'
+  Feature:
+    description: Entitlement feature record.
+    type: object
+    properties:
+      entitlment:
+        type: string
+      enabled:
+        type: boolean
+        description: Whether this entitlement is enabled for the user.
+  Group:
+    description: Information Barrier Group record.
+    type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      active:
+        type: boolean
+      memberCount:
+        type: integer
+        format: int32
+      policies:
+        type: array
+        items:
+          type: string
+      createdDate:
+        type: integer
+        format: int64
+      modifiedDate:
+        type: integer
+        format: int64
+  Product:
+    description: Application Product
+    type: object
+    required:
+      - name
+      - sku
+      - type
+      - subscribed
+    properties:
+      appId:
+        type: string
+        description: App ID for the Product
+      name:
+        type: string
+        minLength: 1
+        maxLength: 50
+        description: Product Name
+      sku:
+        type: string
+        minLength: 1
+        maxLength: 100
+        description: Product SKU
+      subscribed:
+        type: boolean
+        description: indicate whether the product is subscribed or not
+      type:
+        type: string
+        description: Product Type (default or premium)
+  ProductList:
+    type: array
+    items:
+      $ref: '#/definitions/Product'
+  PolicyList:
+    type: array
+    items:
+      $ref: '#/definitions/Policy'
+  Policy:
+    description: Information Barrier Policy record.
+    type: object
+    properties:
+      id:
+        type: string
+      policyType:
+        type: string
+        enum:
+          - BLOCK
+          - ALLOW
+      active:
+        type: boolean
+      memberCount:
+        type: integer
+        format: int32
+      groups:
+        type: array
+        items:
+          type: string
+      createdDate:
+        type: integer
+        format: int64
+      modifiedDate:
+        type: integer
+        format: int64
+  UserAppEntitlement:
+    description: Application Entitlements for the user
+    type: object
+    required:
+      - appId
+      - appName
+      - listed
+      - install
+    properties:
+      appId:
+        type: string
+        description: Unique ID for the Application
+        maxLength: 32
+        minLength: 1
+      appName:
+        type: string
+        description: Name for this Application
+        maxLength: 50
+        minLength: 1
+      listed:
+        type: boolean
+        description: if true, this application will be listed in the appstore for this user.  Otherwise, this application will be hidden in the appstore.
+      install:
+        type: boolean
+        description: if true, it indicate this application is installed for this user.  Otherwise, this user does not have this application installed.
+      products:
+        $ref: '#/definitions/ProductList'
+  PodAppEntitlement:
+    description: Application Entitlements for the company
+    type: object
+    required:
+      - appId
+      - appName
+      - enable
+      - listed
+      - install
+    properties:
+      appId:
+        type: string
+        description: Unique ID for the Application
+        maxLength: 32
+        minLength: 1
+      appName:
+        type: string
+        description: Name for this Application
+        maxLength: 50
+        minLength: 1
+      enable:
+        type: boolean
+      listed:
+        type: boolean
+        description: if true, this application will be listed in the appstore for everyone.  Otherwise, this application will be hidden in the appstore.
+      install:
+        type: boolean
+        description: if true, the entitlement is set to automatic for the company.  Otherwise, it is set to manual.
+  Role:
+    description: Role record.
+    type: object
+    properties:
+      id:
+        type: string
+        format: long
+      name:
+        type: string
+      description:
+        type: string
+  GroupList:
+    type: array
+    items:
+      $ref: '#/definitions/Group'
+  UserAppEntitlementList:
+    type: array
+    items:
+      $ref: '#/definitions/UserAppEntitlement'
+  PodAppEntitlementList:
+    type: array
+    items:
+      $ref: '#/definitions/PodAppEntitlement'
+  RoleList:
+    type: array
+    items:
+      $ref: '#/definitions/Role'
+  IntegerList:
+    type: array
+    items:
+        type: integer
+        format: int64
+  StringList:
+    type: array
+    items:
+        type: string
+  DisclaimerList:
+    type: array
+    items:
+      $ref: '#/definitions/Disclaimer'
+  Disclaimer:
+    type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      content:
+        type: string
+      frequencyInHours:
+        type: integer
+        format: int32
+      isDefault:
+        type: boolean
+      isActive:
+        type: boolean
+      createdDate:
+        type: integer
+        format: int64
+      modifiedDate:
+        type: integer
+        format: int64
+      format:
+        type: string
+        enum:
+          - TEXT
+          - XML
+  DelegateAction:
+    type: object
+    properties:
+      userId:
+        type: integer
+        format: int64
+      action:
+        type: string
+        enum:
+          - ADD
+          - REMOVE
+  UserInfo:
+    description: User record.
+    type: object
+    properties:
+      user:
+        $ref: '#/definitions/UserAttributes'
+      userSystemInfo:
+        $ref: '#/definitions/UserSystemInfo'
+  UserDetail:
+    description: Detailed User record.
+    type: object
+    properties:
+      userAttributes:
+        $ref: '#/definitions/UserAttributes'
+      userSystemInfo:
+        $ref: '#/definitions/UserSystemInfo'
+      features:
+        $ref: '#/definitions/IntegerList'
+      apps:
+        $ref: '#/definitions/IntegerList'
+      groups:
+        $ref: '#/definitions/IntegerList'
+      roles:
+        $ref: '#/definitions/StringList'
+      disclaimers:
+        $ref: '#/definitions/IntegerList'
+      avatar:
+        $ref: '#/definitions/Avatar'
+  UserAttributes:
+    description: User record.
+    type: object
+    properties:
+      emailAddress:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+      userName:
+        type: string
+      displayName:
+        type: string
+      department:
+        type: string
+      division:
+        type: string
+      title:
+        type: string
+      workPhoneNumber:
+        type: string
+      mobilePhoneNumber:
+        type: string
+      smsNumber:
+        type: string
+      accountType:
+        type: string
+        enum:
+          - NORMAL
+          - SYSTEM
+      location:
+        type: string
+      jobFunction:
+        type: string
+      assetClasses:
+        type: array
+        items:
+          type: string
+      industries:
+        type: array
+        items:
+          type: string
+  UserCreate:
+    description: User Creation Object. After creation, modify roles, features etc via the specific API calls.
+    type: object
+    properties:
+      userAttributes:
+        $ref: '#/definitions/UserAttributes'
+      password:
+        $ref: '#/definitions/Password'
+      roles:
+        type: array
+        items:
+          type: string
+  UserSystemInfo:
+    description: User Status Information.
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      status:
+        type: string
+        enum:
+          - ENABLED
+          - DISABLED
+      createdDate:
+        type: integer
+        format: int64
+      createdBy:
+        type: string
+      lastUpdatedDate:
+        type: integer
+        format: int64
+      lastLoginDate:
+        type: integer
+        format: int64
+      lastPasswordReset:
+        type: integer
+        format: int64
+  UserList:
+    type: array
+    items:
+      $ref: '#/definitions/UserInfo'
+  Password:
+    description: Password. Stored as derived password in both the Pod and the Key Manager using PBKDF2 function. Number of iterations should be 10000 and desired length 256 bits.
+    type: object
+    properties:
+      hSalt:
+        description: Pod password salt used for PBKDF2 derivation.
+        type: string
+      hPassword:
+        description: Pod password derived with PBKDF2.
+        type: string
+      khSalt:
+        description: Key Manager password salt used for PBKDF2 derivation.
+        type: string
+      khPassword:
+        description: Key Manager password derived with PBKDF2.
+        type: string
+  MemberInfo:
+    description: Detailed membership record.
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      owner:
+        type: boolean
+      joinDate:
+        type: integer
+        format: int64
+  MembershipList:
+    description: List of members in a room.
+    type: array
+    items:
+      $ref: '#/definitions/MemberInfo'
+  SessionInfo:
+    description: Information about the current user's session
+    type: object
+    properties:
+      userId:
+        type: integer
+        format: int64
+  MessageSuppressionResponse:
+    description: The suppression state of a message
+    type: object
+    properties:
+      messageId:
+        type: string
+      suppressed:
+        type: boolean
+      suppressionDate:
+        type: integer
+        format: int64
+        description: The date when this message was suppressed.
+  BulkActionResult:
+    description: |
+      The results of list based bulk action. The list contains the result messages
+      in the same order as submitted. The message will be an empty string if the action
+      was successful for item in that index.
+    properties:
+      overallResult:
+        type: string
+        enum:
+          - SUCCESS
+          - FAIL
+      results:
+        type: array
+        items:
+          type: string

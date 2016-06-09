@@ -1,0 +1,1364 @@
+swagger: '2.0'
+info:
+  version: '1.38.0'
+  title: Agent API
+  description: |
+    This document refers to Symphony API calls to send and receive messages
+    and content. They need the on-premise Agent installed to perform
+    decryption/encryption of content.
+
+    - sessionToken and keyManagerToken can be obtained by calling the
+    authenticationAPI on the symphony back end and the key manager
+    respectively. Refer to the methods described in authenticatorAPI.yaml.
+    - Actions are defined to be atomic, ie will succeed in their entirety
+    or fail and have changed nothing.
+    - If it returns a 40X status then it will have sent no message to any
+    stream even if a request to aome subset of the requested streams
+    would have succeeded.
+    - If this contract cannot be met for any reason then this is an error
+    and the response code will be 50X.
+    - MessageML is a markup language for messages. See reference here:
+    https://developers.symphony.com/documentation/message_format_reference
+
+paths:
+  '/v2/stream/{sid}/message/create':
+    post:
+      summary: Post a message to one existing stream.
+      description: |
+        Post a new message to the given stream. The stream can be a chatroom,
+        an IM or a multiparty IM.
+
+        If the message parameter type is TEXT then the message contains plain
+        text and cannot include formating, hash tags, mentions etc.
+
+        If the message parameter type is MessageML then the message contains
+        MessageML which allows for these entities.
+
+        If the message is in MessageML and fails schema validation
+        a client error results
+
+        If the message is sent then 200 is returned.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: sid
+          description: Stream ID
+          in: path
+          required: true
+          type: string
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: keyManagerToken
+          description: Key Manager authentication token.
+          in: header
+          required: true
+          type: string
+        - name: message
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/V2MessageSubmission'
+      tags:
+        - Messages
+      responses:
+        '200':
+          description: Message sent.
+          schema:
+            $ref: '#/definitions/V2Message'
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v2/stream/{sid}/message':
+    get:
+      summary: Get messages from an existing stream.
+      description: |
+          A caller can fetch all unseen messages by passing the timestamp of
+          the last message seen as the since parameter and the number of messages
+          with the same timestamp value already seen as the skip parameter. This
+          means that every message will be seen exactly once even in the case that
+          an additional message is processed with the same timestamp as the last
+          message returned by the previous call, and the case where there are
+          more than maxMessages with the same timestamp value.
+
+          This method is intended for historic queries and is generally reliable
+          but if guaranteed delivery of every message in real time is required
+          then the equivilent firehose method should be called.
+      produces:
+        - application/json
+      parameters:
+        - name: sid
+          description: |
+            Stream ID
+          in: path
+          required: true
+          type: string
+        - name: since
+          description: |
+            Timestamp of first required message.
+
+            This is a long integer value representing milliseconds since
+            Jan 1 1970
+          in: query
+          required: true
+          type: integer
+          format: int64
+        - name: offset
+          description: |
+            No. of messages to skip.
+          in: query
+          type: integer
+        - name: limit
+          description: |
+            Max No. of messages to return. If no value is provided, 50 is the default.
+          in: query
+          type: integer
+          required: false
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: keyManagerToken
+          description: Key Manager authentication token.
+          in: header
+          required: true
+          type: string
+      tags:
+        - Messages
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/V2MessageList'
+        '204':
+          description: No Messages.
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v2/stream/{sid}/attachment/create':
+    post:
+      summary: Upload an attachment to one existing stream.
+      description: |
+        Upload an attachment to the given stream. The stream can be a chatroom,
+        an IM or a multiparty IM.
+
+        If the attachment is uploaded then 200 is returned.
+      consumes:
+        - multipart/form-data
+      produces:
+        - application/json
+      parameters:
+        - name: sid
+          description: Stream ID
+          in: path
+          required: true
+          type: string
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: keyManagerToken
+          description: Key Manager authentication token.
+          in: header
+          required: true
+          type: string
+        - name: file
+          description: The attachment body.
+          in: formData
+          required: true
+          type: file
+      tags:
+        - Attachments
+      responses:
+        '200':
+          description: 'Upload successful, return the attachment ID.'
+          schema:
+            $ref: '#/definitions/AttachmentInfo'
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '422':
+          description: 'Unprocessable entity: The submitted data could not be processed.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v2/stream/{sid}/attachment':
+    get:
+      summary: Get an attachment by ID.
+      description: |
+        Get the attachment body by the attachment ID.
+      consumes:
+        - application/json
+      produces:
+        - application/octet-stream
+      parameters:
+        - name: sid
+          description: Stream ID
+          in: path
+          required: true
+          type: string
+        - name: fileId
+          description: The attachment ID
+          in: query
+          required: true
+          type: string
+        - name: messageId
+          description: The ID of the message containing the attachment
+          in: query
+          required: true
+          type: string
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: keyManagerToken
+          description: Key Manager authentication token.
+          in: header
+          required: true
+          type: string
+      tags:
+        - Attachments
+      responses:
+        '200':
+          description: 'Attachment body as Base64 encoded string.'
+          schema:
+            type: string
+            format: byte
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/util/echo':
+    post:
+      summary: Test endpoint, returns input.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: keyManagerToken
+          description: Key Manager authentication token.
+          in: header
+          required: true
+          type: string
+        - name: echoInput
+          description: |
+            Message in plain text
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/SimpleMessage'
+      tags:
+        - Util
+      responses:
+        '200':
+          description: Message sent.
+          schema:
+            $ref: '#/definitions/SimpleMessage'
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/util/obsolete':
+    post:
+      deprecated: true
+      summary: Example of a deprecated endpoint, returns input.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: keyManagerToken
+          description: Key Manager authentication token.
+          in: header
+          required: true
+          type: string
+        - name: echoInput
+          description: |
+            Message in plain text
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/SimpleMessage'
+      tags:
+        - Util
+      responses:
+        '200':
+          description: Message sent.
+          schema:
+            $ref: '#/definitions/SimpleMessage'
+          headers:
+            X-Warning:
+              description: This method is deprecated
+              type: string
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '420':
+          description: 'Gone. Returned when the option to hard fail deprecated methods is enabled'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/stream/{sid}/message/create':
+    post:
+      summary: Post a message to one existing stream.
+      description: |
+        Post a new message to the given stream. The stream can be a chatroom,
+        an IM or a multiparty IM.
+
+        If the message parameter type is TEXT then the message contains plain
+        text and cannot include formating, hash tags, mentions etc.
+
+        If the message parameter type is MessageML then the message contains
+        MessageML which allows for these entities.
+
+        If the message is in MessageML and fails schema validation
+        a client error results
+
+        If the message is sent then 200 is returned.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: sid
+          description: Stream ID
+          in: path
+          required: true
+          type: string
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: keyManagerToken
+          description: Key Manager authentication token.
+          in: header
+          required: true
+          type: string
+        - name: message
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/MessageSubmission'
+      tags:
+        - Messages
+      responses:
+        '200':
+          description: Message sent.
+          schema:
+            $ref: '#/definitions/Message'
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/message/import':
+    post:
+      summary: Post a message to one existing stream.
+      description: |
+        PROVISIONAL Post a new message to the given stream. The stream can be a chatroom,
+        an IM or a multiparty IM.
+
+        If the message parameter type is TEXT then the message contains plain
+        text and cannot include formating, hash tags, mentions etc.
+
+        If the message parameter type is MessageML then the message contains
+        MessageML which allows for these entities.
+
+        If the message is in MessageML and fails schema validation
+        a client error results
+
+        If the message is sent then 200 is returned.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: keyManagerToken
+          description: Key Manager authentication token.
+          in: header
+          required: true
+          type: string
+        - name: messageList
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/MessageImportList'
+      tags:
+        - Messages
+      responses:
+        '200':
+          description: Message sent.
+          schema:
+            $ref: '#/definitions/ImportResponseList'
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/stream/{sid}/message':
+    get:
+      summary: Get messages from an existing stream.
+      description: |
+          A caller can fetch all unseen messages by passing the timestamp of
+          the last message seen as the since parameter and the number of messages
+          with the same timestamp value already seen as the skip parameter. This
+          means that every message will be seen exactly once even in the case that
+          an additional message is processed with the same timestamp as the last
+          message returned by the previous call, and the case where there are
+          more than maxMessages with the same timestamp value.
+
+          This method is intended for historic queries and is generally reliable
+          but if guaranteed delivery of every message in real time is required
+          then the equivilent firehose method should be called.
+      produces:
+        - application/json
+      parameters:
+        - name: sid
+          description: |
+            Stream ID
+          in: path
+          required: true
+          type: string
+        - name: since
+          description: |
+            Timestamp of first required message.
+
+            This is a long integer value representing milliseconds since
+            Jan 1 1970
+          in: query
+          required: true
+          type: integer
+          format: int64
+        - name: offset
+          description: |
+            No. of messages to skip.
+          in: query
+          type: integer
+        - name: maxMessages
+          description: |
+            Max No. of messages to return. If no value is provided, 50 is the default.
+          in: query
+          type: integer
+          required: false
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: keyManagerToken
+          description: Key Manager authentication token.
+          in: header
+          required: true
+          type: string
+      tags:
+        - Messages
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/MessageList'
+        '204':
+          description: No Messages.
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/firehose/create':
+      post:
+        summary: LIMITED RELEASE Create a new real time firehose.
+        description: |
+            A firehose provides all user entered messages that occur within a
+            Symphony pod beginning at the point in time that it is created.
+
+            Note that unlike a datafeed, the user calling a firehose does not need to be a member of the conversations
+            for which it will receive messages.
+
+            System messages like new users joining a chatroom are not part of the firehose.
+
+            A firehose can only be created and accessed by a user with the content export role.
+
+            A firehose will expire if its capacity for unread messages is reached.
+        parameters:
+          - name: sessionToken
+            description: Session authentication token.
+            in: header
+            required: true
+            type: string
+          - name: keyManagerToken
+            description: Key Manager authentication token.
+            in: header
+            required: true
+            type: string
+        consumes:
+          - application/json
+        produces:
+          - application/json
+        tags:
+          - Firehose
+        responses:
+          '200':
+            description: OK
+            schema:
+              $ref: '#/definitions/Firehose'
+          '400':
+            description: 'Client error.'
+            schema:
+              $ref: '#/definitions/Error'
+          '401':
+            description: 'Unauthorized: Session tokens invalid.'
+            schema:
+              $ref: '#/definitions/Error'
+          '403':
+            description: 'Forbidden: Caller lacks necessary entitlement.'
+            schema:
+              $ref: '#/definitions/Error'
+          '500':
+            description: 'Server error, see response body for further details.'
+            schema:
+              $ref: '#/definitions/Error'
+  '/v1/firehose/{id}/read':
+    get:
+      summary: LIMITED RELEASE Read a given firehose.
+      description: |
+          Read messages from the given firehose. If no more messages are available then this method will block.
+          It is intended that the client should re-call this method as soon as it has processed the messages
+          received in the previous call. If the client is able to consume messages more quickly than they become
+          available then each call will initially block, there is no need to delay before re-calling this method.
+
+          A firehose can only be read by a user with the content export role.
+
+          A firehose will expire if its unread capacity is reached.
+
+          A firehose can only be consumed by one client thread at a time. E.g. polling the firehose by two threads may lead to messages being delivered out of order.
+      parameters:
+      - name: id
+        description: |
+          Firehose ID
+        in: path
+        required: true
+        type: string
+      - name: maxMessages
+        description: |
+            Max No. of messages to return.
+        in: query
+        type: integer
+      - name: sessionToken
+        description: Session authentication token.
+        in: header
+        required: true
+        type: string
+      - name: keyManagerToken
+        description: Key Manager authentication token.
+        in: header
+        required: true
+        type: string
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      tags:
+        - Firehose
+      responses:
+        '200':
+          description: List of messages that have occurred since last time this URL was polled. If the list is empty, it means the request has reached its timeout, and the client should poll again.
+          schema:
+            $ref: '#/definitions/MessageList'
+        '204':
+          description: No Messages.
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v2/firehose/{id}/read':
+    get:
+      summary: LIMITED RELEASE Read a given firehose.
+      description: |
+          Read messages from the given firehose. If no more messages are available then this method will block.
+          It is intended that the client should re-call this method as soon as it has processed the messages
+          received in the previous call. If the client is able to consume messages more quickly than they become
+          available then each call will initially block, there is no need to delay before re-calling this method.
+
+          A firehose can only be read by a user with the content export role.
+
+          A firehose will expire if its unread capacity is reached.
+
+          A firehose can only be consumed by one client thread at a time. E.g. polling the firehose by two threads may lead to messages being delivered out of order.
+      parameters:
+      - name: id
+        description: |
+          Firehose ID
+        in: path
+        required: true
+        type: string
+      - name: maxMessages
+        description: |
+            Max No. of messages to return.
+        in: query
+        type: integer
+      - name: sessionToken
+        description: Session authentication token.
+        in: header
+        required: true
+        type: string
+      - name: keyManagerToken
+        description: Key Manager authentication token.
+        in: header
+        required: true
+        type: string
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      tags:
+        - Firehose
+      responses:
+        '200':
+          description: List of messages that have occurred since last time this URL was polled. If the list is empty, it means the request has reached its timeout, and the client should poll again.
+          schema:
+            $ref: '#/definitions/V2MessageList'
+        '204':
+          description: No Messages.
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/datafeed/create':
+      post:
+        summary: Create a new real time message event stream.
+        description: |
+            A datafeed provides the messages in all conversations that a user is in.
+            System messages like new users joining a chatroom are not part of the datafeed.
+
+            A datafeed will expire after if it isn't read before its capacity is reached.
+        parameters:
+          - name: sessionToken
+            description: Session authentication token.
+            in: header
+            required: true
+            type: string
+          - name: keyManagerToken
+            description: Key Manager authentication token.
+            in: header
+            required: true
+            type: string
+        consumes:
+          - application/json
+        produces:
+          - application/json
+        tags:
+          - Datafeed
+        responses:
+          '200':
+            description: OK
+            schema:
+              $ref: '#/definitions/Datafeed'
+          '400':
+            description: 'Client error.'
+            schema:
+              $ref: '#/definitions/Error'
+          '401':
+            description: 'Unauthorized: Session tokens invalid.'
+            schema:
+              $ref: '#/definitions/Error'
+          '403':
+            description: 'Forbidden: Caller lacks necessary entitlement.'
+            schema:
+              $ref: '#/definitions/Error'
+          '500':
+            description: 'Server error, see response body for further details.'
+            schema:
+              $ref: '#/definitions/Error'
+  '/v1/datafeed/{id}/read':
+    get:
+      summary: Read a given datafeed.
+      description: |
+          Read messages from the given datafeed. If no more messages are available then this method will block.
+          It is intended that the client should re-call this method as soon as it has processed the messages
+          received in the previous call. If the client is able to consume messages more quickly than they become
+          available then each call will initially block, there is no need to delay before re-calling this method.
+
+          A datafeed will expire if its unread capacity is reached.
+          A datafeed can only be consumed by one client thread at a time. E.g. polling the datafeed by two threads may lead to messages being delivered out of order.
+      parameters:
+      - name: id
+        description: |
+          Datafeed ID
+        in: path
+        required: true
+        type: string
+      - name: maxMessages
+        description: |
+            Max No. of messages to return.
+        in: query
+        type: integer
+      - name: sessionToken
+        description: Session authentication token.
+        in: header
+        required: true
+        type: string
+      - name: keyManagerToken
+        description: Key Manager authentication token.
+        in: header
+        required: true
+        type: string
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      tags:
+        - Datafeed
+      responses:
+        '200':
+          description: List of messages that have occurred since last time this URL was polled. If the list is empty, it means the request has reached its timeout, and the client should poll again.
+          schema:
+            $ref: '#/definitions/MessageList'
+        '204':
+          description: No Messages.
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v2/datafeed/{id}/read':
+    get:
+      summary: Read a given datafeed.
+      description: |
+          Read messages from the given datafeed. If no more messages are available then this method will block.
+          It is intended that the client should re-call this method as soon as it has processed the messages
+          received in the previous call. If the client is able to consume messages more quickly than they become
+          available then each call will initially block, there is no need to delay before re-calling this method.
+
+          A datafeed will expire if its unread capacity is reached.
+          A datafeed can only be consumed by one client thread at a time. E.g. polling the datafeed by two threads may lead to messages being delivered out of order.
+      parameters:
+      - name: id
+        description: |
+          Datafeed ID
+        in: path
+        required: true
+        type: string
+      - name: maxMessages
+        description: |
+            Max No. of messages to return.
+        in: query
+        type: integer
+      - name: sessionToken
+        description: Session authentication token.
+        in: header
+        required: true
+        type: string
+      - name: keyManagerToken
+        description: Key Manager authentication token.
+        in: header
+        required: true
+        type: string
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      tags:
+        - Datafeed
+      responses:
+        '200':
+          description: List of messages that have occurred since last time this URL was polled. If the list is empty, it means the request has reached its timeout, and the client should poll again.
+          schema:
+            $ref: '#/definitions/V2MessageList'
+        '204':
+          description: No Messages.
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+definitions:
+  Error:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+  MessageSubmission:
+    type: object
+    properties:
+      format:
+        type: string
+        enum:
+          - TEXT
+          - MESSAGEML
+      message:
+        type: string
+  V2MessageSubmission:
+    type: object
+    properties:
+      format:
+        type: string
+        enum:
+          - TEXT
+          - MESSAGEML
+      message:
+        type: string
+      attachments:
+        type: array
+        items:
+          $ref: '#/definitions/AttachmentInfo'
+  MessageImportList:
+    description: |
+      An ordered list of historic messages to be imported.
+      A list of import responsees will be returned in the same order.
+    type: array
+    items:
+      $ref: '#/definitions/ImportedMessage'
+  ImportedMessage:
+    description: |
+      A historic message to be imported into the system.
+      The importing user must have the Content Management role.
+      Also, the importing user must be a member of the chat it is importing into.
+      The user that the message is intended to have come from must also be present in the chat.
+      The intended message timestamp must be a valid time from the past. It cannot be a future timestamp.
+    type: object
+    properties:
+      message:
+        type: string
+        format: MessageML
+        description: Message text in MessageML
+      format:
+        type: string
+        enum:
+          - TEXT
+          - MESSAGEML
+      intendedMessageTimestamp:
+        description: |
+          The timestamp representing the time when the message was sent in the original system
+          in milliseconds since Jan 1st 1970.
+        type: integer
+        format: int64
+      intendedMessageFromUserId:
+        description: |
+          The long integer userid of the Symphony user who you intend to show sent the message.
+        type: integer
+        format: int64
+      originatingSystemId:
+        description: |
+          The ID of the system through which the message was originally sent.
+        type: string
+      stream:
+        type: string
+    required:
+    - message
+    - intendedMessageTimestamp
+    - intendedMessageFromUserId
+    - originatingSystemId
+    - stream
+  ImportResponseList:
+    type: array
+    items:
+      $ref: '#/definitions/ImportResponse'
+  ImportResponse:
+    type: object
+    properties:
+      messageId:
+        description: |
+          If the message was successfully imported then the message ID in the system
+          of the newly created message.
+        type: string
+      diagnostic:
+        description: |
+          A diagnostic message containing an error message in the event that the
+          message import failed. May also be present in the case of a successful
+          call if there is useful narrative to return.
+        type: string
+  BaseMessage:
+    type: object
+    discriminator: messageType
+    properties:
+      id:
+        type: string
+        description: The messageId is assigned by the ingestor service when a message is sent.
+      timestamp:
+        type: string
+      messageType:
+        type: string
+      stream:
+        type: string
+    required:
+    - messageType
+    - timestamp
+    - stream
+  V2BaseMessage:
+    type: object
+    discriminator: v2messageType
+    properties:
+      id:
+        type: string
+        description: The messageId is assigned by the ingestor service when a message is sent.
+      timestamp:
+        type: string
+      v2messageType:
+        type: string
+      stream:
+        type: string
+    required:
+    - v2messageType
+    - timestamp
+    - stream
+  Message:
+    type: object
+    description: A representation of a message sent by a user of Symphony.
+    allOf:
+    - $ref: '#/definitions/BaseMessage'
+    - type: object
+      properties:
+        message:
+          type: string
+          format: MessageML
+          description: Message text in MessageML
+        fromUserId:
+          type: integer
+          format: int64
+          description: the Symphony userId of the user who sent the message. This will be populated by the server (and actually ignored if included when sending a message).
+      required:
+      - message
+      - fromUserId
+  V2Message:
+    type: object
+    description: A representation of a message sent by a user of Symphony.
+    allOf:
+    - $ref: '#/definitions/V2BaseMessage'
+    - type: object
+      properties:
+        message:
+          type: string
+          format: MessageML
+          description: Message text in MessageML
+        fromUserId:
+          type: integer
+          format: int64
+          description: the Symphony userId of the user who sent the message. This will be populated by the server (and actually ignored if included when sending a message).
+        attachments:
+          type: array
+          items:
+            $ref: '#/definitions/AttachmentInfo'
+      required:
+      - message
+      - fromUserId
+  RoomCreatedMessage:
+    type: object
+    description: Generated when a room is created.
+    allOf:
+    - $ref: '#/definitions/V2BaseMessage'
+    - type: object
+      properties:
+        creationDate:
+          type: integer
+          format: int64
+        name:
+          type: string
+        keywords:
+          type: string
+        description:
+          type: string
+        createdByUserId:
+          type: integer
+          format: int64
+          description: The Symphony userId of the user who created the room.
+        readOnly:
+          type: boolean
+        discoverable:
+          type: boolean
+        public:
+          type: boolean
+        membersCanInvite:
+          type: boolean
+        copyProtected:
+          type: boolean
+  V2RoomCreatedMessage:
+      type: object
+      description: Generated when a room is created.
+      allOf:
+      - $ref: '#/definitions/V2BaseMessage'
+      - type: object
+        properties:
+          creationDate:
+            type: integer
+            format: int64
+          name:
+            type: string
+          keywords:
+            type: array
+            items:
+              $ref: '#/definitions/RoomTag'
+          description:
+            type: string
+          createdByUserId:
+            type: integer
+            format: int64
+            description: The Symphony userId of the user who created the room.
+          readOnly:
+            type: boolean
+          discoverable:
+            type: boolean
+          public:
+            type: boolean
+          membersCanInvite:
+            type: boolean
+          copyProtected:
+            type: boolean
+  RoomDeactivatedMessage:
+    type: object
+    description: Generated when a room is deactivated.
+    allOf:
+    - $ref: '#/definitions/V2BaseMessage'
+    - type: object
+      properties:
+        deactivatedByUserId:
+          type: integer
+          format: int64
+  RoomReactivatedMessage:
+    type: object
+    description: Generated when a room is reactivated.
+    allOf:
+    - $ref: '#/definitions/V2BaseMessage'
+    - type: object
+      properties:
+        reactivatedByUserId:
+          type: integer
+          format: int64
+  RoomUpdatedMessage:
+    type: object
+    description: Generated when a room is updated.
+    allOf:
+    - $ref: '#/definitions/V2BaseMessage'
+    - type: object
+      properties:
+        oldName:
+          type: string
+        newName:
+          type: string
+        keywords:
+          type: string
+        oldDescription:
+          type: string
+        newDescription:
+          type: string
+        membersCanInvite:
+          type: boolean
+        discoverable:
+          type: boolean
+        readOnly:
+          type: boolean
+        copyProtected:
+          type: boolean
+  V2RoomUpdatedMessage:
+    type: object
+    description: Generated when a room is updated.
+    allOf:
+    - $ref: '#/definitions/V2BaseMessage'
+    - type: object
+      properties:
+        oldName:
+          type: string
+        newName:
+          type: string
+        keywords:
+          type: array
+          items:
+            $ref: '#/definitions/RoomTag'
+        oldDescription:
+          type: string
+        newDescription:
+          type: string
+        membersCanInvite:
+          type: boolean
+        discoverable:
+          type: boolean
+        readOnly:
+          type: boolean
+        copyProtected:
+          type: boolean
+  UserJoinedRoomMessage:
+    type: object
+    description: Generated when a user joins a room.
+    allOf:
+    - $ref: '#/definitions/V2BaseMessage'
+    - type: object
+      properties:
+        addedByUserId:
+          type: integer
+          format: int64
+        memberAddedUserId:
+          type: integer
+          format: int64
+  UserLeftRoomMessage:
+    type: object
+    description: Generated when a user leaves a room.
+    allOf:
+    - $ref: '#/definitions/V2BaseMessage'
+    - type: object
+      properties:
+        removedByUserId:
+          type: integer
+          format: int64
+        memberLeftUserId:
+          type: integer
+          format: int64
+        informationBarrierRemediation:
+          type: boolean
+  RoomMemberPromotedToOwnerMessage:
+    type: object
+    description: Generated when a room member is promoted to owner.
+    allOf:
+    - $ref: '#/definitions/V2BaseMessage'
+    - type: object
+      properties:
+        promotedByUserId:
+          type: integer
+          format: int64
+        promotedUserId:
+          type: integer
+          format: int64
+  RoomMemberDemotedFromOwnerMessage:
+    type: object
+    description: Generated when a room member is promoted to owner.
+    allOf:
+    - $ref: '#/definitions/V2BaseMessage'
+    - type: object
+      properties:
+        demotedByUserId:
+          type: integer
+          format: int64
+        demotedUserId:
+          type: integer
+          format: int64
+  AttachmentInfo:
+    type: object
+    properties:
+      id:
+        type: string
+        description: The attachment ID.
+      name:
+        type: string
+        description: The file name.
+      size:
+        type: integer
+        format: int64
+        description: Size in bytes.
+    required:
+    - id
+    - name
+    - size
+  MessageList:
+    type: array
+    items:
+      $ref: '#/definitions/Message'
+  V2MessageList:
+    type: array
+    items:
+      $ref: '#/definitions/V2BaseMessage'
+  SimpleMessage:
+    description: A string wrapped in a JSON object.
+    type: object
+    properties:
+      message:
+        type: string
+  Firehose:
+    type: object
+    properties:
+      id:
+        type: string
+  Datafeed:
+    type: object
+    properties:
+      id:
+        type: string
+  RoomTag:
+    description: Room Tag object. A key:value pair describing additional properties of the room.
+    properties:
+      key:
+        description: A unique label of the Tag.
+        type: string
+      value:
+        description: The value of this Tag's label.
+        type: string
+    required:
+    - key
+    - value

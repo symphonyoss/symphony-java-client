@@ -1,2 +1,44 @@
-# symphony-java-client
-Java client library to interact with the Symphony APIs
+The Symphony java client provides a wrapper around the Symphony REST API's to simplify the 
+creation of chat sessions, presence and general messaging.  It is event based with
+associated services and listeners to capture updates and forward.
+
+REST API Support:
+
+        Version 1 API calls implemented and tested under Standalone Agent API 1.38
+        -Authentication
+        -Users
+        -Presence
+        -Streams
+        -Messages
+        -Datafeed
+        
+
+Requirements:
+
+POM:
+
+        <dependency>
+            <groupId>org.symphonyoss</groupId>
+            <artifactId>symphony-client</artifactId>
+            <version>(Version)</version>
+        </dependency>
+
+Certificates:
+
+        Please send email to frank.tarsillo@markit.com to obtain.
+        Server Truststore = Contains server certs
+        User Keystore = Symphony user client certificate
+
+
+Required System Properties:
+
+        -Dkeystore.password=(Pass)
+        -Dtruststore.password=(Pass)
+        -Dsessionauth.url=https://(pod-host).symphony.com:8444/sessionauth
+        //Note: you may have local HSM vs pod
+        -Dkeyauth.url=https://(pod-host).symphony.com:8444/keyauth
+        -Dsymphony.agent.pod.url=https://(symagent-host).mdevlab.com:8446/pod
+        -Dsymphony.agent.agent.url=https://(symagent-host).mdevlab.com:8446/agent
+        -Dcerts.dir=/dev/certs/
+        -Dtruststore.file=/dev/certs/server.truststore
+        -Dbot.user=(user name)
