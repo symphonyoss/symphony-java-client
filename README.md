@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/symphonyoss/symphony-java-client.svg)](https://travis-ci.org/symphonyoss/symphony-java-client)
+[![Validation Status](https://scan.coverity.com/projects/9112/badge.svg?flat=1)](https://scan.coverity.com/projects/symphonyoss-symphony-java-client)
 
 The Symphony java client provides a wrapper around the Symphony REST API's to simplify the
 creation of chat sessions, presence and general messaging.  It is event based with
