@@ -35,7 +35,7 @@ addons:
     project:
       name: "symphonyoss/symphony-java-client"
       description: "Build submitted via Travis CI"
-    notification_email: maurizio.pillitu@symphony.foundation
+    notification_email: maoo@symphony.foundation
     build_command_prepend: "mvn clean"
     build_command:   "mvn -DskipTests=true compile"
-    branch_pattern: master
+    branch_pattern: coverity_scan
