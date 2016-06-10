@@ -1,0 +1,6 @@
+
+image: maven:3-jdk-8
+
+default-job:
+  script:
+    - mvn clean install
