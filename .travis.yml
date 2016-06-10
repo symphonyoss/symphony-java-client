@@ -1,4 +1,41 @@
+#
+#
+# Copyright 2016 The Symphony Software Foundation
+#
+# Licensed to The Symphony Software Foundation (SSF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+#
 language: java
 script: mvn install
 jdk:
   - oraclejdk8
+
+env:
+  global:
+   # Secure is generated using command "travis encrypt COVERITY_SCAN_TOKEN=blah"
+   # Need to "gem install travis" first
+   - secure: "C4A49ZOQceU/ArLstDxMwn2XSZqvuZW+OA8ZGM0ktGN+yXEXymNYO2c5jgzwXkCzaGrnRTrFH509W1BO003SXkBsLRgC/kYupkPR4sSuWAm575IW8QCrBjWozU42aK4ZUfaFMsW1dQ99LTB6DeyjzWJCG0PKqfU+xjw0v+GJzMBEcj6Es0lHkCk8AjmbuKJkbq06WN/GP+0tVE+AavtGQoWNx34Za7BrY/6sUJkuwevIOc3IkjYN8JCZdKo8QPYDevzg2kBWhI2kX3prau+20uHQjsBqub1sYEuyQ3Ndxj+8ZzJP3M7j4QAcufJMjUxOfFnFLbmvXcj7N2zjVc6/c6z5MW3hoVY2WW+1WGUnoD3lK410SPe+W/eIlJqiYpn10dE7+rcSS4iWCVc8luGXXzgemK/yfgbPAnSWEeHJjKnHdUj6hX3He1Ef4sRjmfXlsd0NuKoshw1IH1mGezZ8yy2shKPmZAvbBaX77bebpd/gfOJE+6i2NbfFyicMJMpruHNbiQ2JQk0QRdFdV569wlmiBzLH/AneyIXWT3/VsMDNL1pAXIl8UCBa2HdQcidINMmHyYD2VDzhEsFrzWGP5EJK1WUo3tecJqor2BpnoWlOxVazZnF3MBAzYcM6ldv/jCYQWAyVSYq/oG/GcipXuwbq0sJHQs5/wIdyetDvFGU="
+
+addons:
+  coverity_scan:
+    project:
+      name: "symphonyoss/symphony-java-client"
+      description: "Build submitted via Travis CI"
+    notification_email: maurizio.pillitu@symphony.foundation
+    build_command_prepend: "mvn clean"
+    build_command:   "mvn -DskipTests=true compile"
+    branch_pattern: coverity_scan
