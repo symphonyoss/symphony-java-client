@@ -28,12 +28,12 @@ package org.symphonyoss.client.impl;/**
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
-import org.symphonyoss.symphony.clients.*;
 import org.symphonyoss.client.model.SymAuth;
-import org.symphonyoss.symphony.pod.model.User;
 import org.symphonyoss.client.services.ChatService;
 import org.symphonyoss.client.services.MessageService;
 import org.symphonyoss.client.services.PresenceService;
+import org.symphonyoss.symphony.clients.*;
+import org.symphonyoss.symphony.pod.model.User;
 
 public class SymphonyBasicClient implements SymphonyClient {
 
