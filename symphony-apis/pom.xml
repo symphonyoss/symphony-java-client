@@ -108,6 +108,5 @@
 		<module>agent</module>
 		<module>authenticator</module>
 		<module>pod</module>
-		<module>testclient</module>
 	</modules>
 </project>

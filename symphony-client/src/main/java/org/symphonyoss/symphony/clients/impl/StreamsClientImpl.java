@@ -38,11 +38,11 @@ import java.util.Set;
  * Created by Frank Tarsillo on 5/15/2016.
  */
 public class StreamsClientImpl implements org.symphonyoss.symphony.clients.StreamsClient {
-    private SymAuth symAuth;
-    private String serviceUrl;
-    private ApiClient apiClient;
+    private final SymAuth symAuth;
+    private final String serviceUrl;
+    private final ApiClient apiClient;
 
-    private Logger logger = LoggerFactory.getLogger(StreamsClientImpl.class);
+    private final Logger logger = LoggerFactory.getLogger(StreamsClientImpl.class);
 
 
     public StreamsClientImpl(SymAuth symAuth, String serviceUrl) {
@@ -103,9 +103,19 @@ public class StreamsClientImpl implements org.symphonyoss.symphony.clients.Strea
 
     public Stream getStreamFromEmail(String email) throws Exception {
 
-        UsersClient usersClient = UsersFactory.getClient(symAuth,serviceUrl, UsersFactory.TYPE.BASIC);
+        UsersClient usersClient = UsersFactory.getClient(symAuth,serviceUrl, UsersFactory.TYPE.DEFAULT);
         return getStream(usersClient.getUserFromEmail(email));
     }
+
+
+    public RoomDetail getRoomDetail(String id) throws Exception{
+
+        StreamsApi streamsApi = new StreamsApi(apiClient);
+
+        return streamsApi.v1RoomIdInfoGet(id,symAuth.getSessionToken().getToken());
+
+    }
+
 
 
 

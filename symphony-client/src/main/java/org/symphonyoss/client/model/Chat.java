@@ -38,7 +38,7 @@ public class Chat {
     private Set<User> remoteUsers;
     private User localUser;
     private Stream stream;
-    private Set<ChatListener> chatListeners = new HashSet<ChatListener>();
+    private final Set<ChatListener> chatListeners = new HashSet<ChatListener>();
 
 
     private Message lastMessage;

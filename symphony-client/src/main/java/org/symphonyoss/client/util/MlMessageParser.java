@@ -36,33 +36,32 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import java.util.List;
 
-public class MlMessageParser extends DefaultHandler {
+class MlMessageParser extends DefaultHandler {
 
     private String messageMl;
     private Element elementMessageML;
-    private Element elementErrors;
     private Document doc;
     private Document originalDoc;
     private StringBuilder textDoc = new StringBuilder();
     private String [] textChunks;
 
-    SymphonyClient symClient;
-    private Logger logger = LoggerFactory.getLogger(MlMessageParser.class);
+    private SymphonyClient symClient;
+    private final Logger logger = LoggerFactory.getLogger(MlMessageParser.class);
 
 
-    public MlMessageParser(SymphonyClient symClient){
+    private MlMessageParser(SymphonyClient symClient){
         this.symClient = symClient;
 
     }
 
-    public MlMessageParser() {
+    private MlMessageParser() {
     }
 
-    public void parseMessage(String message) throws Exception {
+    private void parseMessage(String message) throws Exception {
 
         Document doc = Jsoup.parse(message);
         originalDoc = doc.clone();
-        elementErrors = doc.body().getElementsByTag("errors").first();
+        Element elementErrors = doc.body().getElementsByTag("errors").first();
 
         if (elementErrors != null)
             logger.debug("Errors found in message: {}", elementErrors.outerHtml());
@@ -98,7 +97,7 @@ public class MlMessageParser extends DefaultHandler {
         this.textChunks = textChunks;
     }
 
-    public void stripTags(StringBuilder builder, List<Node> nodesList) {
+    private void stripTags(StringBuilder builder, List<Node> nodesList) {
 
 
         for (Node node : nodesList) {
@@ -106,7 +105,7 @@ public class MlMessageParser extends DefaultHandler {
 
             if (nodeName.equalsIgnoreCase("#text")) {
 
-                builder.append(node.toString().trim() + " ");
+                builder.append(node.toString().trim()).append(" ");
 
 
             } else {
@@ -120,7 +119,7 @@ public class MlMessageParser extends DefaultHandler {
                 } else if (nodeName.equalsIgnoreCase(NodeTypes.HASHTAG.toString())) {
 
                     if (node.attributes().hasKey(AttribTypes.TAG.toString()))
-                        builder.append("#" + node.attr(AttribTypes.TAG.toString()) + " ");
+                        builder.append("#").append(node.attr(AttribTypes.TAG.toString())).append(" ");
 
                 } else if (nodeName.equalsIgnoreCase(NodeTypes.MENTION.toString())) {
                     User user = new User();
@@ -145,7 +144,7 @@ public class MlMessageParser extends DefaultHandler {
                 } else if (nodeName.equalsIgnoreCase(NodeTypes.CASHTAG.toString())) {
 
                     if (node.attributes().hasKey(AttribTypes.TAG.toString()))
-                        builder.append("$" + node.attr(AttribTypes.TAG.toString()) + " ");
+                        builder.append("$").append(node.attr(AttribTypes.TAG.toString())).append(" ");
 
 
                 } else {
@@ -174,7 +173,7 @@ public class MlMessageParser extends DefaultHandler {
     }
 
 
-    public String getText() {
+    private String getText() {
         return textDoc.toString();
     }
 
@@ -183,7 +182,7 @@ public class MlMessageParser extends DefaultHandler {
     }
 
 
-    public String getHtmlStartingFromText(String text) {
+    private String getHtmlStartingFromText(String text) {
 
 
         StringBuilder stringBuilder = new StringBuilder();
@@ -191,7 +190,7 @@ public class MlMessageParser extends DefaultHandler {
         return stringBuilder.toString();
     }
 
-    public String getHtmlStartingFromNode(String nodeType, String attrib, String attribValue) {
+    private String getHtmlStartingFromNode(String nodeType, String attrib, String attribValue) {
 
 
         StringBuilder stringBuilder = new StringBuilder();

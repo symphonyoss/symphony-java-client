@@ -34,10 +34,10 @@ import java.util.concurrent.TimeUnit;
  * Created by Frank Tarsillo on 5/15/2016.
  */
 class PresenceWorker implements Runnable {
-    private SymphonyClient symphonyClient;
-    private PresenceListener presenceListener;
-    private PresenceList presenceList;
-    private Logger logger = LoggerFactory.getLogger(PresenceWorker.class);
+    private final SymphonyClient symphonyClient;
+    private final PresenceListener presenceListener;
+    private final PresenceList presenceList;
+    private final Logger logger = LoggerFactory.getLogger(PresenceWorker.class);
     private boolean KILL = false;
 
 

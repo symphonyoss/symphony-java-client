@@ -22,9 +22,7 @@
 
 package org.symphonyoss.symphony.clients;
 
-import org.symphonyoss.symphony.pod.model.Stream;
-import org.symphonyoss.symphony.pod.model.User;
-import org.symphonyoss.symphony.pod.model.UserIdList;
+import org.symphonyoss.symphony.pod.model.*;
 
 import java.util.Set;
 
@@ -39,4 +37,6 @@ public interface StreamsClient {
     Stream getStream(UserIdList userIdList) throws Exception;
 
     Stream getStreamFromEmail(String email) throws Exception;
+
+    RoomDetail getRoomDetail(String id) throws Exception;
 }

@@ -41,13 +41,13 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ChatService implements MessageListener {
 
 
-    private ConcurrentHashMap<String, Chat> chatsByStream = new ConcurrentHashMap<String, Chat>();
-    private ConcurrentHashMap<Long, Set<Chat>> chatsByUser = new ConcurrentHashMap<Long, Set<Chat>>();
+    private final ConcurrentHashMap<String, Chat> chatsByStream = new ConcurrentHashMap<String, Chat>();
+    private final ConcurrentHashMap<Long, Set<Chat>> chatsByUser = new ConcurrentHashMap<Long, Set<Chat>>();
 
-    private Set<ChatServiceListener> chatServiceListeners = new HashSet<ChatServiceListener>();
+    private final Set<ChatServiceListener> chatServiceListeners = new HashSet<ChatServiceListener>();
 
-    private SymphonyClient symClient;
-    private Logger logger = LoggerFactory.getLogger(ChatService.class);
+    private final SymphonyClient symClient;
+    private final Logger logger = LoggerFactory.getLogger(ChatService.class);
 
 
     public ChatService(SymphonyClient symClient) throws Exception {

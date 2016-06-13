@@ -36,17 +36,16 @@ import org.symphonyoss.symphony.pod.model.*;
  * Created by Frank Tarsillo on 5/15/2016.
  */
 public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersClient {
-    private SymAuth symAuth;
-    private String serviceUrl;
-    private ApiClient apiClient;
+    private final SymAuth symAuth;
+    private final ApiClient apiClient;
 
-    private Logger logger = LoggerFactory.getLogger(UsersClientImpl.class);
+    private final Logger logger = LoggerFactory.getLogger(UsersClientImpl.class);
 
 
     public UsersClientImpl(SymAuth symAuth, String serviceUrl) {
 
         this.symAuth = symAuth;
-        this.serviceUrl = serviceUrl;
+        String serviceUrl1 = serviceUrl;
 
 
         //Get Service client to query for userID.

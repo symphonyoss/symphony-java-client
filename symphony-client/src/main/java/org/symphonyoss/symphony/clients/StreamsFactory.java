@@ -30,7 +30,7 @@ import org.symphonyoss.symphony.clients.impl.StreamsClientImpl;
  */
 public class StreamsFactory {
 
-    public enum TYPE { BASIC }
+    public enum TYPE { DEFAULT, v1, v2 }
 
     public static StreamsClient getClient(SymphonyClient symClient, TYPE type){
 

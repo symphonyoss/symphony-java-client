@@ -34,13 +34,12 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by Frank Tarsillo on 5/21/2016.
  */
-public class MessageFeedWorker implements Runnable {
+class MessageFeedWorker implements Runnable {
 
-    private MessageListener messageListener;
-    private SymphonyClient symClient;
-    private Logger logger = LoggerFactory.getLogger(MessageFeedWorker.class);
+    private final MessageListener messageListener;
+    private final SymphonyClient symClient;
+    private final Logger logger = LoggerFactory.getLogger(MessageFeedWorker.class);
     private Datafeed datafeed;
-    private MessageList messageList;
 
     public MessageFeedWorker(SymphonyClient symClient, MessageListener messageListener) {
         this.symClient = symClient;
@@ -52,6 +51,7 @@ public class MessageFeedWorker implements Runnable {
     public void run() {
 
 
+        //noinspection InfiniteLoopStatement
         while (true) {
 
 
@@ -78,7 +78,7 @@ public class MessageFeedWorker implements Runnable {
                 }
 
 
-                messageList = symClient.getDataFeedClient().getMessagesFromDatafeed(datafeed);
+                MessageList messageList = symClient.getDataFeedClient().getMessagesFromDatafeed(datafeed);
 
                 if(messageList != null) {
                     logger.debug("Received {} messages..", messageList.size());

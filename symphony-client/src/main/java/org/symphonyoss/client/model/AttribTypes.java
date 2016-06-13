@@ -23,7 +23,9 @@
 package org.symphonyoss.client.model;
 
 /**
+ *
  * Created by Frank Tarsillo on 5/27/2016.
+ *
  */
 public enum AttribTypes {
     TAG("tag"),
@@ -34,12 +36,12 @@ public enum AttribTypes {
 
     private final String name;
 
-    private AttribTypes(String s) {
+    AttribTypes(String s) {
         name = s;
     }
 
     public boolean equalsName(String otherName) {
-        return (otherName == null) ? false : name.equals(otherName);
+        return otherName != null && name.equals(otherName);
     }
 
     public String toString() {

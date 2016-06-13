@@ -31,7 +31,7 @@ import org.symphonyoss.client.model.SymAuth;
  */
 public class UsersFactory {
 
-    public enum TYPE { BASIC }
+    public enum TYPE { DEFAULT, v1, v2 }
 
     public static UsersClient getClient(SymphonyClient symClient, TYPE type){
 

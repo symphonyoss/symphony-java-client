@@ -41,17 +41,19 @@ public interface SymphonyClient {
 
     PresenceService getPresenceService();
 
+    ChatService getChatService();
+
     PresenceClient getPresenceClient();
 
     StreamsClient getStreamsClient();
 
     UsersClient getUsersClient();
 
-    ChatService getChatService();
-
     MessagesClient getMessagesClient();
 
     DataFeedClient getDataFeedClient();
+
+    RoomMembershipClient getRoomMembershipClient();
 
     boolean init(SymAuth symAuth, String email, String agentUrl, String serviceUrl) throws Exception;
 
@@ -60,6 +62,8 @@ public interface SymphonyClient {
     String getAgentUrl();
 
     String getServiceUrl();
+
+
 
 
 
