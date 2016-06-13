@@ -173,7 +173,7 @@ public class MlMessageParser extends DefaultHandler {
     }
 
 
-    private String getText() {
+    public String getText() {
         return textDoc.toString();
     }
 
@@ -182,7 +182,7 @@ public class MlMessageParser extends DefaultHandler {
     }
 
 
-    private String getHtmlStartingFromText(String text) {
+    public String getHtmlStartingFromText(String text) {
 
 
         StringBuilder stringBuilder = new StringBuilder();
