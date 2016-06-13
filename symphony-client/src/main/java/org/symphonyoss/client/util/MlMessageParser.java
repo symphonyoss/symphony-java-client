@@ -36,7 +36,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import java.util.List;
 
-class MlMessageParser extends DefaultHandler {
+public class MlMessageParser extends DefaultHandler {
 
     private String messageMl;
     private Element elementMessageML;
@@ -49,15 +49,15 @@ class MlMessageParser extends DefaultHandler {
     private final Logger logger = LoggerFactory.getLogger(MlMessageParser.class);
 
 
-    private MlMessageParser(SymphonyClient symClient){
+    public MlMessageParser(SymphonyClient symClient){
         this.symClient = symClient;
 
     }
 
-    private MlMessageParser() {
+    public MlMessageParser() {
     }
 
-    private void parseMessage(String message) throws Exception {
+    public void parseMessage(String message) throws Exception {
 
         Document doc = Jsoup.parse(message);
         originalDoc = doc.clone();
@@ -190,7 +190,7 @@ class MlMessageParser extends DefaultHandler {
         return stringBuilder.toString();
     }
 
-    private String getHtmlStartingFromNode(String nodeType, String attrib, String attribValue) {
+    public String getHtmlStartingFromNode(String nodeType, String attrib, String attribValue) {
 
 
         StringBuilder stringBuilder = new StringBuilder();
@@ -199,7 +199,7 @@ class MlMessageParser extends DefaultHandler {
     }
 
 
-    private void getHtmlStartingFromText(String text, StringBuilder builder, List<Node> nodesList, boolean append) {
+    public void getHtmlStartingFromText(String text, StringBuilder builder, List<Node> nodesList, boolean append) {
 
 
         for (Node node : nodesList) {
