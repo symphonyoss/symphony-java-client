@@ -14,6 +14,7 @@ REST API Support:
         -Streams
         -Messages
         -Datafeed
+        -RoomMembership
 
 
 Requirements:
@@ -28,7 +29,9 @@ POM:
 
 Certificates:
 
-        Please send email to frank.tarsillo@markit.com to obtain.
+        Please contact your Symphony local administrator to obtain the necessary certificates 
+        for the user/service account being used to access the POD.
+        
         Server Truststore = Contains server certs
         User Keystore = Symphony user client certificate
 

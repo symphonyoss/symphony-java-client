@@ -40,11 +40,11 @@ import java.util.Set;
  */
 public class MessageService implements MessageListener{
 
-    private SymphonyClient symClient;
+    private final SymphonyClient symClient;
     private org.symphonyoss.symphony.agent.invoker.ApiClient agentClient;
-    private Logger logger = LoggerFactory.getLogger(MessageService.class);
-    MessageFeedWorker messageFeedWorker;
-    Set<MessageListener> messageListeners = new HashSet<MessageListener>();
+    private final Logger logger = LoggerFactory.getLogger(MessageService.class);
+    private final MessageFeedWorker messageFeedWorker;
+    private final Set<MessageListener> messageListeners = new HashSet<MessageListener>();
 
     public MessageService(SymphonyClient symClient){
 
@@ -73,7 +73,7 @@ public class MessageService implements MessageListener{
     }
 
 
-    public MessageList getMessagesFromStream(Stream stream, Long since, Integer offset, Integer maxMessages) throws Exception {
+    private MessageList getMessagesFromStream(Stream stream, Long since, Integer offset, Integer maxMessages) throws Exception {
 
         return symClient.getMessagesClient().getMessagesFromStream(
                 stream, since, offset, maxMessages);

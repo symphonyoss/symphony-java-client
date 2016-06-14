@@ -28,17 +28,16 @@ package org.symphonyoss.client.impl;/**
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
-import org.symphonyoss.symphony.clients.*;
 import org.symphonyoss.client.model.SymAuth;
-import org.symphonyoss.symphony.pod.model.User;
 import org.symphonyoss.client.services.ChatService;
 import org.symphonyoss.client.services.MessageService;
 import org.symphonyoss.client.services.PresenceService;
+import org.symphonyoss.symphony.clients.*;
+import org.symphonyoss.symphony.pod.model.User;
 
 public class SymphonyBasicClient implements SymphonyClient {
 
 
-    private final String NOT_LOGGED_IN_MESSAGE = "Currently not logged into Agent, please check certificates and tokens.";
     private Logger logger = LoggerFactory.getLogger(SymphonyBasicClient.class);
     private SymAuth symAuth;
     private MessageService messageService;
@@ -52,6 +51,7 @@ public class SymphonyBasicClient implements SymphonyClient {
     private UsersClient usersClient;
     private StreamsClient streamsClient;
     private PresenceClient presenceClient;
+    private RoomMembershipClient roomMembershipClient;
 
 
     public SymphonyBasicClient() {
@@ -61,6 +61,7 @@ public class SymphonyBasicClient implements SymphonyClient {
 
     public boolean init(SymAuth symAuth, String email, String agentUrl, String serviceUrl) throws Exception {
 
+        String NOT_LOGGED_IN_MESSAGE = "Currently not logged into Agent, please check certificates and tokens.";
         if (symAuth == null || symAuth.getSessionToken() == null || symAuth.getKeyToken() == null)
             throw new Exception("Symphony Authorization is not valid", new Throwable(NOT_LOGGED_IN_MESSAGE));
 
@@ -74,12 +75,13 @@ public class SymphonyBasicClient implements SymphonyClient {
         this.agentUrl = agentUrl;
         this.serviceUrl = serviceUrl;
 
-
-        dataFeedClient = DataFeedFactory.getClient(this, DataFeedFactory.TYPE.BASIC);
-        messagesClient = MessagesFactory.getClient(this, MessagesFactory.TYPE.BASIC);
-        presenceClient = PresenceFactory.getClient(this, PresenceFactory.TYPE.BASIC);
-        streamsClient  = StreamsFactory.getClient(this, StreamsFactory.TYPE.BASIC);
-        usersClient    = UsersFactory.getClient(this, UsersFactory.TYPE.BASIC);
+        //Init all clients.
+        dataFeedClient = DataFeedFactory.getClient(this, DataFeedFactory.TYPE.DEFAULT);
+        messagesClient = MessagesFactory.getClient(this, MessagesFactory.TYPE.DEFAULT);
+        presenceClient = PresenceFactory.getClient(this, PresenceFactory.TYPE.DEFAULT);
+        streamsClient  = StreamsFactory.getClient(this, StreamsFactory.TYPE.DEFAULT);
+        usersClient    = UsersFactory.getClient(this, UsersFactory.TYPE.DEFAULT);
+        roomMembershipClient = RoomMembershipFactory.getClient(this, RoomMembershipFactory.TYPE.DEFAULT);
 
         messageService = new MessageService(this);
         presenceService = new PresenceService(this);
@@ -154,7 +156,9 @@ public class SymphonyBasicClient implements SymphonyClient {
         return usersClient;
     }
 
-
+    public RoomMembershipClient getRoomMembershipClient() {
+        return roomMembershipClient;
+    }
 }
 
 

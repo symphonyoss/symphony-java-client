@@ -25,22 +25,23 @@ package org.symphonyoss.symphony.clients.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.model.SymAuth;
-import org.symphonyoss.symphony.pod.api.PresenceApi;
+import org.symphonyoss.symphony.clients.RoomMembershipClient;
+import org.symphonyoss.symphony.pod.api.RoomMembershipApi;
 import org.symphonyoss.symphony.pod.invoker.ApiClient;
-import org.symphonyoss.symphony.pod.model.*;
+import org.symphonyoss.symphony.pod.model.MembershipList;
 
 
 /**
  * Created by Frank Tarsillo on 5/15/2016.
  */
-public class PresenceClientImpl implements org.symphonyoss.symphony.clients.PresenceClient {
+public class RoomMembershipClientImpl implements RoomMembershipClient {
     private final SymAuth symAuth;
     private final ApiClient apiClient;
 
-    private Logger logger = LoggerFactory.getLogger(PresenceClientImpl.class);
+    private Logger logger = LoggerFactory.getLogger(RoomMembershipClientImpl.class);
 
 
-    public PresenceClientImpl(SymAuth symAuth, String serviceUrl) {
+    public RoomMembershipClientImpl(SymAuth symAuth, String serviceUrl) {
 
         this.symAuth = symAuth;
         String serviceUrl1 = serviceUrl;
@@ -56,27 +57,16 @@ public class PresenceClientImpl implements org.symphonyoss.symphony.clients.Pres
     }
 
 
-    public PresenceList getAllUserPresence() throws Exception {
+    public MembershipList getRoomMembership(String id) throws Exception {
 
 
-        PresenceApi presenceApi = new PresenceApi(apiClient);
+        RoomMembershipApi roomMembershipApi = new RoomMembershipApi(apiClient);
 
-
-        return presenceApi.v1PresenceGet(symAuth.getSessionToken().getToken());
-
-
-    }
-
-    public Presence getUserPresence(Long userId) throws Exception {
-
-
-        PresenceApi presenceApi = new PresenceApi(apiClient);
-
-
-        return presenceApi.v1UserUidPresenceGet(userId,symAuth.getSessionToken().getToken());
+        return roomMembershipApi.v1RoomIdMembershipListGet(id,symAuth.getSessionToken().getToken());
 
 
     }
+
 
 
 }

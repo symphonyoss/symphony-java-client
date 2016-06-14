@@ -37,11 +37,11 @@ import java.util.ArrayList;
  */
 public class PresenceService implements PresenceListener {
 
-    private SymphonyClient symClient;
+    private final SymphonyClient symClient;
     private PresenceList presenceList;
     private PresenceWorker presenceWorker;
-    private ArrayList<PresenceListener> presenceListeners;
-    private Logger logger = LoggerFactory.getLogger(PresenceService.class);
+    private final ArrayList<PresenceListener> presenceListeners;
+    private final Logger logger = LoggerFactory.getLogger(PresenceService.class);
 
 
     public PresenceService(SymphonyClient symClient) {

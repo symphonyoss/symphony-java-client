@@ -24,7 +24,6 @@ package org.symphonyoss.symphony.clients.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-;
 import org.symphonyoss.symphony.agent.api.MessagesApi;
 import org.symphonyoss.symphony.agent.invoker.ApiClient;
 import org.symphonyoss.symphony.agent.model.Message;
@@ -40,16 +39,13 @@ import org.symphonyoss.symphony.pod.model.Stream;
  */
 public class MessagesClientImpl implements org.symphonyoss.symphony.clients.MessagesClient {
 
-    private ApiClient apiClient;
-    private SymAuth symAuth;
-    private String agentUrl;
+    private final ApiClient apiClient;
+    private final SymAuth symAuth;
     private Logger logger = LoggerFactory.getLogger(MessagesClientImpl.class);
 
     public MessagesClientImpl(SymAuth symAuth, String agentUrl) {
 
         this.symAuth = symAuth;
-        this.agentUrl = agentUrl;
-
 
         //Get Service client to query for userID.
         apiClient = org.symphonyoss.symphony.agent.invoker.Configuration.getDefaultApiClient();

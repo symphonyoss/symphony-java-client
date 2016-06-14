@@ -36,12 +36,12 @@ public enum NodeTypes {
 
     private final String name;
 
-    private NodeTypes(String s) {
+    NodeTypes(String s) {
         name = s;
     }
 
     public boolean equalsName(String otherName) {
-        return (otherName == null) ? false : name.equals(otherName);
+        return otherName != null && name.equals(otherName);
     }
 
     public String toString() {
