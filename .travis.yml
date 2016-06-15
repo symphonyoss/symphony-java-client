@@ -24,6 +24,9 @@ script: mvn clean install
 jdk:
   - oraclejdk8
 
+before_install:
+  - sudo apt-get install ca-certificates
+
 env:
   global:
    # Secure is generated using command "travis encrypt COVERITY_SCAN_TOKEN=blah"
