@@ -40,3 +40,5 @@ symphony-apis/testclient/
 symphony-client/symphony-client.iml
 symphony-client/target/
 /.idea/uiDesigner.xml
+.idea/
+logs/
