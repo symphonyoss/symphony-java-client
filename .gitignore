@@ -1,5 +1,4 @@
-target/
-
+target
 *.class
 
 # Mobile Tools for Java (J2ME)
@@ -12,3 +11,32 @@ target/
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+.idea/compiler.xml
+.idea/copyright/
+.idea/encodings.xml
+.idea/libraries/
+.idea/misc.xml
+.idea/modules.xml
+.idea/symphony-java-client.iml
+.idea/vcs.xml
+.idea/workspace.xml
+symphony-apis/agent/api/symphony-agent-api.iml
+symphony-apis/agent/api/target/
+symphony-apis/agent/java-jersey2-client/symphony-agent-java-jersey2-client.iml
+symphony-apis/agent/java-jersey2-client/target/
+symphony-apis/agent/symphony-agent.iml
+symphony-apis/authenticator/api/symphony-authenticator-api.iml
+symphony-apis/authenticator/api/target/
+symphony-apis/authenticator/java-jersey2-client/symphony-authenticator-java-jersey2-client.iml
+symphony-apis/authenticator/java-jersey2-client/target/
+symphony-apis/authenticator/symphony-authenticator.iml
+symphony-apis/pod/api/symphony-pod-api.iml
+symphony-apis/pod/api/target/
+symphony-apis/pod/java-jersey2-client/symphony-pod-java-jersey2-client.iml
+symphony-apis/pod/java-jersey2-client/target/
+symphony-apis/pod/symphony-pod.iml
+symphony-apis/symphony-apis.iml
+symphony-apis/testclient/
+symphony-client/symphony-client.iml
+symphony-client/target/
+/.idea/uiDesigner.xml

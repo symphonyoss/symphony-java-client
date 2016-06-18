@@ -38,15 +38,14 @@ import org.symphonyoss.client.model.SymAuth;
  */
 public class DataFeedClientImpl implements DataFeedClient {
 
-    private ApiClient apiClient;
-    private SymAuth symAuth;
-    private String agentUrl;
+    private final ApiClient apiClient;
+    private final SymAuth symAuth;
     private Logger logger = LoggerFactory.getLogger(DataFeedClientImpl.class);
 
     public DataFeedClientImpl(SymAuth symAuth, String agentUrl) {
 
         this.symAuth = symAuth;
-        this.agentUrl = agentUrl;
+        String agentUrl1 = agentUrl;
 
 
         //Get Service client to query for userID.
