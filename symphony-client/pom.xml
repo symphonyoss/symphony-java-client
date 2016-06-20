@@ -59,11 +59,6 @@
             <artifactId>symphony-pod-java-jersey2-client</artifactId>
             <version>${symphony-api-version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.jsoup</groupId>
-            <artifactId>jsoup</artifactId>
-            <version>${jsoup-version}</version>
-        </dependency>
 
 
     </dependencies>
@@ -106,5 +101,6 @@
         </plugins>
 
     </build>
+
 
 </project>

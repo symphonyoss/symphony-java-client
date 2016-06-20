@@ -41,6 +41,7 @@
     <modules>
         <module>symphony-apis</module>
         <module>symphony-client</module>
+        <module>examples</module>
     </modules>
 
     <properties>
@@ -49,6 +50,7 @@
         <jaxrs-version>2.0.1</jaxrs-version>
         <junit-version>4.12</junit-version>
         <mokito-version>1.9.5</mokito-version>
+        <jsoup-version>1.9.2</jsoup-version>
     </properties>
 
 
@@ -80,6 +82,11 @@
             <artifactId>mockito-core</artifactId>
             <version>${mokito-version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>${jsoup-version}</version>
+        </dependency>
 
      </dependencies>
 
@@ -102,6 +109,7 @@
               <param>org.symphonyoss.symphony:symphony-authenticator-java-jersey2-client:1.0-SNAPSHOT</param>
               <param>org.symphonyoss.symphony:symphony-agent-java-jersey2-client:1.0-SNAPSHOT</param>
               <param>org.symphonyoss.symphony:symphony-pod-java-jersey2-client:1.0-SNAPSHOT</param>
+              <param>org.symphonyoss:java-client-examples:1.0-SNAPSHOT</param>
             </excludes>
           </configuration>
         </plugin>
