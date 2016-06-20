@@ -20,34 +20,30 @@
  * under the License.
  */
 
-package org.symphonyoss.examples.hashtagbot;
+package org.symphonyoss.client.examples.hashtagbot;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import org.symphonyoss.client.model.NodeTypes;
 
 /**
- * Created by Frank Tarsillo on 5/22/2016.
+ * Created by Frank Tarsillo on 5/27/2016.
  */
-@XmlRootElement
-public class HashtagDef {
+public class NodeObject {
+    private NodeTypes type;
+    private String name;
 
-    private Long userId;
-    private String definition;
-
-    public HashtagDef(){}
-
-    public Long getUserId() {
-        return userId;
+    public NodeTypes getType() {
+        return type;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setType(NodeTypes type) {
+        this.type = type;
     }
 
-    public String getDefinition() {
-        return definition;
+    public String getName() {
+        return name;
     }
 
-    public void setDefinition(String definition) {
-        this.definition = definition;
+    public void setName(String name) {
+        this.name = name;
     }
 }

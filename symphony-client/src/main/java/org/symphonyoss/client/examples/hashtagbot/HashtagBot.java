@@ -20,7 +20,7 @@
  * under the License.
  */
 
-package org.symphonyoss.examples.hashtagbot;
+package org.symphonyoss.client.examples.hashtagbot;
 
 import com.google.gson.Gson;
 import org.slf4j.Logger;

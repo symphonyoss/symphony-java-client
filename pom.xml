@@ -33,15 +33,15 @@
     <packaging>pom</packaging>
 
     <parent>
-      <groupId>org.symphonyoss</groupId>
-      <artifactId>symphonyoss</artifactId>
-      <version>1-SNAPSHOT</version>
+        <groupId>org.symphonyoss</groupId>
+        <artifactId>symphonyoss</artifactId>
+        <version>1-SNAPSHOT</version>
     </parent>
 
     <modules>
         <module>symphony-apis</module>
         <module>symphony-client</module>
-        <module>examples</module>
+
     </modules>
 
     <properties>
@@ -88,31 +88,41 @@
             <version>${jsoup-version}</version>
         </dependency>
 
-     </dependencies>
+    </dependencies>
 
     <build>
-      <plugins>
-        <plugin>
-          <groupId>org.complykit</groupId>
-          <artifactId>license-check-maven-plugin</artifactId>
-          <configuration>
-            <excludes>
-              <param>org.slf4j:slf4j-api:1.7.5</param>
-              <param>org.slf4j:slf4j-log4j12:1.7.5</param>
-              <param>javax.ws.rs:javax.ws.rs-api:2.0.1</param>
-              <param>org.glassfish.jersey.media:jersey-media-multipart:2.22.2</param>
-              <param>org.glassfish.jersey.media:jersey-media-json-jackson:2.22.2</param>
-              <param>com.brsanthu:migbase64:2.2</param>
-              <param>io.swagger:swagger-core:1.5.7</param>
-              <param>org.glassfish.jersey.core:jersey-client:2.22.2</param>
-              <!-- @TODO - investigate why license-check-maven-plugin fails on these sub-modules  -->
-              <param>org.symphonyoss.symphony:symphony-authenticator-java-jersey2-client:1.0-SNAPSHOT</param>
-              <param>org.symphonyoss.symphony:symphony-agent-java-jersey2-client:1.0-SNAPSHOT</param>
-              <param>org.symphonyoss.symphony:symphony-pod-java-jersey2-client:1.0-SNAPSHOT</param>
-              <param>org.symphonyoss:java-client-examples:1.0-SNAPSHOT</param>
-            </excludes>
-          </configuration>
-        </plugin>
-      </plugins>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.complykit</groupId>
+                <artifactId>license-check-maven-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <param>org.slf4j:slf4j-api:1.7.5</param>
+                        <param>org.slf4j:slf4j-log4j12:1.7.5</param>
+                        <param>javax.ws.rs:javax.ws.rs-api:2.0.1</param>
+                        <param>org.glassfish.jersey.media:jersey-media-multipart:2.22.2</param>
+                        <param>org.glassfish.jersey.media:jersey-media-json-jackson:2.22.2</param>
+                        <param>com.brsanthu:migbase64:2.2</param>
+                        <param>io.swagger:swagger-core:1.5.7</param>
+                        <param>com.google.code.gson:gson:2.6.2</param>
+                        <param>org.glassfish.jersey.core:jersey-client:2.22.2</param>
+                        <!-- @TODO - investigate why license-check-maven-plugin fails on these sub-modules  -->
+                        <param>org.symphonyoss.symphony:symphony-authenticator-java-jersey2-client:1.0-SNAPSHOT</param>
+                        <param>org.symphonyoss.symphony:symphony-agent-java-jersey2-client:1.0-SNAPSHOT</param>
+                        <param>org.symphonyoss.symphony:symphony-pod-java-jersey2-client:1.0-SNAPSHOT</param>
+
+                      </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 </project>

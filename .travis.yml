@@ -37,5 +37,5 @@ addons:
       description: "Build submitted via Travis CI"
     notification_email: maurizio.pillitu@symphony.foundation
     build_command_prepend: "mvn clean"
-    build_command:   "mvn -DskipTests=true compile install"
+    build_command:   "mvn -DskipTests=true compile"
     branch_pattern: master
