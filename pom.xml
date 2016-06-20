@@ -47,6 +47,8 @@
 
         <slfj4-version>1.7.5</slfj4-version>
         <jaxrs-version>2.0.1</jaxrs-version>
+        <junit-version>4.12</junit-version>
+        <mokito-version>1.9.5</mokito-version>
     </properties>
 
 
@@ -71,7 +73,12 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
+            <version>${junit-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mokito-version}</version>
         </dependency>
 
      </dependencies>
