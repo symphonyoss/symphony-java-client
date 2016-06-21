@@ -42,3 +42,8 @@ symphony-client/target/
 /.idea/uiDesigner.xml
 .idea/
 logs/
+/symphony-java-client.iml
+symphony-client-examples/src/main/resources/
+symphony-client-examples/src/test/
+symphony-java-client.iml
+/symphony-client-examples/symphony-client-examples.iml
