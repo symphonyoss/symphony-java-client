@@ -31,6 +31,8 @@ import org.symphonyoss.symphony.pod.model.User;
 import org.symphonyoss.symphony.pod.model.UserPresence;
 
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by Frank Tarsillo on 5/15/2016.
@@ -40,14 +42,13 @@ public class PresenceService implements PresenceListener {
     private final SymphonyClient symClient;
     private PresenceList presenceList;
     private PresenceWorker presenceWorker;
-    private final ArrayList<PresenceListener> presenceListeners;
+    private final Set<PresenceListener> presenceListeners  = ConcurrentHashMap.newKeySet();
     private final Logger logger = LoggerFactory.getLogger(PresenceService.class);
 
 
     public PresenceService(SymphonyClient symClient) {
 
         this.symClient = symClient;
-        presenceListeners = new ArrayList<PresenceListener>();
 
         try {
             presenceList = getAllUserPresence();

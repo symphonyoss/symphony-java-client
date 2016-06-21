@@ -41,6 +41,7 @@
     <modules>
         <module>symphony-apis</module>
         <module>symphony-client</module>
+        <module>symphony-client-examples</module>
 
     </modules>
 
@@ -119,7 +120,7 @@
                         <param>org.symphonyoss.symphony:symphony-authenticator-java-jersey2-client:1.0-SNAPSHOT</param>
                         <param>org.symphonyoss.symphony:symphony-agent-java-jersey2-client:1.0-SNAPSHOT</param>
                         <param>org.symphonyoss.symphony:symphony-pod-java-jersey2-client:1.0-SNAPSHOT</param>
-
+                        <param>org.symphonyoss:symphony-client:1.0-SNAPSHOT</param>
                       </excludes>
                 </configuration>
             </plugin>

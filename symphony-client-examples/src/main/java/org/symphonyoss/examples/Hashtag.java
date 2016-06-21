@@ -20,7 +20,7 @@
  * under the License.
  */
 
-package org.symphonyoss.client.examples.hashtagbot;
+package org.symphonyoss.examples;
 
 import org.symphonyoss.client.model.NodeTypes;
 

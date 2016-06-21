@@ -29,6 +29,7 @@ import org.symphonyoss.client.services.ChatListener;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
@@ -38,12 +39,9 @@ public class Chat {
     private Set<User> remoteUsers;
     private User localUser;
     private Stream stream;
-    private final Set<ChatListener> chatListeners = new HashSet<ChatListener>();
-
+    private final Set<ChatListener> chatListeners = ConcurrentHashMap.newKeySet();
 
     private Message lastMessage;
-
-
 
 
     public Set<User> getRemoteUsers() {
@@ -79,7 +77,7 @@ public class Chat {
 
     }
 
-    public boolean registerListener(ChatListener chatListener){
+    public  boolean registerListener(ChatListener chatListener){
 
         if(lastMessage !=null)
             chatListener.onChatMessage(lastMessage);

@@ -44,7 +44,7 @@ public class ChatService implements MessageListener {
     private final ConcurrentHashMap<String, Chat> chatsByStream = new ConcurrentHashMap<String, Chat>();
     private final ConcurrentHashMap<Long, Set<Chat>> chatsByUser = new ConcurrentHashMap<Long, Set<Chat>>();
 
-    private final Set<ChatServiceListener> chatServiceListeners = new HashSet<ChatServiceListener>();
+    private final Set<ChatServiceListener> chatServiceListeners =  ConcurrentHashMap.newKeySet();
 
     private final SymphonyClient symClient;
     private final Logger logger = LoggerFactory.getLogger(ChatService.class);

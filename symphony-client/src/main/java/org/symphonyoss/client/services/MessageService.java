@@ -34,6 +34,7 @@ import org.symphonyoss.symphony.pod.model.User;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by Frank Tarsillo on 5/15/2016.
@@ -44,7 +45,7 @@ public class MessageService implements MessageListener{
     private org.symphonyoss.symphony.agent.invoker.ApiClient agentClient;
     private final Logger logger = LoggerFactory.getLogger(MessageService.class);
     private final MessageFeedWorker messageFeedWorker;
-    private final Set<MessageListener> messageListeners = new HashSet<MessageListener>();
+    private final Set<MessageListener> messageListeners =  ConcurrentHashMap.newKeySet();
 
     public MessageService(SymphonyClient symClient){
 

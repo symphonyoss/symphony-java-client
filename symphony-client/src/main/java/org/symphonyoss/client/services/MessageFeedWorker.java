@@ -68,7 +68,7 @@ class MessageFeedWorker implements Runnable {
                         logger.error("Failed to create datafeed with pod, please check connection..", e);
                         datafeed = null;
                         try {
-                            TimeUnit.SECONDS.sleep(2000);
+                            TimeUnit.SECONDS.sleep(5);
                         } catch (InterruptedException e1) {
                             logger.error("Interrupt.. ", e1);
                         }

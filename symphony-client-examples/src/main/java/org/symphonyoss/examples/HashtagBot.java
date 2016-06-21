@@ -20,7 +20,7 @@
  * under the License.
  */
 
-package org.symphonyoss.client.examples.hashtagbot;
+package org.symphonyoss.examples;
 
 import com.google.gson.Gson;
 import org.slf4j.Logger;
@@ -56,21 +56,36 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  *
  *
- //        -Dkeystore.password=(Pass)
- //        -Dtruststore.password=(Pass)
- //        -Dsessionauth.url=https://localhost.symphony.com:844/sessionauth
- //        -Dkeyauth.url=https://localhost.symphony.com:8444/keyauth
- //        -Dsymphony.agent.pod.url=https://symagent.mdevlab.com:8446/pod
- //        -Dsymphony.agent.agent.url=https://symagent.mdevlab.com:8446/agent
- //        -Dcerts.dir=/dev/certs/
- //        -Dtruststore.file=/dev/certs/server.truststore
- //        -Dbot.user=hashtag.bot
+ * The hashtag.bot is provides an open hashtag dictionary service.
+ * Anyone can add new, append or update existing definitions.
+ * Definitions have last update and authors.
+ * The BOT stores and loads all definitions through JSON serialized files.
+ *
+ * This program attempts to show some of the symphony-java-client features, such as
+ * ChatService.
+ *
+ *
+ * REQUIRED VM Arguments or System Properties:
+ *
+ *        -Dsessionauth.url=https://pod_fqdn:port/sessionauth
+ *        -Dkeyauth.url=https://pod_fqdn:port/keyauth
+ *        -Dsymphony.agent.pod.url=https://agent_fqdn:port/pod
+ *        -Dsymphony.agent.agent.url=https://agent_fqdn:port/agent
+ *        -Dcerts.dir=/dev/certs/
+ *        -Dkeystore.password=(Pass)
+ *        -Dtruststore.file=/dev/certs/server.truststore
+ *        -Dtruststore.password=(Pass)
+ *        -Dbot.user=hashtag.bot
+ *        -Dbot.domain=@markit.com
+ *        -Duser.call.home=frank.tarsillo@markit.com
+ *        -Dfiles.json=/dev/json/
  *
  *
  *
  * Created by Frank Tarsillo on 5/15/2016.
  */
 public class HashtagBot implements ChatListener, ChatServiceListener, PresenceListener {
+
 
     private final Logger logger = LoggerFactory.getLogger(HashtagBot.class);
     private final ConcurrentHashMap<String, Hashtag> hashtags = new ConcurrentHashMap<>();
@@ -87,7 +102,7 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
     public static void main(String[] args) {
 
 
-        System.out.println("HelpDeskBot starting...");
+        System.out.println("HashtagBOT starting...");
         new HashtagBot();
 
     }
@@ -119,7 +134,7 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
 
             symClient.init(
                     symAuth,
-                    System.getProperty("bot.user") + "@markit.com",
+                    System.getProperty("bot.user") + System.getProperty("bot.domain"),
                     System.getProperty("symphony.agent.agent.url"),
                     System.getProperty("symphony.agent.pod.url")
             );
@@ -140,7 +155,7 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
             Chat chat = new Chat();
             chat.setLocalUser(symClient.getLocalUser());
             Set<User> remoteUsers = new HashSet<>();
-            remoteUsers.add(symClient.getUsersClient().getUserFromEmail("call.home.user@domain.com"));
+            remoteUsers.add(symClient.getUsersClient().getUserFromEmail(System.getProperty("user.call.home")));
             chat.setRemoteUsers(remoteUsers);
             chat.registerListener(this);
             chat.setStream(symClient.getStreamsClient().getStream(remoteUsers));
