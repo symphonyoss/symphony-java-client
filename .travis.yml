@@ -24,7 +24,7 @@ cache:
   - $HOME/.m2
 
 language: java
-script: mvn clean install
+script: mvn clean install -pl !symphony-client-examples
 jdk:
   - oraclejdk8
 
