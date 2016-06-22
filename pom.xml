@@ -38,6 +38,14 @@
         <version>1-SNAPSHOT</version>
     </parent>
 
+    <repositories>
+      <repository>
+        <id>ossrh</id>
+        <name>OSSRH Public Group</name>
+        <url>https://oss.sonatype.org/content/groups/public</url>
+      </repository>
+    </repositories>
+
     <modules>
         <module>symphony-apis</module>
         <module>symphony-client</module>
@@ -56,8 +64,6 @@
 
 
     <dependencies>
-
-
         <dependency>
             <groupId>javax.ws.rs</groupId>
             <artifactId>javax.ws.rs-api</artifactId>
@@ -88,7 +94,6 @@
             <artifactId>jsoup</artifactId>
             <version>${jsoup-version}</version>
         </dependency>
-
     </dependencies>
 
     <build>
