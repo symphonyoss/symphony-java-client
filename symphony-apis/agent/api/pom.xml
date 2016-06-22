@@ -21,43 +21,51 @@
   -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.symphonyoss.symphony</groupId>
-	<artifactId>symphony-agent-api</artifactId>
-	<packaging>jar</packaging>
-	<version>1.0-SNAPSHOT</version>
-	<name>Symphony Agent Service API</name>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.symphonyoss.symphony</groupId>
+    <artifactId>symphony-agent-api</artifactId>
+    <packaging>jar</packaging>
+    <version>1.0-SNAPSHOT</version>
+    <name>Symphony Agent Service API</name>
 
-	<parent>
-		<groupId>org.symphonyoss.symphony</groupId>
-		<artifactId>symphony-agent</artifactId>
-		<version>1.0-SNAPSHOT</version>
-	</parent>
+    <parent>
+        <groupId>org.symphonyoss.symphony</groupId>
+        <artifactId>symphony-agent</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
 
-	<dependencies>
-	</dependencies>
+    <dependencies>
+    </dependencies>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.zalando.maven.plugins</groupId>
-				<artifactId>swagger-codegen-maven-plugin</artifactId>
-				<version>${zalando.swagger.codegen.maven.plugin.version}</version>
-				<executions>
-					<execution>
-						<id>JSON to code Generation</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>codegen</goal>
-						</goals>
-						<configuration>
-							<apiFile>${basedir}/src/main/resources/agentAPI.yaml</apiFile>
-							<language>html</language>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.zalando.maven.plugins</groupId>
+                <artifactId>swagger-codegen-maven-plugin</artifactId>
+                <version>${zalando.swagger.codegen.maven.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>JSON to code Generation</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>codegen</goal>
+                        </goals>
+                        <configuration>
+                            <apiFile>${basedir}/src/main/resources/agentAPI.yaml</apiFile>
+                            <language>html</language>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>2.8.2</version>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

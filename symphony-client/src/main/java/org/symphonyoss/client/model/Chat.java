@@ -105,7 +105,7 @@ public class Chat {
 
         final Chat other = (Chat) obj;
 
-        if (!this.stream.equals(other.stream)) {
+        if (this.stream==null || !this.stream.equals(other.stream)) {
             return false;
         }
         return true;

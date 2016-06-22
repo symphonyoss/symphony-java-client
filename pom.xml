@@ -33,15 +33,14 @@
     <packaging>pom</packaging>
 
     <parent>
-        <groupId>org.symphonyoss</groupId>
-        <artifactId>symphonyoss</artifactId>
-        <version>1-SNAPSHOT</version>
+    <groupId>org.symphonyoss</groupId>
+    <artifactId>symphonyoss</artifactId>
+    <version>1-SNAPSHOT</version>
     </parent>
 
     <modules>
         <module>symphony-apis</module>
         <module>symphony-client</module>
-        <module>symphony-client-examples</module>
 
     </modules>
 
@@ -53,7 +52,6 @@
         <mokito-version>1.9.5</mokito-version>
         <jsoup-version>1.9.2</jsoup-version>
     </properties>
-
 
     <dependencies>
 
@@ -121,9 +119,10 @@
                         <param>org.symphonyoss.symphony:symphony-agent-java-jersey2-client:1.0-SNAPSHOT</param>
                         <param>org.symphonyoss.symphony:symphony-pod-java-jersey2-client:1.0-SNAPSHOT</param>
                         <param>org.symphonyoss:symphony-client:1.0-SNAPSHOT</param>
-                      </excludes>
+                    </excludes>
                 </configuration>
             </plugin>
+
         </plugins>
     </build>
 </project>
