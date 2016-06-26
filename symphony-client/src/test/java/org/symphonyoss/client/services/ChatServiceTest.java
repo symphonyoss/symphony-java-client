@@ -43,78 +43,78 @@ public class ChatServiceTest {
     ChatService chatService;
     SymphonyClient symClient;
 
-    @Before
-    public void beforeTest() {
-
-        symClient = mock(SymphonyBasicClient.class);
-        symClient.setSymAuth(TestFactory.getSymAuth());
-
-
-        when(symClient.getMessageService()).thenReturn(new MessageService(symClient));
-
-
-        try {
-            chatService = new ChatService(symClient);
-        } catch (Exception e) {
-
-            fail("Failed to setup ChatServiceTest..");
-        }
-    }
-
-    @Test
-    public void addChat() throws Exception {
-
-
-        chatService.addChat(TestFactory.getChat());
-
-        try {
-            chatService.addChat(null);
-            fail("Add null Chat to chatservice should throw Exception");
-        } catch (Exception e) {
-
-        }
-
-
-    }
-
-    @Test
-    public void removeChat() throws Exception {
-        chatService.addChat(TestFactory.getChat());
-
-        if(!chatService.removeChat(TestFactory.getChat()))
-            fail("Could not find active chat ro remove");
-
-
-    }
-
-    @Test
-    public void onMessage() throws Exception {
-
-    }
-
-    @Test
-    public void registerListener() throws Exception {
-
-    }
-
-    @Test
-    public void removeListener() throws Exception {
-
-    }
-
-    @Test
-    public void getChatsByEmail() throws Exception {
-
-    }
-
-    @Test
-    public void getChats() throws Exception {
-
-    }
-
-    @Test
-    public void getChatByStream() throws Exception {
-
-    }
+//    @Before
+//    public void beforeTest() {
+//
+//        symClient = mock(SymphonyBasicClient.class);
+//        symClient.setSymAuth(TestFactory.getSymAuth());
+//
+//
+//        when(symClient.getMessageService()).thenReturn(new MessageService(symClient));
+//
+//
+//        try {
+//            chatService = new ChatService(symClient);
+//        } catch (Exception e) {
+//
+//            fail("Failed to setup ChatServiceTest..");
+//        }
+//    }
+//
+//    @Test
+//    public void addChat() throws Exception {
+//
+//
+//        chatService.addChat(TestFactory.getChat());
+//
+//        try {
+//            chatService.addChat(null);
+//            fail("Add null Chat to chatservice should throw Exception");
+//        } catch (Exception e) {
+//
+//        }
+//
+//
+//    }
+//
+//    @Test
+//    public void removeChat() throws Exception {
+//        chatService.addChat(TestFactory.getChat());
+//
+//        if(!chatService.removeChat(TestFactory.getChat()))
+//            fail("Could not find active chat ro remove");
+//
+//
+//    }
+//
+//    @Test
+//    public void onMessage() throws Exception {
+//
+//    }
+//
+//    @Test
+//    public void registerListener() throws Exception {
+//
+//    }
+//
+//    @Test
+//    public void removeListener() throws Exception {
+//
+//    }
+//
+//    @Test
+//    public void getChatsByEmail() throws Exception {
+//
+//    }
+//
+//    @Test
+//    public void getChats() throws Exception {
+//
+//    }
+//
+//    @Test
+//    public void getChatByStream() throws Exception {
+//
+//    }
 
 }

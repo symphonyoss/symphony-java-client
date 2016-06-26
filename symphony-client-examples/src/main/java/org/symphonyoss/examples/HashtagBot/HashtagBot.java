@@ -20,7 +20,7 @@
  * under the License.
  */
 
-package org.symphonyoss.examples;
+package org.symphonyoss.examples.hashtagbot;
 
 import com.google.gson.Gson;
 import org.slf4j.Logger;
@@ -112,26 +112,31 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
 
         try {
 
+            //Create a basic client instance.
             symClient = SymphonyClientFactory.getClient(SymphonyClientFactory.TYPE.BASIC);
 
             logger.debug("{} {}", System.getProperty("sessionauth.url"),
                     System.getProperty("keyauth.url"));
 
 
+            //Init the Symphony authorization client, which requires both the key and session URL's.  In most cases,
+            //the same fqdn but different URLs.
             AuthorizationClient authClient = new AuthorizationClient(
                     System.getProperty("sessionauth.url"),
                     System.getProperty("keyauth.url"));
 
 
+            //Set the local keystores that hold the server CA and client certificates
             authClient.setKeystores(
                     System.getProperty("truststore.file"),
                     System.getProperty("truststore.password"),
                     System.getProperty("certs.dir") + System.getProperty("bot.user") + ".p12",
                     System.getProperty("keystore.password"));
 
+            //Create a SymAuth which holds both key and session tokens.  This will call the external service.
             SymAuth symAuth = authClient.authenticate();
 
-
+            //With a valid SymAuth we can now init our client.
             symClient.init(
                     symAuth,
                     System.getProperty("bot.user") + System.getProperty("bot.domain"),
@@ -139,19 +144,19 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
                     System.getProperty("symphony.agent.pod.url")
             );
 
-            //This is not needed, but added for future use.
+            //This is not needed, but added for future use.  This will monitor all presence events on the network.
             symClient.getPresenceService().registerPresenceListener(this);
 
-
+            //Will notify the bot of new Chat conversations.
             symClient.getChatService().registerListener(this);
 
-
+            //A message to send when the BOT comes online.
             MessageSubmission aMessage = new MessageSubmission();
             aMessage.setFormat(MessageSubmission.FormatEnum.TEXT);
             aMessage.setMessage("Hello master, I'm alive again....");
 
 
-
+            //Creates a Chat session with that will receive the online message.
             Chat chat = new Chat();
             chat.setLocalUser(symClient.getLocalUser());
             Set<User> remoteUsers = new HashSet<>();
@@ -160,9 +165,11 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
             chat.registerListener(this);
             chat.setStream(symClient.getStreamsClient().getStream(remoteUsers));
 
-
+            //Add the chat to the chat service, in case the "master" continues the conversation.
             symClient.getChatService().addChat(chat);
 
+
+            //Send a message to the master user.
             symClient.getMessageService().sendMessage(chat, aMessage);
 
 
@@ -172,14 +179,15 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
 
     }
 
-
+    //Callback from PresenceService.  This will monitor all presence on the network.
     public void onUserPresence(UserPresence userPresence) {
 
-        logger.debug("Received user presence update: {}:{}", userPresence.getUid(), userPresence.getCategory());
+        logger.debug("Received user presence update: {} : {}", userPresence.getUid(), userPresence.getCategory());
 
 
     }
 
+    //Chat sessions callback method.
     public void onChatMessage(Message message) {
         if (message == null)
             return;
@@ -190,15 +198,12 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
                 message.getMessage(),
                 message.getMessageType());
 
+        //Handle the new incoming message.
         processMessage(message);
 
     }
 
     public void processMessage(Message message) {
-
-
-        //MessageMlParser messageMlParser = new MessageMlParser(message.getMessage(), symClient);
-
 
         MlMessageParser mlMessageParser;
 
@@ -211,6 +216,10 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
            return;
        }
 
+        //Fix for v1 sending messages with mention tags containing UID attributes.
+        mlMessageParser.updateMentionUidToEmail(symClient);
+
+        //Split the text repsenstation of the incoming message.
         String[] chunks = mlMessageParser.getTextChunks();
 
 

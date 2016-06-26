@@ -41,6 +41,7 @@
     <modules>
         <module>symphony-apis</module>
         <module>symphony-client</module>
+        <module>symphony-client-examples</module>
 
     </modules>
 
