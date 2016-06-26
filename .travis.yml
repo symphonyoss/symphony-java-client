@@ -19,30 +19,28 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-cache:
-  directories:
-  - $HOME/.m2
+# cache:
+#   directories:
+#   - $HOME/.m2
 
 language: java
-script: mvn clean install -pl !symphony-client-examples
+script: mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar -Psonar -Dsonar.login=$SONAR_LOGIN
 jdk:
   - oraclejdk8
 
-
 env:
   global:
-   # Secure is generated using command "travis encrypt COVERITY_SCAN_TOKEN=blah"
    # Need to "gem install travis" first
+   # Generated using command "travis encrypt COVERITY_SCAN_TOKEN=blah"
    - secure: "C4A49ZOQceU/ArLstDxMwn2XSZqvuZW+OA8ZGM0ktGN+yXEXymNYO2c5jgzwXkCzaGrnRTrFH509W1BO003SXkBsLRgC/kYupkPR4sSuWAm575IW8QCrBjWozU42aK4ZUfaFMsW1dQ99LTB6DeyjzWJCG0PKqfU+xjw0v+GJzMBEcj6Es0lHkCk8AjmbuKJkbq06WN/GP+0tVE+AavtGQoWNx34Za7BrY/6sUJkuwevIOc3IkjYN8JCZdKo8QPYDevzg2kBWhI2kX3prau+20uHQjsBqub1sYEuyQ3Ndxj+8ZzJP3M7j4QAcufJMjUxOfFnFLbmvXcj7N2zjVc6/c6z5MW3hoVY2WW+1WGUnoD3lK410SPe+W/eIlJqiYpn10dE7+rcSS4iWCVc8luGXXzgemK/yfgbPAnSWEeHJjKnHdUj6hX3He1Ef4sRjmfXlsd0NuKoshw1IH1mGezZ8yy2shKPmZAvbBaX77bebpd/gfOJE+6i2NbfFyicMJMpruHNbiQ2JQk0QRdFdV569wlmiBzLH/AneyIXWT3/VsMDNL1pAXIl8UCBa2HdQcidINMmHyYD2VDzhEsFrzWGP5EJK1WUo3tecJqor2BpnoWlOxVazZnF3MBAzYcM6ldv/jCYQWAyVSYq/oG/GcipXuwbq0sJHQs5/wIdyetDvFGU="
-
-
+   # Generated using command "travis encrypt SONAR_LOGIN=blah"
+   - secure: "IBKF37BvQDnp5Q10IedASQZgS2ws7LhboBxQ36X5eAM0hAuv3VLujvmhlkLk00ddTHWKMvJS4B8xO3ck/RNI2QYa1A+Ivi7tTv3Nv3Q/4tmwcsUSdXOv+db3/XK3sqZCtNHJK71MVl62ZKUSE/CZ5y1KwTm6XrT/JgVfaFovBfpB/cUC7pb6UEaiVfCtkn5fgcrDvsYXCYqUcJTl2QMFyvsmuqJk+E/sxwAthmeGQBFEn3rGennn5piefATxHo5x6AITeMUS0QrVQJ9vRg/xLBWSIMclAYpdB92Isugqobx4BgUqpUECS0UkOHXpZ6a6x6AzRwCfA/8i+Q5KPvsGk06lKMe7eky7ZPVoUgovw7j1AA7so0TsCIbi0ZIeh6uDywNc+UWs2YkIr7JC2dBWi11N8u0w8yZ4t58Mr104EmGHYUpcwWTsEaXSlDTIv7Qlm+5iLMq55uKnC8nb8KaywhI3gfThueuEk0yLD7NSMhIXZ5g0Mxruezu6CPM69kyPm8kClkbeYq4XhQgz/B6TmUk33GV76Tp4itQhz4gxBM0bUelRmVWt/ng0v4gCeaPQGXfaoEUD/6/vZGVMaVnyLx69UXRdMUy1ce0hTCX4c5g7YynWqzCMk69V+Pc0F/UtA4mCFoBLTICTkawXro+ud4Sig6Zu3Z0SJmdw6KB/8Go="
 addons:
   coverity_scan:
     project:
       name: "symphonyoss/symphony-java-client"
       description: "Build submitted via Travis CI"
-    notification_email: maurizio.pillitu@symphony.foundation
+    notification_email: maoo@symphony.foundation
     build_command_prepend: "mvn clean"
     build_command:   "mvn -DskipTests=true compile"
-    branch_pattern: master
-
+    branch_pattern: develop

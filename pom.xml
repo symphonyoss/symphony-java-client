@@ -38,6 +38,14 @@
     <version>1-SNAPSHOT</version>
     </parent>
 
+    <repositories>
+      <repository>
+        <id>ossrh</id>
+        <name>OSSRH Public Group</name>
+        <url>https://oss.sonatype.org/content/groups/public</url>
+      </repository>
+    </repositories>
+
     <modules>
         <module>symphony-apis</module>
         <module>symphony-client</module>
@@ -126,4 +134,23 @@
 
         </plugins>
     </build>
+
+    <!-- TODO to be moved to ssf-parent-pom -->
+    <profiles>
+      <profile>
+        <id>sonar</id>
+        <properties>
+          <sonar.host.url>https://sonarqube.com</sonar.host.url>
+        </properties>
+        <build>
+            <plugins>
+                <plugin>
+                    <groupId>org.sonarsource.scanner.maven</groupId>
+                    <artifactId>sonar-maven-plugin</artifactId>
+                    <version>3.0.2</version>
+                </plugin>
+            </plugins>
+        </build>
+      </profile>
+    </profiles>
 </project>
