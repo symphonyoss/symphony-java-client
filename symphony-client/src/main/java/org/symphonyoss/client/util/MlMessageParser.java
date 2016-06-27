@@ -22,6 +22,7 @@
 
 package org.symphonyoss.client.util;
 
+import org.jsoup.nodes.Attribute;
 import org.jsoup.select.Elements;
 import org.symphonyoss.client.model.*;
 import org.jsoup.Jsoup;
@@ -250,6 +251,52 @@ public class MlMessageParser extends DefaultHandler {
             }
             getHtmlStartingFromNode(nodeType, attrib, attribValue, builder, node.childNodes(), append);
         }
+    }
+
+
+    public void updateMentionUidToEmail(SymphonyClient symClient){
+
+        updateMentionUidToEmail(symClient,elementMessageML.childNodes());
+    }
+    //Terrible that Symphony publishes UID on mention but only allows EMAIL on message submission.
+    private void updateMentionUidToEmail(SymphonyClient symClient, List<Node> nodesList){
+
+
+        for (Node node : nodesList) {
+            String nodeName = node.nodeName();
+
+
+            if (nodeName.equalsIgnoreCase(NodeTypes.MENTION.toString())) {
+
+                if (node.attributes().hasKey(AttribTypes.UID.toString())){
+
+                      String uid = node.attr(AttribTypes.UID.toString());
+
+                    User user = null;
+                    try {
+                        user = symClient.getUsersClient().getUserFromId(Long.parseLong(uid));
+
+                        logger.info("Translated mention uid {} to email {}", uid, user.getEmailAddress());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    if(user != null && user.getEmailAddress() != null){
+                            uid = user.getEmailAddress();
+                        }
+
+                      Attribute emailAttribute = new Attribute(AttribTypes.EMAIL.toString(),uid);
+
+                        node.attributes().put(emailAttribute);
+                        node.removeAttr(AttribTypes.UID.toString());
+
+                }
+
+            }
+            updateMentionUidToEmail(symClient, node.childNodes());
+        }
+
+
     }
 
     public Elements getAllElements(){

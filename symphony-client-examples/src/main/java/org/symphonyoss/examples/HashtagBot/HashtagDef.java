@@ -20,7 +20,7 @@
  * under the License.
  */
 
-package org.symphonyoss.examples;
+package org.symphonyoss.examples.hashtagbot;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
