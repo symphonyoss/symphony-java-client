@@ -38,6 +38,13 @@
       <version>1-SNAPSHOT</version>
     </parent>
 
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
     <!-- Temporary until the (Foundation) Parent Pom (see right above) is released on Maven Central -->
     <repositories>
       <repository>

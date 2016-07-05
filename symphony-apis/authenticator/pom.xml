@@ -35,6 +35,13 @@
                 <version>1.0-SNAPSHOT</version>
         </parent>
 
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+		</license>
+	</licenses>
+
 	<properties>
 		<cglib.version>2.2.2</cglib.version>
 		<junit.version>3.8.1</junit.version>
