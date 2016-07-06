@@ -64,7 +64,7 @@
         <slfj4-version>1.7.21</slfj4-version>
         <jaxrs-version>2.0.1</jaxrs-version>
         <junit-version>4.12</junit-version>
-        <mokito-version>1.9.5</mokito-version>
+        <mokito-version>1.10.19</mokito-version>
         <jsoup-version>1.9.2</jsoup-version>
     </properties>
 

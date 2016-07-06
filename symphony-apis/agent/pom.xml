@@ -48,12 +48,6 @@
 		<spring.version>4.2.0.RELEASE</spring.version>
 		<swagger-core-version>1.5.7</swagger-core-version>
 		<swagger.codegen.maven.plugin.version>2.1.6</swagger.codegen.maven.plugin.version>
-<!--
-		<zalando.swagger.codegen.maven.plugin.version>0.4.23-SNAPSHOT</zalando.swagger.codegen.maven.plugin.version>
-		<zalando.swagger.codegen.templates.version>0.4.23-SNAPSHOT</zalando.swagger.codegen.templates.version>
--->
-		<zalando.swagger.codegen.maven.plugin.version>0.4.22</zalando.swagger.codegen.maven.plugin.version>
-		<zalando.swagger.codegen.templates.version>0.4.22</zalando.swagger.codegen.templates.version>
 		<javax.servlet.version>3.0.1</javax.servlet.version>
 		<jstl.version>1.2</jstl.version>
 		<springfox.version>2.3.1</springfox.version>
@@ -62,7 +56,6 @@
 		<woodstox-core-asl.version>4.0.0</woodstox-core-asl.version>
 		<maven.war.plugin.version>2.6</maven.war.plugin.version>
 		<project-lombok.version>1.16.6</project-lombok.version>
-		<docker-maven-plugin.version>0.13.8</docker-maven-plugin.version>
 	</properties>
 	<dependencies>
 	</dependencies>
