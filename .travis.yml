@@ -30,6 +30,11 @@ script:
 jdk:
   - oraclejdk8
 
+notifications:
+  email:
+    recipients:
+      - dev@symphony.foundation
+
 env:
   global:
    # Need to "gem install travis" first
@@ -45,7 +50,7 @@ addons:
     project:
       name: "symphonyoss/symphony-java-client"
       description: "Build submitted via Travis CI"
-    notification_email: maoo@symphony.foundation
+    notification_email: dev@symphony.foundation
     build_command_prepend: "mvn clean"
-    build_command:   "mvn -DskipTests=true compile"
-    branch_pattern: develop
+    build_command:   "mvn -DskipTests=true compile deploy"
+    branch_pattern: master
