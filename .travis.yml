@@ -30,6 +30,11 @@ script:
 jdk:
   - oraclejdk8
 
+notifications:
+  email:
+    recipients:
+      - dev@symphony.foundation
+
 env:
   global:
    # Need to "gem install travis" first
