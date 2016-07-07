@@ -52,7 +52,7 @@
 		<docker.image.base>java:8</docker.image.base>
 
 		<project-lombok.version>1.16.6</project-lombok.version>
-		<swagger-core-version>1.5.7</swagger-core-version>
+		<swagger-core-version>1.5.9</swagger-core-version>
 		<springfox.version>2.3.1</springfox.version>
 		<java.version>1.8</java.version>
 		<symphony-agent.version>1.0-SNAPSHOT</symphony-agent.version>
