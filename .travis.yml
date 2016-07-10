@@ -39,6 +39,7 @@ env:
   global:
    - MVN_COMMAND="mvn clean install"
    - MVN_MASTER_PROFILES="versioneye,sonar"
+   - MVN_ALLBRANCHES_PROFILES="sonar"
    # Need to "gem install travis" first
    # Generated using command "travis encrypt COVERITY_SCAN_TOKEN=blah"
    - secure: "C4A49ZOQceU/ArLstDxMwn2XSZqvuZW+OA8ZGM0ktGN+yXEXymNYO2c5jgzwXkCzaGrnRTrFH509W1BO003SXkBsLRgC/kYupkPR4sSuWAm575IW8QCrBjWozU42aK4ZUfaFMsW1dQ99LTB6DeyjzWJCG0PKqfU+xjw0v+GJzMBEcj6Es0lHkCk8AjmbuKJkbq06WN/GP+0tVE+AavtGQoWNx34Za7BrY/6sUJkuwevIOc3IkjYN8JCZdKo8QPYDevzg2kBWhI2kX3prau+20uHQjsBqub1sYEuyQ3Ndxj+8ZzJP3M7j4QAcufJMjUxOfFnFLbmvXcj7N2zjVc6/c6z5MW3hoVY2WW+1WGUnoD3lK410SPe+W/eIlJqiYpn10dE7+rcSS4iWCVc8luGXXzgemK/yfgbPAnSWEeHJjKnHdUj6hX3He1Ef4sRjmfXlsd0NuKoshw1IH1mGezZ8yy2shKPmZAvbBaX77bebpd/gfOJE+6i2NbfFyicMJMpruHNbiQ2JQk0QRdFdV569wlmiBzLH/AneyIXWT3/VsMDNL1pAXIl8UCBa2HdQcidINMmHyYD2VDzhEsFrzWGP5EJK1WUo3tecJqor2BpnoWlOxVazZnF3MBAzYcM6ldv/jCYQWAyVSYq/oG/GcipXuwbq0sJHQs5/wIdyetDvFGU="
