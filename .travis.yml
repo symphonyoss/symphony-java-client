@@ -25,9 +25,7 @@
 
 language: java
 script:
-  - if [ "$TRAVIS_BRANCH" = "master" ]; then export MVN_PROFILES="sonar,versioneye"; else export MVN_PROFILES="sonar"; fi
-  - echo "Using Maven Profiles: $MVN_PROFILES"
-  - mvn clean package -P$MVN_PROFILES
+  - if [ "$TRAVIS_BRANCH" = "master" ]; then mvn clean package -Psonar,versioneye; else mvn clean package -Psonar; fi
 jdk:
   - oraclejdk8
 
