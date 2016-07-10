@@ -37,6 +37,7 @@ notifications:
 
 env:
   global:
+   - MVN_COMMAND="mvn clean install"
    - MVN_MASTER_PROFILES="versioneye,sonar"
    # Need to "gem install travis" first
    # Generated using command "travis encrypt COVERITY_SCAN_TOKEN=blah"
