@@ -171,8 +171,8 @@ public class ChatService implements MessageListener {
                         return;
                     }
                 }catch(Exception e){
-                    logger.error("Could not retrieve room detail",e);
-                    return;
+                    logger.debug("Stream {} not a room", streamId);
+
                 }
                 chat = createNewChatFromMessage(message);
                 if(chat!=null) {
