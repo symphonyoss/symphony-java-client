@@ -20,8 +20,7 @@
  * under the License.
  */
 
-package org.symphonyoss.examples.presenceservice;
-
+package org.symphonyoss.examples.roomsession;
 
 
 import org.slf4j.Logger;
@@ -29,15 +28,14 @@ import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.client.SymphonyClientFactory;
 import org.symphonyoss.client.model.Chat;
+import org.symphonyoss.client.model.Room;
 import org.symphonyoss.client.model.SymAuth;
-import org.symphonyoss.client.services.ChatListener;
-import org.symphonyoss.client.services.ChatServiceListener;
-import org.symphonyoss.client.services.PresenceListener;
+import org.symphonyoss.client.services.*;
 import org.symphonyoss.symphony.agent.model.Message;
 import org.symphonyoss.symphony.agent.model.MessageSubmission;
 import org.symphonyoss.symphony.clients.AuthorizationClient;
+import org.symphonyoss.symphony.pod.model.Stream;
 import org.symphonyoss.symphony.pod.model.User;
-import org.symphonyoss.symphony.pod.model.UserPresence;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -46,9 +44,11 @@ import java.util.Set;
 /**
  *
  *
- * Simple example of the ChatService.
+ * Simple example of the RoomService.
  *
- * It will send a message to a call.home.user and listen/create new Chat sessions.
+ * It will send a message to a room through from a stream (property: room.stream)
+ * This will create a Room object, which is populated with all room attributes and
+ * membership.  Adding a listener, will provide callbacks.
  *
  *
  *
@@ -65,19 +65,21 @@ import java.util.Set;
  *        -Dbot.user=bot.user1
  *        -Dbot.domain=@domain.com
  *        -Duser.call.home=frank.tarsillo@markit.com
+ *        -Droom.stream=(Stream)
  *
  *
  *
  *
  * Created by Frank Tarsillo on 5/15/2016.
  */
-public class PresenceServiceExample implements PresenceListener {
+public class RoomExample implements RoomListener {
 
 
-    private final Logger logger = LoggerFactory.getLogger(PresenceServiceExample.class);
+    private final Logger logger = LoggerFactory.getLogger(RoomExample.class);
     private SymphonyClient symClient;
+    private  RoomService roomService;
 
-    public PresenceServiceExample() {
+    public RoomExample() {
 
 
         init();
@@ -89,7 +91,7 @@ public class PresenceServiceExample implements PresenceListener {
 
 
         System.out.println("ChatExample starting...");
-        new PresenceServiceExample();
+        new RoomExample();
 
     }
 
@@ -131,9 +133,31 @@ public class PresenceServiceExample implements PresenceListener {
             );
 
 
-            symClient.getPresenceService().registerPresenceListener(this);
+            //A message to send when the BOT comes online.
+            MessageSubmission aMessage = new MessageSubmission();
+            aMessage.setFormat(MessageSubmission.FormatEnum.TEXT);
+            aMessage.setMessage("Hello master, I'm alive again in this room....");
 
-            symClient.getPresenceClient().getAllUserPresence();
+
+
+
+            Stream stream = new Stream();
+            stream.setId(System.getProperty("room.stream"));
+
+
+             roomService = new RoomService(symClient);
+
+            Room room = new Room();
+            room.setStream(stream);
+            room.setId(stream.getId());
+            room.setRoomListener(this);
+
+            roomService.joinRoom(room);
+
+
+            //Send a message to the room.
+            symClient.getMessageService().sendMessage(room, aMessage);
+
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -142,19 +166,37 @@ public class PresenceServiceExample implements PresenceListener {
     }
 
 
-    //Callback from PresenceService.  This will monitor all presence on the network.
-    public void onUserPresence(UserPresence userPresence) {
+    //Chat sessions callback method.
+    public void onChatMessage(Message message) {
+        if (message == null)
+            return;
 
-        try {
-            logger.debug("Received user presence change from: {} : {}: {}",
-                    userPresence.getUid(),
-                    symClient.getUsersClient().getUserFromId(userPresence.getUid()).getEmailAddress(),
-                    userPresence.getCategory());
-        }catch (Exception e){
+        logger.debug("TS: {}\nFrom ID: {}\nMessage: {}\nMessage Type: {}",
+                message.getTimestamp(),
+                message.getFromUserId(),
+                message.getMessage(),
+                message.getMessageType());
 
-            e.printStackTrace();
-        }
+
 
     }
 
+
+
+
+    @Override
+    public void onRoomMessage(RoomMessage roomMessage) {
+
+        Room room = roomService.getRoom(roomMessage.getId());
+
+        if(room!=null && roomMessage.getMessage() != null)
+            logger.debug("New room message detected from room: {} on stream: {} from: {} message: {}",
+                    room.getRoomDetail().getRoomAttributes().getName(),
+                    roomMessage.getRoomStream().getId(),
+                    roomMessage.getMessage().getFromUserId(),
+                    roomMessage.getMessage().getMessage()
+
+                );
+
+    }
 }

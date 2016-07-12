@@ -239,14 +239,58 @@ paths:
           description: 'Server error, see response body for further details.'
           schema:
             $ref: '#/definitions/Error'
+  '/v1/user/name/{userName}/get':
+    get:
+      summary: Get user information by user (login) name.
+      description: |
+        Searches for a user in the local pod with the given user name.
+      produces:
+        - application/json
+      parameters:
+        - name: userName
+          description: User login name
+          in: path
+          required: true
+          type: string
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+      tags:
+        - Users
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/User'
+        '204':
+          description: 'No user found.'
+        '400':
+          description: 'Client error.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
   '/v1/room/{id}/update':
     post:
+      deprecated: true
       summary: Update the attributes of an existing chatroom.
       produces:
         - application/json
       parameters:
         - name: id
-          description: Room stream
+          description: Room streamId
           in: path
           required: true
           type: string
@@ -290,7 +334,7 @@ paths:
         - application/json
       parameters:
         - name: id
-          description: Room stream
+          description: Room streamId
           in: path
           required: true
           type: string
@@ -329,6 +373,7 @@ paths:
             $ref: '#/definitions/Error'
   '/v1/room/create':
       post:
+        deprecated: true
         summary: Create a new chatroom.
         description: |
           Create a new chatroom.
@@ -378,7 +423,7 @@ paths:
           description: |
             Create a new chatroom.
 
-            If no  attributes are specified, the room is created as a public chatroom.
+            If no  attributes are specified, the room is created as a private chatroom.
           consumes:
             - application/json
           produces:
@@ -472,12 +517,13 @@ paths:
             $ref: '#/definitions/Error'
   '/v1/room/{id}/info':
     get:
+      deprecated: true
       summary: Get information about a partcular chatroom.
       produces:
         - application/json
       parameters:
         - name: id
-          description: Room stream
+          description: Room streamId
           in: path
           required: true
           type: string
@@ -516,7 +562,7 @@ paths:
           - application/json
         parameters:
           - name: id
-            description: Room stream
+            description: Room streamId
             in: path
             required: true
             type: string
@@ -555,7 +601,7 @@ paths:
         - application/json
       parameters:
         - name: id
-          description: Room stream
+          description: Room streamId
           in: path
           required: true
           type: string
@@ -598,7 +644,7 @@ paths:
         - application/json
       parameters:
         - name: id
-          description: Room stream
+          description: Room streamId
           in: path
           required: true
           type: string
@@ -642,7 +688,7 @@ paths:
         - application/json
       parameters:
         - name: id
-          description: Room stream
+          description: Room streamId
           in: path
           required: true
           type: string
@@ -686,7 +732,7 @@ paths:
         - application/json
       parameters:
         - name: id
-          description: Room stream
+          description: Room streamId
           in: path
           required: true
           type: string
@@ -730,7 +776,7 @@ paths:
         - application/json
       parameters:
         - name: id
-          description: Room stream
+          description: Room streamId
           in: path
           required: true
           type: string
@@ -774,7 +820,7 @@ paths:
         - application/json
       parameters:
         - name: id
-          description: Room stream
+          description: Room streamId
           in: path
           required: true
           type: string
@@ -808,7 +854,7 @@ paths:
             $ref: '#/definitions/Error'
   '/v1/im/create':
     post:
-      summary: Create a new single or multi party instant message chat
+      summary: Create a new single or multi party instant message conversation
       description: |
           At least one user ID must be provided or
           an error response will be sent.
@@ -819,7 +865,7 @@ paths:
           Duplicate users will be included in the membership of the chat but
           the duplication will be silently ignored.
 
-          If there is an existing IM chat with the same set of participants then
+          If there is an existing IM conversation with the same set of participants then
           the id of that existing stream will be returned.
 
           This method was incorrectly specified to take a query parameter in
@@ -2712,6 +2758,418 @@ paths:
           description: 'Server error, see response body for further details.'
           schema:
             $ref: '#/definitions/Error'
+  '/v1/configuration/list':
+      get:
+        summary: Gets a list of Configurations.
+        description: |
+          A caller can get all Configuration objects.
+
+          If there are no Configurations to return, a 204 response will be returned.
+        produces:
+          - application/json
+        parameters:
+          - name: offset
+            description: |
+              No. of Configurations to skip.
+            in: query
+            type: integer
+            required: false
+          - name: limit
+            description: |
+              Max No. of Configurations to return. If no value is provided,
+              50 is the default.
+            in: query
+            type: integer
+            required: false
+          - name: sessionToken
+            description: Session authentication token.
+            in: header
+            required: true
+            type: string
+        tags:
+          - Configuration
+        responses:
+          '200':
+            description: OK.
+            schema:
+              $ref: '#/definitions/ConfigurationList'
+          '204':
+            description: No Configurations.
+          '400':
+            description: 'Client error, see response body for further details.'
+            schema:
+              $ref: '#/definitions/Error'
+          '401':
+            description: 'Unauthorized: Session tokens invalid.'
+            schema:
+              $ref: '#/definitions/Error'
+          '403':
+            description: 'Forbidden: Caller lacks necessary entitlement.'
+            schema:
+              $ref: '#/definitions/Error'
+          '500':
+            description: 'Server error, see response body for further details.'
+            schema:
+              $ref: '#/definitions/Error'
+  '/v1/configuration/{configurationId}/get':
+    get:
+      summary: Gets a Configuration object.
+      description: |
+        A caller can get a Configuration object for a given ID.
+
+        If the {configurationId} is invalid, a client error results.
+
+        If the ID is correct, then 200 is returned along with the Configuration.
+      produces:
+        - application/json
+      parameters:
+        - name: configurationId
+          description: Configuration ID
+          in: path
+          required: true
+          type: string
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+      tags:
+        - Configuration
+      responses:
+        '200':
+          description: OK.
+          schema:
+            $ref: '#/definitions/V1Configuration'
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/configuration/{configurationId}/update':
+    put:
+      summary: Update a Configuration object.
+      description: |
+        A caller can update a Configuration object.
+
+        If the {configurationId} is invalid, a client error results.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: configurationId
+          description: Configuration ID
+          in: path
+          required: true
+          type: string
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: configuration
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/V1Configuration'
+      tags:
+        - Configuration
+      responses:
+        '200':
+          description: OK.
+          schema:
+            $ref: '#/definitions/V1Configuration'
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/configuration/create':
+    post:
+      summary: Create a Configuration object.
+      description: |
+        A caller can create a Configuration object.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: configuration
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/V1ConfigurationSubmissionCreate'
+      tags:
+        - Configuration
+      responses:
+        '200':
+          description: OK.
+          schema:
+            $ref: '#/definitions/V1Configuration'
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/configuration/{configurationId}/instance/list':
+    get:
+      summary: Get a list of configuration Instances from an Integration.
+      description: |
+        A caller can get all configuration Instances objects for a given Configuration ID.
+
+        If the {configurationId} is invalid, a client error results.
+
+        If there are no configuration Instances to return, a 204 response will be
+        returned.
+      produces:
+        - application/json
+      parameters:
+        - name: configurationId
+          description: Configuration ID
+          in: path
+          required: true
+          type: string
+        - name: offset
+          description: |
+            No. of configuration Instances to skip.
+          in: query
+          type: integer
+          required: false
+        - name: limit
+          description: |
+            Max No. of configuration Instances to return. If no value is
+            provided, 50 is the default.
+          in: query
+          type: integer
+          required: false
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+      tags:
+        - ConfigurationInstance
+      responses:
+        '200':
+          description: OK.
+          schema:
+            $ref: '#/definitions/ConfigurationInstanceList'
+        '204':
+          description: No configuration Instances.
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/configuration/{configurationId}/instance/{instanceId}/get':
+    get:
+      summary: Get a configuration Instance from a Configuration.
+      description: |
+        A caller can get a configuration Instance object for a given Configuration and Instance ID.
+
+        If the {configurationId} is invalid, a client error results.
+
+        If the {instanceId} is invalid, a client error results.
+
+        If the ID is correct, then 200 is returned along with the configuration
+        Instance.
+      produces:
+        - application/json
+      parameters:
+        - name: configurationId
+          description: Configuration ID
+          in: path
+          required: true
+          type: string
+        - name: instanceId
+          description: Configuration Instance ID
+          in: path
+          required: true
+          type: string
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+      tags:
+        - ConfigurationInstance
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ConfigurationInstance'
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/configuration/{configurationId}/instance/{instanceId}/update':
+    put:
+      summary: Update a configuration Instance object.
+      description: |
+        A caller can update a configuration Instance object.
+
+        If the {configurationId} is invalid, a client error results.
+
+        If the {instanceId} is invalid, a client error results.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: configurationId
+          description: Configuration ID
+          in: path
+          required: true
+          type: string
+        - name: instanceId
+          description: Configuration Instance ID
+          in: path
+          required: true
+          type: string
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: configurationInstance
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/ConfigurationInstanceSubmissionUpdate'
+      tags:
+        - ConfigurationInstance
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ConfigurationInstance'
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/configuration/{configurationId}/instance/create':
+    post:
+      summary: Create a Configuration Instance object.
+      description: |
+        A caller can create a Configuration Instance object.
+
+        If the {configurationId} is invalid, a client error results.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: configurationId
+          description: Configuration ID
+          in: path
+          required: true
+          type: string
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: configurationInstance
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/ConfigurationInstanceSubmissionCreate'
+      tags:
+        - ConfigurationInstance
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ConfigurationInstance'
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
 definitions:
   Error:
     type: object
@@ -2970,7 +3428,7 @@ definitions:
   RoomSearchResults:
     description: A list of search results and counts per search parameter.
     properties:
-      found:
+      count:
         description: The total number of rooms matched by the search.
         type: integer
         format: int64
@@ -2983,16 +3441,16 @@ definitions:
       query:
         description: The search query that produced this result.
         $ref: '#/definitions/RoomSearchCriteria'
-      hits:
+      rooms:
         description: A list of rooms matched by the query.
         type: array
         items:
           $ref: '#/definitions/V2RoomDetail'
-      stats:
+      facetedMatchCount:
         description: Detailed counts of matched rooms per search criterion.
         type: array
         items:
-          $ref: '#/definitions/FacetCount'
+          $ref: '#/definitions/FacetedMatchCount'
   RoomTag:
     description: Room Tag object. A key:value pair describing additional properties of the room.
     properties:
@@ -3005,7 +3463,7 @@ definitions:
     required:
     - key
     - value
-  FacetCount:
+  FacetedMatchCount:
     description: An object respresenting the result count of faceted search.
     properties:
       facet:
@@ -3548,3 +4006,90 @@ definitions:
         type: array
         items:
           type: string
+  V1Configuration:
+    type: object
+    description: Configuration for each integration type.
+    properties:
+      configurationId:
+        type: string
+      type:
+        type: string
+      name:
+        type: string
+      description:
+        type: string
+      enabled:
+        type: boolean
+      visible:
+        type: boolean
+  V1ConfigurationSubmissionCreate:
+      type: object
+      description: Configuration for each integration type.
+      properties:
+        type:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        enabled:
+          type: boolean
+        visible:
+          type: boolean
+  ConfigurationList:
+    type: array
+    items:
+      $ref: '#/definitions/V1Configuration'
+  ConfigurationInstance:
+    type: object
+    description: Represents each integration instance.
+    properties:
+      instanceId:
+        type: string
+      configurationId:
+        type: string
+      name:
+        type: string
+      description:
+        type: string
+      creatorId:
+        type: string
+      createdDate:
+        type: integer
+        format: int64
+      optionalProperties:
+        description: This field should be used as a container for a serialized object, holding specialized field values.
+        type: string
+  ConfigurationInstanceList:
+      type: array
+      items:
+        $ref: '#/definitions/ConfigurationInstance'
+  ConfigurationInstanceSubmissionCreate:
+    type: object
+    properties:
+      configurationId:
+        type: string
+      name:
+        type: string
+      description:
+        type: string
+      creatorId:
+        type: string
+      optionalProperties:
+        description: This field should be used as a container for a serialized object, holding specialized field values.
+        type: string
+  ConfigurationInstanceSubmissionUpdate:
+    type: object
+    description: Represents each integration instance.
+    properties:
+      instanceId:
+        type: string
+      configurationId:
+        type: string
+      name:
+        type: string
+      description:
+        type: string
+      optionalProperties:
+        description: This field should be used as a container for a serialized object, holding specialized field values.
+        type: string

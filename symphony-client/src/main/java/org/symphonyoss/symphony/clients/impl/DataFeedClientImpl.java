@@ -28,6 +28,7 @@ import org.symphonyoss.symphony.agent.api.DatafeedApi;
 import org.symphonyoss.symphony.agent.invoker.ApiClient;
 import org.symphonyoss.symphony.agent.model.Datafeed;
 import org.symphonyoss.symphony.agent.model.MessageList;
+import org.symphonyoss.symphony.agent.model.V2MessageList;
 import org.symphonyoss.symphony.clients.DataFeedClient;
 import org.symphonyoss.client.model.SymAuth;
 
@@ -69,5 +70,8 @@ public class DataFeedClientImpl implements DataFeedClient {
 
         return datafeedApi.v1DatafeedIdReadGet(datafeed.getId(),symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken(),100);
     }
+
+
+
 
 }

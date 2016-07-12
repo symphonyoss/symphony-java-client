@@ -28,6 +28,8 @@ paths:
         Post a new message to the given stream. The stream can be a chatroom,
         an IM or a multiparty IM.
 
+        You may include an attachment on the message (see the V2MessageSubmission parameter).
+
         If the message parameter type is TEXT then the message contains plain
         text and cannot include formating, hash tags, mentions etc.
 
@@ -166,12 +168,14 @@ paths:
           description: 'Server error, see response body for further details.'
           schema:
             $ref: '#/definitions/Error'
-  '/v2/stream/{sid}/attachment/create':
+  '/v1/stream/{sid}/attachment/create':
     post:
-      summary: Upload an attachment to one existing stream.
+      summary: Upload an attachment.
       description: |
         Upload an attachment to the given stream. The stream can be a chatroom,
         an IM or a multiparty IM.
+
+        Once uploaded, you can use this attachment on a message you send in that stream.
 
         If the attachment is uploaded then 200 is returned.
       consumes:
@@ -226,11 +230,11 @@ paths:
           description: 'Server error, see response body for further details.'
           schema:
             $ref: '#/definitions/Error'
-  '/v2/stream/{sid}/attachment':
+  '/v1/stream/{sid}/attachment':
     get:
-      summary: Get an attachment by ID.
+      summary: Download an attachment.
       description: |
-        Get the attachment body by the attachment ID.
+        Downloads the attachment body by the attachment ID, stream ID, and message ID.
       consumes:
         - application/json
       produces:
@@ -392,6 +396,7 @@ paths:
             $ref: '#/definitions/Error'
   '/v1/stream/{sid}/message/create':
     post:
+      deprecated: true
       summary: Post a message to one existing stream.
       description: |
         Post a new message to the given stream. The stream can be a chatroom,
@@ -457,21 +462,14 @@ paths:
             $ref: '#/definitions/Error'
   '/v1/message/import':
     post:
-      summary: Post a message to one existing stream.
+      summary: Import messages from other systems into Symphony.
       description: |
-        PROVISIONAL Post a new message to the given stream. The stream can be a chatroom,
-        an IM or a multiparty IM.
-
-        If the message parameter type is TEXT then the message contains plain
-        text and cannot include formating, hash tags, mentions etc.
-
-        If the message parameter type is MessageML then the message contains
-        MessageML which allows for these entities.
-
-        If the message is in MessageML and fails schema validation
-        a client error results
-
-        If the message is sent then 200 is returned.
+        Sends a message to be imported into the system.
+        Allows you to override the timestamp and author of the message with your desired values.
+        The requesting user must have the Content Management role.
+        Also, the requesting user must be a member of the conversation it is importing into.
+        The user that the message is intended to have come from must also be present in the conversation.
+        The intended message timestamp must be a valid time from the past. It cannot be a future timestamp.
       consumes:
         - application/json
       produces:
@@ -517,6 +515,7 @@ paths:
             $ref: '#/definitions/Error'
   '/v1/stream/{sid}/message':
     get:
+      deprecated: true
       summary: Get messages from an existing stream.
       description: |
           A caller can fetch all unseen messages by passing the timestamp of
@@ -948,6 +947,22 @@ paths:
           description: 'Server error, see response body for further details.'
           schema:
             $ref: '#/definitions/Error'
+  '/v1/HealthCheck':
+    get:
+      summary: Checks the health of the Agent.
+      description: |
+          Used to validate the configuration of the agent.
+          Makes a request to the HealthCheck on the Symphony cloud.
+          Makes a request to the HealthCheck on the Key Manager service.
+      produces:
+        - application/json
+      tags:
+        - System
+      responses:
+        '200':
+          description: The Agent is functioning properly.
+          schema:
+            $ref: '#/definitions/V1HealthCheckResponse'
 definitions:
   Error:
     type: object
@@ -992,9 +1007,10 @@ definitions:
     description: |
       A historic message to be imported into the system.
       The importing user must have the Content Management role.
-      Also, the importing user must be a member of the chat it is importing into.
-      The user that the message is intended to have come from must also be present in the chat.
+      Also, the importing user must be a member of the conversation it is importing into.
+      The user that the message is intended to have come from must also be present in the conversation.
       The intended message timestamp must be a valid time from the past. It cannot be a future timestamp.
+      By design, imported messages do not stream to datafeed or firehose endpoints.
     type: object
     properties:
       message:
@@ -1021,14 +1037,14 @@ definitions:
         description: |
           The ID of the system through which the message was originally sent.
         type: string
-      stream:
+      streamId:
         type: string
     required:
     - message
     - intendedMessageTimestamp
     - intendedMessageFromUserId
     - originatingSystemId
-    - stream
+    - streamId
   ImportResponseList:
     type: array
     items:
@@ -1058,12 +1074,12 @@ definitions:
         type: string
       messageType:
         type: string
-      stream:
+      streamId:
         type: string
     required:
     - messageType
     - timestamp
-    - stream
+    - streamId
   V2BaseMessage:
     type: object
     discriminator: v2messageType
@@ -1075,12 +1091,12 @@ definitions:
         type: string
       v2messageType:
         type: string
-      stream:
+      streamId:
         type: string
     required:
     - v2messageType
     - timestamp
-    - stream
+    - streamId
   Message:
     type: object
     description: A representation of a message sent by a user of Symphony.
@@ -1122,36 +1138,6 @@ definitions:
       - message
       - fromUserId
   RoomCreatedMessage:
-    type: object
-    description: Generated when a room is created.
-    allOf:
-    - $ref: '#/definitions/V2BaseMessage'
-    - type: object
-      properties:
-        creationDate:
-          type: integer
-          format: int64
-        name:
-          type: string
-        keywords:
-          type: string
-        description:
-          type: string
-        createdByUserId:
-          type: integer
-          format: int64
-          description: The Symphony userId of the user who created the room.
-        readOnly:
-          type: boolean
-        discoverable:
-          type: boolean
-        public:
-          type: boolean
-        membersCanInvite:
-          type: boolean
-        copyProtected:
-          type: boolean
-  V2RoomCreatedMessage:
       type: object
       description: Generated when a room is created.
       allOf:
@@ -1204,31 +1190,6 @@ definitions:
           type: integer
           format: int64
   RoomUpdatedMessage:
-    type: object
-    description: Generated when a room is updated.
-    allOf:
-    - $ref: '#/definitions/V2BaseMessage'
-    - type: object
-      properties:
-        oldName:
-          type: string
-        newName:
-          type: string
-        keywords:
-          type: string
-        oldDescription:
-          type: string
-        newDescription:
-          type: string
-        membersCanInvite:
-          type: boolean
-        discoverable:
-          type: boolean
-        readOnly:
-          type: boolean
-        copyProtected:
-          type: boolean
-  V2RoomUpdatedMessage:
     type: object
     description: Generated when a room is updated.
     allOf:
@@ -1362,3 +1323,16 @@ definitions:
     required:
     - key
     - value
+  V1HealthCheckResponse:
+    type: object
+    properties:
+      podConnectivity:
+        type: boolean
+      podConnectivityError:
+        type: string
+      keyManagerConnectivity:
+        type: boolean
+      keyManagerConnectivityError:
+        type: string
+      version:
+        type: string

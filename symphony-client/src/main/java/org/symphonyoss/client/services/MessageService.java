@@ -25,6 +25,7 @@ package org.symphonyoss.client.services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.client.model.Room;
 import org.symphonyoss.symphony.agent.model.Message;
 import org.symphonyoss.symphony.agent.model.MessageList;
 import org.symphonyoss.symphony.agent.model.MessageSubmission;
@@ -56,6 +57,12 @@ public class MessageService implements MessageListener{
 
     }
 
+
+    public void sendMessage(Room room, MessageSubmission message) throws Exception{
+
+        symClient.getMessagesClient().sendMessage(room.getStream(),message);
+
+    }
 
 
     public void sendMessage(Chat chat, MessageSubmission message) throws Exception {
@@ -103,17 +110,9 @@ public class MessageService implements MessageListener{
         if(symClient.getLocalUser().getId().equals( message.getFromUserId()))
             return;
 
+        if(message.getStreamId() == null)
+            return;
 
-        if(message.getStream()==null ){
-            User user = new User();
-            user.setId(message.getFromUserId());
-            try {
-                Stream stream =symClient.getStreamsClient().getStream(user);
-                message.setStream(stream.getId());
-
-            }catch(Exception e){e.printStackTrace();}
-
-        }
 
 
         for(MessageListener messageListener: messageListeners){

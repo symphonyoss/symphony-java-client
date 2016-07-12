@@ -128,7 +128,7 @@ public class ChatService implements MessageListener {
             Chat chat = new Chat();
             chat.setLocalUser(symClient.getLocalUser());
             Stream stream = new Stream();
-            stream.setId(message.getStream());
+            stream.setId(message.getStreamId());
             chat.setStream(stream);
             chat.setLastMessage(message);
             User remoteUser = symClient.getUsersClient().getUserFromId(message.getFromUserId());
@@ -141,7 +141,7 @@ public class ChatService implements MessageListener {
                 return chat;
             }
         }catch(Exception e){
-            logger.error("Could not create new chat from message {} {}", message.getStream(), message.getFromUserId(),e);
+            logger.error("Could not create new chat from message {} {}", message.getStreamId(), message.getFromUserId(),e);
         }
 
         return null;
@@ -155,7 +155,7 @@ public class ChatService implements MessageListener {
 
 
 
-        String streamId = message.getStream();
+        String streamId = message.getStreamId();
 
 
         logger.debug("New message from stream {}", streamId);
@@ -164,11 +164,21 @@ public class ChatService implements MessageListener {
             Chat chat = chatsByStream.get(streamId);
 
             if(chat == null){
+
+                try {
+                    if (symClient.getStreamsClient().getRoomDetail(streamId) != null) {
+                        logger.debug("Rejecting message from room stream {}", streamId);
+                        return;
+                    }
+                }catch(Exception e){
+                    logger.error("Could not retrieve room detail",e);
+                    return;
+                }
                 chat = createNewChatFromMessage(message);
                 if(chat!=null) {
                     addChat(chat);
                  }else{
-                    logger.error("Failed to add new chat from message {} {}",message.getStream(), message.getFromUserId());
+                    logger.error("Failed to add new chat from message {} {}",message.getStreamId(), message.getFromUserId());
                     return;
                 }
             }else{

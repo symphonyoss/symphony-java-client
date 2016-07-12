@@ -1,5 +1,6 @@
 /*
  *
+ *
  * Copyright 2016 The Symphony Software Foundation
  *
  * Licensed to The Symphony Software Foundation (SSF) under one
@@ -10,7 +11,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -20,18 +21,41 @@
  * under the License.
  */
 
-package org.symphonyoss.symphony.clients;
+package org.symphonyoss.client.services;
 
-import org.symphonyoss.symphony.agent.model.Datafeed;
-import org.symphonyoss.symphony.agent.model.MessageList;
-import org.symphonyoss.symphony.agent.model.V2MessageList;
+import org.symphonyoss.symphony.agent.model.Message;
+import org.symphonyoss.symphony.pod.model.Stream;
 
 /**
- * Created by frank.tarsillo on 6/6/2016.
+ * Created by Frank Tarsillo on 7/8/2016.
  */
-public interface DataFeedClient {
-    Datafeed createDatafeed() throws Exception;
+public class RoomMessage {
 
-    MessageList getMessagesFromDatafeed(Datafeed datafeed) throws Exception;
+    Stream roomStream;
+    String id;
+    Message message;
 
+    public Stream getRoomStream() {
+        return roomStream;
     }
+
+    public void setRoomStream(Stream roomStream) {
+        this.roomStream = roomStream;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public Message getMessage() {
+        return message;
+    }
+
+    public void setMessage(Message message) {
+        this.message = message;
+    }
+}

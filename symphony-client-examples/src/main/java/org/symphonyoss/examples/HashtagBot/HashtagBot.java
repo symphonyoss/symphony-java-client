@@ -450,7 +450,7 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
         aMessage.setMessage("<messageML><br/>Sorry..hashtag <hash tag=\"" + hashtag + "\"/> not found.<br/></messageML>");
 
         Stream stream = new Stream();
-        stream.setId(message.getStream());
+        stream.setId(message.getStreamId());
         try {
             symClient.getMessagesClient().sendMessage(stream, aMessage);
         } catch (Exception e) {
@@ -468,7 +468,7 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
         aMessage.setMessage("<messageML><br/>Sorry..hashtag <hash tag=\"" + hashtag + "\"/> <hash tag=\"" + num + "\"/> not found.<br/></messageML>");
 
         Stream stream = new Stream();
-        stream.setId(message.getStream());
+        stream.setId(message.getStreamId());
         try {
             symClient.getMessagesClient().sendMessage(stream, aMessage);
         } catch (Exception e) {
@@ -490,7 +490,7 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
         );
 
         Stream stream = new Stream();
-        stream.setId(message.getStream());
+        stream.setId(message.getStreamId());
         try {
             symClient.getMessagesClient().sendMessage(stream, aMessage);
         } catch (Exception e) {
@@ -508,7 +508,7 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
         aMessage.setMessage("<messageML><br/>Completely removed hashtag <b>#" + hashtag + "</b></messageML>");
 
         Stream stream = new Stream();
-        stream.setId(message.getStream());
+        stream.setId(message.getStreamId());
         try {
             symClient.getMessagesClient().sendMessage(stream, aMessage);
         } catch (Exception e) {
@@ -550,7 +550,7 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
         logger.debug("{}", out.toString());
 
         Stream stream = new Stream();
-        stream.setId(message.getStream());
+        stream.setId(message.getStreamId());
         try {
             symClient.getMessagesClient().sendMessage(stream, aMessage);
         } catch (Exception e) {
