@@ -25,7 +25,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.markit</groupId>
+	<groupId>org.symphonyoss.symphony</groupId>
 	<artifactId>symphony-authenticator-server</artifactId>
 	<name>Symphony Authenticator Service Server</name>
 	<version>0.1.0-SNAPSHOT</version>
@@ -55,7 +55,7 @@
 		<swagger-core-version>1.5.9</swagger-core-version>
 		<springfox.version>2.3.1</springfox.version>
 		<java.version>1.8</java.version>
-		<symphony-authenticator.version>1.0-SNAPSHOT</symphony-authenticator.version>
+		<symphony-authenticator.version>0.9.0-SNAPSHOT</symphony-authenticator.version>
 		<spring-boot.version>1.3.2.RELEASE</spring-boot.version>
 		<mysql-connector-java.version>5.1.38</mysql-connector-java.version>
 		<checkstyle.skip>true</checkstyle.skip>
