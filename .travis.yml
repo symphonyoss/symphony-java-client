@@ -33,7 +33,7 @@ jdk:
 notifications:
   email:
     recipients:
-      - dev@symphony.foundation
+      - dev-notify@symphony.foundation
 
 env:
   global:
@@ -53,7 +53,7 @@ addons:
     project:
       name: "symphonyoss/symphony-java-client"
       description: "Build submitted via Travis CI"
-    notification_email: dev@symphony.foundation
+    notification_email: dev-notify@symphony.foundation
     build_command_prepend: "mvn clean"
     build_command:   "mvn -DskipTests=true compile install"
     branch_pattern: master
