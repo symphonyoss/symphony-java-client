@@ -31,11 +31,13 @@
     <version>0.9.0-SNAPSHOT</version>
     <name>Symphony Java Client</name>
     <packaging>pom</packaging>
+    <url>https://github.com/symphonyoss/symphony-java-client</url>
+    <description>A Symphony Agent API client written in Java</description>
 
     <parent>
       <groupId>org.symphonyoss</groupId>
       <artifactId>symphonyoss</artifactId>
-      <version>1-SNAPSHOT</version>
+      <version>2</version>
     </parent>
 
     <licenses>
@@ -45,14 +47,39 @@
         </license>
     </licenses>
 
-    <!-- Temporary until the (Foundation) Parent Pom (see right above) is released on Maven Central -->
-    <repositories>
-      <repository>
-        <id>ossrh</id>
-        <name>OSSRH Public Group</name>
-        <url>https://oss.sonatype.org/content/groups/public</url>
-      </repository>
-    </repositories>
+    <scm>
+      <connection>scm:git:git://github.com/symphonyoss/symphony-java-client.git</connection>
+      <developerConnection>scm:git:git@github.com:symphonyoss/symphony-java-client.git</developerConnection>
+      <url>https://github.com/symphonyoss/symphony-java-client</url>
+    </scm>
+
+    <developers>
+      <developer>
+          <id>ftarsillo</id>
+          <name>Frank Tarsillo</name>
+          <email></email>
+          <url>http://github.com/ftarsillo</url>
+          <organization>Symphony Software Foundation</organization>
+          <organizationUrl>http://symphony.foundation</organizationUrl>
+          <timezone></timezone>
+          <roles>
+              <role>Architect</role>
+              <role>Developer</role>
+          </roles>
+      </developer>
+      <developer>
+          <id>maoo</id>
+          <name>Maurizio Pillitu</name>
+          <email>maoo@symphony.foundation</email>
+          <url>http://github.com/maoo</url>
+          <organization>Symphony Software Foundation</organization>
+          <organizationUrl>http://symphony.foundation</organizationUrl>
+          <timezone>+1</timezone>
+          <roles>
+              <role>Developer</role>
+          </roles>
+      </developer>
+    </developers>
 
     <modules>
         <module>symphony-apis</module>
