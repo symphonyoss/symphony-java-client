@@ -45,7 +45,6 @@
 		<junit.version>3.8.1</junit.version>
 		<spring.version>4.2.0.RELEASE</spring.version>
 		<swagger-core-version>1.5.9</swagger-core-version>
-		<swagger.codegen.maven.plugin.version>2.1.6</swagger.codegen.maven.plugin.version>
 		<javax.servlet.version>3.0.1</javax.servlet.version>
 		<jstl.version>1.2</jstl.version>
 		<springfox.version>2.3.1</springfox.version>
