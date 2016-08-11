@@ -28,7 +28,7 @@
 	<parent>
 		<groupId>org.symphonyoss.symphony</groupId>
 		<artifactId>symphony-agent</artifactId>
-		<version>0.9.0</version>
+		<version>0.9.1-SNAPSHOT</version>
 	</parent>
 
 	<licenses>
