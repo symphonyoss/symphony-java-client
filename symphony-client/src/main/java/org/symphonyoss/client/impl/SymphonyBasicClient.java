@@ -75,14 +75,21 @@ public class SymphonyBasicClient implements SymphonyClient {
         this.agentUrl = agentUrl;
         this.serviceUrl = serviceUrl;
 
-        //Init all clients.
-        dataFeedClient = DataFeedFactory.getClient(this, DataFeedFactory.TYPE.DEFAULT);
-        messagesClient = MessagesFactory.getClient(this, MessagesFactory.TYPE.DEFAULT);
-        presenceClient = PresenceFactory.getClient(this, PresenceFactory.TYPE.DEFAULT);
-        streamsClient  = StreamsFactory.getClient(this, StreamsFactory.TYPE.DEFAULT);
-        usersClient    = UsersFactory.getClient(this, UsersFactory.TYPE.DEFAULT);
-        roomMembershipClient = RoomMembershipFactory.getClient(this, RoomMembershipFactory.TYPE.DEFAULT);
+        try {
+            //Init all clients.
+            dataFeedClient = DataFeedFactory.getClient(this, DataFeedFactory.TYPE.DEFAULT);
+            messagesClient = MessagesFactory.getClient(this, MessagesFactory.TYPE.DEFAULT);
+            presenceClient = PresenceFactory.getClient(this, PresenceFactory.TYPE.DEFAULT);
+            streamsClient = StreamsFactory.getClient(this, StreamsFactory.TYPE.DEFAULT);
+            usersClient = UsersFactory.getClient(this, UsersFactory.TYPE.DEFAULT);
+            roomMembershipClient = RoomMembershipFactory.getClient(this, RoomMembershipFactory.TYPE.DEFAULT);
+        }catch(Exception e){
+            logger.error("Could not initialize one of the Symphony API services." +
+            " This is most likely due to not having the right agent or pod URLs." +
+            " This can also be an issue with the client certificate or server.trustore." +
+            " Here is what you have configured: {}");
 
+        }
         messageService = new MessageService(this);
         presenceService = new PresenceService(this);
         chatService = new ChatService(this);
