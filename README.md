@@ -24,7 +24,7 @@ Requirements:
 POM:
 
         <dependency>
-            <groupId>org.symphonyoss</groupId>
+            <groupId>org.symphonyoss.symphony</groupId>
             <artifactId>symphony-client</artifactId>
             <version>(Version)</version>
         </dependency>
