@@ -23,6 +23,7 @@
 package org.symphonyoss.client.model;
 
 import org.symphonyoss.symphony.agent.model.Message;
+import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.pod.model.Stream;
 import org.symphonyoss.symphony.pod.model.User;
 import org.symphonyoss.client.services.ChatListener;
@@ -41,7 +42,7 @@ public class Chat {
     private Stream stream;
     private final Set<ChatListener> chatListeners = ConcurrentHashMap.newKeySet();
 
-    private Message lastMessage;
+    private SymMessage lastMessage;
 
 
     public Set<User> getRemoteUsers() {
@@ -70,6 +71,12 @@ public class Chat {
 
     public void onChatMessage(Message message){
 
+        onChatMessage(SymMessage.toSymMessage(message));
+
+    }
+
+    public void onChatMessage(SymMessage message){
+
         lastMessage = message;
 
         for(ChatListener chatListener:chatListeners)
@@ -89,11 +96,14 @@ public class Chat {
     public boolean removeListener(ChatListener chatListener){
         return chatListeners.remove(chatListener);
     }
-    public Message getLastMessage() {
+
+    public SymMessage getLastMessage() {
+
         return lastMessage;
     }
 
-    public void setLastMessage(Message lastMessage) {
+
+    public void setLastMessage(SymMessage lastMessage) {
         this.lastMessage = lastMessage;
     }
 

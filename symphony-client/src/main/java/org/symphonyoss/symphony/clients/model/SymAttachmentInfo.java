@@ -23,6 +23,10 @@
 package org.symphonyoss.symphony.clients.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.symphonyoss.symphony.agent.model.AttachmentInfo;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -56,4 +60,22 @@ public class SymAttachmentInfo {
     public void setSize(Long size) {
         this.size = size;
     }
+
+
+public static List<AttachmentInfo> toV2AttachmentsInfo(List<SymAttachmentInfo> symAttachmentsInfo){
+
+    List<AttachmentInfo> attachementsInfo = new ArrayList<>();
+
+    for(SymAttachmentInfo symAttachmentInfo: symAttachmentsInfo) {
+        AttachmentInfo attachmentInfo = new AttachmentInfo();
+        attachmentInfo.setId(symAttachmentInfo.getId());
+        attachmentInfo.setName(symAttachmentInfo.getName());
+        attachmentInfo.setSize(symAttachmentInfo.getSize());
+        attachementsInfo.add(attachmentInfo);
+    }
+
+    return attachementsInfo;
+}
+
+
 }

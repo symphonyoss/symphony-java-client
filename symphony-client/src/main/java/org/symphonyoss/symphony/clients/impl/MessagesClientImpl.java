@@ -26,12 +26,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.symphony.agent.api.MessagesApi;
 import org.symphonyoss.symphony.agent.invoker.ApiClient;
-import org.symphonyoss.symphony.agent.model.Message;
-import org.symphonyoss.symphony.agent.model.MessageList;
-import org.symphonyoss.symphony.agent.model.MessageSubmission;
+import org.symphonyoss.symphony.agent.model.*;
 import org.symphonyoss.client.model.SymAuth;
+import org.symphonyoss.symphony.clients.model.SymAttachmentInfo;
+import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.pod.model.Stream;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -53,7 +56,7 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
 
     }
 
-
+    @Deprecated
     public Message sendMessage(Stream stream, MessageSubmission message) throws Exception {
 
 
@@ -65,14 +68,37 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
     }
 
 
-    public MessageList getMessagesFromStream(Stream stream, Long since, Integer offset, Integer maxMessages) throws Exception {
+
+    public SymMessage sendMessage(Stream stream, SymMessage message) throws Exception {
 
 
         MessagesApi messagesApi = new MessagesApi(apiClient);
 
-        return messagesApi.v1StreamSidMessageGet(stream.getId(), since, symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken(), offset, maxMessages);
+        V2MessageSubmission messageSubmission = new V2MessageSubmission();
+
+        messageSubmission.setMessage(message.getMessage());
+        messageSubmission.setFormat(
+                message.getFormat().toString().equals(V2MessageSubmission.FormatEnum.TEXT.toString()) ?
+                V2MessageSubmission.FormatEnum.TEXT:
+                V2MessageSubmission.FormatEnum.MESSAGEML
+        );
+        messageSubmission.setAttachments(SymAttachmentInfo.toV2AttachmentsInfo(message.getAttachments()));
+
+        V2Message v2Message =  messagesApi.v2StreamSidMessageCreatePost(stream.getId(), symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken(), messageSubmission);
+
+        return SymMessage.toSymMessage(v2Message);
+    }
 
 
+    @Deprecated
+    public List<SymMessage> getMessagesFromStream(Stream stream, Long since, Integer offset, Integer maxMessages) throws Exception {
+
+
+        MessagesApi messagesApi = new MessagesApi(apiClient);
+
+        V2MessageList v2MessageList =  messagesApi.v2StreamSidMessageGet(stream.getId(), since, symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken(), offset, maxMessages);
+
+        return v2MessageList.stream().map(v2BaseMessage -> SymMessage.toSymMessage((V2Message) v2BaseMessage)).collect(Collectors.toList());
     }
 
 

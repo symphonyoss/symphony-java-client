@@ -26,12 +26,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.symphony.agent.api.DatafeedApi;
 import org.symphonyoss.symphony.agent.invoker.ApiClient;
-import org.symphonyoss.symphony.agent.model.Datafeed;
-import org.symphonyoss.symphony.agent.model.MessageList;
-import org.symphonyoss.symphony.agent.model.V2MessageList;
+import org.symphonyoss.symphony.agent.model.*;
 import org.symphonyoss.symphony.clients.DataFeedClient;
 import org.symphonyoss.client.model.SymAuth;
+import org.symphonyoss.symphony.clients.model.SymMessage;
 
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -64,11 +66,19 @@ public class DataFeedClientImpl implements DataFeedClient {
     }
 
 
-    public MessageList getMessagesFromDatafeed(Datafeed datafeed) throws Exception {
+    public List<SymMessage> getMessagesFromDatafeed(Datafeed datafeed) throws Exception {
 
         DatafeedApi datafeedApi = new DatafeedApi(apiClient);
 
-        return datafeedApi.v1DatafeedIdReadGet(datafeed.getId(),symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken(),100);
+        V2MessageList messageList = datafeedApi.v2DatafeedIdReadGet(datafeed.getId(),symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken(),100);
+
+        List<SymMessage> symMessgeList = new ArrayList<SymMessage>();
+
+        for(V2BaseMessage message: messageList)
+            symMessgeList.add(SymMessage.toSymMessage(message));
+
+
+        return symMessgeList;
     }
 
 

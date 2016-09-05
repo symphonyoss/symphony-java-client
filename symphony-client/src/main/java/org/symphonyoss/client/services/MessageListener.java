@@ -22,6 +22,7 @@
 
 package org.symphonyoss.client.services;
 
+import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.agent.model.Message;
 
 /**
@@ -29,6 +30,9 @@ import org.symphonyoss.symphony.agent.model.Message;
  */
 public interface MessageListener {
 
+    @Deprecated
     void onMessage(Message message);
+
+    void onMessage(SymMessage message);
 
 }

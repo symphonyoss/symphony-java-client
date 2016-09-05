@@ -29,8 +29,10 @@ import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.client.model.Room;
 import org.symphonyoss.symphony.agent.model.Message;
 import org.symphonyoss.symphony.agent.model.MessageList;
+import org.symphonyoss.symphony.clients.model.SymMessage;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -68,7 +70,7 @@ public class RoomWorker implements Runnable {
                 break;
 
 
-            MessageList msgs;
+            List<SymMessage> msgs;
             try {
                 msgs = symClient.getMessagesClient().getMessagesFromStream(room.getStream(), now, 0, 1000);
             } catch (Exception e) {
@@ -88,7 +90,7 @@ public class RoomWorker implements Runnable {
                 continue;
             }
 
-            for (Message message : msgs) {
+            for (SymMessage message : msgs) {
 
                 //Ignore all messages sent by running user.
                 if(symClient.getLocalUser().getId().equals( message.getFromUserId()))
@@ -116,7 +118,7 @@ public class RoomWorker implements Runnable {
                 RoomMessage roomMessage = new RoomMessage();
                 roomMessage.setId(room.getId());
                 roomMessage.setRoomStream(room.getStream());
-                roomMessage.setMessage(message);
+                roomMessage.setRoomMessage(message);
 
                 if (room.getRoomListener() != null)
                     room.getRoomListener().onRoomMessage(roomMessage);

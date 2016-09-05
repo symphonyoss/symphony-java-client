@@ -23,7 +23,6 @@
 package org.symphonyoss.examples.chatsession;
 
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
@@ -34,8 +33,10 @@ import org.symphonyoss.client.services.ChatListener;
 import org.symphonyoss.client.services.ChatServiceListener;
 import org.symphonyoss.symphony.agent.model.Message;
 import org.symphonyoss.symphony.agent.model.MessageSubmission;
+import org.symphonyoss.symphony.agent.model.V2Message;
 import org.symphonyoss.symphony.clients.AuthorizationClient;
 import org.symphonyoss.symphony.pod.model.User;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -157,6 +158,12 @@ public class AttachementExample implements ChatListener, ChatServiceListener {
             e.printStackTrace();
         }
 
+
+
+
+
+
+
     }
 
 
@@ -165,7 +172,7 @@ public class AttachementExample implements ChatListener, ChatServiceListener {
         if (message == null)
             return;
 
-        logger.debug("TS: {}\nFrom ID: {}\nMessage: {}\nMessage Type: {}",
+        logger.debug("TS: {}\nFrom ID: {}\nSymMessage: {}\nSymMessage Type: {}",
                 message.getTimestamp(),
                 message.getFromUserId(),
                 message.getMessage(),

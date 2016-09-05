@@ -1,6 +1,6 @@
 swagger: '2.0'
 info:
-  version: '1.38.0'
+  version: '1.40.0'
   title: Agent API
   description: |
     This document refers to Symphony API calls to send and receive messages
@@ -102,7 +102,7 @@ paths:
 
           This method is intended for historic queries and is generally reliable
           but if guaranteed delivery of every message in real time is required
-          then the equivilent firehose method should be called.
+          then the equivilent datafeed method should be called.
       produces:
         - application/json
       parameters:
@@ -246,7 +246,7 @@ paths:
           required: true
           type: string
         - name: fileId
-          description: The attachment ID
+          description: The attachment ID (Base64-encoded)
           in: query
           required: true
           type: string
@@ -528,7 +528,7 @@ paths:
 
           This method is intended for historic queries and is generally reliable
           but if guaranteed delivery of every message in real time is required
-          then the equivilent firehose method should be called.
+          then the equivilent datafeed method should be called.
       produces:
         - application/json
       parameters:
@@ -594,173 +594,44 @@ paths:
           description: 'Server error, see response body for further details.'
           schema:
             $ref: '#/definitions/Error'
-  '/v1/firehose/create':
-      post:
-        summary: LIMITED RELEASE Create a new real time firehose.
-        description: |
-            A firehose provides all user entered messages that occur within a
-            Symphony pod beginning at the point in time that it is created.
-
-            Note that unlike a datafeed, the user calling a firehose does not need to be a member of the conversations
-            for which it will receive messages.
-
-            System messages like new users joining a chatroom are not part of the firehose.
-
-            A firehose can only be created and accessed by a user with the content export role.
-
-            A firehose will expire if its capacity for unread messages is reached.
-        parameters:
-          - name: sessionToken
-            description: Session authentication token.
-            in: header
-            required: true
-            type: string
-          - name: keyManagerToken
-            description: Key Manager authentication token.
-            in: header
-            required: true
-            type: string
-        consumes:
-          - application/json
-        produces:
-          - application/json
-        tags:
-          - Firehose
-        responses:
-          '200':
-            description: OK
-            schema:
-              $ref: '#/definitions/Firehose'
-          '400':
-            description: 'Client error.'
-            schema:
-              $ref: '#/definitions/Error'
-          '401':
-            description: 'Unauthorized: Session tokens invalid.'
-            schema:
-              $ref: '#/definitions/Error'
-          '403':
-            description: 'Forbidden: Caller lacks necessary entitlement.'
-            schema:
-              $ref: '#/definitions/Error'
-          '500':
-            description: 'Server error, see response body for further details.'
-            schema:
-              $ref: '#/definitions/Error'
-  '/v1/firehose/{id}/read':
-    get:
-      summary: LIMITED RELEASE Read a given firehose.
+  '/v1/stream/{sid}/share':
+    post:
+      summary: Share a piece of content into Symphony
       description: |
-          Read messages from the given firehose. If no more messages are available then this method will block.
-          It is intended that the client should re-call this method as soon as it has processed the messages
-          received in the previous call. If the client is able to consume messages more quickly than they become
-          available then each call will initially block, there is no need to delay before re-calling this method.
-
-          A firehose can only be read by a user with the content export role.
-
-          A firehose will expire if its unread capacity is reached.
-
-          A firehose can only be consumed by one client thread at a time. E.g. polling the firehose by two threads may lead to messages being delivered out of order.
-      parameters:
-      - name: id
-        description: |
-          Firehose ID
-        in: path
-        required: true
-        type: string
-      - name: maxMessages
-        description: |
-            Max No. of messages to return.
-        in: query
-        type: integer
-      - name: sessionToken
-        description: Session authentication token.
-        in: header
-        required: true
-        type: string
-      - name: keyManagerToken
-        description: Key Manager authentication token.
-        in: header
-        required: true
-        type: string
+        Given a 3rd party content (eg. news article), it can share to the given stream.
+        The stream can be a chatroom, an IM or a multiparty IM.
       consumes:
         - application/json
       produces:
         - application/json
-      tags:
-        - Firehose
-      responses:
-        '200':
-          description: List of messages that have occurred since last time this URL was polled. If the list is empty, it means the request has reached its timeout, and the client should poll again.
-          schema:
-            $ref: '#/definitions/MessageList'
-        '204':
-          description: No Messages.
-        '400':
-          description: 'Client error, see response body for further details.'
-          schema:
-            $ref: '#/definitions/Error'
-        '401':
-          description: 'Unauthorized: Session tokens invalid.'
-          schema:
-            $ref: '#/definitions/Error'
-        '403':
-          description: 'Forbidden: Caller lacks necessary entitlement.'
-          schema:
-            $ref: '#/definitions/Error'
-        '500':
-          description: 'Server error, see response body for further details.'
-          schema:
-            $ref: '#/definitions/Error'
-  '/v2/firehose/{id}/read':
-    get:
-      summary: LIMITED RELEASE Read a given firehose.
-      description: |
-          Read messages from the given firehose. If no more messages are available then this method will block.
-          It is intended that the client should re-call this method as soon as it has processed the messages
-          received in the previous call. If the client is able to consume messages more quickly than they become
-          available then each call will initially block, there is no need to delay before re-calling this method.
-
-          A firehose can only be read by a user with the content export role.
-
-          A firehose will expire if its unread capacity is reached.
-
-          A firehose can only be consumed by one client thread at a time. E.g. polling the firehose by two threads may lead to messages being delivered out of order.
       parameters:
-      - name: id
-        description: |
-          Firehose ID
-        in: path
-        required: true
-        type: string
-      - name: maxMessages
-        description: |
-            Max No. of messages to return.
-        in: query
-        type: integer
-      - name: sessionToken
-        description: Session authentication token.
-        in: header
-        required: true
-        type: string
-      - name: keyManagerToken
-        description: Key Manager authentication token.
-        in: header
-        required: true
-        type: string
-      consumes:
-        - application/json
-      produces:
-        - application/json
+        - name: sid
+          description: Stream ID
+          in: path
+          required: true
+          type: string
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: keyManagerToken
+          description: Key Manager authentication token.
+          in: header
+          required: true
+          type: string
+        - name: shareContent
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/ShareContent'
       tags:
-        - Firehose
+        - Share
       responses:
         '200':
-          description: List of messages that have occurred since last time this URL was polled. If the list is empty, it means the request has reached its timeout, and the client should poll again.
+          description: Success
           schema:
-            $ref: '#/definitions/V2MessageList'
-        '204':
-          description: No Messages.
+            $ref: '#/definitions/V2Message'
         '400':
           description: 'Client error, see response body for further details.'
           schema:
@@ -1010,7 +881,7 @@ definitions:
       Also, the importing user must be a member of the conversation it is importing into.
       The user that the message is intended to have come from must also be present in the conversation.
       The intended message timestamp must be a valid time from the past. It cannot be a future timestamp.
-      By design, imported messages do not stream to datafeed or firehose endpoints.
+      By design, imported messages do not stream to datafeed endpoints.
     type: object
     properties:
       message:
@@ -1301,11 +1172,6 @@ definitions:
     properties:
       message:
         type: string
-  Firehose:
-    type: object
-    properties:
-      id:
-        type: string
   Datafeed:
     type: object
     properties:
@@ -1323,6 +1189,59 @@ definitions:
     required:
     - key
     - value
+  ShareArticle:
+    type: object
+    properties:
+      articleId:
+        type: string
+        description: An ID for this article that should be unique to the calling application.
+      title:
+        type: string
+        description: The title of the article
+      subTitle:
+        type: string
+        description: The subtitle of the article
+      message:
+        type: string
+        description: The message text that can be send along with the shared article
+      publisher:
+        type: string
+        description: Publisher of the article
+      thumbnailUrl:
+        type: string
+        description: Url to the thumbnail image
+      author:
+        type: string
+        description: Author of the article
+      articleUrl:
+        type: string
+        description: Url to the article
+      summary:
+        type: string
+        description: Preview summary of the article
+      appId:
+        type: string
+        description: App ID of the calling application
+      appName:
+        type: string
+        description: App name of the calling application
+      appIconUrl:
+          type: string
+          description: App icon url of the calling application
+    required:
+    - articleId
+    - title
+    - publisher
+    - author
+    - appId
+  ShareContent:
+    type: object
+    properties:
+      type:
+        type: string
+        description: Type of content to be shared.  Currently only support "com.symphony.sharing.article"
+      content:
+        $ref: '#/definitions/ShareArticle'
   V1HealthCheckResponse:
     type: object
     properties:

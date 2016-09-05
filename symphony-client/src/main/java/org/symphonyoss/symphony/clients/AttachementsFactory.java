@@ -23,6 +23,7 @@
 package org.symphonyoss.symphony.clients;
 
 import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.symphony.clients.impl.AttachmentsClientImpl;
 import org.symphonyoss.symphony.clients.impl.DataFeedClientImpl;
 
 /**
@@ -32,9 +33,9 @@ public class AttachementsFactory {
 
     public enum TYPE { DEFAULT, v1, v2 }
 
-    public static DataFeedClient getClient(SymphonyClient symClient, TYPE type){
+    public static AttachmentsClient getClient(SymphonyClient symClient, TYPE type){
 
-            return new DataFeedClientImpl(symClient.getSymAuth(), symClient.getAgentUrl());
+            return new AttachmentsClientImpl(symClient.getSymAuth(), symClient.getAgentUrl());
 
     }
 

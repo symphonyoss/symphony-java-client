@@ -22,8 +22,9 @@
 
 package org.symphonyoss.symphony.clients.model;
 
-import org.symphonyoss.client.model.SymAttachmentInfo;
 import org.symphonyoss.symphony.agent.model.Message;
+import org.symphonyoss.symphony.agent.model.V2BaseMessage;
+import org.symphonyoss.symphony.agent.model.V2Message;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,24 @@ import java.util.List;
  */
 public class SymMessage {
 
+    public enum Format {
+        TEXT("TEXT"),
+
+        MESSAGEML("MESSAGEML");
+
+        private String value;
+
+        Format(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
+    private Format format = Format.TEXT;
 
     private String id = null;
 
@@ -105,6 +124,14 @@ public class SymMessage {
         this.attachments = attachments;
     }
 
+    public Format getFormat() {
+        return format;
+    }
+
+    public void setFormat(Format format) {
+        this.format = format;
+    }
+
     public static SymMessage toSymMessage(Message message) {
         SymMessage symMessage = new SymMessage();
         symMessage.setId(message.getId());
@@ -115,4 +142,43 @@ public class SymMessage {
         symMessage.setTimestamp(message.getTimestamp());
         return symMessage;
     }
+
+    public static SymMessage toSymMessage(V2BaseMessage v2BaseMessage) {
+
+        SymMessage symMessage = new SymMessage();
+        symMessage.setId(v2BaseMessage.getId());
+        symMessage.setStreamId(v2BaseMessage.getStreamId());
+        symMessage.setMessage(((V2Message) v2BaseMessage).getMessage());
+        symMessage.setMessageType(v2BaseMessage.getV2messageType());
+        symMessage.setFromUserId(((V2Message) v2BaseMessage).getFromUserId());
+        symMessage.setTimestamp(v2BaseMessage.getTimestamp());
+        return symMessage;
+    }
+
+    @Deprecated
+    public static Message toV1Message(V2BaseMessage v2BaseMessage) {
+
+        Message v1Message= new Message();
+        v1Message.setId(v2BaseMessage.getId());
+        v1Message.setStreamId(v2BaseMessage.getStreamId());
+        v1Message.setMessage(((V2Message) v2BaseMessage).getMessage());
+        v1Message.setMessageType(v2BaseMessage.getV2messageType());
+        v1Message.setFromUserId(((V2Message) v2BaseMessage).getFromUserId());
+        v1Message.setTimestamp(v2BaseMessage.getTimestamp());
+        return v1Message;
+    }
+
+    @Deprecated
+    public static Message toV1Message(SymMessage symMessage) {
+
+        Message v1Message= new Message();
+        v1Message.setId(symMessage.getId());
+        v1Message.setStreamId(symMessage.getStreamId());
+        v1Message.setMessage(symMessage.getMessage());
+        v1Message.setMessageType(symMessage.getMessageType());
+        v1Message.setFromUserId(symMessage.getFromUserId());
+        v1Message.setTimestamp(symMessage.getTimestamp());
+        return v1Message;
+    }
+
 }

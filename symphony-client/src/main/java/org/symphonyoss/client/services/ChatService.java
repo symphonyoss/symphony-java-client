@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.symphony.agent.model.Message;
 import org.symphonyoss.client.model.Chat;
+import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.pod.model.Stream;
 import org.symphonyoss.symphony.pod.model.User;
 
@@ -122,7 +123,7 @@ public class ChatService implements MessageListener {
 
     }
 
-    private Chat createNewChatFromMessage(Message message){
+    private Chat createNewChatFromMessage(SymMessage message){
 
         try {
             Chat chat = new Chat();
@@ -147,11 +148,17 @@ public class ChatService implements MessageListener {
         return null;
     }
 
+    @Deprecated
     public void onMessage(Message message) {
 
+      onMessage(SymMessage.toSymMessage(message));
+
+    }
+
+    @Override
+    public void onMessage(SymMessage message) {
         if(message== null)
             return;
-
 
 
 
@@ -177,7 +184,7 @@ public class ChatService implements MessageListener {
                 chat = createNewChatFromMessage(message);
                 if(chat!=null) {
                     addChat(chat);
-                 }else{
+                }else{
                     logger.error("Failed to add new chat from message {} {}",message.getStreamId(), message.getFromUserId());
                     return;
                 }
@@ -189,7 +196,6 @@ public class ChatService implements MessageListener {
 
 
         }
-
 
 
     }

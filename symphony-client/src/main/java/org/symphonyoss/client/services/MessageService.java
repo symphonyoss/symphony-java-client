@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.client.model.Room;
+import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.agent.model.Message;
 import org.symphonyoss.symphony.agent.model.MessageList;
 import org.symphonyoss.symphony.agent.model.MessageSubmission;
@@ -33,22 +34,22 @@ import org.symphonyoss.client.model.Chat;
 import org.symphonyoss.symphony.pod.model.Stream;
 import org.symphonyoss.symphony.pod.model.User;
 
-import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by Frank Tarsillo on 5/15/2016.
  */
-public class MessageService implements MessageListener{
+public class MessageService implements MessageListener {
 
     private final SymphonyClient symClient;
     private org.symphonyoss.symphony.agent.invoker.ApiClient agentClient;
     private final Logger logger = LoggerFactory.getLogger(MessageService.class);
     private final MessageFeedWorker messageFeedWorker;
-    private final Set<MessageListener> messageListeners =  ConcurrentHashMap.newKeySet();
+    private final Set<MessageListener> messageListeners = ConcurrentHashMap.newKeySet();
 
-    public MessageService(SymphonyClient symClient){
+    public MessageService(SymphonyClient symClient) {
 
         this.symClient = symClient;
 
@@ -58,16 +59,16 @@ public class MessageService implements MessageListener{
     }
 
 
-    public void sendMessage(Room room, MessageSubmission message) throws Exception{
+    public void sendMessage(Room room, MessageSubmission message) throws Exception {
 
-        symClient.getMessagesClient().sendMessage(room.getStream(),message);
+        symClient.getMessagesClient().sendMessage(room.getStream(), message);
 
     }
 
 
     public void sendMessage(Chat chat, MessageSubmission message) throws Exception {
 
-        symClient.getMessagesClient().sendMessage(chat.getStream(),message);
+        symClient.getMessagesClient().sendMessage(chat.getStream(), message);
 
     }
 
@@ -76,12 +77,12 @@ public class MessageService implements MessageListener{
 
         User remoteUser = symClient.getUsersClient().getUserFromEmail(email);
 
-        symClient.getMessagesClient().sendMessage(symClient.getStreamsClient().getStream(remoteUser),message);
+        symClient.getMessagesClient().sendMessage(symClient.getStreamsClient().getStream(remoteUser), message);
 
     }
 
 
-    private MessageList getMessagesFromStream(Stream stream, Long since, Integer offset, Integer maxMessages) throws Exception {
+    private List<SymMessage> getMessagesFromStream(Stream stream, Long since, Integer offset, Integer maxMessages) throws Exception {
 
         return symClient.getMessagesClient().getMessagesFromStream(
                 stream, since, offset, maxMessages);
@@ -89,7 +90,7 @@ public class MessageService implements MessageListener{
     }
 
 
-    public MessageList getMessagesFromUserId(long userId, Long since, Integer offset, Integer maxMessages) throws Exception {
+    public List<SymMessage> getMessagesFromUserId(long userId, Long since, Integer offset, Integer maxMessages) throws Exception {
 
 
         User user = new User();
@@ -103,30 +104,38 @@ public class MessageService implements MessageListener{
     }
 
 
-
-    public void onMessage(Message message) {
+    private void processMessage(SymMessage message) {
 
         logger.debug("LocalID: {} messageID: {}", symClient.getLocalUser().getId(), message.getFromUserId());
-        if(symClient.getLocalUser().getId().equals( message.getFromUserId()))
+        if (symClient.getLocalUser().getId().equals(message.getFromUserId()))
             return;
 
-        if(message.getStreamId() == null)
+        if (message.getStreamId() == null)
             return;
 
 
-
-        for(MessageListener messageListener: messageListeners){
-            if(messageListener !=null)
+        for (MessageListener messageListener : messageListeners) {
+            if (messageListener != null)
                 messageListener.onMessage(message);
         }
-        logger.debug("TS: {}\nFrom ID: {}\nMessage: {}\nType: {}",
+        logger.debug("TS: {}\nFrom ID: {}\nSymMessage: {}\nType: {}",
                 message.getTimestamp(),
                 message.getFromUserId(),
                 message.getMessage(),
                 message.getMessageType());
 
 
+    }
 
+    public void onMessage(Message message) {
+
+        processMessage(SymMessage.toSymMessage(message));
+
+    }
+
+    @Override
+    public void onMessage(SymMessage message) {
+        processMessage(message);
     }
 
     public boolean registerMessageListener(MessageListener messageListener) {
@@ -134,6 +143,7 @@ public class MessageService implements MessageListener{
         return messageListeners.add(messageListener);
 
     }
+
     public boolean removeMessageListener(MessageListener messageListener) {
 
         return messageListeners.remove(messageListener);

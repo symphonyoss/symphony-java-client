@@ -22,11 +22,17 @@
 
 package org.symphonyoss.client.services;
 
+import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.agent.model.Message;
 
 /**
  * Created by Frank Tarsillo on 5/22/2016.
  */
 public interface ChatListener {
+
+    @Deprecated
     void onChatMessage(Message message);
+
+
+    void onChatMessage(SymMessage message);
 }

@@ -192,7 +192,7 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
         if (message == null)
             return;
 
-        logger.debug("TS: {}\nFrom ID: {}\nMessage: {}\nMessage Type: {}",
+        logger.debug("TS: {}\nFrom ID: {}\nSymMessage: {}\nSymMessage Type: {}",
                 message.getTimestamp(),
                 message.getFromUserId(),
                 message.getMessage(),

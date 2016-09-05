@@ -28,7 +28,9 @@ import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.symphony.agent.model.Datafeed;
 import org.symphonyoss.symphony.agent.model.Message;
 import org.symphonyoss.symphony.agent.model.MessageList;
+import org.symphonyoss.symphony.clients.model.SymMessage;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -78,13 +80,13 @@ class MessageFeedWorker implements Runnable {
                 }
 
 
-                MessageList messageList = symClient.getDataFeedClient().getMessagesFromDatafeed(datafeed);
+                List<SymMessage> messageList = symClient.getDataFeedClient().getMessagesFromDatafeed(datafeed);
 
                 if(messageList != null) {
                     logger.debug("Received {} messages..", messageList.size());
 
-                    for (Message message : messageList) {
-                   //     logger.debug("Message received from stream {} {}", message.getId(),message.getStream());
+                    for (SymMessage message : messageList) {
+                   //     logger.debug("SymMessage received from stream {} {}", message.getId(),message.getStream());
                         messageListener.onMessage(message);
                     }
                 }

@@ -1,6 +1,6 @@
 swagger: '2.0'
 info:
-  version: '1.38.0'
+  version: '1.40.0'
   title: Pod API
   description: |
     This document refers to Symphony API calls that do not need
@@ -91,64 +91,6 @@ paths:
           description: 'Server error, see response body for further details.'
           schema:
             $ref: '#/definitions/Error'
-    post:
-      summary: LIMITED RELEASE Set presence information for a particular user.
-      description: |
-        Only the following states can be set
-        AVAILABLE
-        BUSY
-        ON_THE_PHONE
-        AWAY
-
-        Attempts to set other states will result in a 403 FORBIDDEN response.
-
-        The UNDEFINED value is an error case used to represent the case if the value stored in the
-        system cannot be represented by the values known to the API.
-
-        The other states are reserved for future use.
-      produces:
-        - application/json
-      parameters:
-        - name: uid
-          description: |
-            User ID as a decimal integer
-          in: path
-          required: true
-          type: integer
-          format: int64
-        - name: sessionToken
-          description: Session authentication token.
-          in: header
-          required: true
-          type: string
-        - name: presence
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/Presence'
-      tags:
-        - Presence
-      responses:
-        '200':
-          description: OK
-          schema:
-            $ref: '#/definitions/Presence'
-        '400':
-          description: 'Client error.'
-          schema:
-            $ref: '#/definitions/Error'
-        '401':
-          description: 'Unauthorized.'
-          schema:
-            $ref: '#/definitions/Error'
-        '403':
-          description: 'Forbidden.'
-          schema:
-            $ref: '#/definitions/Error'
-        '500':
-          description: 'Server error, see response body for further details.'
-          schema:
-            $ref: '#/definitions/Error'
   '/v1/presence':
     get:
       summary: Get presence information about all company (pod) users.
@@ -221,6 +163,68 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/User'
+        '204':
+          description: 'No user found.'
+        '400':
+          description: 'Client error.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v2/user':
+    get:
+      summary: Get user information
+      produces:
+        - application/json
+      parameters:
+        - name: uid
+          description: User ID as a decimal integer
+          in: query
+          required: false
+          type: integer
+          format: int64
+        - name: email
+          description: Email address
+          in: query
+          required: false
+          type: string
+          format: email
+        - name: username
+          description: login user name
+          in: query
+          required: false
+          type: string
+        - name: local
+          description: |
+            If true then a local DB search will be performed and only local pod users will be
+            returned. If absent or false then a directory search will be performed and users
+            from other pods who are visible to the calling user will also be returned.
+            Note: for username search, the local flag must be true
+          in: query
+          required: false
+          type: boolean
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+      tags:
+        - Users
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/UserV2'
         '204':
           description: 'No user found.'
         '400':
@@ -854,7 +858,7 @@ paths:
             $ref: '#/definitions/Error'
   '/v1/im/create':
     post:
-      summary: Create a new single or multi party instant message conversation
+      summary: Create a new single or multi party instant message conversation between the caller and specified users.
       description: |
           At least one user ID must be provided or
           an error response will be sent.
@@ -871,6 +875,60 @@ paths:
           This method was incorrectly specified to take a query parameter in
           version 1.0 of this specification but now expects a JSON array of
           user IDs in the body of the request.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: uidList
+          description: List of (integer) User IDs of participants
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserIdList'
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+      tags:
+        - Streams
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Stream'
+        '400':
+          description: 'Client error.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/admin/im/create':
+    post:
+      summary: Create a new single or multi party instant message conversation
+      description: |
+          At least two user IDs must be provided or
+          an error response will be sent.
+
+          The caller is not included in the members of the
+          created chat.
+
+          Duplicate users will be included in the membership of the chat but
+          the duplication will be silently ignored.
+
+          If there is an existing IM conversation with the same set of participants then
+          the id of that existing stream will be returned.
       consumes:
         - application/json
       produces:
@@ -1035,47 +1093,6 @@ paths:
           description: 'Server error, see response body for further details.'
           schema:
             $ref: '#/definitions/Error'
-  '/v1/admin/user/find':
-    post:
-      summary: PROVISIONAL Find a user based on attributes
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      parameters:
-        - name: sessionToken
-          description: Session authentication token.
-          in: header
-          required: true
-          type: string
-        - name: payload
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/UserFilter'
-      tags:
-        - User
-      responses:
-        '200':
-          description: Success
-          schema:
-            $ref: '#/definitions/UserList'
-        '400':
-          description: 'Client error, see response body for further details.'
-          schema:
-            $ref: '#/definitions/Error'
-        '401':
-          description: 'Unauthorized: Session tokens invalid.'
-          schema:
-            $ref: '#/definitions/Error'
-        '403':
-          description: 'Forbidden: Caller lacks necessary entitlement.'
-          schema:
-            $ref: '#/definitions/Error'
-        '500':
-          description: 'Server error, see response body for further details.'
-          schema:
-            $ref: '#/definitions/Error'
   '/v1/admin/user/{uid}':
     get:
       summary: Retreive user details for a particular user
@@ -1103,54 +1120,6 @@ paths:
           description: Success
           schema:
             $ref: '#/definitions/UserDetail'
-        '400':
-          description: 'Client error, see response body for further details.'
-          schema:
-            $ref: '#/definitions/Error'
-        '401':
-          description: 'Unauthorized: Session tokens invalid.'
-          schema:
-            $ref: '#/definitions/Error'
-        '403':
-          description: 'Forbidden: Caller lacks necessary entitlement.'
-          schema:
-            $ref: '#/definitions/Error'
-        '500':
-          description: 'Server error, see response body for further details.'
-          schema:
-            $ref: '#/definitions/Error'
-  '/v1/admin/user/{uid}/action/password_reset':
-    post:
-      summary: PROVISIONAL Send a password reset email to the email address of a particular user
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      parameters:
-        - name: sessionToken
-          description: Session authentication token.
-          in: header
-          required: true
-          type: string
-        - name: uid
-          description: |
-            User ID as a decimal integer
-          in: path
-          required: true
-          type: integer
-          format: int64
-        - name: payload
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/PasswordReset'
-      tags:
-        - User
-      responses:
-        '200':
-          description: Success
-          schema:
-            $ref: '#/definitions/SuccessResponse'
         '400':
           description: 'Client error, see response body for further details.'
           schema:
@@ -1513,97 +1482,6 @@ paths:
           description: 'Server error, see response body for further details.'
           schema:
             $ref: '#/definitions/Error'
-  '/v1/admin/user/{uid}/roles':
-    get:
-      summary: PROVISIONAL Get the list of roles assigned to a user
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      parameters:
-        - name: sessionToken
-          description: Session authentication token.
-          in: header
-          required: true
-          type: string
-        - name: uid
-          description: |
-            User ID as a decimal integer
-          in: path
-          required: true
-          type: integer
-          format: int64
-      tags:
-        - User
-      responses:
-        '200':
-          description: Success
-          schema:
-            $ref: '#/definitions/RoleList'
-        '400':
-          description: 'Client error, see response body for further details.'
-          schema:
-            $ref: '#/definitions/Error'
-        '401':
-          description: 'Unauthorized: Session tokens invalid.'
-          schema:
-            $ref: '#/definitions/Error'
-        '403':
-          description: 'Forbidden: Caller lacks necessary entitlement.'
-          schema:
-            $ref: '#/definitions/Error'
-        '500':
-          description: 'Server error, see response body for further details.'
-          schema:
-            $ref: '#/definitions/Error'
-  '/v1/admin/user/{uid}/roles/update':
-    post:
-      summary: PROVISIONAL Update the list of roles assigned to a user
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      parameters:
-        - name: sessionToken
-          description: Session authentication token.
-          in: header
-          required: true
-          type: string
-        - name: uid
-          description: |
-            User ID as a decimal integer
-          in: path
-          required: true
-          type: integer
-          format: int64
-        - name: payload
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/StringList'
-      tags:
-        - User
-      responses:
-        '200':
-          description: Success
-          schema:
-            $ref: '#/definitions/SuccessResponse'
-        '400':
-          description: 'Client error, see response body for further details.'
-          schema:
-            $ref: '#/definitions/Error'
-        '401':
-          description: 'Unauthorized: Session tokens invalid.'
-          schema:
-            $ref: '#/definitions/Error'
-        '403':
-          description: 'Forbidden: Caller lacks necessary entitlement.'
-          schema:
-            $ref: '#/definitions/Error'
-        '500':
-          description: 'Server error, see response body for further details.'
-          schema:
-            $ref: '#/definitions/Error'
   '/v1/admin/user/{uid}/disclaimer/update':
     post:
       summary: Assign a disclaimer to a user
@@ -1879,93 +1757,6 @@ paths:
           description: 'Server error, see response body for further details.'
           schema:
             $ref: '#/definitions/Error'
-  '/v1/admin/disclaimer/create':
-    post:
-      summary: PROVISIONAL Create a new disclaimer. The id and timestamps should not be set, they will be assigned in the response.
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      parameters:
-        - name: sessionToken
-          description: Session authentication token.
-          in: header
-          required: true
-          type: string
-        - name: payload
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/Disclaimer'
-      tags:
-        - Disclaimer
-      responses:
-        '200':
-          description: The created disclaimer
-          schema:
-            $ref: '#/definitions/Disclaimer'
-        '400':
-          description: 'Client error, see response body for further details.'
-          schema:
-            $ref: '#/definitions/Error'
-        '401':
-          description: 'Unauthorized: Session tokens invalid.'
-          schema:
-            $ref: '#/definitions/Error'
-        '403':
-          description: 'Forbidden: Caller lacks necessary entitlement.'
-          schema:
-            $ref: '#/definitions/Error'
-        '500':
-          description: 'Server error, see response body for further details.'
-          schema:
-            $ref: '#/definitions/Error'
-  '/v1/admin/disclaimer/{did}/update':
-    post:
-      summary: PROVISIONAL Modify a disclaimer
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      parameters:
-        - name: sessionToken
-          description: Session authentication token.
-          in: header
-          required: true
-          type: string
-        - name: did
-          in: path
-          type: string
-          description: The ID of the entity
-          required: true
-        - name: payload
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/Disclaimer'
-      tags:
-        - Disclaimer
-      responses:
-        '200':
-          description: Success
-          schema:
-            $ref: '#/definitions/Disclaimer'
-        '400':
-          description: 'Client error, see response body for further details.'
-          schema:
-            $ref: '#/definitions/Error'
-        '401':
-          description: 'Unauthorized: Session tokens invalid.'
-          schema:
-            $ref: '#/definitions/Error'
-        '403':
-          description: 'Forbidden: Caller lacks necessary entitlement.'
-          schema:
-            $ref: '#/definitions/Error'
-        '500':
-          description: 'Server error, see response body for further details.'
-          schema:
-            $ref: '#/definitions/Error'
   '/v1/admin/disclaimer/{did}':
     get:
       summary: Get a disclaimer by disclaimer id
@@ -2102,42 +1893,6 @@ paths:
       responses:
         '200':
           description: The list of valid feature entitlement names.
-          schema:
-            $ref: '#/definitions/StringList'
-        '400':
-          description: 'Client error, see response body for further details.'
-          schema:
-            $ref: '#/definitions/Error'
-        '401':
-          description: 'Unauthorized: Session tokens invalid.'
-          schema:
-            $ref: '#/definitions/Error'
-        '403':
-          description: 'Forbidden: Caller lacks necessary entitlement.'
-          schema:
-            $ref: '#/definitions/Error'
-        '500':
-          description: 'Server error, see response body for further details.'
-          schema:
-            $ref: '#/definitions/Error'
-  '/v1/admin/system/roles/list':
-    get:
-      summary: PROVISIONAL Get a list of all roles available in the company (pod)
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      parameters:
-        - name: sessionToken
-          description: Session authentication token.
-          in: header
-          required: true
-          type: string
-      tags:
-        - System
-      responses:
-        '200':
-          description: Success
           schema:
             $ref: '#/definitions/StringList'
         '400':
@@ -2758,159 +2513,9 @@ paths:
           description: 'Server error, see response body for further details.'
           schema:
             $ref: '#/definitions/Error'
-  '/v1/configuration/list':
-      get:
-        summary: Gets a list of Configurations.
-        description: |
-          A caller can get all Configuration objects.
-
-          If there are no Configurations to return, a 204 response will be returned.
-        produces:
-          - application/json
-        parameters:
-          - name: offset
-            description: |
-              No. of Configurations to skip.
-            in: query
-            type: integer
-            required: false
-          - name: limit
-            description: |
-              Max No. of Configurations to return. If no value is provided,
-              50 is the default.
-            in: query
-            type: integer
-            required: false
-          - name: sessionToken
-            description: Session authentication token.
-            in: header
-            required: true
-            type: string
-        tags:
-          - Configuration
-        responses:
-          '200':
-            description: OK.
-            schema:
-              $ref: '#/definitions/ConfigurationList'
-          '204':
-            description: No Configurations.
-          '400':
-            description: 'Client error, see response body for further details.'
-            schema:
-              $ref: '#/definitions/Error'
-          '401':
-            description: 'Unauthorized: Session tokens invalid.'
-            schema:
-              $ref: '#/definitions/Error'
-          '403':
-            description: 'Forbidden: Caller lacks necessary entitlement.'
-            schema:
-              $ref: '#/definitions/Error'
-          '500':
-            description: 'Server error, see response body for further details.'
-            schema:
-              $ref: '#/definitions/Error'
-  '/v1/configuration/{configurationId}/get':
-    get:
-      summary: Gets a Configuration object.
-      description: |
-        A caller can get a Configuration object for a given ID.
-
-        If the {configurationId} is invalid, a client error results.
-
-        If the ID is correct, then 200 is returned along with the Configuration.
-      produces:
-        - application/json
-      parameters:
-        - name: configurationId
-          description: Configuration ID
-          in: path
-          required: true
-          type: string
-        - name: sessionToken
-          description: Session authentication token.
-          in: header
-          required: true
-          type: string
-      tags:
-        - Configuration
-      responses:
-        '200':
-          description: OK.
-          schema:
-            $ref: '#/definitions/V1Configuration'
-        '400':
-          description: 'Client error, see response body for further details.'
-          schema:
-            $ref: '#/definitions/Error'
-        '401':
-          description: 'Unauthorized: Session tokens invalid.'
-          schema:
-            $ref: '#/definitions/Error'
-        '403':
-          description: 'Forbidden: Caller lacks necessary entitlement.'
-          schema:
-            $ref: '#/definitions/Error'
-        '500':
-          description: 'Server error, see response body for further details.'
-          schema:
-            $ref: '#/definitions/Error'
-  '/v1/configuration/{configurationId}/update':
-    put:
-      summary: Update a Configuration object.
-      description: |
-        A caller can update a Configuration object.
-
-        If the {configurationId} is invalid, a client error results.
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      parameters:
-        - name: configurationId
-          description: Configuration ID
-          in: path
-          required: true
-          type: string
-        - name: sessionToken
-          description: Session authentication token.
-          in: header
-          required: true
-          type: string
-        - name: configuration
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/V1Configuration'
-      tags:
-        - Configuration
-      responses:
-        '200':
-          description: OK.
-          schema:
-            $ref: '#/definitions/V1Configuration'
-        '400':
-          description: 'Client error, see response body for further details.'
-          schema:
-            $ref: '#/definitions/Error'
-        '401':
-          description: 'Unauthorized: Session tokens invalid.'
-          schema:
-            $ref: '#/definitions/Error'
-        '403':
-          description: 'Forbidden: Caller lacks necessary entitlement.'
-          schema:
-            $ref: '#/definitions/Error'
-        '500':
-          description: 'Server error, see response body for further details.'
-          schema:
-            $ref: '#/definitions/Error'
-  '/v1/configuration/create':
+  '/v1/connection/create':
     post:
-      summary: Create a Configuration object.
-      description: |
-        A caller can create a Configuration object.
+      summary: Sends an invitation to connect with another user
       consumes:
         - application/json
       produces:
@@ -2921,132 +2526,18 @@ paths:
           in: header
           required: true
           type: string
-        - name: configuration
+        - name: connectionRequest
           in: body
           required: true
           schema:
-            $ref: '#/definitions/V1ConfigurationSubmissionCreate'
+            $ref: '#/definitions/UserConnectionRequest'
       tags:
-        - Configuration
-      responses:
-        '200':
-          description: OK.
-          schema:
-            $ref: '#/definitions/V1Configuration'
-        '400':
-          description: 'Client error, see response body for further details.'
-          schema:
-            $ref: '#/definitions/Error'
-        '401':
-          description: 'Unauthorized: Session tokens invalid.'
-          schema:
-            $ref: '#/definitions/Error'
-        '403':
-          description: 'Forbidden: Caller lacks necessary entitlement.'
-          schema:
-            $ref: '#/definitions/Error'
-        '500':
-          description: 'Server error, see response body for further details.'
-          schema:
-            $ref: '#/definitions/Error'
-  '/v1/configuration/{configurationId}/instance/list':
-    get:
-      summary: Get a list of configuration Instances from an Integration.
-      description: |
-        A caller can get all configuration Instances objects for a given Configuration ID.
-
-        If the {configurationId} is invalid, a client error results.
-
-        If there are no configuration Instances to return, a 204 response will be
-        returned.
-      produces:
-        - application/json
-      parameters:
-        - name: configurationId
-          description: Configuration ID
-          in: path
-          required: true
-          type: string
-        - name: offset
-          description: |
-            No. of configuration Instances to skip.
-          in: query
-          type: integer
-          required: false
-        - name: limit
-          description: |
-            Max No. of configuration Instances to return. If no value is
-            provided, 50 is the default.
-          in: query
-          type: integer
-          required: false
-        - name: sessionToken
-          description: Session authentication token.
-          in: header
-          required: true
-          type: string
-      tags:
-        - ConfigurationInstance
-      responses:
-        '200':
-          description: OK.
-          schema:
-            $ref: '#/definitions/ConfigurationInstanceList'
-        '204':
-          description: No configuration Instances.
-        '400':
-          description: 'Client error, see response body for further details.'
-          schema:
-            $ref: '#/definitions/Error'
-        '401':
-          description: 'Unauthorized: Session tokens invalid.'
-          schema:
-            $ref: '#/definitions/Error'
-        '403':
-          description: 'Forbidden: Caller lacks necessary entitlement.'
-          schema:
-            $ref: '#/definitions/Error'
-        '500':
-          description: 'Server error, see response body for further details.'
-          schema:
-            $ref: '#/definitions/Error'
-  '/v1/configuration/{configurationId}/instance/{instanceId}/get':
-    get:
-      summary: Get a configuration Instance from a Configuration.
-      description: |
-        A caller can get a configuration Instance object for a given Configuration and Instance ID.
-
-        If the {configurationId} is invalid, a client error results.
-
-        If the {instanceId} is invalid, a client error results.
-
-        If the ID is correct, then 200 is returned along with the configuration
-        Instance.
-      produces:
-        - application/json
-      parameters:
-        - name: configurationId
-          description: Configuration ID
-          in: path
-          required: true
-          type: string
-        - name: instanceId
-          description: Configuration Instance ID
-          in: path
-          required: true
-          type: string
-        - name: sessionToken
-          description: Session authentication token.
-          in: header
-          required: true
-          type: string
-      tags:
-        - ConfigurationInstance
+        - Connection
       responses:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/ConfigurationInstance'
+            $ref: '#/definitions/UserConnection'
         '400':
           description: 'Client error, see response body for further details.'
           schema:
@@ -3063,47 +2554,29 @@ paths:
           description: 'Server error, see response body for further details.'
           schema:
             $ref: '#/definitions/Error'
-  '/v1/configuration/{configurationId}/instance/{instanceId}/update':
-    put:
-      summary: Update a configuration Instance object.
-      description: |
-        A caller can update a configuration Instance object.
-
-        If the {configurationId} is invalid, a client error results.
-
-        If the {instanceId} is invalid, a client error results.
-      consumes:
-        - application/json
+  '/v1/connection/user/{userId}/info':
+    get:
+      summary: The status of the connection invitation to another user.
       produces:
         - application/json
       parameters:
-        - name: configurationId
-          description: Configuration ID
-          in: path
-          required: true
-          type: string
-        - name: instanceId
-          description: Configuration Instance ID
-          in: path
-          required: true
-          type: string
         - name: sessionToken
           description: Session authentication token.
           in: header
           required: true
           type: string
-        - name: configurationInstance
-          in: body
+        - name: userId
+          description: user Id
+          in: path
           required: true
-          schema:
-            $ref: '#/definitions/ConfigurationInstanceSubmissionUpdate'
+          type: string
       tags:
-        - ConfigurationInstance
+        - Connection
       responses:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/ConfigurationInstance'
+            $ref: '#/definitions/UserConnection'
         '400':
           description: 'Client error, see response body for further details.'
           schema:
@@ -3120,40 +2593,131 @@ paths:
           description: 'Server error, see response body for further details.'
           schema:
             $ref: '#/definitions/Error'
-  '/v1/configuration/{configurationId}/instance/create':
+  '/v1/connection/list':
+    get:
+      summary: List of requesting user's connection
+      description: |
+        This retrieves all connections of the requesting user. (i.e. both connections in which the requesting user is the sender and those
+        in which the requesting user is the inivtee) By default, if you haven't specified the connection status to filter on, this call will only
+        return results for both "pending_incoming" and "pending_outgoing". You can optionally filter by userIds to further restrict the results of
+        a specific connection status. If the users are in the same private pod, the users have an implicit connection status of "accepted". Those
+        users will not be returned in the response if you don't specify the connection status as "accepted" (default is "pending")
+        and the explicit userIds in the request.
+      produces:
+        - application/json
+      parameters:
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: status
+          description: |
+            Filter the connection list based on the connection status.
+            The connection status can only be pending_incoming, pending_outgoing, accepted, rejected, or all (all of the above)
+          in: query
+          type: string
+          enum:
+            - pending_incoming
+            - pending_outgoing
+            - accepted
+            - rejected
+            - all
+        - name: userIds
+          description: |
+            The userIds parameter should be specified as a comma delimited list of user ids and can be used to restrict the results of a specific connection.
+            Note that this is particularly important if the caller intends to retrieve results for implicit connection (user within the same pod).
+            Implicit connections will not be included in the response if userId is not provided.
+          in: query
+          type: string
+      tags:
+        - Connection
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/UserConnectionList'
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/connection/accept':
     post:
-      summary: Create a Configuration Instance object.
-      description: |
-        A caller can create a Configuration Instance object.
-
-        If the {configurationId} is invalid, a client error results.
-      consumes:
-        - application/json
+      summary: Accept the connection request for the requesting user
       produces:
         - application/json
       parameters:
-        - name: configurationId
-          description: Configuration ID
-          in: path
-          required: true
-          type: string
         - name: sessionToken
           description: Session authentication token.
           in: header
           required: true
           type: string
-        - name: configurationInstance
+        - name: connectionRequest
           in: body
           required: true
           schema:
-            $ref: '#/definitions/ConfigurationInstanceSubmissionCreate'
+            $ref: '#/definitions/UserConnectionRequest'
       tags:
-        - ConfigurationInstance
+        - Connection
       responses:
         '200':
-          description: OK
+          description: Success
           schema:
-            $ref: '#/definitions/ConfigurationInstance'
+            $ref: '#/definitions/UserConnection'
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/connection/reject':
+    post:
+      summary: Reject the connection request for the requesting user.
+      description: |
+        Reject the connection between the requesting user and request sender. If both users are in the same private pod,
+        an error will be returned because both users have an implicit connection which cannot be rejected.
+      produces:
+        - application/json
+      parameters:
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: connectionRequest
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserConnectionRequest'
+      tags:
+        - Connection
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/UserConnection'
         '400':
           description: 'Client error, see response body for further details.'
           schema:
@@ -3337,6 +2901,33 @@ definitions:
       emailAddress:
         type: string
         format: email
+  UserV2:
+    description: User record version 2
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      emailAddress:
+        type: string
+        format: email
+      firstName:
+        type: string
+      lastName:
+        type: string
+      displayName:
+        type: string
+      title:
+        type: string
+      company:
+        type: string
+      username:
+        type: string
+      location:
+        type : string
+      avatars:
+        description: avatar urls for both original size and small size
+        $ref: '#/definitions/AvatarList'
   UserIdList:
     type: array
     items:
@@ -3561,40 +3152,6 @@ definitions:
         enum:
           - ENABLED
           - DISABLED
-  UserFilter:
-    type: object
-    properties:
-      email:
-        type: string
-      name:
-        type: string
-      department:
-        type: string
-      title:
-        type: string
-      role:
-        type: string
-        format: long
-      status:
-        type: string
-        enum:
-          - ENABLED
-          - DISABLED
-      usertype:
-        type: string
-        enum:
-          - NORMAL
-          - SYSTEM
-          - TW
-      location:
-        type: string
-  PasswordReset:
-    type: object
-    properties:
-      type:
-        type: string
-        enum:
-          - EMAIL
   FeatureList:
     type: array
     items:
@@ -3748,17 +3305,6 @@ definitions:
       install:
         type: boolean
         description: if true, the entitlement is set to automatic for the company.  Otherwise, it is set to manual.
-  Role:
-    description: Role record.
-    type: object
-    properties:
-      id:
-        type: string
-        format: long
-      name:
-        type: string
-      description:
-        type: string
   GroupList:
     type: array
     items:
@@ -3771,10 +3317,6 @@ definitions:
     type: array
     items:
       $ref: '#/definitions/PodAppEntitlement'
-  RoleList:
-    type: array
-    items:
-      $ref: '#/definitions/Role'
   IntegerList:
     type: array
     items:
@@ -3826,14 +3368,6 @@ definitions:
         enum:
           - ADD
           - REMOVE
-  UserInfo:
-    description: User record.
-    type: object
-    properties:
-      user:
-        $ref: '#/definitions/UserAttributes'
-      userSystemInfo:
-        $ref: '#/definitions/UserSystemInfo'
   UserDetail:
     description: Detailed User record.
     type: object
@@ -3935,10 +3469,6 @@ definitions:
       lastPasswordReset:
         type: integer
         format: int64
-  UserList:
-    type: array
-    items:
-      $ref: '#/definitions/UserInfo'
   Password:
     description: Password. Stored as derived password in both the Pod and the Key Manager using PBKDF2 function. Number of iterations should be 10000 and desired length 256 bits.
     type: object
@@ -4006,90 +3536,43 @@ definitions:
         type: array
         items:
           type: string
-  V1Configuration:
+  UserConnectionRequest:
     type: object
-    description: Configuration for each integration type.
+    description: Request body for the Connection APIs
     properties:
-      configurationId:
-        type: string
-      type:
-        type: string
-      name:
-        type: string
-      description:
-        type: string
-      enabled:
-        type: boolean
-      visible:
-        type: boolean
-  V1ConfigurationSubmissionCreate:
-      type: object
-      description: Configuration for each integration type.
-      properties:
-        type:
-          type: string
-        name:
-          type: string
-        description:
-          type: string
-        enabled:
-          type: boolean
-        visible:
-          type: boolean
-  ConfigurationList:
-    type: array
-    items:
-      $ref: '#/definitions/V1Configuration'
-  ConfigurationInstance:
-    type: object
-    description: Represents each integration instance.
-    properties:
-      instanceId:
-        type: string
-      configurationId:
-        type: string
-      name:
-        type: string
-      description:
-        type: string
-      creatorId:
-        type: string
-      createdDate:
+      userId:
         type: integer
         format: int64
-      optionalProperties:
-        description: This field should be used as a container for a serialized object, holding specialized field values.
-        type: string
-  ConfigurationInstanceList:
-      type: array
-      items:
-        $ref: '#/definitions/ConfigurationInstance'
-  ConfigurationInstanceSubmissionCreate:
+        description: user id
+  UserConnection:
     type: object
+    description: Connection status between two users
     properties:
-      configurationId:
+      userId:
+        type: integer
+        format: int64
+        description: user id
+      status:
         type: string
-      name:
-        type: string
-      description:
-        type: string
-      creatorId:
-        type: string
-      optionalProperties:
-        description: This field should be used as a container for a serialized object, holding specialized field values.
-        type: string
-  ConfigurationInstanceSubmissionUpdate:
-    type: object
-    description: Represents each integration instance.
-    properties:
-      instanceId:
-        type: string
-      configurationId:
-        type: string
-      name:
-        type: string
-      description:
-        type: string
-      optionalProperties:
-        description: This field should be used as a container for a serialized object, holding specialized field values.
-        type: string
+        description: Connection status between the requesting user and the request sender
+        enum:
+          - pending_incoming
+          - pending_outgoing
+          - accepted
+          - rejected
+      firstRequestedAt:
+        type: integer
+        format: int64
+        description: unix timestamp when the first request was made
+      updatedAt:
+        type: integer
+        format: int64
+        description: unix timestamp on the last updated date
+      requestCounter:
+        type: integer
+        format: int32
+        description: number of requests made
+  UserConnectionList:
+    type: array
+    items:
+      $ref: '#/definitions/UserConnection'

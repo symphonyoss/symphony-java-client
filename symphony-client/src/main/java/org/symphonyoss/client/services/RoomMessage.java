@@ -24,6 +24,7 @@
 package org.symphonyoss.client.services;
 
 import org.symphonyoss.symphony.agent.model.Message;
+import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.pod.model.Stream;
 
 /**
@@ -33,7 +34,7 @@ public class RoomMessage {
 
     Stream roomStream;
     String id;
-    Message message;
+    SymMessage message;
 
     public Stream getRoomStream() {
         return roomStream;
@@ -51,11 +52,21 @@ public class RoomMessage {
         this.id = id;
     }
 
-    public Message getMessage() {
+    public SymMessage getRoomMessage() {
         return message;
     }
 
-    public void setMessage(Message message) {
+    public void setRoomMessage(SymMessage message) {
         this.message = message;
+    }
+
+    @Deprecated
+    public Message getMessage() {
+        return SymMessage.toV1Message(message);
+    }
+
+    @Deprecated
+    public void setMessage(Message message) {
+        this.message = SymMessage.toSymMessage(message);
     }
 }
