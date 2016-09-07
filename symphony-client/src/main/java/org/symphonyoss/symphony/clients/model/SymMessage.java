@@ -133,6 +133,7 @@ public class SymMessage {
         this.format = format;
     }
 
+    @Deprecated
     public static SymMessage toSymMessage(Message message) {
         SymMessage symMessage = new SymMessage();
         symMessage.setId(message.getId());
@@ -156,6 +157,7 @@ public class SymMessage {
         if (v2BaseMessage instanceof V2Message) {
             symMessage.setMessage(((V2Message) v2BaseMessage).getMessage());
             symMessage.setFromUserId(((V2Message) v2BaseMessage).getFromUserId());
+            symMessage.setAttachments(SymAttachmentInfo.toAttachementsInfo(((V2Message) v2BaseMessage).getAttachments()));
         }
 
 

@@ -55,6 +55,8 @@ public interface SymphonyClient {
 
     RoomMembershipClient getRoomMembershipClient();
 
+    AttachmentsClient getAttachmentsClient();
+
     boolean init(SymAuth symAuth, String email, String agentUrl, String serviceUrl) throws Exception;
 
     User getLocalUser();
@@ -62,6 +64,8 @@ public interface SymphonyClient {
     String getAgentUrl();
 
     String getServiceUrl();
+
+
 
 
 

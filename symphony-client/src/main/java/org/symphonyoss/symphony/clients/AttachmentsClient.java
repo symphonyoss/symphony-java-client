@@ -22,8 +22,16 @@
 
 package org.symphonyoss.symphony.clients;
 
+import org.symphonyoss.symphony.clients.model.SymAttachmentInfo;
+import org.symphonyoss.symphony.clients.model.SymMessage;
+
+import java.io.File;
+
 /**
  * Created by frank.tarsillo on 8/12/2016.
  */
 public interface AttachmentsClient {
+    byte[] getAttachmentData(SymAttachmentInfo symAttachmentInfo, SymMessage symMessage) throws Exception;
+
+    SymAttachmentInfo postAttachment(String sid, File attachment) throws Exception;
 }

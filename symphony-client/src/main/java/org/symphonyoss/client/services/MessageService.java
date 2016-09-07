@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.client.model.Room;
+import org.symphonyoss.symphony.clients.model.SymAttachmentInfo;
 import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.agent.model.Message;
 import org.symphonyoss.symphony.agent.model.MessageList;
@@ -34,6 +35,10 @@ import org.symphonyoss.client.model.Chat;
 import org.symphonyoss.symphony.pod.model.Stream;
 import org.symphonyoss.symphony.pod.model.User;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -84,6 +89,7 @@ public class MessageService implements MessageListener {
         symClient.getMessagesClient().sendMessage(chat.getStream(), message);
 
     }
+
 
     @Deprecated
     public void sendMessage(String email, MessageSubmission message) throws Exception {
@@ -169,6 +175,8 @@ public class MessageService implements MessageListener {
         return messageListeners.remove(messageListener);
 
     }
+
+
 
 
 }

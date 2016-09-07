@@ -20,7 +20,7 @@
  * under the License.
  */
 
-package org.symphonyoss.examples.chatsession;
+package org.symphonyoss.examples.attachement;
 
 
 import org.slf4j.Logger;
@@ -33,41 +33,45 @@ import org.symphonyoss.client.services.ChatListener;
 import org.symphonyoss.client.services.ChatServiceListener;
 import org.symphonyoss.symphony.agent.model.Message;
 import org.symphonyoss.symphony.agent.model.MessageSubmission;
-import org.symphonyoss.symphony.agent.model.V2Message;
 import org.symphonyoss.symphony.clients.AuthorizationClient;
+import org.symphonyoss.symphony.clients.model.SymAttachmentInfo;
 import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.pod.model.User;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
 /**
- *
- *
- * Simple example of the ChatService.
- *
- * It will send a message to a call.home.user and listen/create new Chat sessions.
- *
- *
- *
+ * Example of handling attachments.
+ * <p>
+ * Will store an incoming file(s) to the bot and echo them back to the sender.
+ * <p>
+ * <p>
+ * <p>
  * REQUIRED VM Arguments or System Properties:
- *
- *        -Dsessionauth.url=https://pod_fqdn:port/sessionauth
- *        -Dkeyauth.url=https://pod_fqdn:port/keyauth
- *        -Dsymphony.agent.pod.url=https://agent_fqdn:port/pod
- *        -Dsymphony.agent.agent.url=https://agent_fqdn:port/agent
- *        -Dcerts.dir=/dev/certs/
- *        -Dkeystore.password=(Pass)
- *        -Dtruststore.file=/dev/certs/server.truststore
- *        -Dtruststore.password=(Pass)
- *        -Dbot.user=bot.user1
- *        -Dbot.domain=@domain.com
- *        -Duser.call.home=frank.tarsillo@markit.com
- *
- *
- *
- *
+ * <p>
+ * -Dsessionauth.url=https://pod_fqdn:port/sessionauth
+ * -Dkeyauth.url=https://pod_fqdn:port/keyauth
+ * -Dsymphony.agent.pod.url=https://agent_fqdn:port/pod
+ * -Dsymphony.agent.agent.url=https://agent_fqdn:port/agent
+ * -Dcerts.dir=/dev/certs/
+ * -Dkeystore.password=(Pass)
+ * -Dtruststore.file=/dev/certs/server.truststore
+ * -Dtruststore.password=(Pass)
+ * -Dbot.user=bot.user1
+ * -Dbot.domain=@domain.com
+ * -Duser.call.home=frank.tarsillo@markit.com
+ * <p>
+ * <p>
+ * <p>
+ * <p>
  * Created by Frank Tarsillo on 5/15/2016.
  */
 public class AttachementExample implements ChatListener, ChatServiceListener {
@@ -129,12 +133,12 @@ public class AttachementExample implements ChatListener, ChatServiceListener {
                     System.getProperty("symphony.agent.pod.url")
             );
 
-             //Will notify the bot of new Chat conversations.
+            //Will notify the bot of new Chat conversations.
             symClient.getChatService().registerListener(this);
 
             //A message to send when the BOT comes online.
-            MessageSubmission aMessage = new MessageSubmission();
-            aMessage.setFormat(MessageSubmission.FormatEnum.TEXT);
+            SymMessage aMessage = new SymMessage();
+            aMessage.setFormat(SymMessage.Format.TEXT);
             aMessage.setMessage("Hello master, I'm alive again....");
 
 
@@ -160,26 +164,10 @@ public class AttachementExample implements ChatListener, ChatServiceListener {
         }
 
 
-
-
-
-
-
     }
 
 
-    //Chat sessions callback method.
     public void onChatMessage(Message message) {
-        if (message == null)
-            return;
-
-        logger.debug("TS: {}\nFrom ID: {}\nSymMessage: {}\nSymMessage Type: {}",
-                message.getTimestamp(),
-                message.getFromUserId(),
-                message.getMessage(),
-                message.getMessageType());
-
-
 
     }
 
@@ -195,6 +183,66 @@ public class AttachementExample implements ChatListener, ChatServiceListener {
                 message.getMessage(),
                 message.getMessageType());
 
+
+        //Do we have any attachments in the incoming message
+        if (message.getAttachments() != null) {
+
+            List<SymAttachmentInfo> attachmentInfos = message.getAttachments();
+
+            //Check for multiple files
+            for (SymAttachmentInfo symAttachmentInfo : attachmentInfos) {
+
+                try {
+
+                    File outFile = new File(symAttachmentInfo.getName());
+                    OutputStream out = new FileOutputStream(outFile);
+                    out.write(symClient.getAttachmentsClient().getAttachmentData(symAttachmentInfo, message));
+
+                    logger.info("Received file {} with ID: {}", symAttachmentInfo.getName(), symAttachmentInfo.getId());
+
+
+                } catch (Exception e) {
+
+                    logger.error("Failed to process file..", e);
+                }
+
+            }
+
+
+            //Lets construct the reply.
+            SymMessage symMessage = new SymMessage();
+            symMessage.setMessage("Echo the files you sent....");
+            symMessage.setStreamId(message.getStreamId());
+            symMessage.setFormat(SymMessage.Format.TEXT);
+
+            //Post all the incoming files back to the stream.
+            List<SymAttachmentInfo> replyAttachmentInfos = new ArrayList<>();
+            for (SymAttachmentInfo attachmentInfo : attachmentInfos) {
+
+                try {
+                    replyAttachmentInfos.add(
+                            symClient.getAttachmentsClient().postAttachment(symMessage.getStreamId(), new File(attachmentInfo.getName()))
+                    );
+                } catch (Exception e) {
+
+                    logger.error("Could not post file to stream", e);
+                }
+
+            }
+            //Update all the attachment info details in the reply message.
+            symMessage.setAttachments(replyAttachmentInfos);
+
+            //Send the message back..
+            Chat chat = symClient.getChatService().getChatByStream(message.getStreamId());
+
+            try {
+                if (chat != null)
+                    symClient.getMessageService().sendMessage(chat, symMessage);
+            }catch (Exception e){
+                logger.error("Could not send echo reply to user",e);
+            }
+
+        }
 
 
     }

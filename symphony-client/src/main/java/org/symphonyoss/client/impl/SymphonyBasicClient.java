@@ -52,6 +52,7 @@ public class SymphonyBasicClient implements SymphonyClient {
     private StreamsClient streamsClient;
     private PresenceClient presenceClient;
     private RoomMembershipClient roomMembershipClient;
+    private AttachmentsClient attachmentsClient;
 
 
     public SymphonyBasicClient() {
@@ -82,12 +83,13 @@ public class SymphonyBasicClient implements SymphonyClient {
             presenceClient = PresenceFactory.getClient(this, PresenceFactory.TYPE.DEFAULT);
             streamsClient = StreamsFactory.getClient(this, StreamsFactory.TYPE.DEFAULT);
             usersClient = UsersFactory.getClient(this, UsersFactory.TYPE.DEFAULT);
+            attachmentsClient = AttachementsFactory.getClient(this, AttachementsFactory.TYPE.DEFAULT);
             roomMembershipClient = RoomMembershipFactory.getClient(this, RoomMembershipFactory.TYPE.DEFAULT);
-        }catch(Exception e){
+        } catch (Exception e) {
             logger.error("Could not initialize one of the Symphony API services." +
-            " This is most likely due to not having the right agent or pod URLs." +
-            " This can also be an issue with the client certificate or server.trustore." +
-            " Here is what you have configured: {}");
+                    " This is most likely due to not having the right agent or pod URLs." +
+                    " This can also be an issue with the client certificate or server.trustore." +
+                    " Here is what you have configured: {}");
 
         }
         messageService = new MessageService(this);
@@ -166,6 +168,11 @@ public class SymphonyBasicClient implements SymphonyClient {
     public RoomMembershipClient getRoomMembershipClient() {
         return roomMembershipClient;
     }
+
+    public AttachmentsClient getAttachmentsClient() {
+        return attachmentsClient;
+    }
+
 }
 
 

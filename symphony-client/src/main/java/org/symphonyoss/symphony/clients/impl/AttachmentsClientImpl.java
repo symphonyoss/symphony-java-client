@@ -25,8 +25,19 @@ package org.symphonyoss.symphony.clients.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.model.SymAuth;
+import org.symphonyoss.symphony.agent.api.AttachmentsApi;
+import org.symphonyoss.symphony.agent.api.DatafeedApi;
 import org.symphonyoss.symphony.agent.invoker.ApiClient;
+import org.symphonyoss.symphony.agent.model.AttachmentInfo;
 import org.symphonyoss.symphony.clients.AttachmentsClient;
+import org.symphonyoss.symphony.clients.model.SymAttachmentInfo;
+import org.symphonyoss.symphony.clients.model.SymMessage;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Base64;
 
 
 /**
@@ -51,9 +62,35 @@ public class AttachmentsClientImpl implements AttachmentsClient {
     }
 
 
+    public byte[] getAttachmentData(SymAttachmentInfo symAttachmentInfo, SymMessage symMessage) throws Exception {
+
+        AttachmentsApi attachmentsApi = new AttachmentsApi(apiClient);
 
 
+        if (symAttachmentInfo.getId() == null || symMessage.getId() == null || symMessage.getStreamId() == null)
+            return null;
 
+
+        return  Base64.getDecoder().decode(attachmentsApi.v1StreamSidAttachmentGet(symMessage.getStreamId(),
+                symAttachmentInfo.getId(),
+                symMessage.getId(),
+                symAuth.getSessionToken().getToken(),
+                symAuth.getKeyToken().getToken()));
+
+
+    }
+
+
+    public SymAttachmentInfo postAttachment(String sid, File attachment)throws Exception {
+        AttachmentsApi attachmentsApi = new AttachmentsApi(apiClient);
+
+        AttachmentInfo attachmentInfo = attachmentsApi.v1StreamSidAttachmentCreatePost(sid,
+                symAuth.getSessionToken().getToken(),
+                symAuth.getKeyToken().getToken(),
+                attachment);
+
+        return SymAttachmentInfo.toAttachmentInfo(attachmentInfo);
+    }
 
 
 }
