@@ -74,10 +74,16 @@ public class DataFeedClientImpl implements DataFeedClient {
 
         List<SymMessage> symMessgeList = new ArrayList<SymMessage>();
 
-        for(V2BaseMessage message: messageList)
-            symMessgeList.add(SymMessage.toSymMessage(message));
 
+        if(messageList != null) {
+            for (V2BaseMessage message : messageList) {
 
+                if (message instanceof V2Message) {
+                    symMessgeList.add(SymMessage.toSymMessage(message));
+
+                }
+            }
+        }
         return symMessgeList;
     }
 

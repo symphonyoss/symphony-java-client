@@ -58,14 +58,20 @@ public class MessageService implements MessageListener {
 
     }
 
-
+    @Deprecated
     public void sendMessage(Room room, MessageSubmission message) throws Exception {
 
         symClient.getMessagesClient().sendMessage(room.getStream(), message);
 
     }
 
+    public void sendMessage(Room room, SymMessage message) throws Exception {
 
+        symClient.getMessagesClient().sendMessage(room.getStream(), message);
+
+    }
+
+    @Deprecated
     public void sendMessage(Chat chat, MessageSubmission message) throws Exception {
 
         symClient.getMessagesClient().sendMessage(chat.getStream(), message);
@@ -73,6 +79,13 @@ public class MessageService implements MessageListener {
     }
 
 
+    public void sendMessage(Chat chat, SymMessage message) throws Exception {
+
+        symClient.getMessagesClient().sendMessage(chat.getStream(), message);
+
+    }
+
+    @Deprecated
     public void sendMessage(String email, MessageSubmission message) throws Exception {
 
         User remoteUser = symClient.getUsersClient().getUserFromEmail(email);
@@ -81,6 +94,13 @@ public class MessageService implements MessageListener {
 
     }
 
+    public void sendMessage(String email, SymMessage message) throws Exception {
+
+        User remoteUser = symClient.getUsersClient().getUserFromEmail(email);
+
+        symClient.getMessagesClient().sendMessage(symClient.getStreamsClient().getStream(remoteUser), message);
+
+    }
 
     private List<SymMessage> getMessagesFromStream(Stream stream, Long since, Integer offset, Integer maxMessages) throws Exception {
 
@@ -110,7 +130,7 @@ public class MessageService implements MessageListener {
         if (symClient.getLocalUser().getId().equals(message.getFromUserId()))
             return;
 
-        if (message.getStreamId() == null)
+        if (message.getStreamId() == null && message.getMessageType()!= null)
             return;
 
 

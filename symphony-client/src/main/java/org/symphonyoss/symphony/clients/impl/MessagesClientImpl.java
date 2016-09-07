@@ -90,7 +90,7 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
     }
 
 
-    @Deprecated
+
     public List<SymMessage> getMessagesFromStream(Stream stream, Long since, Integer offset, Integer maxMessages) throws Exception {
 
 
@@ -98,7 +98,19 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
 
         V2MessageList v2MessageList =  messagesApi.v2StreamSidMessageGet(stream.getId(), since, symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken(), offset, maxMessages);
 
-        return v2MessageList.stream().map(v2BaseMessage -> SymMessage.toSymMessage((V2Message) v2BaseMessage)).collect(Collectors.toList());
+        List<SymMessage> symMessageList = new ArrayList<>();
+
+        if(v2MessageList != null) {
+            for (V2BaseMessage v2BaseMessage : v2MessageList) {
+
+                if (v2BaseMessage instanceof V2Message)
+                    symMessageList.add(SymMessage.toSymMessage(v2BaseMessage));
+
+
+            }
+        }
+
+        return symMessageList;
     }
 
 

@@ -117,11 +117,7 @@
 			</plugin>
 
 			<plugin>
-                                <!--
-				<groupId>org.zalando.maven.plugins</groupId>
-				<artifactId>swagger-codegen-maven-plugin</artifactId>
-				<version>${zalando.swagger.codegen.maven.plugin.version}</version>
-                                -->
+
 				<groupId>io.swagger</groupId>
 				<artifactId>swagger-codegen-maven-plugin</artifactId>
 				<version>${swagger.codegen.maven.plugin.version}</version>
@@ -143,6 +139,34 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.7</version>
+				<executions>
+					<execution>
+						<id>copy-resource-one</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+
+						<configuration>
+							<overwrite>true</overwrite>
+							<outputDirectory>target/generated-sources/swagger/src/main/java/org/symphonyoss/symphony/agent/model</outputDirectory>
+							<resources>
+								<resource>
+									<directory>src/main/resources/model</directory>
+									<includes>
+										<include>V2BaseMessage.java</include>
+									</includes>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+
 		</plugins>
 	</build>
 

@@ -35,6 +35,7 @@ import org.symphonyoss.symphony.agent.model.Message;
 import org.symphonyoss.symphony.agent.model.MessageSubmission;
 import org.symphonyoss.symphony.agent.model.V2Message;
 import org.symphonyoss.symphony.clients.AuthorizationClient;
+import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.pod.model.User;
 
 import java.util.HashSet;
@@ -169,6 +170,22 @@ public class AttachementExample implements ChatListener, ChatServiceListener {
 
     //Chat sessions callback method.
     public void onChatMessage(Message message) {
+        if (message == null)
+            return;
+
+        logger.debug("TS: {}\nFrom ID: {}\nSymMessage: {}\nSymMessage Type: {}",
+                message.getTimestamp(),
+                message.getFromUserId(),
+                message.getMessage(),
+                message.getMessageType());
+
+
+
+    }
+
+
+    //Chat sessions callback method.
+    public void onChatMessage(SymMessage message) {
         if (message == null)
             return;
 

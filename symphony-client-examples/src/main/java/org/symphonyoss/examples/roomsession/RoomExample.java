@@ -34,6 +34,7 @@ import org.symphonyoss.client.services.*;
 import org.symphonyoss.symphony.agent.model.Message;
 import org.symphonyoss.symphony.agent.model.MessageSubmission;
 import org.symphonyoss.symphony.clients.AuthorizationClient;
+import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.pod.model.Stream;
 import org.symphonyoss.symphony.pod.model.User;
 
@@ -134,8 +135,8 @@ public class RoomExample implements RoomListener {
 
 
             //A message to send when the BOT comes online.
-            MessageSubmission aMessage = new MessageSubmission();
-            aMessage.setFormat(MessageSubmission.FormatEnum.TEXT);
+            SymMessage aMessage = new SymMessage();
+            aMessage.setFormat(SymMessage.Format.TEXT);
             aMessage.setMessage("Hello master, I'm alive again in this room....");
 
 
