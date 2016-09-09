@@ -42,7 +42,6 @@ public class UsersFactoryTest {
     public void getClient() throws Exception {
 
         assertTrue("get DEFAULT client",  UsersFactory.getClient(TestFactory.getSymClient(),UsersFactory.TYPE.DEFAULT) instanceof UsersClientImpl);
-        assertTrue("get DEFAULT client",  UsersFactory.getClient(TestFactory.getSymClient(),UsersFactory.TYPE.v1) instanceof UsersClientImpl);
 
     }
 

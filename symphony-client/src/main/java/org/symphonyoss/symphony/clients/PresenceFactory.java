@@ -30,7 +30,7 @@ import org.symphonyoss.symphony.clients.impl.PresenceClientImpl;
  */
 public class PresenceFactory {
 
-    public enum TYPE { DEFAULT, v1, v2 }
+    public enum TYPE { DEFAULT }
 
     public static PresenceClient getClient(SymphonyClient symClient, TYPE type){
 

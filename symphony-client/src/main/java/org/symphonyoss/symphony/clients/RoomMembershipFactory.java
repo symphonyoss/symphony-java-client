@@ -30,7 +30,7 @@ import org.symphonyoss.symphony.clients.impl.RoomMembershipClientImpl;
  */
 public class RoomMembershipFactory {
 
-    public enum TYPE { DEFAULT, v1, v2 }
+    public enum TYPE { DEFAULT }
 
     public static RoomMembershipClient getClient(SymphonyClient symClient, TYPE type){
 

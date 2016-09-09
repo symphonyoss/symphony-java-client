@@ -33,6 +33,7 @@ import org.symphonyoss.client.services.ChatService;
 import org.symphonyoss.client.services.MessageService;
 import org.symphonyoss.client.services.PresenceService;
 import org.symphonyoss.symphony.clients.*;
+import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.pod.model.User;
 
 public class SymphonyBasicClient implements SymphonyClient {
@@ -43,7 +44,7 @@ public class SymphonyBasicClient implements SymphonyClient {
     private MessageService messageService;
     private PresenceService presenceService;
     private ChatService chatService;
-    private User localUser;
+    private SymUser localUser;
     private String agentUrl;
     private String serviceUrl;
     private MessagesClient messagesClient;
@@ -53,6 +54,7 @@ public class SymphonyBasicClient implements SymphonyClient {
     private PresenceClient presenceClient;
     private RoomMembershipClient roomMembershipClient;
     private AttachmentsClient attachmentsClient;
+    private ConnectionsClient connectionsClient;
 
 
     public SymphonyBasicClient() {
@@ -85,6 +87,7 @@ public class SymphonyBasicClient implements SymphonyClient {
             usersClient = UsersFactory.getClient(this, UsersFactory.TYPE.DEFAULT);
             attachmentsClient = AttachementsFactory.getClient(this, AttachementsFactory.TYPE.DEFAULT);
             roomMembershipClient = RoomMembershipFactory.getClient(this, RoomMembershipFactory.TYPE.DEFAULT);
+            connectionsClient = ConnectionsFactory.getClient(this, ConnectionsFactory.TYPE.DEFAULT);
         } catch (Exception e) {
             logger.error("Could not initialize one of the Symphony API services." +
                     " This is most likely due to not having the right agent or pod URLs." +
@@ -141,11 +144,11 @@ public class SymphonyBasicClient implements SymphonyClient {
         return presenceService;
     }
 
-    public User getLocalUser() {
+    public SymUser getLocalUser() {
         return localUser;
     }
 
-    public void setLocalUser(User localUser) {
+    public void setLocalUser(SymUser localUser) {
         this.localUser = localUser;
     }
 
@@ -173,6 +176,9 @@ public class SymphonyBasicClient implements SymphonyClient {
         return attachmentsClient;
     }
 
+    public ConnectionsClient getConnectionsClient() {
+        return connectionsClient;
+    }
 }
 
 

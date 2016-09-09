@@ -22,6 +22,7 @@
 
 package org.symphonyoss.symphony.clients;
 
+import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.pod.model.*;
 
 import java.util.Set;
@@ -30,9 +31,9 @@ import java.util.Set;
  * Created by frank.tarsillo on 6/6/2016.
  */
 public interface StreamsClient {
-    Stream getStream(User user) throws Exception;
+    Stream getStream(SymUser user) throws Exception;
 
-    Stream getStream(Set<User> users) throws Exception;
+    Stream getStream(Set<SymUser> users) throws Exception;
 
     Stream getStream(UserIdList userIdList) throws Exception;
 

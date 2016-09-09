@@ -22,33 +22,69 @@
 
 package org.symphonyoss.client.services;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.symphony.clients.model.SymUserConnection;
 import org.symphonyoss.symphony.pod.api.ConnectionApi;
+
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by frank.tarsillo on 9/9/2016.
  */
-public class ConnectionsService implements Runnable{
+public class ConnectionsService implements ConnectionsListener{
     private SymphonyClient symClient;
+    private boolean autoAccept;
+    private final Set<ConnectionsListener> connectionsListeners =  ConcurrentHashMap.newKeySet();
+    private final Logger logger = LoggerFactory.getLogger(ChatService.class);
 
     public ConnectionsService(SymphonyClient symClient){
         this.symClient = symClient;
+        new Thread(new ConnectionsWorker(symClient,this)).start();
 
     }
 
 
-
-
     @Override
-    public void run() {
+    public void onConnectionNotification(SymUserConnection userConnection) {
+
+    for(ConnectionsListener connectionsListener : connectionsListeners){
+
+        connectionsListener.onConnectionNotification(userConnection);
+
+    }
+
+    try {
+        if (autoAccept)
+            symClient.getConnectionsClient().acceptConnectionRequest(userConnection);
+
+    }catch (Exception e){
+        logger.error("Could not autoaccept connection request from {}",userConnection.getUserId(),e);
+
+    }
+    }
+
+    public boolean registerListener(ConnectionsListener connectionsListener){
+
+        connectionsListeners.add(connectionsListener);
+        return true;
+    }
+
+    public boolean removeListener(ConnectionsListener connectionsListener){
+
+        connectionsListeners.remove(connectionsListener);
+        return true;
+    }
 
 
-        while(true){
 
+    public boolean isAutoAccept() {
+        return autoAccept;
+    }
 
-
-        }
-
-
+    public void setAutoAccept(boolean autoAccept) {
+        this.autoAccept = autoAccept;
     }
 }

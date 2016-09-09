@@ -31,10 +31,16 @@ import org.symphonyoss.client.model.Chat;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.client.services.ChatListener;
 import org.symphonyoss.client.services.ChatServiceListener;
+import org.symphonyoss.client.services.ConnectionsListener;
+import org.symphonyoss.client.services.ConnectionsService;
+import org.symphonyoss.client.util.MlMessageParser;
 import org.symphonyoss.symphony.agent.model.Message;
 import org.symphonyoss.symphony.agent.model.MessageSubmission;
 import org.symphonyoss.symphony.clients.AuthorizationClient;
 import org.symphonyoss.symphony.clients.model.SymMessage;
+import org.symphonyoss.symphony.clients.model.SymUser;
+import org.symphonyoss.symphony.clients.model.SymUserConnection;
+import org.symphonyoss.symphony.pod.model.Stream;
 import org.symphonyoss.symphony.pod.model.User;
 
 import java.util.HashSet;
@@ -42,38 +48,38 @@ import java.util.Set;
 
 
 /**
- *
- *
  * Simple example of the ChatService.
- *
+ * <p>
  * It will send a message to a call.home.user and listen/create new Chat sessions.
- *
- *
- *
+ * <p>
+ * <p>
+ * <p>
  * REQUIRED VM Arguments or System Properties:
- *
- *        -Dsessionauth.url=https://pod_fqdn:port/sessionauth
- *        -Dkeyauth.url=https://pod_fqdn:port/keyauth
- *        -Dsymphony.agent.pod.url=https://agent_fqdn:port/pod
- *        -Dsymphony.agent.agent.url=https://agent_fqdn:port/agent
- *        -Dcerts.dir=/dev/certs/
- *        -Dkeystore.password=(Pass)
- *        -Dtruststore.file=/dev/certs/server.truststore
- *        -Dtruststore.password=(Pass)
- *        -Dbot.user=bot.user1
- *        -Dbot.domain=@domain.com
- *        -Duser.call.home=frank.tarsillo@markit.com
- *
- *
- *
- *
+ * <p>
+ * -Dsessionauth.url=https://pod_fqdn:port/sessionauth
+ * -Dkeyauth.url=https://pod_fqdn:port/keyauth
+ * -Dsymphony.agent.pod.url=https://agent_fqdn:port/pod
+ * -Dsymphony.agent.agent.url=https://agent_fqdn:port/agent
+ * -Dcerts.dir=/dev/certs/
+ * -Dkeystore.password=(Pass)
+ * -Dtruststore.file=/dev/certs/server.truststore
+ * -Dtruststore.password=(Pass)
+ * -Dbot.user=bot.user1
+ * -Dbot.domain=@domain.com
+ * -Duser.call.home=frank.tarsillo@markit.com
+ * <p>
+ * <p>
+ * <p>
+ * <p>
  * Created by Frank Tarsillo on 5/15/2016.
  */
-public class ChatWithAutoAcceptConnectionsExample implements ChatListener, ChatServiceListener {
+public class ChatWithAutoAcceptConnectionsExample implements ChatListener, ChatServiceListener, ConnectionsListener {
 
 
     private final Logger logger = LoggerFactory.getLogger(ChatWithAutoAcceptConnectionsExample.class);
     private SymphonyClient symClient;
+    private ConnectionsService connectionsService;
+
 
     public ChatWithAutoAcceptConnectionsExample() {
 
@@ -128,19 +134,29 @@ public class ChatWithAutoAcceptConnectionsExample implements ChatListener, ChatS
                     System.getProperty("symphony.agent.pod.url")
             );
 
-             //Will notify the bot of new Chat conversations.
+            //Will notify the bot of new Chat conversations.
             symClient.getChatService().registerListener(this);
 
+            //Init connection service.
+            connectionsService  = new ConnectionsService(symClient);
+
+            //Optional to auto accept connections.
+            connectionsService.setAutoAccept(true);
+
+
+
+
+
             //A message to send when the BOT comes online.
-            MessageSubmission aMessage = new MessageSubmission();
-            aMessage.setFormat(MessageSubmission.FormatEnum.TEXT);
+            SymMessage aMessage = new SymMessage();
+            aMessage.setFormat(SymMessage.Format.TEXT);
             aMessage.setMessage("Hello master, I'm alive again....");
 
 
             //Creates a Chat session with that will receive the online message.
             Chat chat = new Chat();
             chat.setLocalUser(symClient.getLocalUser());
-            Set<User> remoteUsers = new HashSet<>();
+            Set<SymUser> remoteUsers = new HashSet<>();
             remoteUsers.add(symClient.getUsersClient().getUserFromEmail(System.getProperty("user.call.home")));
             chat.setRemoteUsers(remoteUsers);
             chat.registerListener(this);
@@ -161,23 +177,13 @@ public class ChatWithAutoAcceptConnectionsExample implements ChatListener, ChatS
     }
 
 
-       //Chat sessions callback method.
+    //Legacy support
     public void onChatMessage(Message message) {
-        if (message == null)
-            return;
-
-        logger.debug("TS: {}\nFrom ID: {}\nSymMessage: {}\nSymMessage Type: {}",
-                message.getTimestamp(),
-                message.getFromUserId(),
-                message.getMessage(),
-                message.getMessageType());
-
-
 
     }
 
     //Chat sessions callback method.
-    public void onChatMessage(SymMessage message) {
+    public void onChatMessage(SymMessage message)  {
         if (message == null)
             return;
 
@@ -187,6 +193,25 @@ public class ChatWithAutoAcceptConnectionsExample implements ChatListener, ChatS
                 message.getMessage(),
                 message.getMessageType());
 
+
+
+
+        if(message.getMessage().indexOf("life") > -1){
+            message.setMessage("The meaning of life is 42!..silly");
+
+        }else{
+            message.setMessage("ECHO...boring..ECHO...ask me the meaning of life..");
+        }
+
+
+        Stream stream = new Stream();
+        stream.setId(message.getStreamId());
+
+        try {
+            symClient.getMessagesClient().sendMessage(stream,message);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 
     }
@@ -203,4 +228,13 @@ public class ChatWithAutoAcceptConnectionsExample implements ChatListener, ChatS
 
     }
 
+    @Override
+    public void onConnectionNotification(SymUserConnection userConnection) {
+        if (userConnection.getStatus().equals(SymUserConnection.Status.PENDING_INCOMING)) {
+            logger.info("Received new connection request from {}", userConnection.getUserId());
+        } else if (userConnection.getStatus().equals(SymUserConnection.Status.ACCEPTED)) {
+            logger.info("Accepted connection request from {}", userConnection.getUserId());
+
+        }
+    }
 }

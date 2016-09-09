@@ -24,6 +24,7 @@ package org.symphonyoss.client.model;
 
 import org.symphonyoss.symphony.agent.model.Message;
 import org.symphonyoss.symphony.clients.model.SymMessage;
+import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.pod.model.Stream;
 import org.symphonyoss.symphony.pod.model.User;
 import org.symphonyoss.client.services.ChatListener;
@@ -37,27 +38,27 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by Frank Tarsillo on 5/15/2016.
  */
 public class Chat {
-    private Set<User> remoteUsers;
-    private User localUser;
+    private Set<SymUser> remoteUsers;
+    private SymUser localUser;
     private Stream stream;
     private final Set<ChatListener> chatListeners = ConcurrentHashMap.newKeySet();
 
     private SymMessage lastMessage;
 
 
-    public Set<User> getRemoteUsers() {
+    public Set<SymUser> getRemoteUsers() {
         return remoteUsers;
     }
 
-    public void setRemoteUsers(Set<User> remoteUsers) {
+    public void setRemoteUsers(Set<SymUser> remoteUsers) {
         this.remoteUsers = remoteUsers;
     }
 
-    public User getLocalUser() {
+    public SymUser getLocalUser() {
         return localUser;
     }
 
-    public void setLocalUser(User localUser) {
+    public void setLocalUser(SymUser localUser) {
         this.localUser = localUser;
     }
 

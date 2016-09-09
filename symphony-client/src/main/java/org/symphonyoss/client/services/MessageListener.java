@@ -30,8 +30,6 @@ import org.symphonyoss.symphony.agent.model.Message;
  */
 public interface MessageListener {
 
-    @Deprecated
-    void onMessage(Message message);
 
     void onMessage(SymMessage message);
 

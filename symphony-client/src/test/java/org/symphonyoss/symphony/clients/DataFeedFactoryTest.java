@@ -39,7 +39,6 @@ public class DataFeedFactoryTest {
     public void getClient() throws Exception {
 
         assertTrue("get DEFAULT client",  DataFeedFactory.getClient(TestFactory.getSymClient(),DataFeedFactory.TYPE.DEFAULT) instanceof DataFeedClientImpl);
-        assertTrue("get DEFAULT client",  DataFeedFactory.getClient(TestFactory.getSymClient(),DataFeedFactory.TYPE.v1) instanceof DataFeedClientImpl);
 
     }
 

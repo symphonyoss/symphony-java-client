@@ -36,6 +36,7 @@ import org.symphonyoss.symphony.agent.model.Message;
 import org.symphonyoss.symphony.agent.model.MessageSubmission;
 import org.symphonyoss.symphony.clients.AuthorizationClient;
 import org.symphonyoss.symphony.clients.model.SymMessage;
+import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.pod.model.User;
 import java.util.HashSet;
 import java.util.Set;
@@ -140,7 +141,7 @@ public class ChatExample implements ChatListener, ChatServiceListener {
             //Creates a Chat session with that will receive the online message.
             Chat chat = new Chat();
             chat.setLocalUser(symClient.getLocalUser());
-            Set<User> remoteUsers = new HashSet<>();
+            Set<SymUser> remoteUsers = new HashSet<>();
             remoteUsers.add(symClient.getUsersClient().getUserFromEmail(System.getProperty("user.call.home")));
             chat.setRemoteUsers(remoteUsers);
             chat.registerListener(this);

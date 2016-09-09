@@ -32,6 +32,7 @@ import org.symphonyoss.symphony.agent.model.Message;
 import org.symphonyoss.symphony.agent.model.MessageList;
 import org.symphonyoss.symphony.agent.model.MessageSubmission;
 import org.symphonyoss.client.model.Chat;
+import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.pod.model.Stream;
 import org.symphonyoss.symphony.pod.model.User;
 
@@ -94,7 +95,7 @@ public class MessageService implements MessageListener {
     @Deprecated
     public void sendMessage(String email, MessageSubmission message) throws Exception {
 
-        User remoteUser = symClient.getUsersClient().getUserFromEmail(email);
+        SymUser remoteUser = symClient.getUsersClient().getUserFromEmail(email);
 
         symClient.getMessagesClient().sendMessage(symClient.getStreamsClient().getStream(remoteUser), message);
 
@@ -102,7 +103,7 @@ public class MessageService implements MessageListener {
 
     public void sendMessage(String email, SymMessage message) throws Exception {
 
-        User remoteUser = symClient.getUsersClient().getUserFromEmail(email);
+        SymUser remoteUser = symClient.getUsersClient().getUserFromEmail(email);
 
         symClient.getMessagesClient().sendMessage(symClient.getStreamsClient().getStream(remoteUser), message);
 
@@ -119,7 +120,7 @@ public class MessageService implements MessageListener {
     public List<SymMessage> getMessagesFromUserId(long userId, Long since, Integer offset, Integer maxMessages) throws Exception {
 
 
-        User user = new User();
+        SymUser user = new SymUser();
         user.setId(userId);
 
 

@@ -32,6 +32,7 @@ import org.jsoup.nodes.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.pod.model.User;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -123,7 +124,7 @@ public class MlMessageParser extends DefaultHandler {
                         builder.append("#").append(node.attr(AttribTypes.TAG.toString())).append(" ");
 
                 } else if (nodeName.equalsIgnoreCase(NodeTypes.MENTION.toString())) {
-                    User user = new User();
+                    SymUser user = new SymUser();
                     user.setEmailAddress("UID:" + node.attr(AttribTypes.UID.toString()));
                     user.setId(Long.valueOf(node.attr(AttribTypes.UID.toString())));
 
@@ -272,7 +273,7 @@ public class MlMessageParser extends DefaultHandler {
 
                       String uid = node.attr(AttribTypes.UID.toString());
 
-                    User user = null;
+                    SymUser user = null;
                     try {
                         user = symClient.getUsersClient().getUserFromId(Long.parseLong(uid));
 

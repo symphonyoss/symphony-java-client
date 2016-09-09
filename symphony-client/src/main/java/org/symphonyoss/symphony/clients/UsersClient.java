@@ -22,13 +22,14 @@
 
 package org.symphonyoss.symphony.clients;
 
+import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.pod.model.User;
 
 /**
  * Created by frank.tarsillo on 6/6/2016.
  */
 public interface UsersClient {
-    User getUserFromEmail(String email) throws Exception;
+    SymUser getUserFromEmail(String email) throws Exception;
 
-    User getUserFromId(Long userId) throws Exception;
+    SymUser getUserFromId(Long userId) throws Exception;
 }

@@ -14,7 +14,6 @@ public class PresenceFactoryTest {
     public void getClient() throws Exception {
 
         assertTrue("get DEFAULT client",  PresenceFactory.getClient(TestFactory.getSymClient(),PresenceFactory.TYPE.DEFAULT) instanceof PresenceClientImpl);
-        assertTrue("get DEFAULT client",  PresenceFactory.getClient(TestFactory.getSymClient(),PresenceFactory.TYPE.v1) instanceof PresenceClientImpl);
 
 
     }

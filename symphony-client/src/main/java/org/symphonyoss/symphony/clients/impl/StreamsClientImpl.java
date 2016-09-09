@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.symphonyoss.symphony.clients.UsersClient;
 import org.symphonyoss.symphony.clients.UsersFactory;
 import org.symphonyoss.client.model.SymAuth;
+import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.pod.api.StreamsApi;
 import org.symphonyoss.symphony.pod.invoker.ApiClient;
 import org.symphonyoss.symphony.pod.model.*;
@@ -61,7 +62,7 @@ public class StreamsClientImpl implements org.symphonyoss.symphony.clients.Strea
     }
 
 
-    public Stream getStream(User user) throws Exception {
+    public Stream getStream(SymUser user) throws Exception {
 
 
         UserIdList userIdList = new UserIdList();
@@ -75,11 +76,11 @@ public class StreamsClientImpl implements org.symphonyoss.symphony.clients.Strea
 
     }
 
-    public Stream getStream(Set<User> users) throws Exception {
+    public Stream getStream(Set<SymUser> users) throws Exception {
         UserIdList userIdList = new UserIdList();
         String usersPrint = "";
 
-        for (User user : users) {
+        for (SymUser user : users) {
             userIdList.add(user.getId());
             usersPrint += " [" + user.getEmailAddress() + "] ";
         }
@@ -104,6 +105,9 @@ public class StreamsClientImpl implements org.symphonyoss.symphony.clients.Strea
     public Stream getStreamFromEmail(String email) throws Exception {
 
         UsersClient usersClient = UsersFactory.getClient(symAuth,serviceUrl, UsersFactory.TYPE.DEFAULT);
+
+
+
         return getStream(usersClient.getUserFromEmail(email));
     }
 

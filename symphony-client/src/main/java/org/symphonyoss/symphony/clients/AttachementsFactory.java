@@ -31,7 +31,7 @@ import org.symphonyoss.symphony.clients.impl.DataFeedClientImpl;
  */
 public class AttachementsFactory {
 
-    public enum TYPE { DEFAULT, v1, v2 }
+    public enum TYPE { DEFAULT }
 
     public static AttachmentsClient getClient(SymphonyClient symClient, TYPE type){
 

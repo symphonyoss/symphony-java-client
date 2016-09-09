@@ -28,6 +28,7 @@ import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.symphony.agent.model.Message;
 import org.symphonyoss.client.model.Chat;
 import org.symphonyoss.symphony.clients.model.SymMessage;
+import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.pod.model.Stream;
 import org.symphonyoss.symphony.pod.model.User;
 
@@ -65,7 +66,7 @@ public class ChatService implements MessageListener {
 
             chatsByStream.put(chat.getStream().getId(), chat);
 
-            for (User user : chat.getRemoteUsers()) {
+            for (SymUser user : chat.getRemoteUsers()) {
 
                 Set<Chat> userChats = chatsByUser.get(user.getId());
 
@@ -97,7 +98,7 @@ public class ChatService implements MessageListener {
 
         if (chat != null && chatsByStream.remove(chat.getStream().getId()) != null) {
 
-            for (User user : chat.getRemoteUsers()) {
+            for (SymUser user : chat.getRemoteUsers()) {
 
                 Set<Chat> userChats = chatsByUser.get(user.getId());
 
@@ -132,11 +133,11 @@ public class ChatService implements MessageListener {
             stream.setId(message.getStreamId());
             chat.setStream(stream);
             chat.setLastMessage(message);
-            User remoteUser = symClient.getUsersClient().getUserFromId(message.getFromUserId());
+            SymUser remoteUser = symClient.getUsersClient().getUserFromId(message.getFromUserId());
 
             if(remoteUser != null) {
 
-                Set<User> remoteUserSet = new HashSet<User>();
+                Set<SymUser> remoteUserSet = new HashSet<SymUser>();
                 remoteUserSet.add(remoteUser);
                 chat.setRemoteUsers(remoteUserSet);
                 return chat;
@@ -212,7 +213,7 @@ public class ChatService implements MessageListener {
     public Set<Chat> getChatsByEmail(String email) {
 
         try {
-            User user = symClient.getUsersClient().getUserFromEmail(email);
+            SymUser user = symClient.getUsersClient().getUserFromEmail(email);
 
             if (user != null)
                 return chatsByUser.get(user.getId());

@@ -24,6 +24,7 @@ package org.symphonyoss.symphony.clients;
 
 import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.symphony.clients.impl.AttachmentsClientImpl;
+import org.symphonyoss.symphony.clients.impl.ConnectionsClientImpl;
 
 /**
  * Created by frank.tarsillo on 6/6/2016.
@@ -32,9 +33,9 @@ public class ConnectionsFactory {
 
     public enum TYPE { DEFAULT }
 
-    public static ConnectionClient getClient(SymphonyClient symClient, TYPE type){
+    public static ConnectionsClient getClient(SymphonyClient symClient, TYPE type){
 
-            return new ConnectionClientImpl(symClient.getSymAuth(), symClient.getAgentUrl());
+            return new ConnectionsClientImpl(symClient.getSymAuth(), symClient.getServiceUrl());
 
     }
 

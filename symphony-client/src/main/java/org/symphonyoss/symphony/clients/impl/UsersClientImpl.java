@@ -25,6 +25,7 @@ package org.symphonyoss.symphony.clients.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.model.SymAuth;
+import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.pod.api.UserApi;
 import org.symphonyoss.symphony.pod.api.UsersApi;
 import org.symphonyoss.symphony.pod.invoker.ApiClient;
@@ -57,19 +58,19 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
 
     }
 
-    public User getUserFromEmail(String email) throws Exception {
+    public SymUser getUserFromEmail(String email) throws Exception {
 
 
         UsersApi usersApi = new UsersApi(apiClient);
 
 
-        User user = usersApi.v1UserGet(email, symAuth.getSessionToken().getToken(), true);
+        UserV2 user = usersApi.v2UserGet(symAuth.getSessionToken().getToken(),null,email,null , false);
 
 
         if (user != null) {
 
             logger.debug("Found User: {}:{}", user.getEmailAddress(), user.getId());
-            return user;
+            return SymUser.toSymUser(user);
         }
 
         logger.warn("Could not locate user: {}", email);
@@ -78,17 +79,14 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
 
     }
 
-    public User getUserFromId(Long userId) throws Exception {
+    public SymUser getUserFromId(Long userId) throws Exception {
 
-        UserApi userApi = new UserApi(apiClient);
+        UsersApi usersApi = new UsersApi(apiClient);
 
-        UserDetail userDetail = userApi.v1AdminUserUidGet(symAuth.getSessionToken().getToken(), userId);
+        UserV2 user = usersApi.v2UserGet(symAuth.getSessionToken().getToken(),userId,null,null , false);
 
-        User user = new User();
-        user.setId(userDetail.getUserSystemInfo().getId());
-        user.setEmailAddress(userDetail.getUserAttributes().getEmailAddress());
 
-        return user;
+        return SymUser.toSymUser(user);
     }
 
 

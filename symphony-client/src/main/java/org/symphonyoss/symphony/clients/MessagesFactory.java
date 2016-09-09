@@ -30,7 +30,7 @@ import org.symphonyoss.symphony.clients.impl.MessagesClientImpl;
  */
 public class MessagesFactory {
 
-    public enum TYPE { DEFAULT, v1, v2 }
+    public enum TYPE { DEFAULT }
 
     public static MessagesClient getClient(SymphonyClient symClient, TYPE type){
 

@@ -30,6 +30,7 @@ import org.symphonyoss.client.SymphonyClientFactory;
 import org.symphonyoss.client.model.Chat;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.symphony.authenticator.model.Token;
+import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.pod.model.Stream;
 import org.symphonyoss.symphony.pod.model.User;
 import java.util.HashSet;
@@ -67,8 +68,8 @@ public class TestFactory {
 
         Chat chat = new Chat();
         chat.setLocalUser(symClient.getLocalUser());
-        Set<User> remoteUsers = new HashSet<User>();
-        User aUser = new User();
+        Set<SymUser> remoteUsers = new HashSet<SymUser>();
+        SymUser aUser = new SymUser();
         aUser.setId((long)1234567890);
         aUser.setEmailAddress("test.user@domain.com");
         remoteUsers.add(aUser);

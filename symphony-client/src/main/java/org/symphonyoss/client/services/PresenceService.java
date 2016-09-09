@@ -25,6 +25,7 @@ package org.symphonyoss.client.services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.pod.model.Presence;
 import org.symphonyoss.symphony.pod.model.PresenceList;
 import org.symphonyoss.symphony.pod.model.User;
@@ -74,7 +75,7 @@ public class PresenceService implements PresenceListener {
 
     public Presence getUserPresence(String email) throws Exception{
 
-        User user = symClient.getUsersClient().getUserFromEmail(email);
+        SymUser user = symClient.getUsersClient().getUserFromEmail(email);
 
         if(user!= null)
             return symClient.getPresenceClient().getUserPresence(user.getId());

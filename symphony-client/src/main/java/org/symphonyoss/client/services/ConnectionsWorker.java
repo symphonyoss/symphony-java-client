@@ -25,74 +25,91 @@ package org.symphonyoss.client.services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
-import org.symphonyoss.symphony.pod.model.PresenceList;
-import org.symphonyoss.symphony.pod.model.UserPresence;
-
+import org.symphonyoss.symphony.clients.model.SymUserConnection;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Frank Tarsillo on 5/15/2016.
  */
 class ConnectionsWorker implements Runnable {
-    private final SymphonyClient symphonyClient;
-    private final PresenceListener presenceListener;
-    private final PresenceList presenceList;
+    private final SymphonyClient symClient;
+    private final ConnectionsListener connectionsListener;
+    private final ConcurrentHashMap<Long, SymUserConnection> pendingConnections = new ConcurrentHashMap<Long, SymUserConnection>();
     private final Logger logger = LoggerFactory.getLogger(ConnectionsWorker.class);
     private boolean KILL = false;
 
 
-    public ConnectionsWorker(SymphonyClient symphonyClient, PresenceListener presenceListener, PresenceList presenceList) {
-        this.symphonyClient = symphonyClient;
-        this.presenceListener = presenceListener;
-        this.presenceList = presenceList;
+    public ConnectionsWorker(SymphonyClient symClient, ConnectionsListener connectionsListener) {
+        this.symClient = symClient;
+        this.connectionsListener = connectionsListener;
 
     }
 
+
+    //Lets look for all new pending requests..
     public void run() {
 
-        PresenceList cPresenceList;
+        logger.info("Starting connections service worker..");
+
+        List<SymUserConnection> symUserConnectionList;
+
         while (true) {
-
             try {
-                cPresenceList = symphonyClient.getPresenceService().getAllUserPresence();
 
-            } catch (Exception e) {
+                try {
+                    symUserConnectionList = symClient.getConnectionsClient().getIncomingRequests();
 
-                logger.error("Presence retrieval failure", e);
-                continue;
-            }
+                    logger.debug("Connections queue..{}",symUserConnectionList.size());
+                } catch (Exception e) {
 
-            for (UserPresence cPresence : cPresenceList) {
-
-
-                UserPresence presence = findUserPresenceById(cPresence.getUid());
-
-                if(presence == null) {
-                    presenceList.add(cPresence);
-                    presenceListener.onUserPresence(cPresence);
-                    logger.debug("Adding new user presence to cache for {}:{}", cPresence.getUid(), cPresence.getCategory());
+                    logger.error("Pending connections request retrieval failure", e);
+                    try {
+                        TimeUnit.SECONDS.sleep(2);
+                    } catch (InterruptedException ie) {
+                    }
                     continue;
                 }
 
 
-                if(cPresence.getCategory() != presence.getCategory()){
+                if (symUserConnectionList != null)
+                    for (SymUserConnection symUserConnection : symUserConnectionList) {
 
-                    logger.debug("Presence change for {}: from: {}  to:{}", cPresence.getUid(), presence.getCategory(), cPresence.getCategory());
-                    presence.setCategory(cPresence.getCategory());
-                    presenceListener.onUserPresence(cPresence);
+                        SymUserConnection cUserConnection = pendingConnections.get(symUserConnection.getUserId());
 
+                        if (cUserConnection == null) {
+                            pendingConnections.put(symUserConnection.getUserId(), symUserConnection);
+                            connectionsListener.onConnectionNotification(symUserConnection);
+                            logger.debug("Received new pending connection request from {}...", symUserConnection.getUserId());
+                            continue;
+                        }
+
+
+                        if (cUserConnection.getStatus() != symUserConnection.getStatus()) {
+
+                            logger.debug("Connection status changed for {}: from: {}  to:{}", cUserConnection.getUserId(), cUserConnection.getStatus().toString(), symUserConnection.getStatus().toString());
+                            pendingConnections.remove(symUserConnection.getUserId());
+                            connectionsListener.onConnectionNotification(symUserConnection);
+
+                        }
+
+
+                    }
+
+                if (KILL) {
+                    logger.debug("Connections worker thread killed..");
+                    return;
                 }
 
-
+                try {
+                    TimeUnit.SECONDS.sleep(2);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            } catch (Exception bad) {
+                logger.error("Serious failure in connections worker thread..please verify stacktrace.", bad);
             }
-
-            if (KILL) {
-                logger.debug("Presence worker thread killed..");
-                return;
-            }
-
-            try{TimeUnit.SECONDS.sleep(2);}catch(InterruptedException e){e.printStackTrace();}
-
         }
 
 
@@ -104,20 +121,5 @@ class ConnectionsWorker implements Runnable {
 
     }
 
-    private UserPresence findUserPresenceById(Long userId){
-
-
-        if(presenceList == null)
-            return null;
-
-        for(UserPresence userPresence: presenceList){
-
-            if(userPresence.getUid().equals(userId))
-                return userPresence;
-
-        }
-
-        return null;
-    }
 
 }
