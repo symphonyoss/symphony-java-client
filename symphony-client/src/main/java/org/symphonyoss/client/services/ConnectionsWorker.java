@@ -25,6 +25,7 @@ package org.symphonyoss.client.services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.exceptions.ConnectionsException;
 import org.symphonyoss.symphony.clients.model.SymUserConnection;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -63,7 +64,7 @@ class ConnectionsWorker implements Runnable {
 
                     //logger.debug("Connections queue..{}",symUserConnectionList.size());
 
-                } catch (Exception e) {
+                } catch (ConnectionsException e) {
 
                     logger.error("Pending connections request retrieval failure", e);
                     try {

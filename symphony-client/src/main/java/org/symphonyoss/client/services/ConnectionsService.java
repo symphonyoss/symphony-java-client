@@ -25,6 +25,7 @@ package org.symphonyoss.client.services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.exceptions.ConnectionsException;
 import org.symphonyoss.symphony.clients.model.SymUserConnection;
 import org.symphonyoss.symphony.pod.api.ConnectionApi;
 
@@ -60,7 +61,7 @@ public class ConnectionsService implements ConnectionsListener{
         if (autoAccept)
             symClient.getConnectionsClient().acceptConnectionRequest(userConnection);
 
-    }catch (Exception e){
+    }catch (ConnectionsException e){
         logger.error("Could not autoaccept connection request from {}",userConnection.getUserId(),e);
 
     }

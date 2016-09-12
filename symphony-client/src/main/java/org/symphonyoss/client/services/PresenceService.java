@@ -25,6 +25,8 @@ package org.symphonyoss.client.services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.exceptions.UsersClientException;
+import org.symphonyoss.symphony.clients.impl.PresenceException;
 import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.pod.model.Presence;
 import org.symphonyoss.symphony.pod.model.PresenceList;
@@ -60,22 +62,27 @@ public class PresenceService implements PresenceListener {
     }
 
 
-    public PresenceList getAllUserPresence() throws Exception {
+    public PresenceList getAllUserPresence() throws PresenceException {
 
 
         return symClient.getPresenceClient().getAllUserPresence();
 
     }
 
-    public Presence getUserPresence(Long userId) throws Exception{
+    public Presence getUserPresence(Long userId) throws PresenceException{
 
         return symClient.getPresenceClient().getUserPresence(userId);
 
     }
 
-    public Presence getUserPresence(String email) throws Exception{
+    public Presence getUserPresence(String email) throws PresenceException{
 
-        SymUser user = symClient.getUsersClient().getUserFromEmail(email);
+        SymUser user = null;
+        try {
+            user = symClient.getUsersClient().getUserFromEmail(email);
+        } catch (UsersClientException e) {
+            throw new PresenceException("Failed to obtain user from email: " + email, e.getCause());
+        }
 
         if(user!= null)
             return symClient.getPresenceClient().getUserPresence(user.getId());

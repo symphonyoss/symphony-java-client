@@ -26,6 +26,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.exceptions.InitException;
+import org.symphonyoss.exceptions.StreamsException;
+import org.symphonyoss.exceptions.UsersClientException;
 import org.symphonyoss.symphony.agent.model.Message;
 import org.symphonyoss.client.model.Chat;
 import org.symphonyoss.symphony.clients.model.SymMessage;
@@ -179,7 +181,7 @@ public class ChatService implements MessageListener {
                         logger.debug("Rejecting message from room stream {}", streamId);
                         return;
                     }
-                }catch(Exception e){
+                }catch(StreamsException e){
                     logger.debug("Stream {} not a room", streamId);
 
                 }
@@ -218,7 +220,7 @@ public class ChatService implements MessageListener {
 
             if (user != null)
                 return chatsByUser.get(user.getId());
-        }catch(Exception e){
+        }catch(UsersClientException e){
             logger.error("Could not locate user by email {}", email,e);
         }
         return null;

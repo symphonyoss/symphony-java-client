@@ -26,6 +26,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.client.model.Room;
+import org.symphonyoss.exceptions.MessagesException;
+import org.symphonyoss.exceptions.StreamsException;
+import org.symphonyoss.exceptions.UsersClientException;
 import org.symphonyoss.symphony.clients.model.SymAttachmentInfo;
 import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.agent.model.Message;
@@ -65,27 +68,27 @@ public class MessageService implements MessageListener {
     }
 
     @Deprecated
-    public void sendMessage(Room room, MessageSubmission message) throws Exception {
+    public void sendMessage(Room room, MessageSubmission message) throws MessagesException {
 
         symClient.getMessagesClient().sendMessage(room.getStream(), message);
 
     }
 
-    public void sendMessage(Room room, SymMessage message) throws Exception {
+    public void sendMessage(Room room, SymMessage message) throws MessagesException {
 
         symClient.getMessagesClient().sendMessage(room.getStream(), message);
 
     }
 
     @Deprecated
-    public void sendMessage(Chat chat, MessageSubmission message) throws Exception {
+    public void sendMessage(Chat chat, MessageSubmission message) throws MessagesException {
 
         symClient.getMessagesClient().sendMessage(chat.getStream(), message);
 
     }
 
 
-    public void sendMessage(Chat chat, SymMessage message) throws Exception {
+    public void sendMessage(Chat chat, SymMessage message) throws MessagesException {
 
         symClient.getMessagesClient().sendMessage(chat.getStream(), message);
 
@@ -93,23 +96,40 @@ public class MessageService implements MessageListener {
 
 
     @Deprecated
-    public void sendMessage(String email, MessageSubmission message) throws Exception {
+    public void sendMessage(String email, MessageSubmission message) throws MessagesException {
 
-        SymUser remoteUser = symClient.getUsersClient().getUserFromEmail(email);
+        SymUser remoteUser = null;
+        try {
+            remoteUser = symClient.getUsersClient().getUserFromEmail(email);
 
-        symClient.getMessagesClient().sendMessage(symClient.getStreamsClient().getStream(remoteUser), message);
+            symClient.getMessagesClient().sendMessage(symClient.getStreamsClient().getStream(remoteUser), message);
+
+        } catch (UsersClientException e) {
+            throw new MessagesException("Failed to find user from email address: " + email, e.getCause());
+        } catch (StreamsException e) {
+            throw new MessagesException("Failed to send message to user by email address: " + email, e.getCause());
+        }
 
     }
 
-    public void sendMessage(String email, SymMessage message) throws Exception {
+    public void sendMessage(String email, SymMessage message) throws MessagesException {
 
-        SymUser remoteUser = symClient.getUsersClient().getUserFromEmail(email);
+        SymUser remoteUser = null;
+        try {
 
-        symClient.getMessagesClient().sendMessage(symClient.getStreamsClient().getStream(remoteUser), message);
+            remoteUser = symClient.getUsersClient().getUserFromEmail(email);
+
+            symClient.getMessagesClient().sendMessage(symClient.getStreamsClient().getStream(remoteUser), message);
+
+        } catch (UsersClientException e) {
+            throw new MessagesException("Failed to find user from email address: " + email, e.getCause());
+        } catch (StreamsException e) {
+            throw new MessagesException("Failed to send message. Unable to identify stream from email: " + email, e.getCause());
+        }
 
     }
 
-    private List<SymMessage> getMessagesFromStream(Stream stream, Long since, Integer offset, Integer maxMessages) throws Exception {
+    private List<SymMessage> getMessagesFromStream(Stream stream, Long since, Integer offset, Integer maxMessages) throws MessagesException {
 
         return symClient.getMessagesClient().getMessagesFromStream(
                 stream, since, offset, maxMessages);
@@ -117,15 +137,19 @@ public class MessageService implements MessageListener {
     }
 
 
-    public List<SymMessage> getMessagesFromUserId(long userId, Long since, Integer offset, Integer maxMessages) throws Exception {
+    public List<SymMessage> getMessagesFromUserId(long userId, Long since, Integer offset, Integer maxMessages) throws MessagesException {
 
 
         SymUser user = new SymUser();
         user.setId(userId);
 
 
-        return getMessagesFromStream(
-                symClient.getStreamsClient().getStream(user), since, offset, maxMessages);
+        try {
+            return getMessagesFromStream(
+                    symClient.getStreamsClient().getStream(user), since, offset, maxMessages);
+        } catch (StreamsException e) {
+            throw new MessagesException("Failed to retrieve messages. Unable to identity stream for userId: " + userId, e.getCause());
+        }
 
 
     }
@@ -137,7 +161,7 @@ public class MessageService implements MessageListener {
         if (symClient.getLocalUser().getId().equals(message.getFromUserId()))
             return;
 
-        if (message.getStreamId() == null && message.getMessageType()!= null)
+        if (message.getStreamId() == null && message.getMessageType() != null)
             return;
 
 
@@ -176,8 +200,6 @@ public class MessageService implements MessageListener {
         return messageListeners.remove(messageListener);
 
     }
-
-
 
 
 }

@@ -25,6 +25,7 @@ package org.symphonyoss.client.services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.exceptions.DataFeedException;
 import org.symphonyoss.symphony.agent.model.Datafeed;
 import org.symphonyoss.symphony.agent.model.Message;
 import org.symphonyoss.symphony.agent.model.MessageList;
@@ -65,7 +66,7 @@ class MessageFeedWorker implements Runnable {
 
                         datafeed = symClient.getDataFeedClient().createDatafeed();
 
-                    } catch (Exception e) {
+                    } catch (DataFeedException e) {
 
                         logger.error("Failed to create datafeed with pod, please check connection..", e);
                         datafeed = null;
@@ -92,7 +93,7 @@ class MessageFeedWorker implements Runnable {
                     }
                 }
 
-            } catch (Exception e) {
+            } catch (DataFeedException e) {
                 logger.error("Failed to create read datafeed from pod, please check connection..resetting.", e);
                 datafeed = null;
 
