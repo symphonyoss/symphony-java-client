@@ -24,13 +24,15 @@ package org.symphonyoss.symphony.clients.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.symphonyoss.exceptions.UsersClientException;
 import org.symphonyoss.client.model.SymAuth;
+import org.symphonyoss.exceptions.UserNotFoundException;
+import org.symphonyoss.exceptions.UsersClientException;
 import org.symphonyoss.symphony.clients.model.SymUser;
-import org.symphonyoss.symphony.pod.api.UserApi;
 import org.symphonyoss.symphony.pod.api.UsersApi;
 import org.symphonyoss.symphony.pod.invoker.ApiClient;
+import org.symphonyoss.symphony.pod.invoker.ApiException;
 import org.symphonyoss.symphony.pod.model.*;
-
 
 
 /**
@@ -58,14 +60,20 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
 
     }
 
-    public SymUser getUserFromEmail(String email) throws Exception {
+    public SymUser getUserFromEmail(String email) throws UsersClientException {
 
 
         UsersApi usersApi = new UsersApi(apiClient);
 
+        if (email == null)
+            throw new NullPointerException("Email was null");
 
-        UserV2 user = usersApi.v2UserGet(symAuth.getSessionToken().getToken(),null,email,null , false);
-
+        UserV2 user;
+        try {
+            user = usersApi.v2UserGet(symAuth.getSessionToken().getToken(), null, email, null, false);
+        } catch (ApiException e) {
+            throw new UsersClientException("API Error communicating with POD, while retrieving user details for " + email, e.getCause());
+        }
 
         if (user != null) {
 
@@ -73,23 +81,66 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
             return SymUser.toSymUser(user);
         }
 
+
         logger.warn("Could not locate user: {}", email);
-        return null;
+
+        throw new UserNotFoundException("Could not find user from email: " + email);
 
 
     }
 
-    public SymUser getUserFromId(Long userId) throws Exception {
+    public SymUser getUserFromId(Long userId) throws UsersClientException {
 
         UsersApi usersApi = new UsersApi(apiClient);
 
-        UserV2 user = usersApi.v2UserGet(symAuth.getSessionToken().getToken(),userId,null,null , false);
+
+        if (userId == null)
+            throw new NullPointerException("UserId was null...");
+
+        UserV2 user;
+        try {
+            user =  usersApi.v2UserGet(symAuth.getSessionToken().getToken(), userId, null, null, false);
+        }catch(ApiException e){
+            throw new UsersClientException("API Error communicating with POD, while retrieving user details for " + userId, e.getCause());
+        }
+
+        if (user != null) {
+
+            logger.debug("Found User: {}:{}", user.getEmailAddress(), user.getId());
+            return SymUser.toSymUser(user);
+        }
 
 
-        return SymUser.toSymUser(user);
+        throw new UserNotFoundException("Could not find user from ID: " + userId);
+
+
     }
 
 
+    @Override
+    public SymUser getUserFromName(String userName) throws UsersClientException {
 
+        UsersApi usersApi = new UsersApi(apiClient);
+
+
+        if (userName == null)
+            throw new NullPointerException("User name was null...");
+
+        UserV2 user;
+        try {
+            user =  usersApi.v2UserGet(symAuth.getSessionToken().getToken(), null, null, userName, false);
+        }catch(ApiException e){
+            throw new UsersClientException("API Error communicating with POD, while retrieving user details for " + userName, e.getCause());
+        }
+
+        if (user != null) {
+
+            logger.debug("Found User: {}:{}", user.getEmailAddress(), user.getId());
+            return SymUser.toSymUser(user);
+        }
+
+
+        throw new UserNotFoundException("Could not find user from user name: " + userName);
+    }
 
 }

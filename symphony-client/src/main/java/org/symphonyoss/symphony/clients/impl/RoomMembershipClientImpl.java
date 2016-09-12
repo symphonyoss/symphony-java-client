@@ -25,9 +25,11 @@ package org.symphonyoss.symphony.clients.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.model.SymAuth;
+import org.symphonyoss.exceptions.SymException;
 import org.symphonyoss.symphony.clients.RoomMembershipClient;
 import org.symphonyoss.symphony.pod.api.RoomMembershipApi;
 import org.symphonyoss.symphony.pod.invoker.ApiClient;
+import org.symphonyoss.symphony.pod.invoker.ApiException;
 import org.symphonyoss.symphony.pod.model.MembershipList;
 
 
@@ -40,11 +42,9 @@ public class RoomMembershipClientImpl implements RoomMembershipClient {
 
     private Logger logger = LoggerFactory.getLogger(RoomMembershipClientImpl.class);
 
-
     public RoomMembershipClientImpl(SymAuth symAuth, String serviceUrl) {
 
         this.symAuth = symAuth;
-        String serviceUrl1 = serviceUrl;
 
 
         //Get Service client to query for userID.
@@ -57,12 +57,19 @@ public class RoomMembershipClientImpl implements RoomMembershipClient {
     }
 
 
-    public MembershipList getRoomMembership(String id) throws Exception {
+    public MembershipList getRoomMembership(String roomId) throws SymException {
 
 
+        if (roomId == null) {
+            throw new NullPointerException("Room ID was not provided...");
+        }
         RoomMembershipApi roomMembershipApi = new RoomMembershipApi(apiClient);
 
-        return roomMembershipApi.v1RoomIdMembershipListGet(id,symAuth.getSessionToken().getToken());
+        try {
+            return roomMembershipApi.v1RoomIdMembershipListGet(roomId,symAuth.getSessionToken().getToken());
+        } catch (ApiException e) {
+            throw new SymException("Failed to retrieve room membership for room ID: " + roomId, e.getCause());
+        }
 
 
     }

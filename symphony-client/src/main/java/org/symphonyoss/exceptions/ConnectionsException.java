@@ -1,5 +1,6 @@
 /*
  *
+ *
  * Copyright 2016 The Symphony Software Foundation
  *
  * Licensed to The Symphony Software Foundation (SSF) under one
@@ -10,7 +11,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -20,17 +21,21 @@
  * under the License.
  */
 
-package org.symphonyoss.symphony.clients;
-
-import org.symphonyoss.symphony.clients.impl.PresenceException;
-import org.symphonyoss.symphony.pod.model.Presence;
-import org.symphonyoss.symphony.pod.model.PresenceList;
+package org.symphonyoss.exceptions;
 
 /**
- * Created by frank.tarsillo on 6/6/2016.
+ * Created by Frank Tarsillo on 9/11/2016.
  */
-public interface PresenceClient {
-    PresenceList getAllUserPresence() throws PresenceException;
+public class ConnectionsException extends SymException {
+    public ConnectionsException(String message) {
+        super(message);
+    }
 
-    Presence getUserPresence(Long userId) throws PresenceException;
+    public ConnectionsException(Throwable cause) {
+        super(cause);
+    }
+
+    public ConnectionsException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

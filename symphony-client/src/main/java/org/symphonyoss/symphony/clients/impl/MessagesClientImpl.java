@@ -24,8 +24,10 @@ package org.symphonyoss.symphony.clients.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.symphonyoss.exceptions.MessagesException;
 import org.symphonyoss.symphony.agent.api.MessagesApi;
 import org.symphonyoss.symphony.agent.invoker.ApiClient;
+import org.symphonyoss.symphony.agent.invoker.ApiException;
 import org.symphonyoss.symphony.agent.model.*;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.symphony.clients.model.SymAttachmentInfo;
@@ -57,22 +59,35 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
     }
 
     @Deprecated
-    public Message sendMessage(Stream stream, MessageSubmission message) throws Exception {
+    public Message sendMessage(Stream stream, MessageSubmission message) throws MessagesException {
+        if (stream == null || message == null) {
+            throw new NullPointerException("Stream or message submission was not provided..");
+        }
 
 
         MessagesApi messagesApi = new MessagesApi(apiClient);
 
 
-        return messagesApi.v1StreamSidMessageCreatePost(stream.getId(), symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken(), message);
+
+        try {
+            return messagesApi.v1StreamSidMessageCreatePost(stream.getId(), symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken(), message);
+        } catch (ApiException e) {
+            throw new MessagesException("Failed to send message to stream: " + stream, e.getCause());
+        }
 
     }
 
 
 
-    public SymMessage sendMessage(Stream stream, SymMessage message) throws Exception {
+    public SymMessage sendMessage(Stream stream, SymMessage message) throws MessagesException {
 
+        if (stream == null || message == null) {
+            throw new NullPointerException("Stream or message submission was not provided..");
+        }
 
         MessagesApi messagesApi = new MessagesApi(apiClient);
+
+
 
         V2MessageSubmission messageSubmission = new V2MessageSubmission();
 
@@ -84,19 +99,33 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
         );
         messageSubmission.setAttachments(SymAttachmentInfo.toV2AttachmentsInfo(message.getAttachments()));
 
-        V2Message v2Message =  messagesApi.v2StreamSidMessageCreatePost(stream.getId(), symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken(), messageSubmission);
+        V2Message v2Message = null;
+        try {
+            v2Message = messagesApi.v2StreamSidMessageCreatePost(stream.getId(), symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken(), messageSubmission);
+        } catch (ApiException e) {
+            throw new MessagesException("Failed to send message to stream: " + stream, e.getCause());
+        }
 
         return SymMessage.toSymMessage(v2Message);
     }
 
 
 
-    public List<SymMessage> getMessagesFromStream(Stream stream, Long since, Integer offset, Integer maxMessages) throws Exception {
+    public List<SymMessage> getMessagesFromStream(Stream stream, Long since, Integer offset, Integer maxMessages) throws MessagesException {
+
+        if (stream == null ) {
+            throw new NullPointerException("Stream submission was not provided..");
+        }
 
 
         MessagesApi messagesApi = new MessagesApi(apiClient);
 
-        V2MessageList v2MessageList =  messagesApi.v2StreamSidMessageGet(stream.getId(), since, symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken(), offset, maxMessages);
+        V2MessageList v2MessageList = null;
+        try {
+            v2MessageList = messagesApi.v2StreamSidMessageGet(stream.getId(), since, symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken(), offset, maxMessages);
+        } catch (ApiException e) {
+            throw new MessagesException("Failed to retrieve messages from stream: " + stream, e.getCause());
+        }
 
         List<SymMessage> symMessageList = new ArrayList<>();
 

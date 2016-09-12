@@ -24,8 +24,11 @@ package org.symphonyoss.symphony.clients.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.symphonyoss.exceptions.DataFeedException;
+import org.symphonyoss.exceptions.SymException;
 import org.symphonyoss.symphony.agent.api.DatafeedApi;
 import org.symphonyoss.symphony.agent.invoker.ApiClient;
+import org.symphonyoss.symphony.agent.invoker.ApiException;
 import org.symphonyoss.symphony.agent.model.*;
 import org.symphonyoss.symphony.clients.DataFeedClient;
 import org.symphonyoss.client.model.SymAuth;
@@ -58,19 +61,33 @@ public class DataFeedClientImpl implements DataFeedClient {
     }
 
 
-    public Datafeed createDatafeed() throws Exception {
+    public Datafeed createDatafeed() throws DataFeedException {
 
         DatafeedApi datafeedApi = new DatafeedApi(apiClient);
 
-        return datafeedApi.v1DatafeedCreatePost(symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken());
+
+        try {
+            return datafeedApi.v1DatafeedCreatePost(symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken());
+        } catch (ApiException e) {
+            throw new DataFeedException("Could not start datafeed..", e.getCause());
+        }
     }
 
 
-    public List<SymMessage> getMessagesFromDatafeed(Datafeed datafeed) throws Exception {
+    public List<SymMessage> getMessagesFromDatafeed(Datafeed datafeed) throws DataFeedException {
 
         DatafeedApi datafeedApi = new DatafeedApi(apiClient);
 
-        V2MessageList messageList = datafeedApi.v2DatafeedIdReadGet(datafeed.getId(),symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken(),100);
+        if (datafeed == null) {
+            throw new NullPointerException("Datafeed was not provided and null..");
+        }
+
+        V2MessageList messageList = null;
+        try {
+            messageList = datafeedApi.v2DatafeedIdReadGet(datafeed.getId(),symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken(),100);
+        } catch (ApiException e) {
+            throw new DataFeedException("Failed to retrieve messages from datafeed...", e.getCause());
+        }
 
         List<SymMessage> symMessgeList = new ArrayList<SymMessage>();
 

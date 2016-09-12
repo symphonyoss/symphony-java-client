@@ -32,6 +32,7 @@ import org.symphonyoss.client.model.Chat;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.client.services.ChatListener;
 import org.symphonyoss.client.services.ChatServiceListener;
+import org.symphonyoss.exceptions.AuthorizationException;
 import org.symphonyoss.symphony.agent.model.Message;
 import org.symphonyoss.symphony.agent.model.MessageSubmission;
 import org.symphonyoss.symphony.clients.AuthorizationClient;
@@ -121,6 +122,7 @@ public class ChatExample implements ChatListener, ChatServiceListener {
             //Create a SymAuth which holds both key and session tokens.  This will call the external service.
             SymAuth symAuth = authClient.authenticate();
 
+
             //With a valid SymAuth we can now init our client.
             symClient.init(
                     symAuth,
@@ -155,7 +157,11 @@ public class ChatExample implements ChatListener, ChatServiceListener {
             symClient.getMessageService().sendMessage(chat, aMessage);
 
 
-        } catch (Exception e) {
+        } catch(AuthorizationException ae) {
+
+            logger.error(ae.getMessage(),ae);
+
+        }catch (Exception e) {
             e.printStackTrace();
         }
 

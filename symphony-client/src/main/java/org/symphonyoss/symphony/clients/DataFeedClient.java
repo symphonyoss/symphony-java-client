@@ -22,6 +22,8 @@
 
 package org.symphonyoss.symphony.clients;
 
+import org.symphonyoss.exceptions.DataFeedException;
+import org.symphonyoss.exceptions.SymException;
 import org.symphonyoss.symphony.agent.model.Datafeed;
 import org.symphonyoss.symphony.agent.model.MessageList;
 import org.symphonyoss.symphony.agent.model.V2MessageList;
@@ -34,8 +36,8 @@ import java.util.List;
  * Created by frank.tarsillo on 6/6/2016.
  */
 public interface DataFeedClient {
-    Datafeed createDatafeed() throws Exception;
+    Datafeed createDatafeed() throws DataFeedException;
 
-    List<SymMessage> getMessagesFromDatafeed(Datafeed datafeed) throws Exception;
+    List<SymMessage> getMessagesFromDatafeed(Datafeed datafeed) throws DataFeedException;
 
     }

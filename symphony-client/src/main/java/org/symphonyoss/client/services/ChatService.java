@@ -25,6 +25,7 @@ package org.symphonyoss.client.services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.exceptions.InitException;
 import org.symphonyoss.symphony.agent.model.Message;
 import org.symphonyoss.client.model.Chat;
 import org.symphonyoss.symphony.clients.model.SymMessage;
@@ -52,7 +53,7 @@ public class ChatService implements MessageListener {
     private final Logger logger = LoggerFactory.getLogger(ChatService.class);
 
 
-    public ChatService(SymphonyClient symClient) throws Exception {
+    public ChatService(SymphonyClient symClient) throws InitException {
         this.symClient = symClient;
 
         symClient.getMessageService().registerMessageListener(this);

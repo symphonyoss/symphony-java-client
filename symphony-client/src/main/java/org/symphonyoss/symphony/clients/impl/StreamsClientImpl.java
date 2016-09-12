@@ -22,14 +22,18 @@
 
 package org.symphonyoss.symphony.clients.impl;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.symphonyoss.exceptions.StreamsException;
+import org.symphonyoss.exceptions.UsersClientException;
 import org.symphonyoss.symphony.clients.UsersClient;
 import org.symphonyoss.symphony.clients.UsersFactory;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.pod.api.StreamsApi;
 import org.symphonyoss.symphony.pod.invoker.ApiClient;
+import org.symphonyoss.symphony.pod.invoker.ApiException;
 import org.symphonyoss.symphony.pod.model.*;
 
 import java.util.Set;
@@ -62,8 +66,11 @@ public class StreamsClientImpl implements org.symphonyoss.symphony.clients.Strea
     }
 
 
-    public Stream getStream(SymUser user) throws Exception {
+    public Stream getStream(SymUser user) throws StreamsException {
 
+        if (user == null) {
+            throw new NullPointerException("User was not provided...");
+        }
 
         UserIdList userIdList = new UserIdList();
         userIdList.add(user.getId());
@@ -76,7 +83,11 @@ public class StreamsClientImpl implements org.symphonyoss.symphony.clients.Strea
 
     }
 
-    public Stream getStream(Set<SymUser> users) throws Exception {
+    public Stream getStream(Set<SymUser> users) throws StreamsException {
+        if (users == null) {
+             throw new NullPointerException("Users were not provided...");
+        }
+
         UserIdList userIdList = new UserIdList();
         String usersPrint = "";
 
@@ -96,27 +107,48 @@ public class StreamsClientImpl implements org.symphonyoss.symphony.clients.Strea
     }
 
 
-    public Stream getStream(UserIdList userIdList) throws Exception {
+    public Stream getStream(UserIdList userIdList) throws StreamsException {
+        if (userIdList == null) {
+            throw new NullPointerException("UsersIds were not provided...");
+        }
         StreamsApi streamsApi = new StreamsApi(apiClient);
-        return streamsApi.v1ImCreatePost(userIdList, symAuth.getSessionToken().getToken());
+        try {
+            return streamsApi.v1ImCreatePost(userIdList, symAuth.getSessionToken().getToken());
+        } catch (ApiException e) {
+            throw new StreamsException("Failed to retrieve stream for given user ids...", e.getCause());
+        }
 
     }
 
-    public Stream getStreamFromEmail(String email) throws Exception {
+    public Stream getStreamFromEmail(String email) throws StreamsException {
+
+        if (email == null) {
+            throw new NullPointerException("Email was not provided...");
+        }
 
         UsersClient usersClient = UsersFactory.getClient(symAuth,serviceUrl, UsersFactory.TYPE.DEFAULT);
 
 
-
-        return getStream(usersClient.getUserFromEmail(email));
+        try {
+            return getStream(usersClient.getUserFromEmail(email));
+        } catch (UsersClientException e) {
+            throw new StreamsException("Failed to find user from email : " + email, e.getCause());
+        }
     }
 
 
-    public RoomDetail getRoomDetail(String id) throws Exception{
+    public RoomDetail getRoomDetail(String roomId) throws StreamsException{
 
+        if (roomId == null) {
+            throw new NullPointerException("Room ID was not provided..");
+        }
         StreamsApi streamsApi = new StreamsApi(apiClient);
 
-        return streamsApi.v1RoomIdInfoGet(id,symAuth.getSessionToken().getToken());
+        try {
+            return streamsApi.v1RoomIdInfoGet(roomId,symAuth.getSessionToken().getToken());
+        } catch (ApiException e) {
+            throw new StreamsException("Failed to obtain room information from ID: " + roomId, e.getCause());
+        }
 
     }
 

@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.symphony.pod.api.PresenceApi;
 import org.symphonyoss.symphony.pod.invoker.ApiClient;
+import org.symphonyoss.symphony.pod.invoker.ApiException;
 import org.symphonyoss.symphony.pod.model.*;
 
 
@@ -56,24 +57,35 @@ public class PresenceClientImpl implements org.symphonyoss.symphony.clients.Pres
     }
 
 
-    public PresenceList getAllUserPresence() throws Exception {
+    public PresenceList getAllUserPresence() throws PresenceException {
 
 
         PresenceApi presenceApi = new PresenceApi(apiClient);
 
 
-        return presenceApi.v1PresenceGet(symAuth.getSessionToken().getToken());
+        try {
+            return presenceApi.v1PresenceGet(symAuth.getSessionToken().getToken());
+        } catch (ApiException e) {
+            throw new PresenceException("Failed to retrieve all user presence...", e.getCause());
+        }
 
 
     }
 
-    public Presence getUserPresence(Long userId) throws Exception {
+    public Presence getUserPresence(Long userId) throws PresenceException {
 
 
         PresenceApi presenceApi = new PresenceApi(apiClient);
 
+        if (userId == null) {
+            throw new NullPointerException("UserId was not provided...");
+        }
 
-        return presenceApi.v1UserUidPresenceGet(userId,symAuth.getSessionToken().getToken());
+        try {
+            return presenceApi.v1UserUidPresenceGet(userId,symAuth.getSessionToken().getToken());
+        } catch (ApiException e) {
+            throw new PresenceException("Failed to retrieve user presence for ID: " + userId,e.getCause());
+        }
 
 
     }

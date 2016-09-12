@@ -22,6 +22,7 @@
 
 package org.symphonyoss.symphony.clients;
 
+import org.symphonyoss.exceptions.MessagesException;
 import org.symphonyoss.symphony.agent.model.Message;
 import org.symphonyoss.symphony.agent.model.MessageList;
 import org.symphonyoss.symphony.agent.model.MessageSubmission;
@@ -34,10 +35,11 @@ import java.util.List;
  * Created by frank.tarsillo on 6/6/2016.
  */
 public interface MessagesClient {
-    SymMessage sendMessage(Stream stream, SymMessage message) throws Exception;
+    SymMessage sendMessage(Stream stream, SymMessage message) throws MessagesException;
 
     @Deprecated
-    Message sendMessage(Stream stream, MessageSubmission message) throws Exception;
+    Message sendMessage(Stream stream, MessageSubmission message) throws MessagesException;
 
-    List<SymMessage> getMessagesFromStream(Stream stream, Long since, Integer offset, Integer maxMessages) throws Exception;
+
+    List<SymMessage> getMessagesFromStream(Stream stream, Long since, Integer offset, Integer maxMessages) throws MessagesException;
 }

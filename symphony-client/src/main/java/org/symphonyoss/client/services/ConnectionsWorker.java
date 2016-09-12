@@ -61,12 +61,13 @@ class ConnectionsWorker implements Runnable {
                 try {
                     symUserConnectionList = symClient.getConnectionsClient().getIncomingRequests();
 
-                    logger.debug("Connections queue..{}",symUserConnectionList.size());
+                    //logger.debug("Connections queue..{}",symUserConnectionList.size());
+
                 } catch (Exception e) {
 
                     logger.error("Pending connections request retrieval failure", e);
                     try {
-                        TimeUnit.SECONDS.sleep(2);
+                        TimeUnit.SECONDS.sleep(30);
                     } catch (InterruptedException ie) {
                     }
                     continue;
@@ -103,7 +104,7 @@ class ConnectionsWorker implements Runnable {
                 }
 
                 try {
-                    TimeUnit.SECONDS.sleep(2);
+                    TimeUnit.SECONDS.sleep(30);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

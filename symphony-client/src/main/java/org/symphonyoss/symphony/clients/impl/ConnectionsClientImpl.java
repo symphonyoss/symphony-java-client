@@ -25,12 +25,17 @@ package org.symphonyoss.symphony.clients.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.model.SymAuth;
+import org.symphonyoss.exceptions.ConnectionsException;
+import org.symphonyoss.exceptions.ConnectionsException;
 import org.symphonyoss.symphony.clients.model.SymUserConnection;
 import org.symphonyoss.symphony.clients.model.SymUserConnectionRequest;
 import org.symphonyoss.symphony.pod.invoker.ApiClient;
 import org.symphonyoss.symphony.clients.ConnectionsClient;
 import org.symphonyoss.symphony.pod.api.ConnectionApi;
+import org.symphonyoss.symphony.pod.invoker.ApiException;
 import org.symphonyoss.symphony.pod.model.UserConnectionList;
+
+import java.net.ConnectException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,7 +43,7 @@ import java.util.stream.Collectors;
 /**
  * Created by Frank Tarsillo on 5/15/2016.
  */
-public class ConnectionsClientImpl implements  ConnectionsClient {
+public class ConnectionsClientImpl implements ConnectionsClient {
 
     private final ApiClient apiClient;
     private final SymAuth symAuth;
@@ -49,7 +54,6 @@ public class ConnectionsClientImpl implements  ConnectionsClient {
         this.symAuth = symAuth;
 
 
-
         //Get Service client to query for userID.
         apiClient = org.symphonyoss.symphony.pod.invoker.Configuration.getDefaultApiClient();
         apiClient.setBasePath(serviceUrl);
@@ -57,15 +61,15 @@ public class ConnectionsClientImpl implements  ConnectionsClient {
     }
 
     @Override
-    public List<SymUserConnection> getIncomingRequests() throws Exception {
+    public List<SymUserConnection> getIncomingRequests() throws ConnectionsException {
 
-        return getAllConnections(SymUserConnection.Status.PENDING_INCOMING,null);
+        return getAllConnections(SymUserConnection.Status.PENDING_INCOMING, null);
 
     }
 
 
     @Override
-    public List<SymUserConnection> getPendingRequests() throws Exception {
+    public List<SymUserConnection> getPendingRequests() throws ConnectionsException {
 
 
         return getAllConnections(SymUserConnection.Status.PENDING_OUTGOING, null);
@@ -74,7 +78,7 @@ public class ConnectionsClientImpl implements  ConnectionsClient {
 
 
     @Override
-    public List<SymUserConnection> getRejectedRequests() throws Exception {
+    public List<SymUserConnection> getRejectedRequests() throws ConnectionsException {
 
 
         return getAllConnections(SymUserConnection.Status.REJECTED, null);
@@ -83,7 +87,7 @@ public class ConnectionsClientImpl implements  ConnectionsClient {
 
 
     @Override
-    public List<SymUserConnection> getAcceptedRequests() throws Exception {
+    public List<SymUserConnection> getAcceptedRequests() throws ConnectionsException {
 
 
         return getAllConnections(SymUserConnection.Status.ACCEPTED, null);
@@ -91,7 +95,7 @@ public class ConnectionsClientImpl implements  ConnectionsClient {
     }
 
     @Override
-    public List<SymUserConnection> getAllConnections() throws Exception {
+    public List<SymUserConnection> getAllConnections() throws ConnectionsException {
 
 
         return getAllConnections(SymUserConnection.Status.ALL, null);
@@ -100,70 +104,109 @@ public class ConnectionsClientImpl implements  ConnectionsClient {
 
 
     @Override
-    public SymUserConnection sendConnectionRequest(SymUserConnectionRequest symUserConnectionRequest) throws Exception{
+    public SymUserConnection sendConnectionRequest(SymUserConnectionRequest symUserConnectionRequest) throws ConnectionsException {
         ConnectionApi connectionApi = new ConnectionApi(apiClient);
 
-        return SymUserConnection.toSymUserConnection( connectionApi.v1ConnectionCreatePost(symAuth.getSessionToken().getToken(),symUserConnectionRequest));
+        if (symUserConnectionRequest == null)
+            throw new NullPointerException("Connection request was not provided.");
+
+
+        try {
+            return SymUserConnection.toSymUserConnection(connectionApi.v1ConnectionCreatePost(symAuth.getSessionToken().getToken(), symUserConnectionRequest));
+        } catch (ApiException e) {
+            throw new ConnectionsException("Error sending connection request to ID: " + symUserConnectionRequest.getUserId(), e.getCause());
+        }
 
 
     }
 
     @Override
-    public SymUserConnection acceptConnectionRequest(SymUserConnectionRequest symUserConnectionRequest) throws Exception{
+    public SymUserConnection acceptConnectionRequest(SymUserConnectionRequest symUserConnectionRequest) throws ConnectionsException {
         ConnectionApi connectionApi = new ConnectionApi(apiClient);
+        if (symUserConnectionRequest == null)
+            throw new NullPointerException("Connection request was not provided.");
 
-        return SymUserConnection.toSymUserConnection( connectionApi.v1ConnectionAcceptPost(symAuth.getSessionToken().getToken(),symUserConnectionRequest));
-
-
-    }
-
-
-    @Override
-    public SymUserConnection acceptConnectionRequest(SymUserConnection symUserConnection) throws Exception{
-        if(symUserConnection==null)
-            throw new NullPointerException("SymUserConnection was null.. ");
-
-        ConnectionApi connectionApi = new ConnectionApi(apiClient);
-
-        return SymUserConnection.toSymUserConnection( connectionApi.v1ConnectionAcceptPost(symAuth.getSessionToken().getToken(), new SymUserConnectionRequest( symUserConnection)));
-
-
-    }
-
-
-    @Override
-    public SymUserConnection rejectConnectionRequest(SymUserConnectionRequest symUserConnectionRequest) throws Exception{
-        ConnectionApi connectionApi = new ConnectionApi(apiClient);
-
-        return SymUserConnection.toSymUserConnection( connectionApi.v1ConnectionRejectPost(symAuth.getSessionToken().getToken(),symUserConnectionRequest));
+        try {
+            return SymUserConnection.toSymUserConnection(connectionApi.v1ConnectionAcceptPost(symAuth.getSessionToken().getToken(), symUserConnectionRequest));
+        } catch (ApiException e) {
+            throw new ConnectionsException("Failed to accept connection request from ID: " + symUserConnectionRequest.getUserId(), e.getCause());
+        }
 
 
     }
 
 
     @Override
-    public SymUserConnection getUserConnection(String userId) throws Exception {
+    public SymUserConnection acceptConnectionRequest(SymUserConnection symUserConnection) throws ConnectionsException {
+        if (symUserConnection == null)
+            throw new NullPointerException("SymUserConnection was not provided.. ");
 
         ConnectionApi connectionApi = new ConnectionApi(apiClient);
 
-        return  SymUserConnection.toSymUserConnection(connectionApi.v1ConnectionUserUserIdInfoGet(symAuth.getSessionToken().getToken(), userId));
+        try {
+            return SymUserConnection.toSymUserConnection(connectionApi.v1ConnectionAcceptPost(symAuth.getSessionToken().getToken(), new SymUserConnectionRequest(symUserConnection)));
+        } catch (ApiException e) {
+            throw new ConnectionsException("Failed to accept connection request from ID: " + symUserConnection.getUserId(), e.getCause());
+        }
 
 
     }
 
 
-    private List<SymUserConnection> getAllConnections(SymUserConnection.Status status, String userIds)throws Exception{
+    @Override
+    public SymUserConnection rejectConnectionRequest(SymUserConnectionRequest symUserConnectionRequest) throws ConnectionsException {
+        ConnectionApi connectionApi = new ConnectionApi(apiClient);
+
+        if (symUserConnectionRequest == null)
+            throw new NullPointerException("Connection request was not provided.");
+
+        try {
+            return SymUserConnection.toSymUserConnection(connectionApi.v1ConnectionRejectPost(symAuth.getSessionToken().getToken(), symUserConnectionRequest));
+        } catch (ApiException e) {
+            throw new ConnectionsException("Failed to reject connection request from ID: " + symUserConnectionRequest.getUserId(), e.getCause());
+        }
+
+
+    }
+
+
+    @Override
+    public SymUserConnection getUserConnection(String userId) throws ConnectionsException {
 
         ConnectionApi connectionApi = new ConnectionApi(apiClient);
 
-        UserConnectionList userConnectionList = connectionApi.v1ConnectionListGet(symAuth.getSessionToken().getToken(), status.toString(),userIds);
+        if (userId == null) {
+            throw new NullPointerException("UserID was not provided..");
+        }
+
+        try {
+            return SymUserConnection.toSymUserConnection(connectionApi.v1ConnectionUserUserIdInfoGet(symAuth.getSessionToken().getToken(), userId));
+        } catch (ApiException e) {
+            throw new ConnectionsException("Unable to retrieve connection information for ID: " + userId, e.getCause());
+        }
+
+
+    }
+
+
+    private List<SymUserConnection> getAllConnections(SymUserConnection.Status status, String userIds) throws ConnectionsException {
+
+        ConnectionApi connectionApi = new ConnectionApi(apiClient);
+
+        if(status == null)
+            status = SymUserConnection.Status.ALL;
+
+        UserConnectionList userConnectionList = null;
+        try {
+            userConnectionList = connectionApi.v1ConnectionListGet(symAuth.getSessionToken().getToken(), status.toString(), userIds);
+        } catch (ApiException e) {
+            throw new ConnectionsException("Unable to retrieve all known connections..", e.getCause());
+        }
 
         return userConnectionList.stream().map(SymUserConnection::toSymUserConnection).collect(Collectors.toList());
 
 
     }
-
-
 
 
 }

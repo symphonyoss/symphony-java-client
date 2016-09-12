@@ -83,6 +83,7 @@ class MessageFeedWorker implements Runnable {
                 List<SymMessage> messageList = symClient.getDataFeedClient().getMessagesFromDatafeed(datafeed);
 
                 if(messageList != null) {
+
                     logger.debug("Received {} messages..", messageList.size());
 
                     for (SymMessage message : messageList) {

@@ -22,12 +22,17 @@
 
 package org.symphonyoss.symphony.clients.impl;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.model.SymAuth;
+import org.symphonyoss.exceptions.AttachementsException;
+import org.symphonyoss.exceptions.DataFeedException;
+import org.symphonyoss.exceptions.SymException;
 import org.symphonyoss.symphony.agent.api.AttachmentsApi;
 import org.symphonyoss.symphony.agent.api.DatafeedApi;
 import org.symphonyoss.symphony.agent.invoker.ApiClient;
+import org.symphonyoss.symphony.agent.invoker.ApiException;
 import org.symphonyoss.symphony.agent.model.AttachmentInfo;
 import org.symphonyoss.symphony.clients.AttachmentsClient;
 import org.symphonyoss.symphony.clients.model.SymAttachmentInfo;
@@ -62,32 +67,49 @@ public class AttachmentsClientImpl implements AttachmentsClient {
     }
 
 
-    public byte[] getAttachmentData(SymAttachmentInfo symAttachmentInfo, SymMessage symMessage) throws Exception {
+    public byte[] getAttachmentData(SymAttachmentInfo symAttachmentInfo, SymMessage symMessage) throws AttachementsException {
 
         AttachmentsApi attachmentsApi = new AttachmentsApi(apiClient);
 
 
         if (symAttachmentInfo.getId() == null || symMessage.getId() == null || symMessage.getStreamId() == null)
-            return null;
+            throw new NullPointerException("Null values detected for attachments information or streamId");
 
 
-        return  Base64.getDecoder().decode(attachmentsApi.v1StreamSidAttachmentGet(symMessage.getStreamId(),
-                symAttachmentInfo.getId(),
-                symMessage.getId(),
-                symAuth.getSessionToken().getToken(),
-                symAuth.getKeyToken().getToken()));
+        try {
+            return  Base64.getDecoder().decode(attachmentsApi.v1StreamSidAttachmentGet(symMessage.getStreamId(),
+                    symAttachmentInfo.getId(),
+                    symMessage.getId(),
+                    symAuth.getSessionToken().getToken(),
+                    symAuth.getKeyToken().getToken()));
+        } catch (ApiException e) {
+            throw new AttachementsException("Could not retrieve or decode attachment from POD..", e.getCause());
+        }
 
 
     }
 
 
-    public SymAttachmentInfo postAttachment(String sid, File attachment)throws Exception {
+    public SymAttachmentInfo postAttachment(String sid, File attachment)throws AttachementsException {
         AttachmentsApi attachmentsApi = new AttachmentsApi(apiClient);
 
-        AttachmentInfo attachmentInfo = attachmentsApi.v1StreamSidAttachmentCreatePost(sid,
-                symAuth.getSessionToken().getToken(),
-                symAuth.getKeyToken().getToken(),
-                attachment);
+        if(sid == null || attachment == null)
+         throw new NullPointerException("Either stream ID or file is null..");
+
+
+        AttachmentInfo attachmentInfo = null;
+        try {
+            attachmentInfo = attachmentsApi.v1StreamSidAttachmentCreatePost(sid,
+                    symAuth.getSessionToken().getToken(),
+                    symAuth.getKeyToken().getToken(),
+                    attachment);
+        } catch (ApiException e) {
+            throw new AttachementsException("Failed to post attachment for file " + attachment.getName(), e.getCause());
+        }
+
+        if(attachmentInfo == null)
+            throw new AttachementsException("Failed to post attachment.  Posting results returned no information.");
+
 
         return SymAttachmentInfo.toAttachmentInfo(attachmentInfo);
     }

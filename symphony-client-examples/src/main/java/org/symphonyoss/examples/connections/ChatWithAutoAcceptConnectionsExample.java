@@ -34,6 +34,7 @@ import org.symphonyoss.client.services.ChatServiceListener;
 import org.symphonyoss.client.services.ConnectionsListener;
 import org.symphonyoss.client.services.ConnectionsService;
 import org.symphonyoss.client.util.MlMessageParser;
+import org.symphonyoss.exceptions.UserNotFoundException;
 import org.symphonyoss.symphony.agent.model.Message;
 import org.symphonyoss.symphony.agent.model.MessageSubmission;
 import org.symphonyoss.symphony.clients.AuthorizationClient;
@@ -138,19 +139,16 @@ public class ChatWithAutoAcceptConnectionsExample implements ChatListener, ChatS
             symClient.getChatService().registerListener(this);
 
             //Init connection service.
-            connectionsService  = new ConnectionsService(symClient);
+            connectionsService = new ConnectionsService(symClient);
 
             //Optional to auto accept connections.
             connectionsService.setAutoAccept(true);
 
 
-
-
-
             //A message to send when the BOT comes online.
             SymMessage aMessage = new SymMessage();
-            aMessage.setFormat(SymMessage.Format.TEXT);
-            aMessage.setMessage("Hello master, I'm alive again....");
+            aMessage.setFormat(SymMessage.Format.MESSAGEML);
+            aMessage.setMessage("<messageML>Hello <b>master</b>, I'm alive again....</messageML>");
 
 
             //Creates a Chat session with that will receive the online message.
@@ -170,6 +168,10 @@ public class ChatWithAutoAcceptConnectionsExample implements ChatListener, ChatS
             symClient.getMessageService().sendMessage(chat, aMessage);
 
 
+        } catch (UserNotFoundException ue) {
+
+            logger.error("Failed to find user....", ue);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -183,7 +185,7 @@ public class ChatWithAutoAcceptConnectionsExample implements ChatListener, ChatS
     }
 
     //Chat sessions callback method.
-    public void onChatMessage(SymMessage message)  {
+    public void onChatMessage(SymMessage message) {
         if (message == null)
             return;
 
@@ -194,12 +196,10 @@ public class ChatWithAutoAcceptConnectionsExample implements ChatListener, ChatS
                 message.getMessageType());
 
 
-
-
-        if(message.getMessage().indexOf("life") > -1){
+        if (message.getMessage().indexOf("life") > -1) {
             message.setMessage("The meaning of life is 42!..silly");
 
-        }else{
+        } else {
             message.setMessage("ECHO...boring..ECHO...ask me the meaning of life..");
         }
 
@@ -208,7 +208,7 @@ public class ChatWithAutoAcceptConnectionsExample implements ChatListener, ChatS
         stream.setId(message.getStreamId());
 
         try {
-            symClient.getMessagesClient().sendMessage(stream,message);
+            symClient.getMessagesClient().sendMessage(stream, message);
         } catch (Exception e) {
             e.printStackTrace();
         }
