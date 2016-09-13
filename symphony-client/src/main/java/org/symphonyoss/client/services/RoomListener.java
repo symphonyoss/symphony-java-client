@@ -1,6 +1,5 @@
 /*
  *
- *
  * Copyright 2016 The Symphony Software Foundation
  *
  * Licensed to The Symphony Software Foundation (SSF) under one
@@ -11,7 +10,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -23,11 +22,29 @@
 
 package org.symphonyoss.client.services;
 
+
+import org.symphonyoss.symphony.agent.model.*;
+import org.symphonyoss.symphony.clients.model.SymMessage;
+
 /**
  * Created by Frank Tarsillo on 7/8/2016.
  */
 public interface RoomListener {
 
-    void onRoomMessage(RoomMessage roomMessage);
+    void onRoomMessage(SymMessage symMessage);
+
+    void onRoomDeactivedMessage(RoomDeactivatedMessage roomDeactivatedMessage);
+
+    void onRoomMemberDemotedFromOwnerMessage(RoomMemberDemotedFromOwnerMessage roomMemberDemotedFromOwnerMessage);
+
+    void onRoomMemberPromotedToOwnerMessage(RoomMemberPromotedToOwnerMessage roomMemberPromotedToOwnerMessage);
+
+    void onRoomReactivatedMessage(RoomReactivatedMessage roomReactivatedMessage);
+
+    void onRoomUpdatedMessage(RoomUpdatedMessage roomUpdatedMessage);
+
+    void onUserJoinedRoomMessage(UserJoinedRoomMessage userJoinedRoomMessage);
+
+    void onUserLeftRoomMessage(UserLeftRoomMessage userLeftRoomMessage);
 
 }

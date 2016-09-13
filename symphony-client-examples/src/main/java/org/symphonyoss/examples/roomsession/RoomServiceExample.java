@@ -27,19 +27,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.client.SymphonyClientFactory;
-import org.symphonyoss.client.model.Chat;
 import org.symphonyoss.client.model.Room;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.client.services.*;
-import org.symphonyoss.symphony.agent.model.Message;
-import org.symphonyoss.symphony.agent.model.MessageSubmission;
+import org.symphonyoss.symphony.agent.model.*;
 import org.symphonyoss.symphony.clients.AuthorizationClient;
 import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.pod.model.Stream;
-import org.symphonyoss.symphony.pod.model.User;
-
-import java.util.HashSet;
-import java.util.Set;
 
 
 /**
@@ -73,14 +67,14 @@ import java.util.Set;
  *
  * Created by Frank Tarsillo on 5/15/2016.
  */
-public class RoomExample implements RoomListener {
+public class RoomServiceExample implements RoomServiceListener, RoomListener {
 
 
-    private final Logger logger = LoggerFactory.getLogger(RoomExample.class);
+    private final Logger logger = LoggerFactory.getLogger(RoomServiceExample.class);
     private SymphonyClient symClient;
-    private  RoomService roomService;
+    private RoomService roomService;
 
-    public RoomExample() {
+    public RoomServiceExample() {
 
 
         init();
@@ -92,7 +86,7 @@ public class RoomExample implements RoomListener {
 
 
         System.out.println("ChatExample starting...");
-        new RoomExample();
+        new RoomServiceExample();
 
     }
 
@@ -147,6 +141,7 @@ public class RoomExample implements RoomListener {
 
 
              roomService = new RoomService(symClient);
+             roomService.registerRoomServiceListener(this);
 
             Room room = new Room();
             room.setStream(stream);
@@ -186,18 +181,69 @@ public class RoomExample implements RoomListener {
 
 
     @Override
-    public void onRoomMessage(RoomMessage roomMessage) {
+    public void onRoomMessage(SymMessage roomMessage) {
 
-        Room room = roomService.getRoom(roomMessage.getId());
+        Room room = roomService.getRoom(roomMessage.getStreamId());
 
         if(room!=null && roomMessage.getMessage() != null)
             logger.debug("New room message detected from room: {} on stream: {} from: {} message: {}",
                     room.getRoomDetail().getRoomAttributes().getName(),
-                    roomMessage.getRoomStream().getId(),
-                    roomMessage.getMessage().getFromUserId(),
-                    roomMessage.getMessage().getMessage()
+                    roomMessage.getStreamId(),
+                    roomMessage.getFromUserId(),
+                    roomMessage.getMessage()
 
                 );
+
+    }
+
+    @Override
+    public void onRoomCreatedMessage(RoomCreatedMessage roomCreatedMessage) {
+
+    }
+
+    @Override
+    public void onMessage(SymMessage symMessage) {
+
+    }
+
+    @Override
+    public void onNewRoom(Room room) {
+        logger.info("Created new room instance from incoming message..{} {}", room.getId(), room.getRoomDetail().getRoomAttributes().getName());
+        room.setRoomListener(this);
+    }
+
+    @Override
+    public void onRoomDeactivedMessage(RoomDeactivatedMessage roomDeactivatedMessage) {
+
+    }
+
+    @Override
+    public void onRoomMemberDemotedFromOwnerMessage(RoomMemberDemotedFromOwnerMessage roomMemberDemotedFromOwnerMessage) {
+
+    }
+
+    @Override
+    public void onRoomMemberPromotedToOwnerMessage(RoomMemberPromotedToOwnerMessage roomMemberPromotedToOwnerMessage) {
+
+    }
+
+    @Override
+    public void onRoomReactivatedMessage(RoomReactivatedMessage roomReactivatedMessage) {
+
+    }
+
+    @Override
+    public void onRoomUpdatedMessage(RoomUpdatedMessage roomUpdatedMessage) {
+
+    }
+
+    @Override
+    public void onUserJoinedRoomMessage(UserJoinedRoomMessage userJoinedRoomMessage) {
+
+    }
+
+    @Override
+    public void onUserLeftRoomMessage(UserLeftRoomMessage userLeftRoomMessage) {
 
     }
 }

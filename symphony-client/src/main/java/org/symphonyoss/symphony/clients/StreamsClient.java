@@ -23,6 +23,8 @@
 package org.symphonyoss.symphony.clients;
 
 import org.symphonyoss.exceptions.StreamsException;
+import org.symphonyoss.symphony.clients.model.SymRoomAttributes;
+import org.symphonyoss.symphony.clients.model.SymRoomDetail;
 import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.pod.model.*;
 
@@ -40,5 +42,9 @@ public interface StreamsClient {
 
     Stream getStreamFromEmail(String email) throws StreamsException;
 
-    RoomDetail getRoomDetail(String id) throws StreamsException;
+    SymRoomDetail getRoomDetail(String id) throws StreamsException;
+
+    SymRoomDetail createChatRoom(SymRoomAttributes roomAttributes) throws StreamsException;
+
+    SymRoomDetail updateChatRoom(String streamId, SymRoomAttributes roomAttributes) throws StreamsException;
 }

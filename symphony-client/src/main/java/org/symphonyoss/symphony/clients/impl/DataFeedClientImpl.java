@@ -36,6 +36,7 @@ import org.symphonyoss.symphony.clients.model.SymMessage;
 
 
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 
 
@@ -47,6 +48,9 @@ public class DataFeedClientImpl implements DataFeedClient {
     private final ApiClient apiClient;
     private final SymAuth symAuth;
     private Logger logger = LoggerFactory.getLogger(DataFeedClientImpl.class);
+
+
+
 
     public DataFeedClientImpl(SymAuth symAuth, String agentUrl) {
 
@@ -74,7 +78,10 @@ public class DataFeedClientImpl implements DataFeedClient {
     }
 
 
-    public List<SymMessage> getMessagesFromDatafeed(Datafeed datafeed) throws DataFeedException {
+
+
+    //This will return messages by TYPE.
+    public List<V2BaseMessage> getMessagesFromDatafeed(Datafeed datafeed) throws DataFeedException {
 
         DatafeedApi datafeedApi = new DatafeedApi(apiClient);
 
@@ -82,26 +89,29 @@ public class DataFeedClientImpl implements DataFeedClient {
             throw new NullPointerException("Datafeed was not provided and null..");
         }
 
-        V2MessageList messageList = null;
+        //V2MessageList messageList = null;
         try {
-            messageList = datafeedApi.v2DatafeedIdReadGet(datafeed.getId(),symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken(),100);
+            return datafeedApi.v2DatafeedIdReadGet(datafeed.getId(),symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken(),100);
         } catch (ApiException e) {
             throw new DataFeedException("Failed to retrieve messages from datafeed...", e.getCause());
         }
 
-        List<SymMessage> symMessgeList = new ArrayList<SymMessage>();
+//        List<SymMessage> symMessgeList = new ArrayList<SymMessage>();
+//
+//
+//        if(messageList != null) {
+//            for (V2BaseMessage message : messageList) {
+//
+//                if (message instanceof V2Message) {
+//                    symMessgeList.add(SymMessage.toSymMessage(message));
+//
+//                }
+//            }
+//        }
+//
+//        return symMessgeList;
 
 
-        if(messageList != null) {
-            for (V2BaseMessage message : messageList) {
-
-                if (message instanceof V2Message) {
-                    symMessgeList.add(SymMessage.toSymMessage(message));
-
-                }
-            }
-        }
-        return symMessgeList;
     }
 
 

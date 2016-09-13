@@ -20,25 +20,21 @@
  * under the License.
  */
 
-package org.symphonyoss.symphony.clients;
-
-import org.symphonyoss.exceptions.DataFeedException;
-import org.symphonyoss.exceptions.SymException;
-import org.symphonyoss.symphony.agent.model.Datafeed;
-import org.symphonyoss.symphony.agent.model.MessageList;
-import org.symphonyoss.symphony.agent.model.V2BaseMessage;
-import org.symphonyoss.symphony.agent.model.V2MessageList;
-import org.symphonyoss.symphony.clients.model.SymMessage;
-
-
-import java.util.List;
+package org.symphonyoss.exceptions;
 
 /**
- * Created by frank.tarsillo on 6/6/2016.
+ * Created by frank.tarsillo on 9/12/2016.
  */
-public interface DataFeedClient {
-    Datafeed createDatafeed() throws DataFeedException;
-
-    List<V2BaseMessage> getMessagesFromDatafeed(Datafeed datafeed) throws DataFeedException;
-
+public class RoomException extends SymException {
+    public RoomException(String message) {
+        super(message);
     }
+
+    public RoomException(Throwable cause) {
+        super(cause);
+    }
+
+    public RoomException(String message, Throwable cause) {
+        super(message, cause);
+    }
+}

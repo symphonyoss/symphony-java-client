@@ -23,50 +23,34 @@
 
 package org.symphonyoss.client.services;
 
-import org.symphonyoss.symphony.agent.model.Message;
+
+import org.symphonyoss.client.model.Room;
+import org.symphonyoss.symphony.agent.model.*;
 import org.symphonyoss.symphony.clients.model.SymMessage;
-import org.symphonyoss.symphony.pod.model.Stream;
 
 /**
  * Created by Frank Tarsillo on 7/8/2016.
  */
-public class RoomMessage {
+public interface RoomServiceListener {
 
-    Stream roomStream;
-    String id;
-    SymMessage message;
+    void onNewRoom(Room room);
 
-    public Stream getRoomStream() {
-        return roomStream;
-    }
+    void onRoomDeactivedMessage(RoomDeactivatedMessage roomDeactivatedMessage);
 
-    public void setRoomStream(Stream roomStream) {
-        this.roomStream = roomStream;
-    }
+    void onRoomMemberDemotedFromOwnerMessage(RoomMemberDemotedFromOwnerMessage roomMemberDemotedFromOwnerMessage);
 
-    public String getId() {
-        return id;
-    }
+    void onRoomMemberPromotedToOwnerMessage(RoomMemberPromotedToOwnerMessage roomMemberPromotedToOwnerMessage);
 
-    public void setId(String id) {
-        this.id = id;
-    }
+    void onRoomReactivatedMessage(RoomReactivatedMessage roomReactivatedMessage);
 
-    public SymMessage getRoomMessage() {
-        return message;
-    }
+    void onRoomUpdatedMessage(RoomUpdatedMessage roomUpdatedMessage);
 
-    public void setRoomMessage(SymMessage message) {
-        this.message = message;
-    }
+    void onUserJoinedRoomMessage(UserJoinedRoomMessage userJoinedRoomMessage);
 
-    @Deprecated
-    public Message getMessage() {
-        return SymMessage.toV1Message(message);
-    }
+    void onUserLeftRoomMessage(UserLeftRoomMessage userLeftRoomMessage);
 
-    @Deprecated
-    public void setMessage(Message message) {
-        this.message = SymMessage.toSymMessage(message);
-    }
+    void onRoomCreatedMessage(RoomCreatedMessage roomCreatedMessage);
+
+    void onMessage(SymMessage symMessage);
+
 }

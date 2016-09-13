@@ -20,25 +20,14 @@
  * under the License.
  */
 
-package org.symphonyoss.symphony.clients;
+package org.symphonyoss.client.services;
 
-import org.symphonyoss.exceptions.DataFeedException;
-import org.symphonyoss.exceptions.SymException;
-import org.symphonyoss.symphony.agent.model.Datafeed;
-import org.symphonyoss.symphony.agent.model.MessageList;
 import org.symphonyoss.symphony.agent.model.V2BaseMessage;
-import org.symphonyoss.symphony.agent.model.V2MessageList;
-import org.symphonyoss.symphony.clients.model.SymMessage;
-
-
-import java.util.List;
 
 /**
- * Created by frank.tarsillo on 6/6/2016.
+ * Created by frank.tarsillo on 9/12/2016.
  */
-public interface DataFeedClient {
-    Datafeed createDatafeed() throws DataFeedException;
+public interface DataFeedListener {
 
-    List<V2BaseMessage> getMessagesFromDatafeed(Datafeed datafeed) throws DataFeedException;
-
-    }
+    void onMessage(V2BaseMessage message);
+}

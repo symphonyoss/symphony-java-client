@@ -29,20 +29,12 @@ import org.symphonyoss.client.model.Room;
 import org.symphonyoss.exceptions.MessagesException;
 import org.symphonyoss.exceptions.StreamsException;
 import org.symphonyoss.exceptions.UsersClientException;
-import org.symphonyoss.symphony.clients.model.SymAttachmentInfo;
+import org.symphonyoss.symphony.agent.model.*;
 import org.symphonyoss.symphony.clients.model.SymMessage;
-import org.symphonyoss.symphony.agent.model.Message;
-import org.symphonyoss.symphony.agent.model.MessageList;
-import org.symphonyoss.symphony.agent.model.MessageSubmission;
 import org.symphonyoss.client.model.Chat;
 import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.pod.model.Stream;
-import org.symphonyoss.symphony.pod.model.User;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -50,13 +42,17 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Created by Frank Tarsillo on 5/15/2016.
  */
-public class MessageService implements MessageListener {
+public class MessageService implements DataFeedListener {
 
     private final SymphonyClient symClient;
     private org.symphonyoss.symphony.agent.invoker.ApiClient agentClient;
     private final Logger logger = LoggerFactory.getLogger(MessageService.class);
     private final MessageFeedWorker messageFeedWorker;
     private final Set<MessageListener> messageListeners = ConcurrentHashMap.newKeySet();
+    private final Set<ChatListener> chatListeners = ConcurrentHashMap.newKeySet();
+    private final Set<RoomServiceListener> roomServiceListeners = ConcurrentHashMap.newKeySet();
+    private final Set<String> roomStreamCache = ConcurrentHashMap.newKeySet();
+    private final Set<String> chatStreamCache = ConcurrentHashMap.newKeySet();
 
     public MessageService(SymphonyClient symClient) {
 
@@ -155,39 +151,98 @@ public class MessageService implements MessageListener {
     }
 
 
-    private void processMessage(SymMessage message) {
+    public void onMessage(V2BaseMessage message) {
 
-        logger.debug("LocalID: {} messageID: {}", symClient.getLocalUser().getId(), message.getFromUserId());
-        if (symClient.getLocalUser().getId().equals(message.getFromUserId()))
+        logger.debug("LocalID: {} messageID: {}", symClient.getLocalUser().getId(), message.getId());
+
+
+        if (message.getStreamId() == null)
             return;
 
-        if (message.getStreamId() == null && message.getMessageType() != null)
-            return;
+
+        if (message instanceof V2Message) {
+            SymMessage symMessage = SymMessage.toSymMessage(message);
+
+            if (symClient.getLocalUser().getId().equals(symMessage.getFromUserId()))
+                return;
 
 
-        for (MessageListener messageListener : messageListeners) {
-            if (messageListener != null)
-                messageListener.onMessage(message);
+            if (isRoomMessage(message)) {
+
+                for (RoomServiceListener roomServiceListener : roomServiceListeners)
+                    roomServiceListener.onMessage(symMessage);
+            } else {
+
+                for (ChatListener chatListener : chatListeners)
+                    chatListener.onChatMessage(symMessage);
+            }
+
+
+            //Listen for all messages...
+            for (MessageListener messageListener : messageListeners) {
+                messageListener.onMessage(symMessage);
+            }
+
+            logger.debug("TS: {}\nFrom ID: {}\nSymMessage: {}\nType: {}",
+                    symMessage.getTimestamp(),
+                    symMessage.getFromUserId(),
+                    symMessage.getMessage(),
+                    symMessage.getMessageType());
+
+
+        }else if(message instanceof UserJoinedRoomMessage){
+            for (RoomServiceListener roomServiceListener : roomServiceListeners)
+                roomServiceListener.onUserJoinedRoomMessage((UserJoinedRoomMessage) message);
+        }else if(message instanceof UserLeftRoomMessage){
+            for (RoomServiceListener roomServiceListener : roomServiceListeners)
+                roomServiceListener.onUserLeftRoomMessage((UserLeftRoomMessage) message);
+        }else if(message instanceof RoomCreatedMessage){
+            for (RoomServiceListener roomServiceListener : roomServiceListeners)
+                roomServiceListener.onRoomCreatedMessage((RoomCreatedMessage) message);
+        }else if(message instanceof RoomDeactivatedMessage){
+            for (RoomServiceListener roomServiceListener : roomServiceListeners)
+                roomServiceListener.onRoomDeactivedMessage((RoomDeactivatedMessage) message);
+        }else if(message instanceof RoomMemberDemotedFromOwnerMessage){
+            for (RoomServiceListener roomServiceListener : roomServiceListeners)
+                roomServiceListener.onRoomMemberDemotedFromOwnerMessage((RoomMemberDemotedFromOwnerMessage) message);
+        }else if(message instanceof RoomMemberPromotedToOwnerMessage){
+            for (RoomServiceListener roomServiceListener : roomServiceListeners)
+                roomServiceListener.onRoomMemberPromotedToOwnerMessage((RoomMemberPromotedToOwnerMessage) message);
+        }else if(message instanceof RoomUpdatedMessage){
+            for (RoomServiceListener roomServiceListener : roomServiceListeners)
+                roomServiceListener.onRoomUpdatedMessage((RoomUpdatedMessage) message);
         }
-        logger.debug("TS: {}\nFrom ID: {}\nSymMessage: {}\nType: {}",
-                message.getTimestamp(),
-                message.getFromUserId(),
-                message.getMessage(),
-                message.getMessageType());
 
 
     }
 
-    public void onMessage(Message message) {
+    private boolean isRoomMessage(V2BaseMessage message) {
 
-        processMessage(SymMessage.toSymMessage(message));
+
+        if (roomStreamCache.contains(message.getStreamId()))
+            return true;
+
+        if (chatStreamCache.contains(message.getStreamId()))
+            return false;
+
+
+        try {
+            if (symClient.getStreamsClient().getRoomDetail(message.getStreamId()) != null) {
+                roomStreamCache.add(message.getStreamId());
+                logger.debug("Found new room stream to cache: {}", message.getStreamId());
+                return true;
+            }
+        } catch (StreamsException e) {
+
+
+        }
+        chatStreamCache.add(message.getStreamId());
+        logger.debug("Found new chat stream to cache: {}", message.getStreamId());
+        return false;
+
 
     }
 
-    @Override
-    public void onMessage(SymMessage message) {
-        processMessage(message);
-    }
 
     public boolean registerMessageListener(MessageListener messageListener) {
 
@@ -201,5 +256,29 @@ public class MessageService implements MessageListener {
 
     }
 
+
+    public boolean registerRoomListener(RoomServiceListener roomServiceListener) {
+
+        return roomServiceListeners.add(roomServiceListener);
+
+    }
+
+    public boolean removeRoomListener(RoomServiceListener roomServiceListener) {
+
+        return roomServiceListeners.remove(roomServiceListener);
+
+    }
+
+    public boolean registerChatListener(ChatListener chatListener) {
+
+        return chatListeners.add(chatListener);
+
+    }
+
+    public boolean removeChatListener(ChatListener chatListener) {
+
+        return chatListeners.remove(chatListener);
+
+    }
 
 }

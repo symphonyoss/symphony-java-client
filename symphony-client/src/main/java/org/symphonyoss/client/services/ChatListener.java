@@ -30,9 +30,6 @@ import org.symphonyoss.symphony.agent.model.Message;
  */
 public interface ChatListener {
 
-    @Deprecated
-    void onChatMessage(Message message);
-
 
     void onChatMessage(SymMessage message);
 }

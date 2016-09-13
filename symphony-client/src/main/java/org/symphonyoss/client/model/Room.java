@@ -24,8 +24,9 @@
 package org.symphonyoss.client.model;
 
 import org.symphonyoss.client.services.RoomListener;
+import org.symphonyoss.client.services.RoomServiceListener;
+import org.symphonyoss.symphony.clients.model.SymRoomDetail;
 import org.symphonyoss.symphony.pod.model.MembershipList;
-import org.symphonyoss.symphony.pod.model.RoomDetail;
 import org.symphonyoss.symphony.pod.model.Stream;
 
 /**
@@ -35,7 +36,7 @@ public class Room {
     String id;
     Stream stream;
     MembershipList membershipList;
-    RoomDetail roomDetail;
+    SymRoomDetail roomDetail;
     RoomListener roomListener;
 
     public String getId() {
@@ -54,11 +55,11 @@ public class Room {
         this.membershipList = membershipList;
     }
 
-    public RoomDetail getRoomDetail() {
+    public SymRoomDetail getRoomDetail() {
         return roomDetail;
     }
 
-    public void setRoomDetail(RoomDetail roomDetail) {
+    public void setRoomDetail(SymRoomDetail roomDetail) {
         this.roomDetail = roomDetail;
     }
 

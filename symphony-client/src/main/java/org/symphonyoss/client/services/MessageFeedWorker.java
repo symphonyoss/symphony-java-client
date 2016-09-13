@@ -29,6 +29,7 @@ import org.symphonyoss.exceptions.DataFeedException;
 import org.symphonyoss.symphony.agent.model.Datafeed;
 import org.symphonyoss.symphony.agent.model.Message;
 import org.symphonyoss.symphony.agent.model.MessageList;
+import org.symphonyoss.symphony.agent.model.V2BaseMessage;
 import org.symphonyoss.symphony.clients.model.SymMessage;
 
 import java.util.List;
@@ -39,14 +40,15 @@ import java.util.concurrent.TimeUnit;
  */
 class MessageFeedWorker implements Runnable {
 
-    private final MessageListener messageListener;
+    private final DataFeedListener dataFeedListener;
     private final SymphonyClient symClient;
     private final Logger logger = LoggerFactory.getLogger(MessageFeedWorker.class);
     private Datafeed datafeed;
 
-    public MessageFeedWorker(SymphonyClient symClient, MessageListener messageListener) {
+
+    public MessageFeedWorker(SymphonyClient symClient, DataFeedListener dataFeedListener) {
         this.symClient = symClient;
-        this.messageListener = messageListener;
+        this.dataFeedListener = dataFeedListener;
 
 
     }
@@ -81,15 +83,15 @@ class MessageFeedWorker implements Runnable {
                 }
 
 
-                List<SymMessage> messageList = symClient.getDataFeedClient().getMessagesFromDatafeed(datafeed);
+                List<V2BaseMessage> messageList = symClient.getDataFeedClient().getMessagesFromDatafeed(datafeed);
 
                 if(messageList != null) {
 
                     logger.debug("Received {} messages..", messageList.size());
 
-                    for (SymMessage message : messageList) {
+                    for (V2BaseMessage message : messageList) {
                    //     logger.debug("SymMessage received from stream {} {}", message.getId(),message.getStream());
-                        messageListener.onMessage(message);
+                        dataFeedListener.onMessage(message);
                     }
                 }
 

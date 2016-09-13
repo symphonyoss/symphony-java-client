@@ -103,7 +103,7 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
         try {
             v2Message = messagesApi.v2StreamSidMessageCreatePost(stream.getId(), symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken(), messageSubmission);
         } catch (ApiException e) {
-            throw new MessagesException("Failed to send message to stream: " + stream, e.getCause());
+            throw new MessagesException("Failed to send message to stream: " + stream.getId(), e.getCause());
         }
 
         return SymMessage.toSymMessage(v2Message);

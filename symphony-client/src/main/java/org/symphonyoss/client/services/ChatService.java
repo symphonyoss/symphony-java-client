@@ -43,13 +43,13 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Created by Frank Tarsillo on 5/16/2016.
  */
-public class ChatService implements MessageListener {
+public class ChatService implements ChatListener {
 
 
     private final ConcurrentHashMap<String, Chat> chatsByStream = new ConcurrentHashMap<String, Chat>();
     private final ConcurrentHashMap<Long, Set<Chat>> chatsByUser = new ConcurrentHashMap<Long, Set<Chat>>();
 
-    private final Set<ChatServiceListener> chatServiceListeners =  ConcurrentHashMap.newKeySet();
+    private final Set<ChatServiceListener> chatServiceListeners = ConcurrentHashMap.newKeySet();
 
     private final SymphonyClient symClient;
     private final Logger logger = LoggerFactory.getLogger(ChatService.class);
@@ -58,7 +58,7 @@ public class ChatService implements MessageListener {
     public ChatService(SymphonyClient symClient) throws InitException {
         this.symClient = symClient;
 
-        symClient.getMessageService().registerMessageListener(this);
+        symClient.getMessageService().registerChatListener(this);
 
     }
 
@@ -73,9 +73,9 @@ public class ChatService implements MessageListener {
 
                 Set<Chat> userChats = chatsByUser.get(user.getId());
 
-                if(userChats == null){
+                if (userChats == null) {
                     userChats = new HashSet<Chat>();
-                    chatsByUser.put(user.getId(),userChats);
+                    chatsByUser.put(user.getId(), userChats);
                 }
 
 
@@ -89,7 +89,7 @@ public class ChatService implements MessageListener {
 
             }
 
-            for(ChatServiceListener chatServiceListener: chatServiceListeners)
+            for (ChatServiceListener chatServiceListener : chatServiceListeners)
                 chatServiceListener.onNewChat(chat);
 
             return true;
@@ -113,7 +113,7 @@ public class ChatService implements MessageListener {
 
 
             }
-            for(ChatServiceListener chatServiceListener: chatServiceListeners)
+            for (ChatServiceListener chatServiceListener : chatServiceListeners)
                 chatServiceListener.onRemovedChat(chat);
 
             return true;
@@ -122,12 +122,12 @@ public class ChatService implements MessageListener {
 
     }
 
-    private void newChatUpdate(Chat chat){
+    private void newChatUpdate(Chat chat) {
 
 
     }
 
-    private Chat createNewChatFromMessage(SymMessage message){
+    private Chat createNewChatFromMessage(SymMessage message) {
 
         try {
             Chat chat = new Chat();
@@ -138,32 +138,25 @@ public class ChatService implements MessageListener {
             chat.setLastMessage(message);
             SymUser remoteUser = symClient.getUsersClient().getUserFromId(message.getFromUserId());
 
-            if(remoteUser != null) {
+            if (remoteUser != null) {
 
                 Set<SymUser> remoteUserSet = new HashSet<SymUser>();
                 remoteUserSet.add(remoteUser);
                 chat.setRemoteUsers(remoteUserSet);
                 return chat;
             }
-        }catch(Exception e){
-            logger.error("Could not create new chat from message {} {}", message.getStreamId(), message.getFromUserId(),e);
+        } catch (Exception e) {
+            logger.error("Could not create new chat from message {} {}", message.getStreamId(), message.getFromUserId(), e);
         }
 
         return null;
     }
 
-    @Deprecated
-    public void onMessage(Message message) {
-
-      onMessage(SymMessage.toSymMessage(message));
-
-    }
 
     @Override
-    public void onMessage(SymMessage message) {
-        if(message== null)
+    public void onChatMessage(SymMessage message) {
+        if (message == null)
             return;
-
 
 
         String streamId = message.getStreamId();
@@ -171,28 +164,18 @@ public class ChatService implements MessageListener {
 
         logger.debug("New message from stream {}", streamId);
 
-        if(streamId!= null){
+        if (streamId != null) {
             Chat chat = chatsByStream.get(streamId);
 
-            if(chat == null){
-
-                try {
-                    if (symClient.getStreamsClient().getRoomDetail(streamId) != null) {
-                        logger.debug("Rejecting message from room stream {}", streamId);
-                        return;
-                    }
-                }catch(StreamsException e){
-                    logger.debug("Stream {} not a room", streamId);
-
-                }
+            if (chat == null) {
                 chat = createNewChatFromMessage(message);
-                if(chat!=null) {
+                if (chat != null) {
                     addChat(chat);
-                }else{
-                    logger.error("Failed to add new chat from message {} {}",message.getStreamId(), message.getFromUserId());
+                } else {
+                    logger.error("Failed to add new chat from message {} {}", message.getStreamId(), message.getFromUserId());
                     return;
                 }
-            }else{
+            } else {
 
                 chat.onChatMessage(message);
 
@@ -209,7 +192,7 @@ public class ChatService implements MessageListener {
         return chatServiceListeners.add(chatServiceListener);
     }
 
-    public boolean removeListener(ChatServiceListener chatServiceListener){
+    public boolean removeListener(ChatServiceListener chatServiceListener) {
         return chatServiceListeners.remove(chatServiceListener);
     }
 
@@ -220,8 +203,8 @@ public class ChatService implements MessageListener {
 
             if (user != null)
                 return chatsByUser.get(user.getId());
-        }catch(UsersClientException e){
-            logger.error("Could not locate user by email {}", email,e);
+        } catch (UsersClientException e) {
+            logger.error("Could not locate user by email {}", email, e);
         }
         return null;
     }
@@ -229,8 +212,8 @@ public class ChatService implements MessageListener {
 
     public Set<Chat> getChats(User user) {
 
-            if (user != null)
-                return chatsByUser.get(user.getId());
+        if (user != null)
+            return chatsByUser.get(user.getId());
 
         return null;
     }

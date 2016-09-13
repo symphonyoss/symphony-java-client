@@ -30,6 +30,8 @@ import org.symphonyoss.exceptions.UsersClientException;
 import org.symphonyoss.symphony.clients.UsersClient;
 import org.symphonyoss.symphony.clients.UsersFactory;
 import org.symphonyoss.client.model.SymAuth;
+import org.symphonyoss.symphony.clients.model.SymRoomAttributes;
+import org.symphonyoss.symphony.clients.model.SymRoomDetail;
 import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.pod.api.StreamsApi;
 import org.symphonyoss.symphony.pod.invoker.ApiClient;
@@ -137,7 +139,7 @@ public class StreamsClientImpl implements org.symphonyoss.symphony.clients.Strea
     }
 
 
-    public RoomDetail getRoomDetail(String roomId) throws StreamsException{
+    public SymRoomDetail getRoomDetail(String roomId) throws StreamsException{
 
         if (roomId == null) {
             throw new NullPointerException("Room ID was not provided..");
@@ -145,14 +147,50 @@ public class StreamsClientImpl implements org.symphonyoss.symphony.clients.Strea
         StreamsApi streamsApi = new StreamsApi(apiClient);
 
         try {
-            return streamsApi.v1RoomIdInfoGet(roomId,symAuth.getSessionToken().getToken());
+            return SymRoomDetail.toSymRoomDetail(streamsApi.v2RoomIdInfoGet(roomId,symAuth.getSessionToken().getToken()));
         } catch (ApiException e) {
             throw new StreamsException("Failed to obtain room information from ID: " + roomId, e.getCause());
         }
 
     }
 
+    @Override
+    public SymRoomDetail createChatRoom(SymRoomAttributes roomAttributes) throws StreamsException{
 
+        if (roomAttributes == null) {
+            throw new NullPointerException("Room Attributes were not provided..");
+        }
+        StreamsApi streamsApi = new StreamsApi(apiClient);
+
+        try {
+            return SymRoomDetail.toSymRoomDetail(streamsApi.v2RoomCreatePost(
+                    SymRoomAttributes.toV2RoomAttributes(roomAttributes),symAuth.getSessionToken().getToken())
+            );
+        } catch (ApiException e) {
+            throw new StreamsException("Failed to obtain room information while creating room: " + roomAttributes.getName(), e.getCause());
+        }
+
+
+    }
+
+    @Override
+    public SymRoomDetail updateChatRoom(String streamId, SymRoomAttributes roomAttributes) throws StreamsException{
+
+        if (roomAttributes == null) {
+            throw new NullPointerException("Room Attributes were not provided..");
+        }
+        StreamsApi streamsApi = new StreamsApi(apiClient);
+
+        try {
+            return SymRoomDetail.toSymRoomDetail(streamsApi.v2RoomIdUpdatePost( streamId,
+                    SymRoomAttributes.toV2RoomAttributes(roomAttributes),symAuth.getSessionToken().getToken())
+            );
+        } catch (ApiException e) {
+            throw new StreamsException("Failed to obtain room information while updating attributes on room: " + roomAttributes.getName(), e.getCause());
+        }
+
+
+    }
 
 
 
