@@ -39,8 +39,7 @@ public class AuthorizationClient {
     private SymAuth symAuth;
     private final String sessionUrl;
     private final String keyUrl;
-    private boolean LOGIN_STATUS = false;
-    private final String NOT_LOGGED_IN_MESSAGE = "Currently not logged into Agent, please check certificates and tokens.";
+    private boolean loginStatus = false;
     private final Logger logger = LoggerFactory.getLogger(AuthorizationClient.class);
 
 
@@ -91,21 +90,16 @@ public class AuthorizationClient {
 
         } catch (ApiException e) {
 
+            logger.error("Symphony API error",e);
             throw new AuthorizationException("Please check certificates, tokens and paths: " +
             "\nSession URL: " + sessionUrl +
             "\nKeystore URL: " + keyUrl +
             "\nServer TrustStore File: " +  System.getProperty("javax.net.ssl.trustStore") +
             "\nClient Keystore File: " + System.getProperty("javax.net.ssl.keyStore"), e.getCause());
 
-        } catch (Exception e1){
-
-            throw new AuthorizationException("Could not connect to Key manager or POD: " +
-                    "\nSession URL: " + sessionUrl +
-                    "\nKeystore URL: " + keyUrl
-                  , e1.getCause());
         }
 
-        LOGIN_STATUS = true;
+        loginStatus = true;
         return symAuth;
 
     }
@@ -125,7 +119,7 @@ public class AuthorizationClient {
     }
 
     public boolean isLoggedIn(){
-        return LOGIN_STATUS;
+        return loginStatus;
     }
 
     public Token getKeyToken() {

@@ -43,7 +43,7 @@ public class PresenceService implements PresenceListener {
     private final SymphonyClient symClient;
     private PresenceList presenceList;
     private PresenceWorker presenceWorker;
-    private final Set<PresenceListener> presenceListeners  = ConcurrentHashMap.newKeySet();
+    private final Set<PresenceListener> presenceListeners = ConcurrentHashMap.newKeySet();
     private final Logger logger = LoggerFactory.getLogger(PresenceService.class);
 
 
@@ -54,7 +54,7 @@ public class PresenceService implements PresenceListener {
         try {
             presenceList = getAllUserPresence();
         } catch (PresenceException e) {
-           logger.error("Unable to obtain presence list...please check connections...",e);
+            logger.error("Unable to obtain presence list...please check connections...", e);
         }
 
     }
@@ -67,26 +67,28 @@ public class PresenceService implements PresenceListener {
 
     }
 
-    public Presence getUserPresence(Long userId) throws PresenceException{
+    public Presence getUserPresence(Long userId) throws PresenceException {
 
         return symClient.getPresenceClient().getUserPresence(userId);
 
     }
 
-    public Presence getUserPresence(String email) throws PresenceException{
+    public Presence getUserPresence(String email) throws PresenceException {
+
+        if(email==null)
+            throw new NullPointerException("Email was not provided..");
 
         SymUser user;
         try {
             user = symClient.getUsersClient().getUserFromEmail(email);
         } catch (UsersClientException e) {
+            logger.error("Failed to obtain userID from email",e);
             throw new PresenceException("Failed to obtain user from email: " + email, e.getCause());
         }
 
-        if(user!= null)
-            return symClient.getPresenceClient().getUserPresence(user.getId());
+        return (user != null)?
+            symClient.getPresenceClient().getUserPresence(user.getId()) : null;
 
-
-            return null;
 
     }
 
@@ -106,7 +108,7 @@ public class PresenceService implements PresenceListener {
 
         presenceListeners.remove(presenceListener);
 
-        if (presenceListeners.size() == 0) {
+        if (presenceListeners.isEmpty()) {
             presenceWorker.kill();
             presenceWorker = null;
 
@@ -116,7 +118,7 @@ public class PresenceService implements PresenceListener {
 
     }
 
-
+    @Override
     public void onUserPresence(UserPresence userPresence) {
 
         for (PresenceListener listener : presenceListeners) {

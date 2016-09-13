@@ -36,9 +36,6 @@ import java.util.List;
 public interface MessagesClient {
     SymMessage sendMessage(Stream stream, SymMessage message) throws MessagesException;
 
-    @Deprecated
-    Message sendMessage(Stream stream, MessageSubmission message) throws MessagesException;
-
 
     List<SymMessage> getMessagesFromStream(Stream stream, Long since, Integer offset, Integer maxMessages) throws MessagesException;
 }

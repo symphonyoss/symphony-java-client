@@ -35,6 +35,9 @@ import org.symphonyoss.client.services.ChatListener;
 import org.symphonyoss.client.services.ChatServiceListener;
 import org.symphonyoss.client.services.PresenceListener;
 import org.symphonyoss.client.util.MlMessageParser;
+import org.symphonyoss.exceptions.MessagesException;
+import org.symphonyoss.exceptions.SymException;
+import org.symphonyoss.exceptions.UsersClientException;
 import org.symphonyoss.symphony.clients.AuthorizationClient;
 import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.clients.model.SymUser;
@@ -53,36 +56,35 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- *
- *
  * The hashtag.bot is provides an open hashtag dictionary service.
  * Anyone can add new, append or update existing definitions.
  * Definitions have last update and authors.
  * The BOT stores and loads all definitions through JSON serialized files.
- *
+ * <p>
  * This program attempts to show some of the symphony-java-client features, such as
  * ChatService.
- *
- *
+ * <p>
+ * <p>
  * REQUIRED VM Arguments or System Properties:
- *
- *        -Dsessionauth.url=https://pod_fqdn:port/sessionauth
- *        -Dkeyauth.url=https://pod_fqdn:port/keyauth
- *        -Dsymphony.agent.pod.url=https://agent_fqdn:port/pod
- *        -Dsymphony.agent.agent.url=https://agent_fqdn:port/agent
- *        -Dcerts.dir=/dev/certs/
- *        -Dkeystore.password=(Pass)
- *        -Dtruststore.file=/dev/certs/server.truststore
- *        -Dtruststore.password=(Pass)
- *        -Dbot.user=hashtag.bot
- *        -Dbot.domain=@markit.com
- *        -Duser.call.home=frank.tarsillo@markit.com
- *        -Dfiles.json=/dev/json/
- *
- *
- *
+ * <p>
+ * -Dsessionauth.url=https://pod_fqdn:port/sessionauth
+ * -Dkeyauth.url=https://pod_fqdn:port/keyauth
+ * -Dsymphony.agent.pod.url=https://agent_fqdn:port/pod
+ * -Dsymphony.agent.agent.url=https://agent_fqdn:port/agent
+ * -Dcerts.dir=/dev/certs/
+ * -Dkeystore.password=(Pass)
+ * -Dtruststore.file=/dev/certs/server.truststore
+ * -Dtruststore.password=(Pass)
+ * -Dbot.user=hashtag.bot
+ * -Dbot.domain=@markit.com
+ * -Duser.call.home=frank.tarsillo@markit.com
+ * -Dfiles.json=/dev/json/
+ * <p>
+ * <p>
+ * <p>
  * Created by Frank Tarsillo on 5/15/2016.
  */
+//NO SONAR
 public class HashtagBot implements ChatListener, ChatServiceListener, PresenceListener {
 
 
@@ -92,6 +94,7 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
 
     public HashtagBot() {
 
+        logger.info("HashtagBOT starting...");
         loadAllHashtags();
         init();
 
@@ -101,7 +104,6 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
     public static void main(String[] args) {
 
 
-        System.out.println("HashtagBOT starting...");
         new HashtagBot();
 
     }
@@ -172,13 +174,14 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
             symClient.getMessageService().sendMessage(chat, aMessage);
 
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SymException e) {
+            logger.error("Something went wrong..", e);
         }
 
     }
 
     //Callback from PresenceService.  This will monitor all presence on the network.
+    @Override
     public void onUserPresence(UserPresence userPresence) {
 
         logger.debug("Received user presence update: {} : {}", userPresence.getUid(), userPresence.getCategory());
@@ -187,6 +190,7 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
     }
 
     //Chat sessions callback method.
+    @Override
     public void onChatMessage(SymMessage message) {
         if (message == null)
             return;
@@ -206,14 +210,14 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
 
         MlMessageParser mlMessageParser;
 
-       try {
-           mlMessageParser = new MlMessageParser(symClient);
-           mlMessageParser.parseMessage(message.getMessage());
-       }catch(Exception e){
-           logger.error("Could not parse message {}", message.getMessage(),e);
-           sendUsage(message);
-           return;
-       }
+        try {
+            mlMessageParser = new MlMessageParser(symClient);
+            mlMessageParser.parseMessage(message.getMessage());
+        } catch (Exception e) {
+            logger.error("Could not parse message {}", message.getMessage(), e);
+            sendUsage(message);
+            return;
+        }
 
         //Fix for v1 sending messages with mention tags containing UID attributes.
         mlMessageParser.updateMentionUidToEmail(symClient);
@@ -274,8 +278,7 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
 
             HashtagDef hashtagDef = new HashtagDef();
             hashtagDef.setUserId(message.getFromUserId());
-            hashtagDef.setDefinition( mlMessageParser.getHtmlStartingFromNode(NodeTypes.HASHTAG.toString(), AttribTypes.TAG.toString(),chunks[1].substring(1)));
-
+            hashtagDef.setDefinition(mlMessageParser.getHtmlStartingFromNode(NodeTypes.HASHTAG.toString(), AttribTypes.TAG.toString(), chunks[1].substring(1)));
 
 
             Hashtag cHashtag = hashtags.get(hashtag.getName());
@@ -302,6 +305,7 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
 
     }
 
+    //NO SONAR
     private void updateHashtag(MlMessageParser mlMessageParser, SymMessage message) {
         String[] chunks = mlMessageParser.getTextChunks();
 
@@ -315,7 +319,7 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
 
         if (chunks[1].startsWith("#") && chunks[2].startsWith("#")) {
 
-            Hashtag hashtag =  new Hashtag();
+            Hashtag hashtag = new Hashtag();
             hashtag.setName(chunks[1].substring(1));
 
             Hashtag cHashtag = hashtags.get(hashtag.getName());
@@ -326,33 +330,30 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
                 ArrayList<HashtagDef> defs = cHashtag.getDefinitions();
 
                 if (defs != null) {
-                    Hashtag hNum = new Hashtag();
-                    hNum.setName(chunks[2].substring(1));
-
-
-                    try {
-                        HashtagDef hashtagDef = defs.get(Integer.parseInt(hNum.getName()) - 1);
-
-                        if (hashtagDef != null) {
-
-                            logger.debug("Updated message: {}", mlMessageParser.getHtmlStartingFromText(chunks[2]) );
-
-                            hashtagDef.setDefinition(mlMessageParser.getHtmlStartingFromNode(NodeTypes.HASHTAG.toString(), AttribTypes.TAG.toString(),chunks[2].substring(1)));
-
-
-
-                        } else {
-                            sendUsage(message);
-                            return;
-                        }
-                    } catch (IndexOutOfBoundsException e) {
-
-                        sendDefinitionNotFound(message, hashtag.getName(), hNum.getName());
-                    }
-
-                } else {
                     sendUsage(message);
                     return;
+                }
+
+                Hashtag hNum = new Hashtag();
+                hNum.setName(chunks[2].substring(1));
+
+
+                try {
+                    HashtagDef hashtagDef = defs.get(Integer.parseInt(hNum.getName()) - 1);
+
+                    if (hashtagDef != null) {
+                        sendUsage(message);
+                        return;
+                    }
+
+                    logger.debug("Updated message: {}", mlMessageParser.getHtmlStartingFromText(chunks[2]));
+
+                    hashtagDef.setDefinition(mlMessageParser.getHtmlStartingFromNode(NodeTypes.HASHTAG.toString(), AttribTypes.TAG.toString(), chunks[2].substring(1)));
+
+
+                } catch (IndexOutOfBoundsException e) {
+
+                    sendDefinitionNotFound(message, hashtag.getName(), hNum.getName());
                 }
 
 
@@ -375,7 +376,7 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
     private void removeHashtag(MlMessageParser mlMessageParser, SymMessage message) {
         String[] chunks = mlMessageParser.getTextChunks();
 
-        if (chunks.length < 2 && !chunks[1].startsWith("#") ) {
+        if (chunks.length < 2 && !chunks[1].startsWith("#")) {
             sendUsage(message);
             return;
         }
@@ -422,7 +423,7 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
 
         String[] chunks = mlMessageParser.getTextChunks();
 
-        if (chunks.length < 2 && !chunks[1].startsWith("#") ) {
+        if (chunks.length < 2 && !chunks[1].startsWith("#")) {
             sendUsage(message);
             return;
         }
@@ -492,8 +493,8 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
         stream.setId(message.getStreamId());
         try {
             symClient.getMessagesClient().sendMessage(stream, aMessage);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (MessagesException e) {
+            logger.error("Error sending message..",e);
         }
 
 
@@ -536,8 +537,8 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
             out.append(def.getDefinition());
             try {
                 out.append("<br/>         by <mention email=\"").append(symClient.getUsersClient().getUserFromId(def.getUserId()).getEmailAddress()).append("\"/>");
-            } catch (Exception e) {
-                logger.error("Could not append mention due to failed email lookup from userId: {} ", def.getUserId());
+            } catch (UsersClientException e) {
+                logger.error("Could not append mention due to failed email lookup from userId:  {}", def.getUserId(),e);
             }
 
             ++i;
@@ -552,8 +553,8 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
         stream.setId(message.getStreamId());
         try {
             symClient.getMessagesClient().sendMessage(stream, aMessage);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (MessagesException e) {
+            logger.error("Error sending message...",e);
         }
 
 
@@ -600,8 +601,8 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
 
         File[] files = new File(System.getProperty("files.json")).listFiles();
 
-        if(files==null){
-            logger.error("Failed to load locate directory [{}] for json pre-load..exiting",System.getProperty("files.json") );
+        if (files == null) {
+            logger.error("Failed to load locate directory [{}] for json pre-load..exiting", System.getProperty("files.json"));
             System.exit(1);
         }
         Gson gson = new Gson();
