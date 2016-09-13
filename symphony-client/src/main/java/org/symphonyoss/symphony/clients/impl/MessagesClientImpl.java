@@ -99,7 +99,7 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
         );
         messageSubmission.setAttachments(SymAttachmentInfo.toV2AttachmentsInfo(message.getAttachments()));
 
-        V2Message v2Message = null;
+        V2Message v2Message;
         try {
             v2Message = messagesApi.v2StreamSidMessageCreatePost(stream.getId(), symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken(), messageSubmission);
         } catch (ApiException e) {
@@ -120,7 +120,7 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
 
         MessagesApi messagesApi = new MessagesApi(apiClient);
 
-        V2MessageList v2MessageList = null;
+        V2MessageList v2MessageList;
         try {
             v2MessageList = messagesApi.v2StreamSidMessageGet(stream.getId(), since, symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken(), offset, maxMessages);
         } catch (ApiException e) {
@@ -130,13 +130,7 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
         List<SymMessage> symMessageList = new ArrayList<>();
 
         if(v2MessageList != null) {
-            for (V2BaseMessage v2BaseMessage : v2MessageList) {
-
-                if (v2BaseMessage instanceof V2Message)
-                    symMessageList.add(SymMessage.toSymMessage(v2BaseMessage));
-
-
-            }
+            symMessageList.addAll(v2MessageList.stream().filter(v2BaseMessage -> v2BaseMessage instanceof V2Message).map(SymMessage::toSymMessage).collect(Collectors.toList()));
         }
 
         return symMessageList;

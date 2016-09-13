@@ -23,7 +23,6 @@
 package org.symphonyoss.symphony.clients.model;
 
 import org.symphonyoss.symphony.agent.model.AttachmentInfo;
-import org.symphonyoss.symphony.clients.AttachementsFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,17 +64,17 @@ public class SymAttachmentInfo {
 
 public static List<AttachmentInfo> toV2AttachmentsInfo(List<SymAttachmentInfo> symAttachmentsInfo){
 
-    List<AttachmentInfo> attachementsInfo = new ArrayList<>();
+    List<AttachmentInfo> attachmentInfos = new ArrayList<>();
 
     for(SymAttachmentInfo symAttachmentInfo: symAttachmentsInfo) {
         AttachmentInfo attachmentInfo = new AttachmentInfo();
         attachmentInfo.setId(symAttachmentInfo.getId());
         attachmentInfo.setName(symAttachmentInfo.getName());
         attachmentInfo.setSize(symAttachmentInfo.getSize());
-        attachementsInfo.add(attachmentInfo);
+        attachmentInfos.add(attachmentInfo);
     }
 
-    return attachementsInfo;
+    return attachmentInfos;
 }
 
 
@@ -90,7 +89,7 @@ public static List<AttachmentInfo> toV2AttachmentsInfo(List<SymAttachmentInfo> s
     }
 
 
-    public static List<SymAttachmentInfo> toAttachementsInfo(List<AttachmentInfo> attachmentInfos){
+    public static List<SymAttachmentInfo> toAttachmentsInfo(List<AttachmentInfo> attachmentInfos){
 
         return  attachmentInfos.stream().map(SymAttachmentInfo::toAttachmentInfo).collect(Collectors.toList());
 

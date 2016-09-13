@@ -47,7 +47,6 @@ public class MessageService implements DataFeedListener {
     private final SymphonyClient symClient;
     private org.symphonyoss.symphony.agent.invoker.ApiClient agentClient;
     private final Logger logger = LoggerFactory.getLogger(MessageService.class);
-    private final MessageFeedWorker messageFeedWorker;
     private final Set<MessageListener> messageListeners = ConcurrentHashMap.newKeySet();
     private final Set<ChatListener> chatListeners = ConcurrentHashMap.newKeySet();
     private final Set<RoomServiceListener> roomServiceListeners = ConcurrentHashMap.newKeySet();
@@ -58,28 +57,15 @@ public class MessageService implements DataFeedListener {
 
         this.symClient = symClient;
 
-        messageFeedWorker = new MessageFeedWorker(symClient, this);
+        MessageFeedWorker messageFeedWorker = new MessageFeedWorker(symClient, this);
         new Thread(messageFeedWorker).start();
 
     }
 
-    @Deprecated
-    public void sendMessage(Room room, MessageSubmission message) throws MessagesException {
-
-        symClient.getMessagesClient().sendMessage(room.getStream(), message);
-
-    }
 
     public void sendMessage(Room room, SymMessage message) throws MessagesException {
 
         symClient.getMessagesClient().sendMessage(room.getStream(), message);
-
-    }
-
-    @Deprecated
-    public void sendMessage(Chat chat, MessageSubmission message) throws MessagesException {
-
-        symClient.getMessagesClient().sendMessage(chat.getStream(), message);
 
     }
 
@@ -91,26 +77,10 @@ public class MessageService implements DataFeedListener {
     }
 
 
-    @Deprecated
-    public void sendMessage(String email, MessageSubmission message) throws MessagesException {
-
-        SymUser remoteUser = null;
-        try {
-            remoteUser = symClient.getUsersClient().getUserFromEmail(email);
-
-            symClient.getMessagesClient().sendMessage(symClient.getStreamsClient().getStream(remoteUser), message);
-
-        } catch (UsersClientException e) {
-            throw new MessagesException("Failed to find user from email address: " + email, e.getCause());
-        } catch (StreamsException e) {
-            throw new MessagesException("Failed to send message to user by email address: " + email, e.getCause());
-        }
-
-    }
 
     public void sendMessage(String email, SymMessage message) throws MessagesException {
 
-        SymUser remoteUser = null;
+        SymUser remoteUser;
         try {
 
             remoteUser = symClient.getUsersClient().getUserFromEmail(email);
@@ -233,6 +203,7 @@ public class MessageService implements DataFeedListener {
                 return true;
             }
         } catch (StreamsException e) {
+            logger.error("Failed to retrieve room detail...",e);
 
 
         }

@@ -28,7 +28,6 @@ import org.symphonyoss.symphony.agent.model.V2Message;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.ObjDoubleConsumer;
 
 /**
  * Created by frank.tarsillo on 8/12/2016.
@@ -66,7 +65,7 @@ public class SymMessage {
 
     private Long fromUserId = null;
 
-    private List<SymAttachmentInfo> attachments = new ArrayList<SymAttachmentInfo>();
+    private List<SymAttachmentInfo> attachments = new ArrayList<>();
 
 
     public String getId() {
@@ -157,7 +156,7 @@ public class SymMessage {
         if (v2BaseMessage instanceof V2Message) {
             symMessage.setMessage(((V2Message) v2BaseMessage).getMessage());
             symMessage.setFromUserId(((V2Message) v2BaseMessage).getFromUserId());
-            symMessage.setAttachments(SymAttachmentInfo.toAttachementsInfo(((V2Message) v2BaseMessage).getAttachments()));
+            symMessage.setAttachments(SymAttachmentInfo.toAttachmentsInfo(((V2Message) v2BaseMessage).getAttachments()));
         }
 
 

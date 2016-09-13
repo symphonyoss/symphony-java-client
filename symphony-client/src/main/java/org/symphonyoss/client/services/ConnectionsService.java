@@ -27,7 +27,6 @@ import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.exceptions.ConnectionsException;
 import org.symphonyoss.symphony.clients.model.SymUserConnection;
-import org.symphonyoss.symphony.pod.api.ConnectionApi;
 
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,7 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by frank.tarsillo on 9/9/2016.
  */
 public class ConnectionsService implements ConnectionsListener{
-    private SymphonyClient symClient;
+    private final SymphonyClient symClient;
     private boolean autoAccept;
     private final Set<ConnectionsListener> connectionsListeners =  ConcurrentHashMap.newKeySet();
     private final Logger logger = LoggerFactory.getLogger(ChatService.class);
@@ -67,16 +66,16 @@ public class ConnectionsService implements ConnectionsListener{
     }
     }
 
-    public boolean registerListener(ConnectionsListener connectionsListener){
+    public void registerListener(ConnectionsListener connectionsListener){
 
         connectionsListeners.add(connectionsListener);
-        return true;
+
     }
 
-    public boolean removeListener(ConnectionsListener connectionsListener){
+    public void removeListener(ConnectionsListener connectionsListener){
 
         connectionsListeners.remove(connectionsListener);
-        return true;
+
     }
 
 

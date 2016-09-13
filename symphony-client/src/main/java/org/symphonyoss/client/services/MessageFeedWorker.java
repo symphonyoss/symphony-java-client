@@ -27,10 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.exceptions.DataFeedException;
 import org.symphonyoss.symphony.agent.model.Datafeed;
-import org.symphonyoss.symphony.agent.model.Message;
-import org.symphonyoss.symphony.agent.model.MessageList;
 import org.symphonyoss.symphony.agent.model.V2BaseMessage;
-import org.symphonyoss.symphony.clients.model.SymMessage;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -89,10 +86,8 @@ class MessageFeedWorker implements Runnable {
 
                     logger.debug("Received {} messages..", messageList.size());
 
-                    for (V2BaseMessage message : messageList) {
-                   //     logger.debug("SymMessage received from stream {} {}", message.getId(),message.getStream());
-                        dataFeedListener.onMessage(message);
-                    }
+                    //logger.debug("SymMessage received from stream {} {}", message.getId(),message.getStream());
+                    messageList.forEach(dataFeedListener::onMessage);
                 }
 
             } catch (DataFeedException e) {

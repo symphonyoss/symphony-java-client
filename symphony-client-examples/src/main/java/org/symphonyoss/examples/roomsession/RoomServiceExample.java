@@ -71,7 +71,6 @@ public class RoomServiceExample implements RoomServiceListener, RoomListener {
 
 
     private final Logger logger = LoggerFactory.getLogger(RoomServiceExample.class);
-    private SymphonyClient symClient;
     private RoomService roomService;
 
     public RoomServiceExample() {
@@ -96,7 +95,7 @@ public class RoomServiceExample implements RoomServiceListener, RoomListener {
         try {
 
             //Create a basic client instance.
-            symClient = SymphonyClientFactory.getClient(SymphonyClientFactory.TYPE.BASIC);
+            SymphonyClient symClient = SymphonyClientFactory.getClient(SymphonyClientFactory.TYPE.BASIC);
 
             logger.debug("{} {}", System.getProperty("sessionauth.url"),
                     System.getProperty("keyauth.url"));

@@ -23,8 +23,6 @@
 
 package org.symphonyoss.exceptions;
 
-import org.symphonyoss.exceptions.SymException;
-
 /**
  * Created by Frank Tarsillo on 9/11/2016.
  */

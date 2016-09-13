@@ -27,7 +27,6 @@ package org.symphonyoss.symphony.clients;
 
 import org.junit.Test;
 import org.symphonyoss.symphony.clients.impl.StreamsClientImpl;
-import org.symphonyoss.symphony.clients.impl.UsersClientImpl;
 import org.symphonyoss.util.TestFactory;
 
 import static org.junit.Assert.*;

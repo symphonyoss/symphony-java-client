@@ -32,7 +32,7 @@ import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.symphony.authenticator.model.Token;
 import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.pod.model.Stream;
-import org.symphonyoss.symphony.pod.model.User;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -40,8 +40,8 @@ import java.util.Set;
  * Created by Frank Tarsillo on 6/19/2016.
  */
 public class TestFactory {
-    private static SymphonyClient symClient = SymphonyClientFactory.getClient(SymphonyClientFactory.TYPE.BASIC);
-    private static SymAuth symAuth = new SymAuth();
+    private static final SymphonyClient symClient = SymphonyClientFactory.getClient(SymphonyClientFactory.TYPE.BASIC);
+    private static final SymAuth symAuth = new SymAuth();
 
     static {
 
@@ -68,7 +68,7 @@ public class TestFactory {
 
         Chat chat = new Chat();
         chat.setLocalUser(symClient.getLocalUser());
-        Set<SymUser> remoteUsers = new HashSet<SymUser>();
+        Set<SymUser> remoteUsers = new HashSet<>();
         SymUser aUser = new SymUser();
         aUser.setId((long)1234567890);
         aUser.setEmailAddress("test.user@domain.com");

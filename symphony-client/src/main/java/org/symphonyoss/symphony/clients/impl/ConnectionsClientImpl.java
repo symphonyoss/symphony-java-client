@@ -26,7 +26,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.exceptions.ConnectionsException;
-import org.symphonyoss.exceptions.ConnectionsException;
 import org.symphonyoss.symphony.clients.model.SymUserConnection;
 import org.symphonyoss.symphony.clients.model.SymUserConnectionRequest;
 import org.symphonyoss.symphony.pod.invoker.ApiClient;
@@ -35,7 +34,6 @@ import org.symphonyoss.symphony.pod.api.ConnectionApi;
 import org.symphonyoss.symphony.pod.invoker.ApiException;
 import org.symphonyoss.symphony.pod.model.UserConnectionList;
 
-import java.net.ConnectException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -196,7 +194,7 @@ public class ConnectionsClientImpl implements ConnectionsClient {
         if(status == null)
             status = SymUserConnection.Status.ALL;
 
-        UserConnectionList userConnectionList = null;
+        UserConnectionList userConnectionList;
         try {
             userConnectionList = connectionApi.v1ConnectionListGet(symAuth.getSessionToken().getToken(), status.toString(), userIds);
         } catch (ApiException e) {

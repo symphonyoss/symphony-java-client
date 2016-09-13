@@ -40,7 +40,7 @@ import org.symphonyoss.symphony.clients.model.SymUser;
 public class SymphonyBasicClient implements SymphonyClient {
 
 
-    private Logger logger = LoggerFactory.getLogger(SymphonyBasicClient.class);
+    private final Logger logger = LoggerFactory.getLogger(SymphonyBasicClient.class);
     private SymAuth symAuth;
     private MessageService messageService;
     private PresenceService presenceService;
@@ -63,7 +63,7 @@ public class SymphonyBasicClient implements SymphonyClient {
     }
 
 
-    public boolean init(SymAuth symAuth, String email, String agentUrl, String serviceUrl) throws SymException {
+    public void init(SymAuth symAuth, String email, String agentUrl, String serviceUrl) throws InitException {
 
         String NOT_LOGGED_IN_MESSAGE = "Currently not logged into Agent, please check certificates and tokens.";
         if (symAuth == null || symAuth.getSessionToken() == null || symAuth.getKeyToken() == null)
@@ -79,39 +79,39 @@ public class SymphonyBasicClient implements SymphonyClient {
         this.agentUrl = agentUrl;
         this.serviceUrl = serviceUrl;
 
-        try {
-            //Init all clients.
-            dataFeedClient = DataFeedFactory.getClient(this, DataFeedFactory.TYPE.DEFAULT);
-            messagesClient = MessagesFactory.getClient(this, MessagesFactory.TYPE.DEFAULT);
-            presenceClient = PresenceFactory.getClient(this, PresenceFactory.TYPE.DEFAULT);
-            streamsClient = StreamsFactory.getClient(this, StreamsFactory.TYPE.DEFAULT);
-            usersClient = UsersFactory.getClient(this, UsersFactory.TYPE.DEFAULT);
-            attachmentsClient = AttachementsFactory.getClient(this, AttachementsFactory.TYPE.DEFAULT);
-            roomMembershipClient = RoomMembershipFactory.getClient(this, RoomMembershipFactory.TYPE.DEFAULT);
-            connectionsClient = ConnectionsFactory.getClient(this, ConnectionsFactory.TYPE.DEFAULT);
-        } catch (Exception e) {
 
+        //Init all clients.
+        dataFeedClient = DataFeedFactory.getClient(this, DataFeedFactory.TYPE.DEFAULT);
+        messagesClient = MessagesFactory.getClient(this, MessagesFactory.TYPE.DEFAULT);
+        presenceClient = PresenceFactory.getClient(this, PresenceFactory.TYPE.DEFAULT);
+        streamsClient = StreamsFactory.getClient(this, StreamsFactory.TYPE.DEFAULT);
+        usersClient = UsersFactory.getClient(this, UsersFactory.TYPE.DEFAULT);
+        attachmentsClient = AttachmentsFactory.getClient(this, AttachmentsFactory.TYPE.DEFAULT);
+        roomMembershipClient = RoomMembershipFactory.getClient(this, RoomMembershipFactory.TYPE.DEFAULT);
+        connectionsClient = ConnectionsFactory.getClient(this, ConnectionsFactory.TYPE.DEFAULT);
+
+
+        try {
+            messageService = new MessageService(this);
+            presenceService = new PresenceService(this);
+            chatService = new ChatService(this);
+
+            localUser = usersClient.getUserFromEmail(email);
+        }catch (SymException e){
+            logger.error("Failed to initialize client..", e);
 
             throw new InitException("Could not initialize one of the Symphony API services." +
                     " This is most likely due to not having the right agent or pod URLs." +
-                    " This can also be an issue with the client certificate or server.trustore." +
+                    " This can also be an issue with the client certificate or server.truststore." +
                     " Here is what you have configured:\n" +
                     "SessionToken: " + symAuth.getSessionToken() + "\n" +
                     "KeyToken: " + symAuth.getKeyToken() + "\n" +
                     "Email: " + email + "\n" +
                     "AgentUrl: " + agentUrl + "\n" +
-                    "ServiceUrl: " + serviceUrl );
-
-
+                    "ServiceUrl: " + serviceUrl);
         }
-        messageService = new MessageService(this);
-        presenceService = new PresenceService(this);
-        chatService = new ChatService(this);
-
-        localUser = usersClient.getUserFromEmail(email);
 
 
-        return true;
     }
 
     public SymAuth getSymAuth() {

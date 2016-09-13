@@ -22,14 +22,11 @@
 
 package org.symphonyoss.client.model;
 
-import org.symphonyoss.symphony.agent.model.Message;
 import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.pod.model.Stream;
-import org.symphonyoss.symphony.pod.model.User;
 import org.symphonyoss.client.services.ChatListener;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -70,11 +67,6 @@ public class Chat {
         this.stream = stream;
     }
 
-    public void onChatMessage(Message message){
-
-        onChatMessage(SymMessage.toSymMessage(message));
-
-    }
 
     public void onChatMessage(SymMessage message){
 
@@ -116,10 +108,7 @@ public class Chat {
 
         final Chat other = (Chat) obj;
 
-        if (this.stream==null || !this.stream.equals(other.stream)) {
-            return false;
-        }
-        return true;
+        return !(this.stream == null || !this.stream.equals(other.stream));
     }
 
 }

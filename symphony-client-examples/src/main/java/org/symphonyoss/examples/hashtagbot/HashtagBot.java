@@ -35,13 +35,10 @@ import org.symphonyoss.client.services.ChatListener;
 import org.symphonyoss.client.services.ChatServiceListener;
 import org.symphonyoss.client.services.PresenceListener;
 import org.symphonyoss.client.util.MlMessageParser;
-import org.symphonyoss.symphony.agent.model.Message;
-import org.symphonyoss.symphony.agent.model.MessageSubmission;
 import org.symphonyoss.symphony.clients.AuthorizationClient;
 import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.pod.model.Stream;
-import org.symphonyoss.symphony.pod.model.User;
 import org.symphonyoss.symphony.pod.model.UserPresence;
 
 import java.io.File;
@@ -153,8 +150,8 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
             symClient.getChatService().registerListener(this);
 
             //A message to send when the BOT comes online.
-            MessageSubmission aMessage = new MessageSubmission();
-            aMessage.setFormat(MessageSubmission.FormatEnum.TEXT);
+            SymMessage aMessage = new SymMessage();
+            aMessage.setFormat(SymMessage.Format.TEXT);
             aMessage.setMessage("Hello master, I'm alive again....");
 
 
@@ -190,7 +187,7 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
     }
 
     //Chat sessions callback method.
-    public void onChatMessage(Message message) {
+    public void onChatMessage(SymMessage message) {
         if (message == null)
             return;
 
@@ -204,23 +201,8 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
         processMessage(message);
 
     }
-    //Chat sessions callback method.
-    public void onChatMessage(SymMessage message) {
-        if (message == null)
-            return;
 
-        logger.debug("TS: {}\nFrom ID: {}\nSymMessage: {}\nSymMessage Type: {}",
-                message.getTimestamp(),
-                message.getFromUserId(),
-                message.getMessage(),
-                message.getMessageType());
-
-        //Handle the new incoming message.
-        processMessage(SymMessage.toV1Message(message));
-
-    }
-
-    public void processMessage(Message message) {
+    public void processMessage(SymMessage message) {
 
         MlMessageParser mlMessageParser;
 
@@ -274,7 +256,7 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
 
     }
 
-    private void addHashtag(MlMessageParser mlMessageParser, Message message) {
+    private void addHashtag(MlMessageParser mlMessageParser, SymMessage message) {
 
         String[] chunks = mlMessageParser.getTextChunks();
 
@@ -320,7 +302,7 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
 
     }
 
-    private void updateHashtag(MlMessageParser mlMessageParser, Message message) {
+    private void updateHashtag(MlMessageParser mlMessageParser, SymMessage message) {
         String[] chunks = mlMessageParser.getTextChunks();
 
 
@@ -390,7 +372,7 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
 
     }
 
-    private void removeHashtag(MlMessageParser mlMessageParser, Message message) {
+    private void removeHashtag(MlMessageParser mlMessageParser, SymMessage message) {
         String[] chunks = mlMessageParser.getTextChunks();
 
         if (chunks.length < 2 && !chunks[1].startsWith("#") ) {
@@ -436,7 +418,7 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
 
     }
 
-    private void searchHashtag(MlMessageParser mlMessageParser, Message message) {
+    private void searchHashtag(MlMessageParser mlMessageParser, SymMessage message) {
 
         String[] chunks = mlMessageParser.getTextChunks();
 
@@ -460,10 +442,10 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
 
     }
 
-    private void sendNotFound(Message message, String hashtag) {
+    private void sendNotFound(SymMessage message, String hashtag) {
 
-        MessageSubmission aMessage = new MessageSubmission();
-        aMessage.setFormat(MessageSubmission.FormatEnum.MESSAGEML);
+        SymMessage aMessage = new SymMessage();
+        aMessage.setFormat(SymMessage.Format.MESSAGEML);
         aMessage.setMessage("<messageML><br/>Sorry..hashtag <hash tag=\"" + hashtag + "\"/> not found.<br/></messageML>");
 
         Stream stream = new Stream();
@@ -478,10 +460,10 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
     }
 
 
-    private void sendDefinitionNotFound(Message message, String hashtag, String num) {
+    private void sendDefinitionNotFound(SymMessage message, String hashtag, String num) {
 
-        MessageSubmission aMessage = new MessageSubmission();
-        aMessage.setFormat(MessageSubmission.FormatEnum.MESSAGEML);
+        SymMessage aMessage = new SymMessage();
+        aMessage.setFormat(SymMessage.Format.MESSAGEML);
         aMessage.setMessage("<messageML><br/>Sorry..hashtag <hash tag=\"" + hashtag + "\"/> <hash tag=\"" + num + "\"/> not found.<br/></messageML>");
 
         Stream stream = new Stream();
@@ -495,10 +477,10 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
 
     }
 
-    private void sendUsage(Message message) {
+    private void sendUsage(SymMessage message) {
 
-        MessageSubmission aMessage = new MessageSubmission();
-        aMessage.setFormat(MessageSubmission.FormatEnum.MESSAGEML);
+        SymMessage aMessage = new SymMessage();
+        aMessage.setFormat(SymMessage.Format.MESSAGEML);
         aMessage.setMessage("<messageML>Sorry...  <br/><b>Check the usage:</b><br/>" +
                 "<b>   Add</b>        #hashtag definition<br/>" +
                 "<b>   Update</b>  #hashtag #(num) definition<br/>" +
@@ -518,10 +500,10 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
     }
 
 
-    private void sendRemovedHashtag(Message message, String hashtag) {
+    private void sendRemovedHashtag(SymMessage message, String hashtag) {
 
-        MessageSubmission aMessage = new MessageSubmission();
-        aMessage.setFormat(MessageSubmission.FormatEnum.MESSAGEML);
+        SymMessage aMessage = new SymMessage();
+        aMessage.setFormat(SymMessage.Format.MESSAGEML);
         aMessage.setMessage("<messageML><br/>Completely removed hashtag <b>#" + hashtag + "</b></messageML>");
 
         Stream stream = new Stream();
@@ -535,12 +517,12 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
 
     }
 
-    private void sendHashtagMessage(Hashtag hashtag, Message message) {
+    private void sendHashtagMessage(Hashtag hashtag, SymMessage message) {
 
         StringBuilder out = new StringBuilder();
 
-        MessageSubmission aMessage = new MessageSubmission();
-        aMessage.setFormat(MessageSubmission.FormatEnum.MESSAGEML);
+        SymMessage aMessage = new SymMessage();
+        aMessage.setFormat(SymMessage.Format.MESSAGEML);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss z");
         Date date = new Date(hashtag.getLastChange());
 

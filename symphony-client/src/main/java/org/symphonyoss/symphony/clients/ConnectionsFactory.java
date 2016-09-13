@@ -23,7 +23,6 @@
 package org.symphonyoss.symphony.clients;
 
 import org.symphonyoss.client.SymphonyClient;
-import org.symphonyoss.symphony.clients.impl.AttachmentsClientImpl;
 import org.symphonyoss.symphony.clients.impl.ConnectionsClientImpl;
 
 /**

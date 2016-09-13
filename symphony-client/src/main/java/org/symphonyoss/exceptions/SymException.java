@@ -32,7 +32,7 @@ public class SymException extends Exception{
         super (message);
     }
 
-    public SymException(Throwable cause) {
+    protected SymException(Throwable cause) {
         super (cause);
     }
 

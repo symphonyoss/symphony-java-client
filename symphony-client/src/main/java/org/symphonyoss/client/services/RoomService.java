@@ -44,14 +44,14 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RoomService implements RoomServiceListener {
 
 
-    private final ConcurrentHashMap<String, Room> roomsByStream = new ConcurrentHashMap<String,Room>();
+    private final ConcurrentHashMap<String, Room> roomsByStream = new ConcurrentHashMap<>();
 
 
     private final SymphonyClient symClient;
     private final Logger logger = LoggerFactory.getLogger(RoomService.class);
-    Set<RoomServiceListener> roomServiceListeners = ConcurrentHashMap.newKeySet();
+    private final Set<RoomServiceListener> roomServiceListeners = ConcurrentHashMap.newKeySet();
 
-    public RoomService(SymphonyClient symClient) throws Exception {
+    public RoomService(SymphonyClient symClient) {
         this.symClient = symClient;
 
         symClient.getMessageService().registerRoomListener(this);

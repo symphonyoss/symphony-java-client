@@ -28,19 +28,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.client.SymphonyClientFactory;
-import org.symphonyoss.client.model.Chat;
 import org.symphonyoss.client.model.SymAuth;
-import org.symphonyoss.client.services.ChatListener;
-import org.symphonyoss.client.services.ChatServiceListener;
 import org.symphonyoss.client.services.PresenceListener;
-import org.symphonyoss.symphony.agent.model.Message;
-import org.symphonyoss.symphony.agent.model.MessageSubmission;
 import org.symphonyoss.symphony.clients.AuthorizationClient;
-import org.symphonyoss.symphony.pod.model.User;
 import org.symphonyoss.symphony.pod.model.UserPresence;
-
-import java.util.HashSet;
-import java.util.Set;
 
 
 /**

@@ -31,17 +31,13 @@ import org.symphonyoss.client.model.Chat;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.client.services.ChatListener;
 import org.symphonyoss.client.services.ChatServiceListener;
-import org.symphonyoss.symphony.agent.model.Message;
-import org.symphonyoss.symphony.agent.model.MessageSubmission;
 import org.symphonyoss.symphony.clients.AuthorizationClient;
 import org.symphonyoss.symphony.clients.model.SymAttachmentInfo;
 import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.clients.model.SymUser;
-import org.symphonyoss.symphony.pod.model.User;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -167,10 +163,6 @@ public class AttachementExample implements ChatListener, ChatServiceListener {
 
     }
 
-
-    public void onChatMessage(Message message) {
-
-    }
 
 
     //Chat sessions callback method.

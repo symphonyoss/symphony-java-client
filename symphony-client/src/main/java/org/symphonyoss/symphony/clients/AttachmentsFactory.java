@@ -24,12 +24,11 @@ package org.symphonyoss.symphony.clients;
 
 import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.symphony.clients.impl.AttachmentsClientImpl;
-import org.symphonyoss.symphony.clients.impl.DataFeedClientImpl;
 
 /**
  * Created by frank.tarsillo on 6/6/2016.
  */
-public class AttachementsFactory {
+public class AttachmentsFactory {
 
     public enum TYPE { DEFAULT }
 

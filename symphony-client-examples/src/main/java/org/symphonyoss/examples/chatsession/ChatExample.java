@@ -34,11 +34,10 @@ import org.symphonyoss.client.services.ChatListener;
 import org.symphonyoss.client.services.ChatServiceListener;
 import org.symphonyoss.exceptions.AuthorizationException;
 import org.symphonyoss.symphony.agent.model.Message;
-import org.symphonyoss.symphony.agent.model.MessageSubmission;
 import org.symphonyoss.symphony.clients.AuthorizationClient;
 import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.clients.model.SymUser;
-import org.symphonyoss.symphony.pod.model.User;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -75,7 +74,6 @@ public class ChatExample implements ChatListener, ChatServiceListener {
 
 
     private final Logger logger = LoggerFactory.getLogger(org.symphonyoss.examples.chatsession.ChatExample.class);
-    private SymphonyClient symClient;
 
     public ChatExample() {
 
@@ -99,7 +97,7 @@ public class ChatExample implements ChatListener, ChatServiceListener {
         try {
 
             //Create a basic client instance.
-            symClient = SymphonyClientFactory.getClient(SymphonyClientFactory.TYPE.BASIC);
+            SymphonyClient symClient = SymphonyClientFactory.getClient(SymphonyClientFactory.TYPE.BASIC);
 
             logger.debug("{} {}", System.getProperty("sessionauth.url"),
                     System.getProperty("keyauth.url"));
@@ -135,8 +133,8 @@ public class ChatExample implements ChatListener, ChatServiceListener {
             symClient.getChatService().registerListener(this);
 
             //A message to send when the BOT comes online.
-            MessageSubmission aMessage = new MessageSubmission();
-            aMessage.setFormat(MessageSubmission.FormatEnum.TEXT);
+            SymMessage aMessage = new SymMessage();
+            aMessage.setFormat(SymMessage.Format.TEXT);
             aMessage.setMessage("Hello master, I'm alive again....");
 
 

@@ -23,9 +23,9 @@
 package org.symphonyoss.client;
 
 import org.symphonyoss.client.model.SymAuth;
+import org.symphonyoss.exceptions.InitException;
 import org.symphonyoss.symphony.clients.*;
 import org.symphonyoss.symphony.clients.model.SymUser;
-import org.symphonyoss.symphony.pod.model.User;
 import org.symphonyoss.client.services.*;
 
 /**
@@ -60,7 +60,7 @@ public interface SymphonyClient {
 
     ConnectionsClient getConnectionsClient();
 
-    boolean init(SymAuth symAuth, String email, String agentUrl, String serviceUrl) throws Exception;
+    void init(SymAuth symAuth, String email, String agentUrl, String serviceUrl) throws InitException;
 
     SymUser getLocalUser();
 

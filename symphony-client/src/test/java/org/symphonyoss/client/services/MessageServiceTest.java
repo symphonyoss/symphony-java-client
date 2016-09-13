@@ -27,8 +27,6 @@ package org.symphonyoss.client.services;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
 /**
  * Created by Frank Tarsillo on 6/19/2016.
  */

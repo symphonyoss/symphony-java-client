@@ -91,7 +91,8 @@ class PresenceWorker implements Runnable {
                 return;
             }
 
-            try{TimeUnit.SECONDS.sleep(2);}catch(InterruptedException e){e.printStackTrace();}
+            try{TimeUnit.SECONDS.sleep(2);}catch(InterruptedException e){
+                logger.error("Sleep timer interrupted",e);}
 
         }
 

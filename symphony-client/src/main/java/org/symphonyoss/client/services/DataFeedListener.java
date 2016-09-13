@@ -27,7 +27,7 @@ import org.symphonyoss.symphony.agent.model.V2BaseMessage;
 /**
  * Created by frank.tarsillo on 9/12/2016.
  */
-public interface DataFeedListener {
+interface DataFeedListener {
 
     void onMessage(V2BaseMessage message);
 }

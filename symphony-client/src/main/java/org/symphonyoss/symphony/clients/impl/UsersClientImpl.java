@@ -24,7 +24,6 @@ package org.symphonyoss.symphony.clients.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.symphonyoss.exceptions.UsersClientException;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.exceptions.UserNotFoundException;
 import org.symphonyoss.exceptions.UsersClientException;
@@ -48,7 +47,6 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
     public UsersClientImpl(SymAuth symAuth, String serviceUrl) {
 
         this.symAuth = symAuth;
-        String serviceUrl1 = serviceUrl;
 
 
         //Get Service client to query for userID.

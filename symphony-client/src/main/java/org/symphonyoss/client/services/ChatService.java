@@ -25,10 +25,7 @@ package org.symphonyoss.client.services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
-import org.symphonyoss.exceptions.InitException;
-import org.symphonyoss.exceptions.StreamsException;
 import org.symphonyoss.exceptions.UsersClientException;
-import org.symphonyoss.symphony.agent.model.Message;
 import org.symphonyoss.client.model.Chat;
 import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.clients.model.SymUser;
@@ -46,8 +43,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ChatService implements ChatListener {
 
 
-    private final ConcurrentHashMap<String, Chat> chatsByStream = new ConcurrentHashMap<String, Chat>();
-    private final ConcurrentHashMap<Long, Set<Chat>> chatsByUser = new ConcurrentHashMap<Long, Set<Chat>>();
+    private final ConcurrentHashMap<String, Chat> chatsByStream = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Long, Set<Chat>> chatsByUser = new ConcurrentHashMap<>();
 
     private final Set<ChatServiceListener> chatServiceListeners = ConcurrentHashMap.newKeySet();
 
@@ -55,7 +52,7 @@ public class ChatService implements ChatListener {
     private final Logger logger = LoggerFactory.getLogger(ChatService.class);
 
 
-    public ChatService(SymphonyClient symClient) throws InitException {
+    public ChatService(SymphonyClient symClient){
         this.symClient = symClient;
 
         symClient.getMessageService().registerChatListener(this);
@@ -74,7 +71,7 @@ public class ChatService implements ChatListener {
                 Set<Chat> userChats = chatsByUser.get(user.getId());
 
                 if (userChats == null) {
-                    userChats = new HashSet<Chat>();
+                    userChats = new HashSet<>();
                     chatsByUser.put(user.getId(), userChats);
                 }
 
@@ -122,10 +119,6 @@ public class ChatService implements ChatListener {
 
     }
 
-    private void newChatUpdate(Chat chat) {
-
-
-    }
 
     private Chat createNewChatFromMessage(SymMessage message) {
 
@@ -140,7 +133,7 @@ public class ChatService implements ChatListener {
 
             if (remoteUser != null) {
 
-                Set<SymUser> remoteUserSet = new HashSet<SymUser>();
+                Set<SymUser> remoteUserSet = new HashSet<>();
                 remoteUserSet.add(remoteUser);
                 chat.setRemoteUsers(remoteUserSet);
                 return chat;
@@ -173,7 +166,6 @@ public class ChatService implements ChatListener {
                     addChat(chat);
                 } else {
                     logger.error("Failed to add new chat from message {} {}", message.getStreamId(), message.getFromUserId());
-                    return;
                 }
             } else {
 

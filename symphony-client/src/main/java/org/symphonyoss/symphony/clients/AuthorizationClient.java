@@ -31,8 +31,6 @@ import org.symphonyoss.symphony.authenticator.model.Token;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.symphony.authenticator.invoker.ApiException;
 
-import java.net.ConnectException;
-
 /**
  * Created by Frank Tarsillo on 5/15/2016.
  */
@@ -114,10 +112,10 @@ public class AuthorizationClient {
 
 
 
-    public void setKeystores(String serverTrustore, String truststorePass, String clientKeystore, String keystorePass) {
+    public void setKeystores(String serverTruststore, String truststorePass, String clientKeystore, String keystorePass) {
 
 
-        System.setProperty("javax.net.ssl.trustStore", serverTrustore);
+        System.setProperty("javax.net.ssl.trustStore", serverTruststore);
         System.setProperty("javax.net.ssl.trustStorePassword", truststorePass);
         System.setProperty("javax.net.ssl.keyStore", clientKeystore);
         System.setProperty("javax.net.ssl.keyStorePassword", keystorePass);

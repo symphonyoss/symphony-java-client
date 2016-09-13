@@ -44,7 +44,6 @@ public class PresenceClientImpl implements org.symphonyoss.symphony.clients.Pres
     public PresenceClientImpl(SymAuth symAuth, String serviceUrl) {
 
         this.symAuth = symAuth;
-        String serviceUrl1 = serviceUrl;
 
 
         //Get Service client to query for userID.

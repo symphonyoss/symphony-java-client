@@ -37,7 +37,7 @@ import java.util.concurrent.TimeUnit;
 class ConnectionsWorker implements Runnable {
     private final SymphonyClient symClient;
     private final ConnectionsListener connectionsListener;
-    private final ConcurrentHashMap<Long, SymUserConnection> pendingConnections = new ConcurrentHashMap<Long, SymUserConnection>();
+    private final ConcurrentHashMap<Long, SymUserConnection> pendingConnections = new ConcurrentHashMap<>();
     private final Logger logger = LoggerFactory.getLogger(ConnectionsWorker.class);
     private boolean KILL = false;
 
@@ -70,6 +70,7 @@ class ConnectionsWorker implements Runnable {
                     try {
                         TimeUnit.SECONDS.sleep(30);
                     } catch (InterruptedException ie) {
+                        logger.error("Interrupt failed on presence retrieval",ie);
                     }
                     continue;
                 }
@@ -107,7 +108,7 @@ class ConnectionsWorker implements Runnable {
                 try {
                     TimeUnit.SECONDS.sleep(30);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    logger.error("Sleep timer interrupted",e);
                 }
             } catch (Exception bad) {
                 logger.error("Serious failure in connections worker thread..please verify stacktrace.", bad);

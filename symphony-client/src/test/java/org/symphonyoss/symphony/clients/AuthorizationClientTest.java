@@ -27,7 +27,6 @@ package org.symphonyoss.symphony.clients;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.util.TestFactory;
 
 import static org.junit.Assert.*;
@@ -39,7 +38,7 @@ import static org.mockito.Mockito.when;
  */
 public class AuthorizationClientTest {
 
-    AuthorizationClient authorizationClient;
+    private AuthorizationClient authorizationClient;
 
     @Before
     public void beforeTest(){
@@ -61,7 +60,7 @@ public class AuthorizationClientTest {
     @Test
     public void authenticate() throws Exception {
 
-        AuthorizationClient authorizationClientReal = new AuthorizationClient("AUTHURL","KEYURL");
+        //AuthorizationClient authorizationClientReal = new AuthorizationClient("AUTHURL","KEYURL");
 
         authorizationClient.setKeystores("/dir/file.trustore","trustpass","/dir/client.keystore","keystorepass");
 

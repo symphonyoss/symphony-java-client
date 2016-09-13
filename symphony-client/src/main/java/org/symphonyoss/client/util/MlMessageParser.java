@@ -32,8 +32,9 @@ import org.jsoup.nodes.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.exceptions.SymException;
+import org.symphonyoss.exceptions.UsersClientException;
 import org.symphonyoss.symphony.clients.model.SymUser;
-import org.symphonyoss.symphony.pod.model.User;
 import org.xml.sax.helpers.DefaultHandler;
 
 import java.util.List;
@@ -59,7 +60,7 @@ public class MlMessageParser extends DefaultHandler {
     public MlMessageParser() {
     }
 
-    public void parseMessage(String message) throws Exception {
+    public void parseMessage(String message) throws SymException {
 
         Document doc = Jsoup.parse(message);
         originalDoc = doc.clone();
@@ -79,7 +80,7 @@ public class MlMessageParser extends DefaultHandler {
         } else {
 
             logger.error("Could not parse document for message {}", message);
-            throw new Exception("Malformed message");
+            throw new SymException("Malformed message");
         }
 
         textDoc = new StringBuilder();
@@ -133,8 +134,8 @@ public class MlMessageParser extends DefaultHandler {
                         if (symClient != null)
                             try {
                                 user = symClient.getUsersClient().getUserFromId(Long.valueOf(node.attr(AttribTypes.UID.toString())));
-                            } catch (Exception e) {
-                                e.printStackTrace();
+                            } catch (UsersClientException e) {
+                                logger.error("Could not identify user from userID",e);
                             }
 
 
@@ -159,20 +160,7 @@ public class MlMessageParser extends DefaultHandler {
     }
 
 
-    public static void main(String[] args) {
-        MlMessageParser m2 = new MlMessageParser();
 
-        try {
-            m2.parseMessage("<messageML>add <hash TAG=\"test\"/><a HREF=\"https://bits.mdevlab.com\"><b>ANCHOR <i>TEXT</i></b></a> some other stuff <cash tag=\"mrkt\"/> is there <mention uid=\"221232232\"/> <b>test of </b><a HREF=\"https://bits.mdevlab.com\"/>something<errors><error>Invalid control characters in message</error></errors></messageML>");
-            System.out.println(m2.getText());
-            System.out.println(m2.getHtmlStartingFromText("add"));
-            System.out.println(m2.getHtmlStartingFromNode(NodeTypes.CASHTAG.toString(), AttribTypes.TAG.toString(), "mrkt"));
-            System.out.println(m2.getHtmlStartingFromNode(NodeTypes.HASHTAG.toString(), AttribTypes.TAG.toString(), "test"));
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
 
     public String getText() {
@@ -278,8 +266,8 @@ public class MlMessageParser extends DefaultHandler {
                         user = symClient.getUsersClient().getUserFromId(Long.parseLong(uid));
 
                         logger.info("Translated mention uid {} to email {}", uid, user.getEmailAddress());
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    } catch (UsersClientException e) {
+                        logger.error("Could not identify user email from id",e);
                     }
 
                     if(user != null && user.getEmailAddress() != null){

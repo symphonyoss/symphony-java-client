@@ -26,16 +26,16 @@ package org.symphonyoss.exceptions;
 /**
  * Created by Frank Tarsillo on 9/11/2016.
  */
-public class AttachementsException extends SymException{
-    public AttachementsException(String message) {
+public class AttachmentsException extends SymException{
+    public AttachmentsException(String message) {
         super(message);
     }
 
-    public AttachementsException(Throwable cause) {
+    public AttachmentsException(Throwable cause) {
         super(cause);
     }
 
-    public AttachementsException(String message, Throwable cause) {
+    public AttachmentsException(String message, Throwable cause) {
         super(message, cause);
     }
 }

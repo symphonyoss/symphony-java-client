@@ -22,7 +22,6 @@
 
 package org.symphonyoss.symphony.clients;
 
-import org.symphonyoss.exceptions.SymException;
 import org.symphonyoss.exceptions.UsersClientException;
 import org.symphonyoss.symphony.clients.model.SymUser;
 

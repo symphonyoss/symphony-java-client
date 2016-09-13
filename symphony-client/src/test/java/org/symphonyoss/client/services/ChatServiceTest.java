@@ -25,16 +25,7 @@
 
 package org.symphonyoss.client.services;
 
-import org.junit.Before;
-import org.junit.Test;
 import org.symphonyoss.client.SymphonyClient;
-import org.symphonyoss.client.SymphonyClientFactory;
-import org.symphonyoss.client.impl.SymphonyBasicClient;
-import org.symphonyoss.util.TestFactory;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * Created by Frank Tarsillo on 6/19/2016.

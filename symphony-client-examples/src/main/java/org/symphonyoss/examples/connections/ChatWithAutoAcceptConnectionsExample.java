@@ -33,16 +33,12 @@ import org.symphonyoss.client.services.ChatListener;
 import org.symphonyoss.client.services.ChatServiceListener;
 import org.symphonyoss.client.services.ConnectionsListener;
 import org.symphonyoss.client.services.ConnectionsService;
-import org.symphonyoss.client.util.MlMessageParser;
 import org.symphonyoss.exceptions.UserNotFoundException;
-import org.symphonyoss.symphony.agent.model.Message;
-import org.symphonyoss.symphony.agent.model.MessageSubmission;
 import org.symphonyoss.symphony.clients.AuthorizationClient;
 import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.clients.model.SymUserConnection;
 import org.symphonyoss.symphony.pod.model.Stream;
-import org.symphonyoss.symphony.pod.model.User;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -79,7 +75,6 @@ public class ChatWithAutoAcceptConnectionsExample implements ChatListener, ChatS
 
     private final Logger logger = LoggerFactory.getLogger(ChatWithAutoAcceptConnectionsExample.class);
     private SymphonyClient symClient;
-    private ConnectionsService connectionsService;
 
 
     public ChatWithAutoAcceptConnectionsExample() {
@@ -139,7 +134,7 @@ public class ChatWithAutoAcceptConnectionsExample implements ChatListener, ChatS
             symClient.getChatService().registerListener(this);
 
             //Init connection service.
-            connectionsService = new ConnectionsService(symClient);
+            ConnectionsService connectionsService = new ConnectionsService(symClient);
 
             //Optional to auto accept connections.
             connectionsService.setAutoAccept(true);
@@ -178,11 +173,6 @@ public class ChatWithAutoAcceptConnectionsExample implements ChatListener, ChatS
 
     }
 
-
-    //Legacy support
-    public void onChatMessage(Message message) {
-
-    }
 
     //Chat sessions callback method.
     public void onChatMessage(SymMessage message) {

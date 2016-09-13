@@ -23,12 +23,11 @@
 package org.symphonyoss.client.services;
 
 import org.symphonyoss.symphony.clients.model.SymMessage;
-import org.symphonyoss.symphony.agent.model.Message;
 
 /**
  * Created by Frank Tarsillo on 5/15/2016.
  */
-public interface MessageListener {
+interface MessageListener {
 
 
     void onMessage(SymMessage message);

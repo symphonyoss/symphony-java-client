@@ -30,10 +30,8 @@ import org.symphonyoss.symphony.clients.impl.PresenceException;
 import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.pod.model.Presence;
 import org.symphonyoss.symphony.pod.model.PresenceList;
-import org.symphonyoss.symphony.pod.model.User;
 import org.symphonyoss.symphony.pod.model.UserPresence;
 
-import java.util.ArrayList;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -55,8 +53,8 @@ public class PresenceService implements PresenceListener {
 
         try {
             presenceList = getAllUserPresence();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (PresenceException e) {
+           logger.error("Unable to obtain presence list...please check connections...",e);
         }
 
     }
@@ -77,7 +75,7 @@ public class PresenceService implements PresenceListener {
 
     public Presence getUserPresence(String email) throws PresenceException{
 
-        SymUser user = null;
+        SymUser user;
         try {
             user = symClient.getUsersClient().getUserFromEmail(email);
         } catch (UsersClientException e) {

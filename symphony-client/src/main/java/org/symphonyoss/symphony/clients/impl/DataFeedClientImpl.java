@@ -25,18 +25,14 @@ package org.symphonyoss.symphony.clients.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.exceptions.DataFeedException;
-import org.symphonyoss.exceptions.SymException;
 import org.symphonyoss.symphony.agent.api.DatafeedApi;
 import org.symphonyoss.symphony.agent.invoker.ApiClient;
 import org.symphonyoss.symphony.agent.invoker.ApiException;
 import org.symphonyoss.symphony.agent.model.*;
 import org.symphonyoss.symphony.clients.DataFeedClient;
 import org.symphonyoss.client.model.SymAuth;
-import org.symphonyoss.symphony.clients.model.SymMessage;
 
 
-import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 
 
@@ -55,7 +51,6 @@ public class DataFeedClientImpl implements DataFeedClient {
     public DataFeedClientImpl(SymAuth symAuth, String agentUrl) {
 
         this.symAuth = symAuth;
-        String agentUrl1 = agentUrl;
 
 
         //Get Service client to query for userID.
@@ -95,21 +90,6 @@ public class DataFeedClientImpl implements DataFeedClient {
         } catch (ApiException e) {
             throw new DataFeedException("Failed to retrieve messages from datafeed...", e.getCause());
         }
-
-//        List<SymMessage> symMessgeList = new ArrayList<SymMessage>();
-//
-//
-//        if(messageList != null) {
-//            for (V2BaseMessage message : messageList) {
-//
-//                if (message instanceof V2Message) {
-//                    symMessgeList.add(SymMessage.toSymMessage(message));
-//
-//                }
-//            }
-//        }
-//
-//        return symMessgeList;
 
 
     }
