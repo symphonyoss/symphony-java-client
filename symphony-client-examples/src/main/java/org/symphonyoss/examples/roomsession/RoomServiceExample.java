@@ -30,6 +30,10 @@ import org.symphonyoss.client.SymphonyClientFactory;
 import org.symphonyoss.client.model.Room;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.client.services.*;
+import org.symphonyoss.exceptions.AuthorizationException;
+import org.symphonyoss.exceptions.InitException;
+import org.symphonyoss.exceptions.MessagesException;
+import org.symphonyoss.exceptions.RoomException;
 import org.symphonyoss.symphony.agent.model.*;
 import org.symphonyoss.symphony.clients.AuthorizationClient;
 import org.symphonyoss.symphony.clients.model.SymMessage;
@@ -83,14 +87,13 @@ public class RoomServiceExample implements RoomServiceListener, RoomListener {
 
     public static void main(String[] args) {
 
-
-        System.out.println("ChatExample starting...");
         new RoomServiceExample();
 
     }
 
     public void init() {
 
+        logger.info("Room Example starting...");
 
         try {
 
@@ -154,8 +157,14 @@ public class RoomServiceExample implements RoomServiceListener, RoomListener {
             symClient.getMessageService().sendMessage(room, aMessage);
 
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (RoomException e) {
+           logger.error("error",e);
+        } catch (MessagesException e) {
+            logger.error("error",e);
+        } catch (InitException e) {
+            logger.error("error",e);
+        } catch (AuthorizationException e) {
+            logger.error("error",e);
         }
 
     }

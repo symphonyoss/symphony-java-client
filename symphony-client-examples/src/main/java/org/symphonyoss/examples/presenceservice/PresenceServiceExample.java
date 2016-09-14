@@ -30,7 +30,9 @@ import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.client.SymphonyClientFactory;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.client.services.PresenceListener;
+import org.symphonyoss.exceptions.UsersClientException;
 import org.symphonyoss.symphony.clients.AuthorizationClient;
+import org.symphonyoss.symphony.clients.impl.PresenceException;
 import org.symphonyoss.symphony.pod.model.UserPresence;
 
 
@@ -79,13 +81,14 @@ public class PresenceServiceExample implements PresenceListener {
     public static void main(String[] args) {
 
 
-        System.out.println("ChatExample starting...");
+
         new PresenceServiceExample();
 
     }
 
     public void init() {
 
+        logger.info("Presence Service example starting...");
 
         try {
 
@@ -134,6 +137,7 @@ public class PresenceServiceExample implements PresenceListener {
 
 
     //Callback from PresenceService.  This will monitor all presence on the network.
+   @Override
     public void onUserPresence(UserPresence userPresence) {
 
         try {
@@ -141,9 +145,9 @@ public class PresenceServiceExample implements PresenceListener {
                     userPresence.getUid(),
                     symClient.getUsersClient().getUserFromId(userPresence.getUid()).getEmailAddress(),
                     userPresence.getCategory());
-        }catch (Exception e){
+        }catch (UsersClientException e){
 
-            e.printStackTrace();
+            logger.error("Failed to retrieve email from userID..",e);
         }
 
     }

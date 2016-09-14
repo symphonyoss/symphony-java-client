@@ -31,6 +31,9 @@ import org.symphonyoss.client.model.Chat;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.client.services.ChatListener;
 import org.symphonyoss.client.services.ChatServiceListener;
+import org.symphonyoss.exceptions.AttachmentsException;
+import org.symphonyoss.exceptions.MessagesException;
+import org.symphonyoss.exceptions.SymException;
 import org.symphonyoss.symphony.clients.AuthorizationClient;
 import org.symphonyoss.symphony.clients.model.SymAttachmentInfo;
 import org.symphonyoss.symphony.clients.model.SymMessage;
@@ -38,6 +41,7 @@ import org.symphonyoss.symphony.clients.model.SymUser;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -87,8 +91,6 @@ public class AttachementExample implements ChatListener, ChatServiceListener {
 
     public static void main(String[] args) {
 
-
-        System.out.println("Attachment example starting...");
         new AttachementExample();
 
     }
@@ -97,6 +99,8 @@ public class AttachementExample implements ChatListener, ChatServiceListener {
 
 
         try {
+
+            logger.info("Attachment example starting...");
 
             //Create a basic client instance.
             symClient = SymphonyClientFactory.getClient(SymphonyClientFactory.TYPE.BASIC);
@@ -156,8 +160,8 @@ public class AttachementExample implements ChatListener, ChatServiceListener {
             symClient.getMessageService().sendMessage(chat, aMessage);
 
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SymException e) {
+            logger.error("Something went bad...",e);
         }
 
 
@@ -166,6 +170,7 @@ public class AttachementExample implements ChatListener, ChatServiceListener {
 
 
     //Chat sessions callback method.
+    @Override
     public void onChatMessage(SymMessage message) {
         if (message == null)
             return;
@@ -193,10 +198,13 @@ public class AttachementExample implements ChatListener, ChatServiceListener {
 
                     logger.info("Received file {} with ID: {}", symAttachmentInfo.getName(), symAttachmentInfo.getId());
 
+                    out.close();
 
-                } catch (Exception e) {
+                } catch (IOException e) {
 
                     logger.error("Failed to process file..", e);
+                } catch (AttachmentsException e) {
+                    logger.error("Failed to send attachment..", e);
                 }
 
             }
@@ -216,7 +224,7 @@ public class AttachementExample implements ChatListener, ChatServiceListener {
                     replyAttachmentInfos.add(
                             symClient.getAttachmentsClient().postAttachment(symMessage.getStreamId(), new File(attachmentInfo.getName()))
                     );
-                } catch (Exception e) {
+                } catch (AttachmentsException e) {
 
                     logger.error("Could not post file to stream", e);
                 }
@@ -231,7 +239,7 @@ public class AttachementExample implements ChatListener, ChatServiceListener {
             try {
                 if (chat != null)
                     symClient.getMessageService().sendMessage(chat, symMessage);
-            }catch (Exception e){
+            }catch (MessagesException e){
                 logger.error("Could not send echo reply to user",e);
             }
 
@@ -240,6 +248,7 @@ public class AttachementExample implements ChatListener, ChatServiceListener {
 
     }
 
+    @Override
     public void onNewChat(Chat chat) {
 
         chat.registerListener(this);
@@ -247,6 +256,7 @@ public class AttachementExample implements ChatListener, ChatServiceListener {
         logger.debug("New chat session detected on stream {} with {}", chat.getStream().getId(), chat.getRemoteUsers());
     }
 
+    @Override
     public void onRemovedChat(Chat chat) {
 
     }

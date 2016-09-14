@@ -33,7 +33,7 @@ import org.symphonyoss.client.services.ChatListener;
 import org.symphonyoss.client.services.ChatServiceListener;
 import org.symphonyoss.client.services.ConnectionsListener;
 import org.symphonyoss.client.services.ConnectionsService;
-import org.symphonyoss.exceptions.UserNotFoundException;
+import org.symphonyoss.exceptions.*;
 import org.symphonyoss.symphony.clients.AuthorizationClient;
 import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.clients.model.SymUser;
@@ -79,7 +79,6 @@ public class ChatWithAutoAcceptConnectionsExample implements ChatListener, ChatS
 
     public ChatWithAutoAcceptConnectionsExample() {
 
-
         init();
 
 
@@ -87,15 +86,13 @@ public class ChatWithAutoAcceptConnectionsExample implements ChatListener, ChatS
 
     public static void main(String[] args) {
 
-
-        System.out.println("ChatExample starting...");
         new ChatWithAutoAcceptConnectionsExample();
 
     }
 
     public void init() {
 
-
+        logger.info("Connections example starting...");
         try {
 
             //Create a basic client instance.
@@ -167,14 +164,23 @@ public class ChatWithAutoAcceptConnectionsExample implements ChatListener, ChatS
 
             logger.error("Failed to find user....", ue);
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (UsersClientException e) {
+            logger.error("error", e);
+        } catch (AuthorizationException e) {
+            logger.error("error", e);
+        } catch (MessagesException e) {
+            logger.error("error", e);
+        } catch (StreamsException e) {
+            logger.error("error", e);
+        } catch (InitException e) {
+            logger.error("error", e);
         }
 
     }
 
 
     //Chat sessions callback method.
+    @Override
     public void onChatMessage(SymMessage message) {
         if (message == null)
             return;
@@ -199,14 +205,14 @@ public class ChatWithAutoAcceptConnectionsExample implements ChatListener, ChatS
 
         try {
             symClient.getMessagesClient().sendMessage(stream, message);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (MessagesException e) {
+            logger.error("Failed to send message", e);
         }
 
 
     }
 
-
+    @Override
     public void onNewChat(Chat chat) {
 
         chat.registerListener(this);
@@ -214,6 +220,7 @@ public class ChatWithAutoAcceptConnectionsExample implements ChatListener, ChatS
         logger.debug("New chat session detected on stream {} with {}", chat.getStream().getId(), chat.getRemoteUsers());
     }
 
+    @Override
     public void onRemovedChat(Chat chat) {
 
     }

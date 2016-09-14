@@ -84,7 +84,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>
  * Created by Frank Tarsillo on 5/15/2016.
  */
-//NO SONAR
+//NOSONAR
 public class HashtagBot implements ChatListener, ChatServiceListener, PresenceListener {
 
 
@@ -305,7 +305,7 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
 
     }
 
-    //NO SONAR
+    //NOSONAR
     private void updateHashtag(MlMessageParser mlMessageParser, SymMessage message) {
         String[] chunks = mlMessageParser.getTextChunks();
 
@@ -352,7 +352,7 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
 
 
                 } catch (IndexOutOfBoundsException e) {
-
+                    logger.error("Index issue",e);
                     sendDefinitionNotFound(message, hashtag.getName(), hNum.getName());
                 }
 
@@ -453,8 +453,8 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
         stream.setId(message.getStreamId());
         try {
             symClient.getMessagesClient().sendMessage(stream, aMessage);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (MessagesException e) {
+            logger.error("Failed to send message...",e);
         }
 
 
@@ -471,8 +471,8 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
         stream.setId(message.getStreamId());
         try {
             symClient.getMessagesClient().sendMessage(stream, aMessage);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (MessagesException e) {
+            logger.error("Failed to send message..",e);
         }
 
 
@@ -511,8 +511,8 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
         stream.setId(message.getStreamId());
         try {
             symClient.getMessagesClient().sendMessage(stream, aMessage);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (MessagesException e) {
+            logger.error("Failed to send message..",e);
         }
 
 
@@ -560,7 +560,7 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
 
     }
 
-
+    @Override
     public void onNewChat(Chat chat) {
 
         chat.registerListener(this);
@@ -568,6 +568,7 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
         logger.debug("New chat session detected on stream {} with {}", chat.getStream().getId(), chat.getRemoteUsers());
     }
 
+    @Override
     public void onRemovedChat(Chat chat) {
 
     }

@@ -23,7 +23,6 @@
 package org.symphonyoss.examples.chatsession;
 
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
@@ -32,7 +31,7 @@ import org.symphonyoss.client.model.Chat;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.client.services.ChatListener;
 import org.symphonyoss.client.services.ChatServiceListener;
-import org.symphonyoss.exceptions.AuthorizationException;
+import org.symphonyoss.exceptions.*;
 import org.symphonyoss.symphony.agent.model.Message;
 import org.symphonyoss.symphony.clients.AuthorizationClient;
 import org.symphonyoss.symphony.clients.model.SymMessage;
@@ -43,31 +42,29 @@ import java.util.Set;
 
 
 /**
- *
- *
  * Simple example of the ChatService.
- *
+ * <p>
  * It will send a message to a call.home.user and listen/create new Chat sessions.
- *
- *
- *
+ * <p>
+ * <p>
+ * <p>
  * REQUIRED VM Arguments or System Properties:
- *
- *        -Dsessionauth.url=https://pod_fqdn:port/sessionauth
- *        -Dkeyauth.url=https://pod_fqdn:port/keyauth
- *        -Dsymphony.agent.pod.url=https://agent_fqdn:port/pod
- *        -Dsymphony.agent.agent.url=https://agent_fqdn:port/agent
- *        -Dcerts.dir=/dev/certs/
- *        -Dkeystore.password=(Pass)
- *        -Dtruststore.file=/dev/certs/server.truststore
- *        -Dtruststore.password=(Pass)
- *        -Dbot.user=bot.user1
- *        -Dbot.domain=@domain.com
- *        -Duser.call.home=frank.tarsillo@markit.com
- *
- *
- *
- *
+ * <p>
+ * -Dsessionauth.url=https://pod_fqdn:port/sessionauth
+ * -Dkeyauth.url=https://pod_fqdn:port/keyauth
+ * -Dsymphony.agent.pod.url=https://agent_fqdn:port/pod
+ * -Dsymphony.agent.agent.url=https://agent_fqdn:port/agent
+ * -Dcerts.dir=/dev/certs/
+ * -Dkeystore.password=(Pass)
+ * -Dtruststore.file=/dev/certs/server.truststore
+ * -Dtruststore.password=(Pass)
+ * -Dbot.user=bot.user1
+ * -Dbot.domain=@domain.com
+ * -Duser.call.home=frank.tarsillo@markit.com
+ * <p>
+ * <p>
+ * <p>
+ * <p>
  * Created by Frank Tarsillo on 5/15/2016.
  */
 public class ChatExample implements ChatListener, ChatServiceListener {
@@ -85,8 +82,6 @@ public class ChatExample implements ChatListener, ChatServiceListener {
 
     public static void main(String[] args) {
 
-
-        System.out.println("ChatExample starting...");
         new org.symphonyoss.examples.chatsession.ChatExample();
 
     }
@@ -129,7 +124,7 @@ public class ChatExample implements ChatListener, ChatServiceListener {
                     System.getProperty("symphony.agent.pod.url")
             );
 
-             //Will notify the bot of new Chat conversations.
+            //Will notify the bot of new Chat conversations.
             symClient.getChatService().registerListener(this);
 
             //A message to send when the BOT comes online.
@@ -155,33 +150,26 @@ public class ChatExample implements ChatListener, ChatServiceListener {
             symClient.getMessageService().sendMessage(chat, aMessage);
 
 
-        } catch(AuthorizationException ae) {
+        } catch (AuthorizationException ae) {
 
-            logger.error(ae.getMessage(),ae);
+            logger.error(ae.getMessage(), ae);
 
-        }catch (Exception e) {
-            e.printStackTrace();
+        } catch (StreamsException e) {
+            logger.error("error", e);
+        } catch (MessagesException e) {
+            logger.error("error", e);
+        } catch (UsersClientException e) {
+            logger.error("error", e);
+        } catch (InitException e) {
+            logger.error("error", e);
         }
 
     }
 
 
-       //Chat sessions callback method.
-    public void onChatMessage(Message message) {
-        if (message == null)
-            return;
-
-        logger.debug("TS: {}\nFrom ID: {}\nSymMessage: {}\nSymMessage Type: {}",
-                message.getTimestamp(),
-                message.getFromUserId(),
-                message.getMessage(),
-                message.getMessageType());
-
-
-
-    }
 
     //Chat sessions callback method.
+    @Override
     public void onChatMessage(SymMessage message) {
         if (message == null)
             return;
@@ -193,10 +181,9 @@ public class ChatExample implements ChatListener, ChatServiceListener {
                 message.getMessageType());
 
 
-
     }
 
-
+    @Override
     public void onNewChat(Chat chat) {
 
         chat.registerListener(this);
@@ -204,6 +191,7 @@ public class ChatExample implements ChatListener, ChatServiceListener {
         logger.debug("New chat session detected on stream {} with {}", chat.getStream().getId(), chat.getRemoteUsers());
     }
 
+    @Override
     public void onRemovedChat(Chat chat) {
 
     }
