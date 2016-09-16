@@ -3,25 +3,72 @@
 [![Validation Status](https://scan.coverity.com/projects/9112/badge.svg?flat=1)](https://scan.coverity.com/projects/symphonyoss-symphony-java-client)
 <a href="https://sonarqube.com/overview?id=org.symphonyoss.symphony%3Asymphony-java-client"><img src="http://www.sonarqube.org/wp-content/themes/sonarsource.org/images/sonar.png" title="SonarQube" width="80"/></a>
 
-The Symphony java client provides a wrapper around the Symphony REST API's to simplify the
-creation of chat sessions, presence and general messaging.  It is event based with
-associated services and listeners to capture updates and forward.
+Symphony Java Client
+====================
 
-REST API Support:
+The Symphony java client provides a real-time wrapper around the Symphony REST API's to simplify the creation of chat sessions, room access, presence, messaging and more...  The client provides a set of logical services representing supported features of the Symphony platform.  Services support real-time events through feature based listeners and communication objects.  Access is not limited to the services as all underlying Symphony client implementations are exposed for advanced use or creation of your own service.
 
-        Version 1 API calls implemented and tested under Standalone Agent API 1.38
-        -Authentication
-        -Users
-        -Presence
-        -Streams
-        -Messages
-        -Datafeed
-        -RoomMembership
+##Features
+* Basic client: 
+    * Authentication management
+    * Implements and exposes functional services and underlying clients.
+* Chat Service: 
+    * Support for chat session creation and eventing
+    * Filters only on chat messages
+    * Real-time listeners on chat events such as callbacks on new chat session
+    * Enriches chat objects with user attributes
+    * X-Pod support
+* Room Service
+    * Support for room session creation and all associated room events
+    * Filters only on room messages
+    * Real-time listeners on all room events
+    * Enriches Room objects with associated system attributes
+    * X-Pod Support
+* Presence Service
+    * Maintains an active cache of endpoint presence associated with single POD.
+    * Real-time listeners on all presence changes
+    * Request user presence
+* Connections request handling including auto-accept.
+* Attachment Support
+* MessageML utilities
+    * Support for command line processing
+    * Conversion from MessageML to Text
+* Exposure of underlying Symphony clients:
+    * Authentication, Users, Presence, Streams, Datafeed, RoomMembership, Connections, Attachments
+* Examples on most key features
+
+**Administration features are currently not supported in the library. (future work)**
 
 
-Requirements:
 
-POM:
+##Change log and notes
+
+### V0.9.1 (SNAPSHOT)
+
+* Compatible with 1.40.1 API, V2 and Agent 1.39+
+* New Connections Service for managing connection requests.  This includes auto-accept.
+* Support for attachments through new SymMessage and Attachments Client
+* Message and User objects have been replaced with SymMessage and SymUser in order to handle future underlying versioning changes
+* Listeners have been upgraded to support new object models
+* Room Service is now linked into Datafeed for real-time processing and dynamic room formation
+* New UserV2 lookups have been implemented that should alleviate the need for elevated privileges
+* New exceptions handling implemented with detailed message outputs. 
+* Additional examples added for new features 
+* Examples upded to reflect core changes
+
+### V0.9.0 (Stable)
+
+* Compatible with 1.38 API, V1 and Agent
+* Bot user requires elevated privileges to acquire 
+* Inititial release includes the basic client, chat service, presence service and basic room functions. 
+* Exposes clients for Symphoni API including Authorization, Streams, Presence, RoomMembership, User, Users, 
+* Utilizes generated API models from Symphony
+
+
+
+##Requirements
+
+####POM:
 
         <dependency>
             <groupId>org.symphonyoss.symphony</groupId>
@@ -29,7 +76,7 @@ POM:
             <version>(Version)</version>
         </dependency>
 
-Certificates:
+####Certificates:
 
         Please contact your Symphony local administrator to obtain the necessary certificates
         for the user/service account being used to access the POD.
@@ -38,7 +85,7 @@ Certificates:
         User Keystore = Symphony user client certificate
 
 
-Required System Properties:
+####Required System Properties:
 
         -Dkeystore.password=(Pass)
         -Dtruststore.password=(Pass)
@@ -50,3 +97,5 @@ Required System Properties:
         -Dcerts.dir=/dev/certs/
         -Dtruststore.file=/dev/certs/server.truststore
         -Dbot.user=(user name)
+
+
