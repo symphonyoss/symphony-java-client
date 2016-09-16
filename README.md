@@ -52,9 +52,10 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 * Listeners have been upgraded to support new object models
 * Room Service is now linked into Datafeed for real-time processing and dynamic room formation
 * New UserV2 lookups have been implemented that should alleviate the need for elevated privileges
-* New exceptions handling implemented with detailed message outputs. 
+* New exceptions handling implemented with detailed message outputs
+* Lazy cache for room identification
 * Additional examples added for new features 
-* Examples upded to reflect core changes
+* Examples updated to reflect core changes
 
 ### V0.9.0 (Stable)
 
