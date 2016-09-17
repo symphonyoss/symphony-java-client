@@ -56,6 +56,7 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 * Lazy cache for room identification
 * Additional examples added for new features 
 * Examples updated to reflect core changes
+* Many..many..underlying code updates resolving sonar issues
 
 ### V0.9.0 (Stable)
 
@@ -100,3 +101,10 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
         -Dbot.user=(user name)
 
 
+##API Docs
+[API Documentation](http://ftbb.github.io/symphony-java-client/index.html)
+
+## Contribute
+This project was initiated at [IHS Markit](https://www.ihsmarkit.com) and has been developed as open-source from the very beginning.
+
+Contributions are accepted via GitHub pull requests. All contributors must be covered by contributor license agreements to comply with the [Code Contribution Process](https://symphonyoss.atlassian.net/wiki/display/FM/Code+Contribution+Process).

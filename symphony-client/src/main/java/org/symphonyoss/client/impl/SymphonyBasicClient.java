@@ -20,23 +20,33 @@
  * under the License.
  */
 
-package org.symphonyoss.client.impl;/**
- * Created by Frank Tarsillo on 5/15/2016.
- */
+package org.symphonyoss.client.impl;
 
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
-import org.symphonyoss.exceptions.SymException;
-import org.symphonyoss.exceptions.InitException;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.client.services.ChatService;
 import org.symphonyoss.client.services.MessageService;
 import org.symphonyoss.client.services.PresenceService;
+import org.symphonyoss.exceptions.InitException;
+import org.symphonyoss.exceptions.SymException;
 import org.symphonyoss.symphony.clients.*;
 import org.symphonyoss.symphony.clients.model.SymUser;
 
+/**
+ * Implements a full abstraction of underlying clients and exposes services to simplify
+ * functional collaboration elements.  Although all clients are exposed, it's highly recommended
+ * to access core functions through services.
+ *
+ * You must init this class with valid key and session tokens with stored in a SymAuth object.
+ * Please note, that the SymAuth expires and must be updated periodically to maintain access to
+ * the Symphony network.
+ *
+ * @author  Frank Tarsillo
+ *
+ */
 public class SymphonyBasicClient implements SymphonyClient {
 
 
@@ -62,7 +72,15 @@ public class SymphonyBasicClient implements SymphonyClient {
 
     }
 
-
+    /**
+     * Initialize client with required parameters.
+     *
+     * @param symAuth Contains valid key and session tokens generated from AuthorizationClient.
+     * @param email Email address of the BOT
+     * @param agentUrl The Agent URL
+     * @param serviceUrl The Service URL (in most cases it's the POD URL)
+     * @throws InitException Failure of a specific service most likely due to connectivity issues
+     */
     public void init(SymAuth symAuth, String email, String agentUrl, String serviceUrl) throws InitException {
 
         String NOT_LOGGED_IN_MESSAGE = "Currently not logged into Agent, please check certificates and tokens.";
@@ -118,6 +136,10 @@ public class SymphonyBasicClient implements SymphonyClient {
         return symAuth;
     }
 
+    /**
+     *
+     * @param symAuth Contains valid key and session tokens generated from AuthorizationClient.
+     */
     public void setSymAuth(SymAuth symAuth) {
         this.symAuth = symAuth;
     }
@@ -126,18 +148,34 @@ public class SymphonyBasicClient implements SymphonyClient {
         return agentUrl;
     }
 
+    /**
+     *
+     * @param agentUrl Agent URL
+     */
     public void setAgentUrl(String agentUrl) {
         this.agentUrl = agentUrl;
     }
 
+    /**
+     *
+     * @return Service URL which can be either the Agent URL or POD URL
+     */
     public String getServiceUrl() {
         return serviceUrl;
     }
 
+    /**
+     *
+     * @param serviceUrl Service URL which can be either the Agent URL or POD URL
+     */
     public void setServiceUrl(String serviceUrl) {
         this.serviceUrl = serviceUrl;
     }
 
+    /**
+     *
+     * @return DataFeedClient
+     */
     public DataFeedClient getDataFeedClient() {
         return dataFeedClient;
     }
