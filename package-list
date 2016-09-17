@@ -1,0 +1,9 @@
+org.symphonyoss.client
+org.symphonyoss.client.impl
+org.symphonyoss.client.model
+org.symphonyoss.client.services
+org.symphonyoss.client.util
+org.symphonyoss.exceptions
+org.symphonyoss.symphony.clients
+org.symphonyoss.symphony.clients.impl
+org.symphonyoss.symphony.clients.model
