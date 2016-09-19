@@ -65,8 +65,18 @@ public class SymMessage {
 
     private Long fromUserId = null;
 
+    private SymUser symUser = null;
+
     private List<SymAttachmentInfo> attachments = new ArrayList<>();
 
+    public SymUser getSymUser() {
+        return symUser;
+    }
+
+    public void setSymUser(SymUser symUser) {
+        this.symUser = symUser;
+        fromUserId = symUser.getId();
+    }
 
     public String getId() {
         return id;
@@ -114,7 +124,15 @@ public class SymMessage {
 
     public void setFromUserId(Long fromUserId) {
         this.fromUserId = fromUserId;
+
+        if(symUser ==null)
+            symUser = new SymUser();
+
+
+        symUser.setId(fromUserId);
+
     }
+
 
     public List<SymAttachmentInfo> getAttachments() {
         return attachments;

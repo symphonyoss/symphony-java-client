@@ -100,7 +100,7 @@ public class StreamsClientImpl implements org.symphonyoss.symphony.clients.Strea
 
         Stream stream = getStream(userIdList);
 
-        logger.debug("Stream ID for multi-party chat: {}:{} ", usersPrint, stream.getId());
+        logger.debug("Stream ID for chat: {}:{} ", usersPrint, stream.getId());
 
         return stream;
 
@@ -112,6 +112,7 @@ public class StreamsClientImpl implements org.symphonyoss.symphony.clients.Strea
         if (userIdList == null) {
             throw new NullPointerException("UsersIds were not provided...");
         }
+
         StreamsApi streamsApi = new StreamsApi(apiClient);
         try {
             return streamsApi.v1ImCreatePost(userIdList, symAuth.getSessionToken().getToken());

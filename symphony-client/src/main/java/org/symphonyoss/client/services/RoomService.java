@@ -60,10 +60,9 @@ public class RoomService implements RoomServiceListener {
     }
 
 
+    public Room createRoom(SymRoomAttributes symRoomAttributes) throws RoomException {
 
-    public Room createRoom(SymRoomAttributes symRoomAttributes) throws RoomException{
-
-        if(symRoomAttributes==null)
+        if (symRoomAttributes == null)
             throw new NullPointerException("Room attributes were not provided..");
 
         try {
@@ -77,33 +76,33 @@ public class RoomService implements RoomServiceListener {
             return room;
 
         } catch (StreamsException e) {
-            logger.error("Failed to obtain stream for room...",e);
-            throw new RoomException("Could not create/join chat room: "+  symRoomAttributes.getName(), e.getCause());
-        } catch(SymException e1){
-            logger.error("Failed to retrieve room membership...",e1);
+            logger.error("Failed to obtain stream for room...", e);
+            throw new RoomException("Could not create/join chat room: " + symRoomAttributes.getName(), e.getCause());
+        } catch (SymException e1) {
+            logger.error("Failed to retrieve room membership...", e1);
             throw new RoomException("Could not retrieve room membership for room: " + symRoomAttributes.getName());
         }
 
     }
 
-    public Room getRoom(String stream){
+    public Room getRoom(String stream) {
 
         return roomsByStream.get(stream);
     }
 
     //Logical join of the room which registers the listeners.
-    public void joinRoom(Room room) throws RoomException{
+    public void joinRoom(Room room) throws RoomException {
 
-        if(room.getStream()==null || room.getStream().getId()==null || room.getId()==null)
+        if (room.getStream() == null || room.getStreamId() == null || room.getId() == null)
             throw new RoomException("Room is not fully defined.  Check ID and stream ID");
 
 
         try {
-            room.setRoomDetail(symClient.getStreamsClient().getRoomDetail(room.getStream().getId()));
-            roomsByStream.put(room.getStream().getId(),room);
+            room.setRoomDetail(symClient.getStreamsClient().getRoomDetail(room.getStreamId()));
+            roomsByStream.put(room.getStreamId(), room);
         } catch (StreamsException e) {
-            logger.error("Failed to obtain room detail...",e);
-            throw new RoomException("Failed to obtain room detail for requested room: " + room.getStream().getId(), e.getCause());
+            logger.error("Failed to obtain room detail...", e);
+            throw new RoomException("Failed to obtain room detail for requested room: " + room.getStreamId(), e.getCause());
         }
 
 
@@ -126,12 +125,12 @@ public class RoomService implements RoomServiceListener {
 
             }
 
-        }catch(RoomException e){
+        } catch (RoomException e) {
             logger.error("Unable to add new room from message: ", e);
         }
     }
 
-    private void addRoom(String streamId) throws RoomException{
+    private void addRoom(String streamId) throws RoomException {
 
         Room room = new Room();
 
@@ -146,16 +145,16 @@ public class RoomService implements RoomServiceListener {
     }
 
     @Override
-    public void onNewRoom(Room room){
+    public void onNewRoom(Room room) {
 
-        for(RoomServiceListener roomServiceListener: roomServiceListeners)
+        for (RoomServiceListener roomServiceListener : roomServiceListeners)
             roomServiceListener.onNewRoom(room);
     }
 
     @Override
     public void onRoomCreatedMessage(RoomCreatedMessage roomCreatedMessage) {
 
-        for(RoomServiceListener roomServiceListener: roomServiceListeners) {
+        for (RoomServiceListener roomServiceListener : roomServiceListeners) {
             roomServiceListener.onRoomCreatedMessage(roomCreatedMessage);
 
         }
@@ -166,10 +165,10 @@ public class RoomService implements RoomServiceListener {
     @Override
     public void onRoomDeactivedMessage(RoomDeactivatedMessage roomDeactivatedMessage) {
 
-        for(Map.Entry<String,Room> entry: roomsByStream.entrySet()){
+        for (Map.Entry<String, Room> entry : roomsByStream.entrySet()) {
 
             RoomListener roomListener = entry.getValue().getRoomListener();
-            if(roomListener !=null)
+            if (roomListener != null)
                 roomListener.onRoomDeactivedMessage(roomDeactivatedMessage);
 
         }
@@ -177,10 +176,10 @@ public class RoomService implements RoomServiceListener {
 
     @Override
     public void onRoomMemberDemotedFromOwnerMessage(RoomMemberDemotedFromOwnerMessage roomMemberDemotedFromOwnerMessage) {
-        for(Map.Entry<String,Room> entry: roomsByStream.entrySet()){
+        for (Map.Entry<String, Room> entry : roomsByStream.entrySet()) {
 
             RoomListener roomListener = entry.getValue().getRoomListener();
-            if(roomListener !=null)
+            if (roomListener != null)
                 roomListener.onRoomMemberDemotedFromOwnerMessage(roomMemberDemotedFromOwnerMessage);
 
         }
@@ -189,10 +188,10 @@ public class RoomService implements RoomServiceListener {
     @Override
     public void onRoomMemberPromotedToOwnerMessage(RoomMemberPromotedToOwnerMessage roomMemberPromotedToOwnerMessage) {
 
-        for(Map.Entry<String,Room> entry: roomsByStream.entrySet()){
+        for (Map.Entry<String, Room> entry : roomsByStream.entrySet()) {
 
             RoomListener roomListener = entry.getValue().getRoomListener();
-            if(roomListener !=null)
+            if (roomListener != null)
                 roomListener.onRoomMemberPromotedToOwnerMessage(roomMemberPromotedToOwnerMessage);
 
         }
@@ -200,10 +199,10 @@ public class RoomService implements RoomServiceListener {
 
     @Override
     public void onRoomReactivatedMessage(RoomReactivatedMessage roomReactivatedMessage) {
-        for(Map.Entry<String,Room> entry: roomsByStream.entrySet()){
+        for (Map.Entry<String, Room> entry : roomsByStream.entrySet()) {
 
             RoomListener roomListener = entry.getValue().getRoomListener();
-            if(roomListener !=null)
+            if (roomListener != null)
                 roomListener.onRoomReactivatedMessage(roomReactivatedMessage);
 
         }
@@ -211,10 +210,10 @@ public class RoomService implements RoomServiceListener {
 
     @Override
     public void onRoomUpdatedMessage(RoomUpdatedMessage roomUpdatedMessage) {
-        for(Map.Entry<String,Room> entry: roomsByStream.entrySet()){
+        for (Map.Entry<String, Room> entry : roomsByStream.entrySet()) {
 
             RoomListener roomListener = entry.getValue().getRoomListener();
-            if(roomListener !=null)
+            if (roomListener != null)
                 roomListener.onRoomUpdatedMessage(roomUpdatedMessage);
 
         }
@@ -223,10 +222,10 @@ public class RoomService implements RoomServiceListener {
     @Override
     public void onUserJoinedRoomMessage(UserJoinedRoomMessage userJoinedRoomMessage) {
 
-        for(Map.Entry<String,Room> entry: roomsByStream.entrySet()){
+        for (Map.Entry<String, Room> entry : roomsByStream.entrySet()) {
 
             RoomListener roomListener = entry.getValue().getRoomListener();
-            if(roomListener !=null)
+            if (roomListener != null)
                 roomListener.onUserJoinedRoomMessage(userJoinedRoomMessage);
 
         }
@@ -234,10 +233,10 @@ public class RoomService implements RoomServiceListener {
 
     @Override
     public void onUserLeftRoomMessage(UserLeftRoomMessage userLeftRoomMessage) {
-        for(Map.Entry<String,Room> entry: roomsByStream.entrySet()){
+        for (Map.Entry<String, Room> entry : roomsByStream.entrySet()) {
 
             RoomListener roomListener = entry.getValue().getRoomListener();
-            if(roomListener !=null)
+            if (roomListener != null)
                 roomListener.onUserLeftRoomMessage(userLeftRoomMessage);
 
         }

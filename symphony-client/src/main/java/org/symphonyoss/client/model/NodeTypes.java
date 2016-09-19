@@ -23,7 +23,7 @@
 package org.symphonyoss.client.model;
 
 /**
- * Created by Frank Tarsillo on 5/27/2016.
+ * @author Frank Tarsillo
  */
 public enum NodeTypes {
     ANCHOR("a"),

@@ -32,7 +32,6 @@ import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.client.services.ChatListener;
 import org.symphonyoss.client.services.ChatServiceListener;
 import org.symphonyoss.exceptions.*;
-import org.symphonyoss.symphony.agent.model.Message;
 import org.symphonyoss.symphony.clients.AuthorizationClient;
 import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.clients.model.SymUser;
@@ -72,6 +71,8 @@ public class ChatExample implements ChatListener, ChatServiceListener {
 
     private final Logger logger = LoggerFactory.getLogger(org.symphonyoss.examples.chatsession.ChatExample.class);
 
+    private SymphonyClient symClient;
+
     public ChatExample() {
 
 
@@ -92,7 +93,7 @@ public class ChatExample implements ChatListener, ChatServiceListener {
         try {
 
             //Create a basic client instance.
-            SymphonyClient symClient = SymphonyClientFactory.getClient(SymphonyClientFactory.TYPE.BASIC);
+            symClient = SymphonyClientFactory.getClient(SymphonyClientFactory.TYPE.BASIC);
 
             logger.debug("{} {}", System.getProperty("sessionauth.url"),
                     System.getProperty("keyauth.url"));
@@ -138,6 +139,7 @@ public class ChatExample implements ChatListener, ChatServiceListener {
             chat.setLocalUser(symClient.getLocalUser());
             Set<SymUser> remoteUsers = new HashSet<>();
             remoteUsers.add(symClient.getUsersClient().getUserFromEmail(System.getProperty("user.call.home")));
+           // remoteUsers.add(symClient.getUsersClient().getUserFromId(Long.valueOf("69956427334318")));
             chat.setRemoteUsers(remoteUsers);
             chat.registerListener(this);
             chat.setStream(symClient.getStreamsClient().getStream(remoteUsers));
@@ -179,6 +181,13 @@ public class ChatExample implements ChatListener, ChatServiceListener {
                 message.getFromUserId(),
                 message.getMessage(),
                 message.getMessageType());
+
+        Chat chat = symClient.getChatService().getChatByStream(message.getStreamId());
+
+        if(chat!=null)
+            logger.debug("New message is related to chat with users: {}", chat.getRemoteUsers());
+
+
 
 
     }

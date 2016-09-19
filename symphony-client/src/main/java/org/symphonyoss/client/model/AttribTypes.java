@@ -23,9 +23,9 @@
 package org.symphonyoss.client.model;
 
 /**
+ * Basic support for MessageML attributes.
  *
- * Created by Frank Tarsillo on 5/27/2016.
- *
+ * @author Frank Tarsillo
  */
 public enum AttribTypes {
     TAG("tag"),

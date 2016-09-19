@@ -29,14 +29,31 @@ import org.symphonyoss.symphony.pod.model.MembershipList;
 import org.symphonyoss.symphony.pod.model.Stream;
 
 /**
- * Created by Frank Tarsillo on 6/11/2016.
+ * Room abstraction object which identifies and holds all properties of a Symphony Room.
+ * Room objects work directly with the RoomService, which supports all room events.
+ * @author Frank Tarsillo
  */
 public class Room {
     private String id;
     private Stream stream;
+    private String streamId;
     private MembershipList membershipList;
     private SymRoomDetail roomDetail;
     private RoomListener roomListener;
+
+    public String getStreamId() {
+        return streamId;
+    }
+
+    public void setStreamId(String streamId) {
+        this.streamId = streamId;
+        if(stream == null){
+            stream = new Stream();
+            stream.setId(streamId);
+        }
+
+
+    }
 
     public String getId() {
         return id;
@@ -68,6 +85,8 @@ public class Room {
 
     public void setStream(Stream stream) {
         this.stream = stream;
+        if(stream==null)
+            streamId=stream.getId();
     }
 
     public RoomListener getRoomListener() {

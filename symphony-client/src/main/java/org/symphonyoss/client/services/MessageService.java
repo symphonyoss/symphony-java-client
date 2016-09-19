@@ -123,7 +123,7 @@ public class MessageService implements DataFeedListener {
 
     public void onMessage(V2BaseMessage message) {
 
-        logger.debug("LocalID: {} messageID: {}", symClient.getLocalUser().getId(), message.getId());
+        logger.debug("MessageID: {} StreamID: {}", message.getId(), message.getStreamId());
 
 
         if (message.getStreamId() == null)
@@ -203,7 +203,8 @@ public class MessageService implements DataFeedListener {
                 return true;
             }
         } catch (StreamsException e) {
-            logger.error("Failed to retrieve room detail...",e);
+            //Exception will be common here, so we are not going to throw exceptions every time.
+            logger.debug("Failed to retrieve room detail, so this is a chat stream.");
 
 
         }

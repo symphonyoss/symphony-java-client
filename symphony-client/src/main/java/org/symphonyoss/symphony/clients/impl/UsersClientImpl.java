@@ -104,7 +104,7 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
 
         if (user != null) {
 
-            logger.debug("Found User: {}:{}", user.getEmailAddress(), user.getId());
+            logger.debug("Found User: {}:{}", user.getDisplayName(), user.getId());
             return SymUser.toSymUser(user);
         }
 

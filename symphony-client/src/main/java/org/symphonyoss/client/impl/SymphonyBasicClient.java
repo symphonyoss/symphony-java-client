@@ -180,10 +180,18 @@ public class SymphonyBasicClient implements SymphonyClient {
         return dataFeedClient;
     }
 
+    /**
+     *
+     * @return MessagesClient
+     */
     public MessagesClient getMessagesClient() {
         return messagesClient;
     }
 
+    /**
+     *
+     * @return MessagesService
+     */
     public MessageService getMessageService() {
         return messageService;
     }

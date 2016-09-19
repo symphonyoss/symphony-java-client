@@ -32,16 +32,41 @@ import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
- * Created by Frank Tarsillo on 5/15/2016.
+ * Chat is a core model that defines an active conversation between users.  It includes the ability to register
+ * ChatListener callbacks, which are monitored by the ChatService. Once defined, make sure to add the chat model to the
+ * ChatService in order to receive events when a listeners are defined.
+ *
+ * @author Frank Tarsillo
  */
 public class Chat {
     private Set<SymUser> remoteUsers;
     private SymUser localUser;
     private Stream stream;
+    private String streamId;
+
+
     private final Set<ChatListener> chatListeners = ConcurrentHashMap.newKeySet();
 
     private SymMessage lastMessage;
 
+
+    /**
+     * @return current stream ID for chat session
+     */
+    public String getStreamId() {
+
+        return streamId;
+    }
+
+    public void setStreamId(String streamId) {
+        this.streamId = streamId;
+
+        if (stream == null)
+            stream = new Stream();
+
+        stream.setId(streamId);
+
+    }
 
     public Set<SymUser> getRemoteUsers() {
         return remoteUsers;
@@ -63,30 +88,47 @@ public class Chat {
         return stream;
     }
 
+
     public void setStream(Stream stream) {
         this.stream = stream;
+        streamId = stream.getId();
+
     }
 
 
-    public void onChatMessage(SymMessage message){
+    /**
+     * Push message to all registered listeners.
+     * @param message
+     */
+    public void onChatMessage(SymMessage message) {
 
         lastMessage = message;
 
-        for(ChatListener chatListener:chatListeners)
+        for (ChatListener chatListener : chatListeners)
             chatListener.onChatMessage(message);
 
     }
 
-    public  boolean registerListener(ChatListener chatListener){
+    /**
+     * Register Chat listeners. A chat can have more than one listener at any time.
+     * @param chatListener
+     * @return Success
+     */
+    public boolean registerListener(ChatListener chatListener) {
 
-        if(lastMessage !=null)
+        if (lastMessage != null)
             chatListener.onChatMessage(lastMessage);
 
         return chatListeners.add(chatListener);
 
     }
 
-    public boolean removeListener(ChatListener chatListener){
+    /**
+     * Remove a specific listener
+     * @param chatListener
+     * @return
+     */
+    public boolean removeListener(ChatListener chatListener) {
         return chatListeners.remove(chatListener);
     }
 
@@ -96,6 +138,10 @@ public class Chat {
     }
 
 
+    /**
+     * Sometimes you want to have the last message...just in case!
+     * @param lastMessage
+     */
     public void setLastMessage(SymMessage lastMessage) {
         this.lastMessage = lastMessage;
     }

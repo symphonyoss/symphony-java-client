@@ -25,6 +25,7 @@ package org.symphonyoss.client.services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.exceptions.StreamsException;
 import org.symphonyoss.exceptions.UsersClientException;
 import org.symphonyoss.client.model.Chat;
 import org.symphonyoss.symphony.clients.model.SymMessage;
@@ -32,13 +33,23 @@ import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.pod.model.Stream;
 import org.symphonyoss.symphony.pod.model.User;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 
 /**
- * Created by Frank Tarsillo on 5/16/2016.
+ * The chat service provides capabilities to construct and monitor chat conversations. Supports the ability to add chat
+ * conversations which are validated and enriched.  Supports the creation and callback of new chat conversations from
+ * incoming messages.
+ * <p>
+ * NOTE: Multi-party conversations that are constructed via incoming messages are enriched over time.  Currently there
+ * is no way of identifying all users of an incoming message from a given stream.
+ *
+ * @author Frank Tarsillo on 5/16/2016.
  */
 public class ChatService implements ChatListener {
 
@@ -52,19 +63,74 @@ public class ChatService implements ChatListener {
     private final Logger logger = LoggerFactory.getLogger(ChatService.class);
 
 
-    public ChatService(SymphonyClient symClient){
+    /**
+     * @param symClient Symphony Client required to access all underlying clients functions.
+     */
+    public ChatService(SymphonyClient symClient) {
         this.symClient = symClient;
 
+        //Register this service against the message service which is backed by datafeed.
         symClient.getMessageService().registerChatListener(this);
 
     }
 
 
+    /**
+     * Add a predefined chat to the service.  RemoteUsers are required and streams will be generated and verified,
+     * so if one of the remote users are not connected to the BOT this will fail and return false.
+     * <p>
+     * Note: In the future response object will be available to provide additional detail.
+     *
+     * @param chat Chat with remote users defined.  Stream not required and will be generated.
+     * @return True if chat has been verified and accepted.
+     */
     public boolean addChat(Chat chat) {
 
-        if (chatsByStream.get(chat.getStream().getId()) == null) {
+        //True to verify streams.
+        return addChat(chat, true);
+    }
 
-            chatsByStream.put(chat.getStream().getId(), chat);
+    /**
+     * @param chat
+     * @param updateStream Verify and generate stream.  This should be false for generated chats from incoming messages
+     * @return
+     * @see #addChat(Chat)
+     */
+    private boolean addChat(Chat chat, boolean updateStream) {
+
+        //Check for min requirements. We need at least one user...
+        if (chat == null || chat.getRemoteUsers() == null)
+            return false;
+
+        //Lets verify and enrich SymUsers..
+        if (!updateSymUsers(chat)) {
+            logger.error("Failed to register chat conversation because some or all users can not be identified...please check!");
+            return false;
+        }
+
+        //Good if you are generating a new chat from BOT, bad if you are receiving generated chats incoming.
+        if (updateStream) {
+            //Lets find the stream ID for all users in conversation.
+            try {
+
+                Stream stream = symClient.getStreamsClient().getStream(chat.getRemoteUsers());
+                if (stream != null) {
+                    chat.setStreamId(stream.getId());
+
+                } else {
+                    logger.error("Failed to obtain stream ID for chat...");
+                    return false;
+                }
+            } catch (StreamsException e) {
+                logger.error("Failed to obtain stream ID for chat...", e);
+                return false;
+            }
+        }
+
+        //If all checks out, we need to make sure the chat is added into chats by streams and linked to chats by user.
+        if (chatsByStream.get(chat.getStreamId()) == null) {
+
+            chatsByStream.put(chat.getStreamId(), chat);
 
             for (SymUser user : chat.getRemoteUsers()) {
 
@@ -86,17 +152,28 @@ public class ChatService implements ChatListener {
 
             }
 
+            //Issue event to listeners.
             for (ChatServiceListener chatServiceListener : chatServiceListeners)
                 chatServiceListener.onNewChat(chat);
 
+
             return true;
         }
+
+        //no need to add it, because it exists.
         return false;
     }
 
+
+    /**
+     * Remove Chat conversation
+     * @param chat
+     * @return Removed chat
+     */
     public boolean removeChat(Chat chat) {
 
-        if (chat != null && chatsByStream.remove(chat.getStream().getId()) != null) {
+        //Make sure something exists..
+        if (chat != null && chat.getStreamId()!=null && chatsByStream.remove(chat.getStreamId()) != null) {
 
             for (SymUser user : chat.getRemoteUsers()) {
 
@@ -105,7 +182,7 @@ public class ChatService implements ChatListener {
                 if (userChats.remove(chat)) {
                     logger.debug("Removed chat for user {}:{}", user.getId(), user.getEmailAddress());
                 } else {
-                    logger.debug("Could not remove chats for user {}:{} on stream {}", user.getId(), user.getEmailAddress(), chat.getStream());
+                    logger.debug("Could not remove chats for user {}:{} on stream {}", user.getId(), user.getEmailAddress(), chat.getStreamId());
                 }
 
 
@@ -115,20 +192,26 @@ public class ChatService implements ChatListener {
 
             return true;
         }
+
         return false;
 
     }
 
 
+    /**
+     * Construct a Chat from incoming message.  This includes enrichment of user detail.
+     * @param message Incoming {@link SymMessage}
+     * @return Constructed chat
+     */
     private Chat createNewChatFromMessage(SymMessage message) {
 
+        logger.info("Detected new chat on stream ID: {} FromUserID: {}", message.getStreamId(), message.getFromUserId());
         try {
             Chat chat = new Chat();
             chat.setLocalUser(symClient.getLocalUser());
-            Stream stream = new Stream();
-            stream.setId(message.getStreamId());
-            chat.setStream(stream);
+            chat.setStreamId(message.getStreamId());
             chat.setLastMessage(message);
+            //Enrich user data..
             SymUser remoteUser = symClient.getUsersClient().getUserFromId(message.getFromUserId());
 
             if (remoteUser != null) {
@@ -136,16 +219,23 @@ public class ChatService implements ChatListener {
                 Set<SymUser> remoteUserSet = new HashSet<>();
                 remoteUserSet.add(remoteUser);
                 chat.setRemoteUsers(remoteUserSet);
+
                 return chat;
             }
-        } catch (Exception e) {
+
+        } catch (UsersClientException e) {
             logger.error("Could not create new chat from message {} {}", message.getStreamId(), message.getFromUserId(), e);
         }
 
+        //Unable to identify user...
         return null;
     }
 
 
+    /**
+     * Process incoming message from ChatListener
+     * @param {@link SymMessage } incoming from remote user.
+     */
     @Override
     public void onChatMessage(SymMessage message) {
         if (message == null)
@@ -157,18 +247,48 @@ public class ChatService implements ChatListener {
 
         logger.debug("New message from stream {}", streamId);
 
+        //There has to be a streamID to do anything.
         if (streamId != null) {
+
+            //Lets see if we can find an existing chat session for this stream.
             Chat chat = chatsByStream.get(streamId);
 
+            //Create a chat from the message if Chat doesn't exist.
             if (chat == null) {
+                //Construct it.
                 chat = createNewChatFromMessage(message);
+
+                //Good...
                 if (chat != null) {
-                    addChat(chat);
+
+                    //Lets add it to the service...but don't check for streams as it could be a multi-party conversation.
+                    //Currently no way to identify all remote users from a given stream. (BUG on REST API)
+                    addChat(chat, false);
+
                 } else {
                     logger.error("Failed to add new chat from message {} {}", message.getStreamId(), message.getFromUserId());
                 }
+                //Chat already exist..
             } else {
 
+
+                try {
+                    //We need to check if incoming user is registered as a remote user...if not add them.
+                    //This is lazy loading remote users into the active conversation.
+                    if (chat.getRemoteUsers().stream().filter(symUser -> symUser.getId().equals(message.getFromUserId())).findAny().orElse(null) == null) {
+
+                        //Get full detail for the remote users..and add to existing Chat.
+                        SymUser symUser = symClient.getUsersClient().getUserFromId(message.getFromUserId());
+                        if (symUser != null) {
+                            chat.getRemoteUsers().add(symUser);
+                            logger.info("Added user {}:{} to conversation.", symUser.getId(), symUser.getDisplayName());
+                        }
+                    }
+                } catch (UsersClientException e) {
+                    logger.error("Failed to add user to multi-party chat. Failed to identify user ID: {}", message.getFromUserId());
+                }
+
+                //Inform all Chat listners of new message..
                 chat.onChatMessage(message);
 
             }
@@ -179,17 +299,34 @@ public class ChatService implements ChatListener {
 
     }
 
+    /**
+     *
+     * @param chatServiceListener {@link ChatServiceListener}
+     * @return True if successful.
+     */
     public boolean registerListener(ChatServiceListener chatServiceListener) {
 
         return chatServiceListeners.add(chatServiceListener);
     }
 
+    /**
+     *
+     * @param chatServiceListener {@link ChatServiceListener}
+     * @return True if successful
+     */
     public boolean removeListener(ChatServiceListener chatServiceListener) {
         return chatServiceListeners.remove(chatServiceListener);
     }
 
+    /**
+     * Returns a set of chats from a given email address (resolved to UserID). This can be BOT or users that
+     * the BOT is communicating with.
+     * @param email
+     * @return A set of Chats associated with the given user.
+     */
     public Set<Chat> getChatsByEmail(String email) {
 
+        //Resolve the UserID to pull chat set.
         try {
             SymUser user = symClient.getUsersClient().getUserFromEmail(email);
 
@@ -202,7 +339,12 @@ public class ChatService implements ChatListener {
     }
 
 
-    public Set<Chat> getChats(User user) {
+    /**
+     * Return a set of chats for a given user
+     * @param user {@link SymUser}
+     * @return A set of Chats associated with the given user.
+     */
+    public Set<Chat> getChats(SymUser user) {
 
         if (user != null)
             return chatsByUser.get(user.getId());
@@ -210,9 +352,61 @@ public class ChatService implements ChatListener {
         return null;
     }
 
+    /**
+     * Get a given Chat by streamId
+     * @param streamId
+     * @return A Chat
+     */
     public Chat getChatByStream(String streamId) {
 
         return chatsByStream.get(streamId);
+
+    }
+
+    /**
+     * Enrich users from a given chat
+     * @param chat
+     * @return Success
+     */
+    private boolean updateSymUsers(Chat chat) {
+
+
+        Set<SymUser> verifiedSymUsers = new HashSet<>();
+
+
+        //Now lets not trust what was provided and update all user details.
+        for (SymUser symUser : chat.getRemoteUsers()) {
+            try {
+                SymUser updatedSymUser = new SymUser();
+
+                if (symUser.getId() != null) {
+                    updatedSymUser = symClient.getUsersClient().getUserFromId(symUser.getId());
+                } else if (symUser.getEmailAddress() != null) {
+                    updatedSymUser = symClient.getUsersClient().getUserFromEmail(symUser.getEmailAddress());
+                } else if (symUser.getUsername() != null) {
+                    updatedSymUser = symClient.getUsersClient().getUserFromName(symUser.getUsername());
+                } else {
+                    logger.error("Failed to retrieve user detail for chat session..(nothing to identify the user)..");
+                }
+
+                if (updatedSymUser.getId() != null)
+                    verifiedSymUsers.add(updatedSymUser);
+
+            } catch (UsersClientException e) {
+                logger.error("Failed to retrieve user detail for chat session..(nothing to identify the user)..", e);
+            }
+        }
+
+        //What we verified is not the same as what was defined...bad thing! (strict)
+        //Note: in future release we can add an option to allow multi-party with users who are verified.
+        if (chat.getRemoteUsers().size() != verifiedSymUsers.size()) {
+            return false;
+        } else {
+
+            chat.setRemoteUsers(verifiedSymUsers);
+            return true;
+        }
+
 
     }
 
