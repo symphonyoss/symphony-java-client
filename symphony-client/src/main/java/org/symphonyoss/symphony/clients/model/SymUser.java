@@ -22,17 +22,122 @@
 
 package org.symphonyoss.symphony.clients.model;
 
+import org.symphonyoss.symphony.pod.model.Avatar;
+import org.symphonyoss.symphony.pod.model.AvatarList;
 import org.symphonyoss.symphony.pod.model.UserV2;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by frank.tarsillo on 9/8/2016.
  */
-public class SymUser extends UserV2 {
+public class SymUser  {
 
-   public static UserV2 toUserV2(SymUser symUser){
+    private Long id = null;
+
+    private String emailAddress = null;
+
+    private String firstName = null;
+
+    private String lastName = null;
+
+    private String displayName = null;
+
+    private String title = null;
+
+    private String company = null;
+
+    private String username = null;
+
+    private String location = null;
+
+    private List<SymAvatar> avatars = null;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getCompany() {
+        return company;
+    }
+
+    public void setCompany(String company) {
+        this.company = company;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public List<SymAvatar> getAvatars() {
+        return avatars;
+    }
+
+    public void setAvatars(List<SymAvatar> avatars) {
+        this.avatars = avatars;
+    }
+
+    public static UserV2 toUserV2(SymUser symUser){
        UserV2 userV2 = new UserV2();
 
-       userV2.setAvatars(symUser.getAvatars());
+
        userV2.setCompany(symUser.getCompany());
        userV2.setDisplayName(symUser.getDisplayName());
        userV2.setEmailAddress(symUser.getEmailAddress());
@@ -42,6 +147,16 @@ public class SymUser extends UserV2 {
        userV2.setLocation(symUser.getLocation());
        userV2.setTitle(symUser.getTitle());
        userV2.setUsername(symUser.getUsername());
+
+        AvatarList avatars = new AvatarList();
+        for(SymAvatar symAvatar: symUser.getAvatars()){
+            Avatar avatar = new Avatar();
+            avatar.setSize(symAvatar.getSize());
+            avatar.setUrl(symAvatar.getUrl());
+            avatars.add(avatar);
+        }
+        userV2.setAvatars(avatars);
+
        return userV2;
    }
 
@@ -52,7 +167,7 @@ public class SymUser extends UserV2 {
 
         SymUser symUser = new SymUser();
 
-        symUser.setAvatars(user.getAvatars());
+
         symUser.setCompany(user.getCompany());
         symUser.setDisplayName(user.getDisplayName());
         symUser.setEmailAddress(user.getEmailAddress());
@@ -62,6 +177,17 @@ public class SymUser extends UserV2 {
         symUser.setLocation(user.getLocation());
         symUser.setTitle(user.getTitle());
         symUser.setUsername(user.getUsername());
+
+        List<SymAvatar> avatars = new ArrayList<>();
+        for(Avatar avatar: user.getAvatars()){
+            SymAvatar symAvatar = new SymAvatar();
+            symAvatar.setSize(avatar.getSize());
+            symAvatar.setUrl(avatar.getUrl());
+            avatars.add(symAvatar);
+        }
+        symUser.setAvatars(avatars);
+
+
         return symUser;
 
     }
