@@ -35,7 +35,7 @@ public interface RoomServiceListener {
 
     void onNewRoom(Room room);
 
-    void onRoomDeactivedMessage(RoomDeactivatedMessage roomDeactivatedMessage);
+    void onRoomDeactivatedMessage(RoomDeactivatedMessage roomDeactivatedMessage);
 
     void onRoomMemberDemotedFromOwnerMessage(RoomMemberDemotedFromOwnerMessage roomMemberDemotedFromOwnerMessage);
 

@@ -85,7 +85,7 @@ public class Room {
 
     public void setStream(Stream stream) {
         this.stream = stream;
-        if(stream==null)
+        if(streamId==null)
             streamId=stream.getId();
     }
 

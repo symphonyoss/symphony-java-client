@@ -171,7 +171,7 @@ public class MessageService implements DataFeedListener {
                 roomServiceListener.onRoomCreatedMessage((RoomCreatedMessage) message);
         }else if(message instanceof RoomDeactivatedMessage){
             for (RoomServiceListener roomServiceListener : roomServiceListeners)
-                roomServiceListener.onRoomDeactivedMessage((RoomDeactivatedMessage) message);
+                roomServiceListener.onRoomDeactivatedMessage((RoomDeactivatedMessage) message);
         }else if(message instanceof RoomMemberDemotedFromOwnerMessage){
             for (RoomServiceListener roomServiceListener : roomServiceListeners)
                 roomServiceListener.onRoomMemberDemotedFromOwnerMessage((RoomMemberDemotedFromOwnerMessage) message);

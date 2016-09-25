@@ -221,7 +221,7 @@ public class RoomServiceExample implements RoomServiceListener, RoomListener {
     }
 
     @Override
-    public void onRoomDeactivedMessage(RoomDeactivatedMessage roomDeactivatedMessage) {
+    public void onRoomDeactivatedMessage(RoomDeactivatedMessage roomDeactivatedMessage) {
 
     }
 

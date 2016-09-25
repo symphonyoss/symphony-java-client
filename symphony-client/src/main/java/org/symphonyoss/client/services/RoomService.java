@@ -163,13 +163,13 @@ public class RoomService implements RoomServiceListener {
     }
 
     @Override
-    public void onRoomDeactivedMessage(RoomDeactivatedMessage roomDeactivatedMessage) {
+    public void onRoomDeactivatedMessage(RoomDeactivatedMessage roomDeactivatedMessage) {
 
         for (Map.Entry<String, Room> entry : roomsByStream.entrySet()) {
 
             RoomListener roomListener = entry.getValue().getRoomListener();
             if (roomListener != null)
-                roomListener.onRoomDeactivedMessage(roomDeactivatedMessage);
+                roomListener.onRoomDeactivatedMessage(roomDeactivatedMessage);
 
         }
     }

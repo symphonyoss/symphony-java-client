@@ -33,7 +33,7 @@ public interface RoomListener {
 
     void onRoomMessage(SymMessage symMessage);
 
-    void onRoomDeactivedMessage(RoomDeactivatedMessage roomDeactivatedMessage);
+    void onRoomDeactivatedMessage(RoomDeactivatedMessage roomDeactivatedMessage);
 
     void onRoomMemberDemotedFromOwnerMessage(RoomMemberDemotedFromOwnerMessage roomMemberDemotedFromOwnerMessage);
 
