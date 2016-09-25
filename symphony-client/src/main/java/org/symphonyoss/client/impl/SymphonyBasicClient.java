@@ -30,6 +30,7 @@ import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.client.services.ChatService;
 import org.symphonyoss.client.services.MessageService;
 import org.symphonyoss.client.services.PresenceService;
+import org.symphonyoss.client.services.RoomService;
 import org.symphonyoss.exceptions.InitException;
 import org.symphonyoss.exceptions.SymException;
 import org.symphonyoss.symphony.clients.*;
@@ -55,6 +56,7 @@ public class SymphonyBasicClient implements SymphonyClient {
     private MessageService messageService;
     private PresenceService presenceService;
     private ChatService chatService;
+    private RoomService roomService;
     private SymUser localUser;
     private String agentUrl;
     private String serviceUrl;
@@ -113,6 +115,7 @@ public class SymphonyBasicClient implements SymphonyClient {
             messageService = new MessageService(this);
             presenceService = new PresenceService(this);
             chatService = new ChatService(this);
+            roomService = new RoomService(this);
 
             localUser = usersClient.getUserFromEmail(email);
         }catch (SymException e){
@@ -200,6 +203,10 @@ public class SymphonyBasicClient implements SymphonyClient {
         return presenceService;
     }
 
+    public RoomService getRoomService() {
+        return roomService;
+    }
+
     public SymUser getLocalUser() {
         return localUser;
     }
@@ -235,6 +242,8 @@ public class SymphonyBasicClient implements SymphonyClient {
     public ConnectionsClient getConnectionsClient() {
         return connectionsClient;
     }
+
+
 }
 
 

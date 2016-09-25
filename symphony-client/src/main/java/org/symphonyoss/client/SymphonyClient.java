@@ -44,6 +44,8 @@ public interface SymphonyClient {
 
     ChatService getChatService();
 
+    RoomService getRoomService();
+
     PresenceClient getPresenceClient();
 
     StreamsClient getStreamsClient();
