@@ -27,7 +27,7 @@ import org.symphonyoss.symphony.clients.model.SymMessage;
 /**
  * Created by Frank Tarsillo on 5/15/2016.
  */
-interface MessageListener {
+public interface MessageListener {
 
 
     void onMessage(SymMessage message);
