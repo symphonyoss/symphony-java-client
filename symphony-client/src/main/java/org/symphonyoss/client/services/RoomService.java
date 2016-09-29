@@ -55,7 +55,7 @@ public class RoomService implements RoomServiceListener {
     public RoomService(SymphonyClient symClient) {
         this.symClient = symClient;
 
-        symClient.getMessageService().registerRoomListener(this);
+        symClient.getMessageService().addRoomListener(this);
 
     }
 
@@ -243,7 +243,16 @@ public class RoomService implements RoomServiceListener {
 
     }
 
+    /**
+     * Please use {@link #addRoomServiceListener(RoomServiceListener)}
+     * @param roomServiceListener
+     */
+    @Deprecated
     public void registerRoomServiceListener(RoomServiceListener roomServiceListener) {
+        addRoomServiceListener(roomServiceListener);
+    }
+
+    public void addRoomServiceListener(RoomServiceListener roomServiceListener) {
         roomServiceListeners.add(roomServiceListener);
     }
 

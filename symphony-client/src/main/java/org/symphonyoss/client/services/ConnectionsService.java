@@ -66,12 +66,27 @@ public class ConnectionsService implements ConnectionsListener{
     }
     }
 
+    /**
+     * Please use {@link #addListener(ConnectionsListener)}
+     * @param connectionsListener
+     */
+    @Deprecated
     public void registerListener(ConnectionsListener connectionsListener){
+
+        addListener(connectionsListener);
+
+    }
+
+    public void addListener(ConnectionsListener connectionsListener){
 
         connectionsListeners.add(connectionsListener);
 
     }
 
+    /**
+     *
+     * @param connectionsListener
+     */
     public void removeListener(ConnectionsListener connectionsListener){
 
         connectionsListeners.remove(connectionsListener);

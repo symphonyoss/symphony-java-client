@@ -25,13 +25,13 @@ package org.symphonyoss.client.services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.client.model.Chat;
 import org.symphonyoss.client.model.Room;
 import org.symphonyoss.exceptions.MessagesException;
 import org.symphonyoss.exceptions.StreamsException;
 import org.symphonyoss.exceptions.UsersClientException;
 import org.symphonyoss.symphony.agent.model.*;
 import org.symphonyoss.symphony.clients.model.SymMessage;
-import org.symphonyoss.client.model.Chat;
 import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.pod.model.Stream;
 
@@ -216,11 +216,24 @@ public class MessageService implements DataFeedListener {
     }
 
 
+    /**
+     * Please use {@link #addMessageListener(MessageListener)}
+     * @param messageListener
+     * @return
+     */
+    @Deprecated
     public boolean registerMessageListener(MessageListener messageListener) {
 
         return messageListeners.add(messageListener);
 
     }
+
+    public void addMessageListener(MessageListener messageListener) {
+
+         messageListeners.add(messageListener);
+
+    }
+
 
     public boolean removeMessageListener(MessageListener messageListener) {
 
@@ -229,6 +242,17 @@ public class MessageService implements DataFeedListener {
     }
 
 
+    public void addRoomListener(RoomServiceListener roomServiceListener) {
+
+         roomServiceListeners.add(roomServiceListener);
+
+    }
+    /**
+     * Please use {@link #addRoomListener(RoomServiceListener)}
+     * @param roomServiceListener
+     * @return
+     */
+    @Deprecated
     public boolean registerRoomListener(RoomServiceListener roomServiceListener) {
 
         return roomServiceListeners.add(roomServiceListener);
@@ -241,6 +265,20 @@ public class MessageService implements DataFeedListener {
 
     }
 
+
+
+    public void addChatListener(ChatListener chatListener) {
+
+         chatListeners.add(chatListener);
+
+    }
+
+    /**
+     * Please use {@link #addChatListener(ChatListener)}
+     * @param chatListener
+     * @return
+     */
+    @Deprecated
     public boolean registerChatListener(ChatListener chatListener) {
 
         return chatListeners.add(chatListener);

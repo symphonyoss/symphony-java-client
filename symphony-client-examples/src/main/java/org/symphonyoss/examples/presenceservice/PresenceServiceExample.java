@@ -23,7 +23,6 @@
 package org.symphonyoss.examples.presenceservice;
 
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
@@ -32,7 +31,6 @@ import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.client.services.PresenceListener;
 import org.symphonyoss.exceptions.UsersClientException;
 import org.symphonyoss.symphony.clients.AuthorizationClient;
-import org.symphonyoss.symphony.clients.impl.PresenceException;
 import org.symphonyoss.symphony.pod.model.UserPresence;
 
 
@@ -125,7 +123,7 @@ public class PresenceServiceExample implements PresenceListener {
             );
 
 
-            symClient.getPresenceService().registerPresenceListener(this);
+            symClient.getPresenceService().addPresenceListener(this);
 
             symClient.getPresenceClient().getAllUserPresence();
 

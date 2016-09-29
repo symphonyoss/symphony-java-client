@@ -92,7 +92,17 @@ public class PresenceService implements PresenceListener {
 
     }
 
+    /**
+     * Please use {@link #addPresenceListener(PresenceListener)}
+     * @param presenceListener
+     */
     public void registerPresenceListener(PresenceListener presenceListener) {
+
+        addPresenceListener(presenceListener);
+
+    }
+
+    public void addPresenceListener(PresenceListener presenceListener) {
 
         if (presenceWorker == null) {
             logger.debug("Starting presence worker thread..");

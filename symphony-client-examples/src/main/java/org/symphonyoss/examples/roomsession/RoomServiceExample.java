@@ -29,7 +29,9 @@ import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.client.SymphonyClientFactory;
 import org.symphonyoss.client.model.Room;
 import org.symphonyoss.client.model.SymAuth;
-import org.symphonyoss.client.services.*;
+import org.symphonyoss.client.services.RoomListener;
+import org.symphonyoss.client.services.RoomService;
+import org.symphonyoss.client.services.RoomServiceListener;
 import org.symphonyoss.exceptions.AuthorizationException;
 import org.symphonyoss.exceptions.InitException;
 import org.symphonyoss.exceptions.MessagesException;
@@ -143,7 +145,7 @@ public class RoomServiceExample implements RoomServiceListener, RoomListener {
 
 
              roomService = new RoomService(symClient);
-             roomService.registerRoomServiceListener(this);
+             roomService.addRoomServiceListener(this);
 
             Room room = new Room();
             room.setStream(stream);

@@ -126,7 +126,7 @@ public class ChatExample implements ChatListener, ChatServiceListener {
             );
 
             //Will notify the bot of new Chat conversations.
-            symClient.getChatService().registerListener(this);
+            symClient.getChatService().addListener(this);
 
             //A message to send when the BOT comes online.
             SymMessage aMessage = new SymMessage();
@@ -141,7 +141,7 @@ public class ChatExample implements ChatListener, ChatServiceListener {
             remoteUsers.add(symClient.getUsersClient().getUserFromEmail(System.getProperty("user.call.home")));
            // remoteUsers.add(symClient.getUsersClient().getUserFromId(Long.valueOf("69956427334318")));
             chat.setRemoteUsers(remoteUsers);
-            chat.registerListener(this);
+            chat.addListener(this);
             chat.setStream(symClient.getStreamsClient().getStream(remoteUsers));
 
             //Add the chat to the chat service, in case the "master" continues the conversation.
@@ -195,7 +195,7 @@ public class ChatExample implements ChatListener, ChatServiceListener {
     @Override
     public void onNewChat(Chat chat) {
 
-        chat.registerListener(this);
+        chat.addListener(this);
 
         logger.debug("New chat session detected on stream {} with {}", chat.getStream().getId(), chat.getRemoteUsers());
     }
