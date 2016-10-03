@@ -42,8 +42,11 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 
 
 ##Change log and notes
+### V1.0.0 (SNAPSHOT)
+* Performance Updates
+* Command Framework (TBD)
 
-### V0.9.1 (SNAPSHOT)
+### V0.9.1 (Stable)
 
 * Compatible with 1.40.1 API, V2 and Agent 1.39+
 * New Connections Service for managing connection requests.  This includes auto-accept.
