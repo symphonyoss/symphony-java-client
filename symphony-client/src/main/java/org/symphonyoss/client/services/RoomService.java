@@ -55,7 +55,7 @@ public class RoomService implements RoomServiceListener {
     public RoomService(SymphonyClient symClient) {
         this.symClient = symClient;
 
-        symClient.getMessageService().registerRoomListener(this);
+        symClient.getMessageService().addRoomListener(this);
 
     }
 
@@ -77,7 +77,7 @@ public class RoomService implements RoomServiceListener {
 
         } catch (StreamsException e) {
             logger.error("Failed to obtain stream for room...", e);
-            throw new RoomException("Could not create/join chat room: " + symRoomAttributes.getName(), e.getCause());
+            throw new RoomException("Could not create/join chat room: " + symRoomAttributes.getName(), e);
         } catch (SymException e1) {
             logger.error("Failed to retrieve room membership...", e1);
             throw new RoomException("Could not retrieve room membership for room: " + symRoomAttributes.getName());
@@ -102,7 +102,7 @@ public class RoomService implements RoomServiceListener {
             roomsByStream.put(room.getStreamId(), room);
         } catch (StreamsException e) {
             logger.error("Failed to obtain room detail...", e);
-            throw new RoomException("Failed to obtain room detail for requested room: " + room.getStreamId(), e.getCause());
+            throw new RoomException("Failed to obtain room detail for requested room: " + room.getStreamId(), e);
         }
 
 
@@ -243,7 +243,16 @@ public class RoomService implements RoomServiceListener {
 
     }
 
+    /**
+     * Please use {@link #addRoomServiceListener(RoomServiceListener)}
+     * @param roomServiceListener
+     */
+    @Deprecated
     public void registerRoomServiceListener(RoomServiceListener roomServiceListener) {
+        addRoomServiceListener(roomServiceListener);
+    }
+
+    public void addRoomServiceListener(RoomServiceListener roomServiceListener) {
         roomServiceListeners.add(roomServiceListener);
     }
 

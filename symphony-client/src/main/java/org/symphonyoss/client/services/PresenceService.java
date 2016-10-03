@@ -83,7 +83,7 @@ public class PresenceService implements PresenceListener {
             user = symClient.getUsersClient().getUserFromEmail(email);
         } catch (UsersClientException e) {
             logger.error("Failed to obtain userID from email",e);
-            throw new PresenceException("Failed to obtain user from email: " + email, e.getCause());
+            throw new PresenceException("Failed to obtain user from email: " + email, e);
         }
 
         return (user != null)?
@@ -92,7 +92,17 @@ public class PresenceService implements PresenceListener {
 
     }
 
+    /**
+     * Please use {@link #addPresenceListener(PresenceListener)}
+     * @param presenceListener
+     */
     public void registerPresenceListener(PresenceListener presenceListener) {
+
+        addPresenceListener(presenceListener);
+
+    }
+
+    public void addPresenceListener(PresenceListener presenceListener) {
 
         if (presenceWorker == null) {
             logger.debug("Starting presence worker thread..");

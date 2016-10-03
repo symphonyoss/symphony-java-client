@@ -146,10 +146,10 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
             );
 
             //This is not needed, but added for future use.  This will monitor all presence events on the network.
-            symClient.getPresenceService().registerPresenceListener(this);
+            symClient.getPresenceService().addPresenceListener(this);
 
             //Will notify the bot of new Chat conversations.
-            symClient.getChatService().registerListener(this);
+            symClient.getChatService().addListener(this);
 
             //A message to send when the BOT comes online.
             SymMessage aMessage = new SymMessage();
@@ -163,7 +163,7 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
             Set<SymUser> remoteUsers = new HashSet<>();
             remoteUsers.add(symClient.getUsersClient().getUserFromEmail(System.getProperty("user.call.home")));
             chat.setRemoteUsers(remoteUsers);
-            chat.registerListener(this);
+            chat.addListener(this);
             chat.setStream(symClient.getStreamsClient().getStream(remoteUsers));
 
             //Add the chat to the chat service, in case the "master" continues the conversation.
@@ -563,7 +563,7 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
     @Override
     public void onNewChat(Chat chat) {
 
-        chat.registerListener(this);
+        chat.addListener(this);
 
         logger.debug("New chat session detected on stream {} with {}", chat.getStream().getId(), chat.getRemoteUsers());
     }

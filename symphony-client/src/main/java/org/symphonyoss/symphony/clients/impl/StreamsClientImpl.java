@@ -24,18 +24,19 @@ package org.symphonyoss.symphony.clients.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.exceptions.StreamsException;
 import org.symphonyoss.exceptions.UsersClientException;
 import org.symphonyoss.symphony.clients.UsersClient;
 import org.symphonyoss.symphony.clients.UsersFactory;
-import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.symphony.clients.model.SymRoomAttributes;
 import org.symphonyoss.symphony.clients.model.SymRoomDetail;
 import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.pod.api.StreamsApi;
 import org.symphonyoss.symphony.pod.invoker.ApiClient;
 import org.symphonyoss.symphony.pod.invoker.ApiException;
-import org.symphonyoss.symphony.pod.model.*;
+import org.symphonyoss.symphony.pod.model.Stream;
+import org.symphonyoss.symphony.pod.model.UserIdList;
 
 import java.util.Set;
 
@@ -117,7 +118,7 @@ public class StreamsClientImpl implements org.symphonyoss.symphony.clients.Strea
         try {
             return streamsApi.v1ImCreatePost(userIdList, symAuth.getSessionToken().getToken());
         } catch (ApiException e) {
-            throw new StreamsException("Failed to retrieve stream for given user ids...", e.getCause());
+            throw new StreamsException("Failed to retrieve stream for given user ids...", e);
         }
 
     }
@@ -134,7 +135,7 @@ public class StreamsClientImpl implements org.symphonyoss.symphony.clients.Strea
         try {
             return getStream(usersClient.getUserFromEmail(email));
         } catch (UsersClientException e) {
-            throw new StreamsException("Failed to find user from email : " + email, e.getCause());
+            throw new StreamsException("Failed to find user from email : " + email, e);
         }
     }
 
@@ -149,7 +150,7 @@ public class StreamsClientImpl implements org.symphonyoss.symphony.clients.Strea
         try {
             return SymRoomDetail.toSymRoomDetail(streamsApi.v2RoomIdInfoGet(roomId,symAuth.getSessionToken().getToken()));
         } catch (ApiException e) {
-            throw new StreamsException("Failed to obtain room information from ID: " + roomId, e.getCause());
+            throw new StreamsException("Failed to obtain room information from ID: " + roomId, e);
         }
 
     }
@@ -167,7 +168,7 @@ public class StreamsClientImpl implements org.symphonyoss.symphony.clients.Strea
                     SymRoomAttributes.toV2RoomAttributes(roomAttributes),symAuth.getSessionToken().getToken())
             );
         } catch (ApiException e) {
-            throw new StreamsException("Failed to obtain room information while creating room: " + roomAttributes.getName(), e.getCause());
+            throw new StreamsException("Failed to obtain room information while creating room: " + roomAttributes.getName(), e);
         }
 
 
@@ -186,7 +187,7 @@ public class StreamsClientImpl implements org.symphonyoss.symphony.clients.Strea
                     SymRoomAttributes.toV2RoomAttributes(roomAttributes),symAuth.getSessionToken().getToken())
             );
         } catch (ApiException e) {
-            throw new StreamsException("Failed to obtain room information while updating attributes on room: " + roomAttributes.getName(), e.getCause());
+            throw new StreamsException("Failed to obtain room information while updating attributes on room: " + roomAttributes.getName(), e);
         }
 
 

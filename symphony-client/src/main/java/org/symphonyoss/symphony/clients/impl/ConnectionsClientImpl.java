@@ -26,11 +26,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.exceptions.ConnectionsException;
+import org.symphonyoss.symphony.clients.ConnectionsClient;
 import org.symphonyoss.symphony.clients.model.SymUserConnection;
 import org.symphonyoss.symphony.clients.model.SymUserConnectionRequest;
-import org.symphonyoss.symphony.pod.invoker.ApiClient;
-import org.symphonyoss.symphony.clients.ConnectionsClient;
 import org.symphonyoss.symphony.pod.api.ConnectionApi;
+import org.symphonyoss.symphony.pod.invoker.ApiClient;
 import org.symphonyoss.symphony.pod.invoker.ApiException;
 import org.symphonyoss.symphony.pod.model.UserConnectionList;
 
@@ -112,7 +112,7 @@ public class ConnectionsClientImpl implements ConnectionsClient {
         try {
             return SymUserConnection.toSymUserConnection(connectionApi.v1ConnectionCreatePost(symAuth.getSessionToken().getToken(), symUserConnectionRequest));
         } catch (ApiException e) {
-            throw new ConnectionsException("Error sending connection request to ID: " + symUserConnectionRequest.getUserId(), e.getCause());
+            throw new ConnectionsException("Error sending connection request to ID: " + symUserConnectionRequest.getUserId(), e);
         }
 
 
@@ -127,7 +127,7 @@ public class ConnectionsClientImpl implements ConnectionsClient {
         try {
             return SymUserConnection.toSymUserConnection(connectionApi.v1ConnectionAcceptPost(symAuth.getSessionToken().getToken(), symUserConnectionRequest));
         } catch (ApiException e) {
-            throw new ConnectionsException("Failed to accept connection request from ID: " + symUserConnectionRequest.getUserId(), e.getCause());
+            throw new ConnectionsException("Failed to accept connection request from ID: " + symUserConnectionRequest.getUserId(), e);
         }
 
 
@@ -144,7 +144,7 @@ public class ConnectionsClientImpl implements ConnectionsClient {
         try {
             return SymUserConnection.toSymUserConnection(connectionApi.v1ConnectionAcceptPost(symAuth.getSessionToken().getToken(), new SymUserConnectionRequest(symUserConnection)));
         } catch (ApiException e) {
-            throw new ConnectionsException("Failed to accept connection request from ID: " + symUserConnection.getUserId(), e.getCause());
+            throw new ConnectionsException("Failed to accept connection request from ID: " + symUserConnection.getUserId(), e);
         }
 
 
@@ -161,7 +161,7 @@ public class ConnectionsClientImpl implements ConnectionsClient {
         try {
             return SymUserConnection.toSymUserConnection(connectionApi.v1ConnectionRejectPost(symAuth.getSessionToken().getToken(), symUserConnectionRequest));
         } catch (ApiException e) {
-            throw new ConnectionsException("Failed to reject connection request from ID: " + symUserConnectionRequest.getUserId(), e.getCause());
+            throw new ConnectionsException("Failed to reject connection request from ID: " + symUserConnectionRequest.getUserId(), e);
         }
 
 
@@ -180,7 +180,7 @@ public class ConnectionsClientImpl implements ConnectionsClient {
         try {
             return SymUserConnection.toSymUserConnection(connectionApi.v1ConnectionUserUserIdInfoGet(symAuth.getSessionToken().getToken(), userId));
         } catch (ApiException e) {
-            throw new ConnectionsException("Unable to retrieve connection information for ID: " + userId, e.getCause());
+            throw new ConnectionsException("Unable to retrieve connection information for ID: " + userId, e);
         }
 
 
@@ -198,7 +198,7 @@ public class ConnectionsClientImpl implements ConnectionsClient {
         try {
             userConnectionList = connectionApi.v1ConnectionListGet(symAuth.getSessionToken().getToken(), status.toString(), userIds);
         } catch (ApiException e) {
-            throw new ConnectionsException("Unable to retrieve all known connections..", e.getCause());
+            throw new ConnectionsException("Unable to retrieve all known connections..", e);
         }
 
         return userConnectionList.stream().map(SymUserConnection::toSymUserConnection).collect(Collectors.toList());

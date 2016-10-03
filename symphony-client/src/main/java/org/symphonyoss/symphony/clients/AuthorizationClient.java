@@ -24,12 +24,12 @@ package org.symphonyoss.symphony.clients;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.exceptions.AuthorizationException;
 import org.symphonyoss.symphony.authenticator.api.AuthenticationApi;
+import org.symphonyoss.symphony.authenticator.invoker.ApiException;
 import org.symphonyoss.symphony.authenticator.invoker.Configuration;
 import org.symphonyoss.symphony.authenticator.model.Token;
-import org.symphonyoss.client.model.SymAuth;
-import org.symphonyoss.symphony.authenticator.invoker.ApiException;
 
 /**
  * Created by Frank Tarsillo on 5/15/2016.
@@ -95,7 +95,7 @@ public class AuthorizationClient {
             "\nSession URL: " + sessionUrl +
             "\nKeystore URL: " + keyUrl +
             "\nServer TrustStore File: " +  System.getProperty("javax.net.ssl.trustStore") +
-            "\nClient Keystore File: " + System.getProperty("javax.net.ssl.keyStore"), e.getCause());
+            "\nClient Keystore File: " + System.getProperty("javax.net.ssl.keyStore"), e);
 
         }
 

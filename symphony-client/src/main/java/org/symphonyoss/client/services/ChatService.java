@@ -25,20 +25,16 @@ package org.symphonyoss.client.services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.client.model.Chat;
 import org.symphonyoss.exceptions.StreamsException;
 import org.symphonyoss.exceptions.UsersClientException;
-import org.symphonyoss.client.model.Chat;
 import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.pod.model.Stream;
-import org.symphonyoss.symphony.pod.model.User;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 
 /**
@@ -70,7 +66,7 @@ public class ChatService implements ChatListener {
         this.symClient = symClient;
 
         //Register this service against the message service which is backed by datafeed.
-        symClient.getMessageService().registerChatListener(this);
+        symClient.getMessageService().addChatListener(this);
 
     }
 
@@ -300,11 +296,23 @@ public class ChatService implements ChatListener {
     }
 
     /**
+     * Please use {@link #addListener(ChatServiceListener)}
      *
      * @param chatServiceListener {@link ChatServiceListener}
      * @return True if successful.
      */
+    @Deprecated
     public boolean registerListener(ChatServiceListener chatServiceListener) {
+
+        return chatServiceListeners.add(chatServiceListener);
+    }
+
+    /**
+     *
+     * @param chatServiceListener {@link ChatServiceListener}
+     * @return True if successful.
+     */
+    public boolean addListener(ChatServiceListener chatServiceListener) {
 
         return chatServiceListeners.add(chatServiceListener);
     }

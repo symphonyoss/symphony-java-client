@@ -128,7 +128,7 @@ public class ChatWithAutoAcceptConnectionsExample implements ChatListener, ChatS
             );
 
             //Will notify the bot of new Chat conversations.
-            symClient.getChatService().registerListener(this);
+            symClient.getChatService().addListener(this);
 
             //Init connection service.
             ConnectionsService connectionsService = new ConnectionsService(symClient);
@@ -149,7 +149,7 @@ public class ChatWithAutoAcceptConnectionsExample implements ChatListener, ChatS
             Set<SymUser> remoteUsers = new HashSet<>();
             remoteUsers.add(symClient.getUsersClient().getUserFromEmail(System.getProperty("user.call.home")));
             chat.setRemoteUsers(remoteUsers);
-            chat.registerListener(this);
+            chat.addListener(this);
             chat.setStream(symClient.getStreamsClient().getStream(remoteUsers));
 
             //Add the chat to the chat service, in case the "master" continues the conversation.
@@ -215,7 +215,7 @@ public class ChatWithAutoAcceptConnectionsExample implements ChatListener, ChatS
     @Override
     public void onNewChat(Chat chat) {
 
-        chat.registerListener(this);
+        chat.addListener(this);
 
         logger.debug("New chat session detected on stream {} with {}", chat.getStream().getId(), chat.getRemoteUsers());
     }

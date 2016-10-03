@@ -20,7 +20,7 @@
  * under the License.
  */
 
-package org.symphonyoss.examples.attachement;
+package org.symphonyoss.examples.attachment;
 
 
 import org.slf4j.Logger;
@@ -75,14 +75,13 @@ import java.util.Set;
  * <p>
  * Created by Frank Tarsillo on 5/15/2016.
  */
-//NOSONAR
-public class AttachementExample implements ChatListener, ChatServiceListener {
+public class AttachmentExample implements ChatListener, ChatServiceListener {
 
 
-    private final Logger logger = LoggerFactory.getLogger(AttachementExample.class);
+    private final Logger logger = LoggerFactory.getLogger(AttachmentExample.class);
     private SymphonyClient symClient;
 
-    public AttachementExample() {
+    public AttachmentExample() {
 
 
         init();
@@ -92,7 +91,7 @@ public class AttachementExample implements ChatListener, ChatServiceListener {
 
     public static void main(String[] args) {
 
-        new AttachementExample();
+        new AttachmentExample();
 
     }
 
@@ -136,7 +135,7 @@ public class AttachementExample implements ChatListener, ChatServiceListener {
             );
 
             //Will notify the bot of new Chat conversations.
-            symClient.getChatService().registerListener(this);
+            symClient.getChatService().addListener(this);
 
             //A message to send when the BOT comes online.
             SymMessage aMessage = new SymMessage();
@@ -150,7 +149,7 @@ public class AttachementExample implements ChatListener, ChatServiceListener {
             Set<SymUser> remoteUsers = new HashSet<>();
             remoteUsers.add(symClient.getUsersClient().getUserFromEmail(System.getProperty("user.call.home")));
             chat.setRemoteUsers(remoteUsers);
-            chat.registerListener(this);
+            chat.addListener(this);
             chat.setStream(symClient.getStreamsClient().getStream(remoteUsers));
 
             //Add the chat to the chat service, in case the "master" continues the conversation.
@@ -252,7 +251,7 @@ public class AttachementExample implements ChatListener, ChatServiceListener {
     @Override
     public void onNewChat(Chat chat) {
 
-        chat.registerListener(this);
+        chat.addListener(this);
 
         logger.debug("New chat session detected on stream {} with {}", chat.getStream().getId(), chat.getRemoteUsers());
     }

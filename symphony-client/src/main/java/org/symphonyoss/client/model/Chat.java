@@ -22,10 +22,10 @@
 
 package org.symphonyoss.client.model;
 
+import org.symphonyoss.client.services.ChatListener;
 import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.pod.model.Stream;
-import org.symphonyoss.client.services.ChatListener;
 
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -111,10 +111,24 @@ public class Chat {
 
     /**
      * Register Chat listeners. A chat can have more than one listener at any time.
+     * Please use {@link #addListener(ChatListener)}
      * @param chatListener
      * @return Success
      */
+    @Deprecated
     public boolean registerListener(ChatListener chatListener) {
+
+
+        return addListener(chatListener);
+
+    }
+
+    /**
+     * Add Chat listeners. A chat can have more than one listener at any time.
+     * @param chatListener
+     * @return Success
+     */
+    public boolean addListener(ChatListener chatListener) {
 
         if (lastMessage != null)
             chatListener.onChatMessage(lastMessage);

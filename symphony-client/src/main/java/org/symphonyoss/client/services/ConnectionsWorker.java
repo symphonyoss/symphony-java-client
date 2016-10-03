@@ -27,6 +27,8 @@ import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.exceptions.ConnectionsException;
 import org.symphonyoss.symphony.clients.model.SymUserConnection;
+
+import javax.ws.rs.ProcessingException;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -58,20 +60,22 @@ class ConnectionsWorker implements Runnable {
 
         while (true) {
             try {
+                TimeUnit.SECONDS.sleep(30);
+            } catch (InterruptedException ie) {
+                logger.error("Interrupt failed on presence retrieval",ie);
+            }
+
+            try {
 
                 try {
                     symUserConnectionList = symClient.getConnectionsClient().getIncomingRequests();
 
                     //logger.debug("Connections queue..{}",symUserConnectionList.size());
 
-                } catch (ConnectionsException e) {
+                } catch (ConnectionsException | ProcessingException e) {
 
                     logger.error("Pending connections request retrieval failure", e);
-                    try {
-                        TimeUnit.SECONDS.sleep(30);
-                    } catch (InterruptedException ie) {
-                        logger.error("Interrupt failed on presence retrieval",ie);
-                    }
+
                     continue;
                 }
 
@@ -105,13 +109,10 @@ class ConnectionsWorker implements Runnable {
                     return;
                 }
 
-                try {
-                    TimeUnit.SECONDS.sleep(30);
-                } catch (InterruptedException e) {
-                    logger.error("Sleep timer interrupted",e);
-                }
+
             } catch (Exception bad) {
                 logger.error("Serious failure in connections worker thread..please verify stacktrace.", bad);
+
             }
         }
 
