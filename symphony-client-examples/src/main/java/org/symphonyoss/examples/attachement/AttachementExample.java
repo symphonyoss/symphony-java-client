@@ -75,6 +75,7 @@ import java.util.Set;
  * <p>
  * Created by Frank Tarsillo on 5/15/2016.
  */
+//NOSONAR
 public class AttachementExample implements ChatListener, ChatServiceListener {
 
 
