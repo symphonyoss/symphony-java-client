@@ -33,4 +33,6 @@ public interface PresenceClient {
     PresenceList getAllUserPresence() throws PresenceException;
 
     Presence getUserPresence(Long userId) throws PresenceException;
+
+     Presence setUserPresence(Long userId, Presence presence) throws PresenceException;
 }

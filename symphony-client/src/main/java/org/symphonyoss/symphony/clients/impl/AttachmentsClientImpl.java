@@ -75,7 +75,7 @@ public class AttachmentsClientImpl implements AttachmentsClient {
                     symAuth.getSessionToken().getToken(),
                     symAuth.getKeyToken().getToken()));
         } catch (ApiException e) {
-            throw new AttachmentsException("Could not retrieve or decode attachment from POD..", e.getCause());
+            throw new AttachmentsException("Could not retrieve or decode attachment from POD..", e);
         }
 
 
@@ -96,7 +96,7 @@ public class AttachmentsClientImpl implements AttachmentsClient {
                     symAuth.getKeyToken().getToken(),
                     attachment);
         } catch (ApiException e) {
-            throw new AttachmentsException("Failed to post attachment for file " + attachment.getName(), e.getCause());
+            throw new AttachmentsException("Failed to post attachment for file " + attachment.getName(), e);
         }
 
         if(attachmentInfo == null)

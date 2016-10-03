@@ -31,7 +31,7 @@ import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.pod.api.UsersApi;
 import org.symphonyoss.symphony.pod.invoker.ApiClient;
 import org.symphonyoss.symphony.pod.invoker.ApiException;
-import org.symphonyoss.symphony.pod.model.*;
+import org.symphonyoss.symphony.pod.model.UserV2;
 
 
 /**
@@ -70,7 +70,7 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
         try {
             user = usersApi.v2UserGet(symAuth.getSessionToken().getToken(), null, email, null, false);
         } catch (ApiException e) {
-            throw new UsersClientException("API Error communicating with POD, while retrieving user details for " + email, e.getCause());
+            throw new UsersClientException("API Error communicating with POD, while retrieving user details for " + email, e);
         }
 
         if (user != null) {
@@ -99,7 +99,7 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
         try {
             user =  usersApi.v2UserGet(symAuth.getSessionToken().getToken(), userId, null, null, false);
         }catch(ApiException e){
-            throw new UsersClientException("API Error communicating with POD, while retrieving user details for " + userId, e.getCause());
+            throw new UsersClientException("API Error communicating with POD, while retrieving user details for " + userId, e);
         }
 
         if (user != null) {
@@ -128,7 +128,7 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
         try {
             user =  usersApi.v2UserGet(symAuth.getSessionToken().getToken(), null, null, userName, false);
         }catch(ApiException e){
-            throw new UsersClientException("API Error communicating with POD, while retrieving user details for " + userName, e.getCause());
+            throw new UsersClientException("API Error communicating with POD, while retrieving user details for " + userName, e);
         }
 
         if (user != null) {

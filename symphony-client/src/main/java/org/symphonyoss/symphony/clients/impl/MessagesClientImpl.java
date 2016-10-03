@@ -24,12 +24,12 @@ package org.symphonyoss.symphony.clients.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.exceptions.MessagesException;
 import org.symphonyoss.symphony.agent.api.MessagesApi;
 import org.symphonyoss.symphony.agent.invoker.ApiClient;
 import org.symphonyoss.symphony.agent.invoker.ApiException;
 import org.symphonyoss.symphony.agent.model.*;
-import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.symphony.clients.model.SymAttachmentInfo;
 import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.pod.model.Stream;
@@ -72,7 +72,7 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
         try {
             return messagesApi.v1StreamSidMessageCreatePost(stream.getId(), symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken(), message);
         } catch (ApiException e) {
-            throw new MessagesException("Failed to send message to stream: " + stream, e.getCause());
+            throw new MessagesException("Failed to send message to stream: " + stream, e);
         }
 
     }
@@ -103,7 +103,7 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
         try {
             v2Message = messagesApi.v2StreamSidMessageCreatePost(stream.getId(), symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken(), messageSubmission);
         } catch (ApiException e) {
-            throw new MessagesException("Failed to send message to stream: " + stream.getId(), e.getCause());
+            throw new MessagesException("Failed to send message to stream: " + stream.getId(), e);
         }
 
         return SymMessage.toSymMessage(v2Message);
@@ -124,7 +124,7 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
         try {
             v2MessageList = messagesApi.v2StreamSidMessageGet(stream.getId(), since, symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken(), offset, maxMessages);
         } catch (ApiException e) {
-            throw new MessagesException("Failed to retrieve messages from stream: " + stream, e.getCause());
+            throw new MessagesException("Failed to retrieve messages from stream: " + stream, e);
         }
 
         List<SymMessage> symMessageList = new ArrayList<>();

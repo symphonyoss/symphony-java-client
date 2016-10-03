@@ -88,9 +88,9 @@ public class MessageService implements DataFeedListener {
             symClient.getMessagesClient().sendMessage(symClient.getStreamsClient().getStream(remoteUser), message);
 
         } catch (UsersClientException e) {
-            throw new MessagesException("Failed to find user from email address: " + email, e.getCause());
+            throw new MessagesException("Failed to find user from email address: " + email, e);
         } catch (StreamsException e) {
-            throw new MessagesException("Failed to send message. Unable to identify stream from email: " + email, e.getCause());
+            throw new MessagesException("Failed to send message. Unable to identify stream from email: " + email, e);
         }
 
     }
@@ -114,7 +114,7 @@ public class MessageService implements DataFeedListener {
             return getMessagesFromStream(
                     symClient.getStreamsClient().getStream(user), since, offset, maxMessages);
         } catch (StreamsException e) {
-            throw new MessagesException("Failed to retrieve messages. Unable to identity stream for userId: " + userId, e.getCause());
+            throw new MessagesException("Failed to retrieve messages. Unable to identity stream for userId: " + userId, e);
         }
 
 

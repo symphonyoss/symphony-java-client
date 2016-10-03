@@ -1,26 +1,28 @@
 /*
  *
- * Copyright 2016 The Symphony Software Foundation
+ *  *
+ *  * Copyright 2016 The Symphony Software Foundation
+ *  *
+ *  * Licensed to The Symphony Software Foundation (SSF) under one
+ *  * or more contributor license agreements.  See the NOTICE file
+ *  * distributed with this work for additional information
+ *  * regarding copyright ownership.  The ASF licenses this file
+ *  * to you under the Apache License, Version 2.0 (the
+ *  * "License"); you may not use this file except in compliance
+ *  * with the License.  You may obtain a copy of the License at
+ *  *
+ *  *   http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing,
+ *  * software distributed under the License is distributed on an
+ *  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *  * KIND, either express or implied.  See the License for the
+ *  * specific language governing permissions and limitations
+ *  * under the License.
  *
- * Licensed to The Symphony Software Foundation (SSF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
  */
 
-package org.symphonyoss.examples.presenceservice;
+package org.symphonyoss.examples.setpresence;
 
 
 import org.slf4j.Logger;
@@ -31,13 +33,18 @@ import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.client.services.PresenceListener;
 import org.symphonyoss.exceptions.UsersClientException;
 import org.symphonyoss.symphony.clients.AuthorizationClient;
+import org.symphonyoss.symphony.pod.model.Presence;
 import org.symphonyoss.symphony.pod.model.UserPresence;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 /**
  *
  *
- * Simple example of the Presence Service.
+ * Simple example to set user presence.
  *
  * It will send a message to a call.home.user and listen/create new Chat sessions.
  *
@@ -62,13 +69,13 @@ import org.symphonyoss.symphony.pod.model.UserPresence;
  *
  * Created by Frank Tarsillo on 5/15/2016.
  */
-public class PresenceServiceExample implements PresenceListener {
+public class SetPresenceExample implements PresenceListener {
 
 
-    private final Logger logger = LoggerFactory.getLogger(PresenceServiceExample.class);
+    private final Logger logger = LoggerFactory.getLogger(SetPresenceExample.class);
     private SymphonyClient symClient;
 
-    public PresenceServiceExample() {
+    public SetPresenceExample() {
 
 
         init();
@@ -80,7 +87,7 @@ public class PresenceServiceExample implements PresenceListener {
 
 
 
-        new PresenceServiceExample();
+        new SetPresenceExample();
 
     }
 
@@ -117,7 +124,7 @@ public class PresenceServiceExample implements PresenceListener {
             //With a valid SymAuth we can now init our client.
             symClient.init(
                     symAuth,
-                    System.getProperty("bot.user") + System.getProperty("bot.domain"),
+                    System.getProperty("bot.user") + "@" + System.getProperty("bot.domain"),
                     System.getProperty("symphony.agent.agent.url"),
                     System.getProperty("symphony.agent.pod.url")
             );
@@ -125,7 +132,31 @@ public class PresenceServiceExample implements PresenceListener {
 
             symClient.getPresenceService().addPresenceListener(this);
 
-            symClient.getPresenceClient().getAllUserPresence();
+            List<Presence> presences = new ArrayList<>();
+            Presence presence = new Presence();
+            presence.setCategory(Presence.CategoryEnum.BUSY);
+            presences.add(presence);
+            presence = new Presence();
+            presence.setCategory(Presence.CategoryEnum.AWAY);
+            presences.add(presence);
+            presence = new Presence();
+            presence.setCategory(Presence.CategoryEnum.AVAILABLE);
+            presences.add(presence);
+
+
+
+
+            for(Presence p: presences) {
+                symClient.getPresenceClient().setUserPresence(symClient.getLocalUser().getId(), p);
+
+                logger.debug("SET PRESENCE TO: {} ", p.getCategory().toString());
+                try {
+                    TimeUnit.SECONDS.sleep(10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+            }
 
         } catch (Exception e) {
             e.printStackTrace();

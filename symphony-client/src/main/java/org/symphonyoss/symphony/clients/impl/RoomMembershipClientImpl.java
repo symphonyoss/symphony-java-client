@@ -68,7 +68,7 @@ public class RoomMembershipClientImpl implements RoomMembershipClient {
         try {
             return roomMembershipApi.v1RoomIdMembershipListGet(roomId,symAuth.getSessionToken().getToken());
         } catch (ApiException e) {
-            throw new SymException("Failed to retrieve room membership for room ID: " + roomId, e.getCause());
+            throw new SymException("Failed to retrieve room membership for room ID: " + roomId, e);
         }
 
 
