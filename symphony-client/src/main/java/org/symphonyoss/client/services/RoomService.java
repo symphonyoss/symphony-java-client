@@ -117,9 +117,19 @@ public class RoomService implements RoomServiceListener {
                 addRoom(symMessage.getStreamId());
             }
 
+
+            for(RoomServiceListener roomServiceListener: roomServiceListeners){
+
+                roomServiceListener.onMessage(symMessage);
+
+            }
+
+
+
             for (String stream : roomsByStream.keySet()) {
 
-                RoomListener roomListener = roomsByStream.get(stream).getRoomListener();
+
+                RoomListener roomListener = roomsByStream.get(symMessage.getStreamId()).getRoomListener();
                 if (roomListener != null)
                     roomListener.onRoomMessage(symMessage);
 
