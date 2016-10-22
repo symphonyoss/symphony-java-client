@@ -30,6 +30,7 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
     * Request user presence
 * Connections request handling including auto-accept.
 * Attachment Support
+* Publish formatted articles (news) using ShareApi
 * MessageML utilities
     * Support for command line processing
     * Conversion from MessageML to Text
@@ -43,8 +44,14 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 
 ##Change log and notes
 ### V1.0.0 (SNAPSHOT)
+* Compatible with 1.40.1 API, V2 and Agent 1.39+
+* ShareAPI supporting article (news) posts implemented
+* Automatic Auth refresh in client
+* ChatService enhancements including remote user identification on Chat creation.
+* Added get users by stream
 * Performance Updates
 * Command Framework (TBD)
+* Bug fixes and documentation
 
 ### V0.9.1 (Stable)
 
