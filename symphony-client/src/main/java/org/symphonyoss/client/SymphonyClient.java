@@ -71,11 +71,5 @@ public interface SymphonyClient {
     String getServiceUrl();
 
 
-
-
-
-
-
-
-
+    ShareClient getShareClient();
 }
