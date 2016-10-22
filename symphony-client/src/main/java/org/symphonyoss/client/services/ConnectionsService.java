@@ -32,7 +32,12 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Created by frank.tarsillo on 9/9/2016.
+ * This service handles incoming connection requests and provides options for automatically accepting requests.
+ *
+ * All actions for connection requests should be handled through {@link org.symphonyoss.symphony.clients.ConnectionsClient  }
+ *
+ *
+ * @author Frank Tarsillo on 5/16/2016.
  */
 public class ConnectionsService implements ConnectionsListener{
     private final SymphonyClient symClient;
@@ -47,6 +52,14 @@ public class ConnectionsService implements ConnectionsListener{
     }
 
 
+    /**
+     * New connection request notification message from callback.
+     * Issue event to all registered listeners.
+     *
+     * Option to auto-accept on new event.
+     *
+     * @param userConnection
+     */
     @Override
     public void onConnectionNotification(SymUserConnection userConnection) {
 
@@ -56,6 +69,7 @@ public class ConnectionsService implements ConnectionsListener{
 
     }
 
+    //Auto Accept if true.
     try {
         if (autoAccept)
             symClient.getConnectionsClient().acceptConnectionRequest(userConnection);

@@ -207,14 +207,13 @@ public class ChatService implements ChatListener {
             chat.setLocalUser(symClient.getLocalUser());
             chat.setStreamId(message.getStreamId());
             chat.setLastMessage(message);
-            //Enrich user data..
-            SymUser remoteUser = symClient.getUsersClient().getUserFromId(message.getFromUserId());
 
-            if (remoteUser != null) {
+            //Enrich all user data..
+            Set<SymUser> remoteUsers = symClient.getUsersClient().getUsersFromStream(message.getStreamId());
 
-                Set<SymUser> remoteUserSet = new HashSet<>();
-                remoteUserSet.add(remoteUser);
-                chat.setRemoteUsers(remoteUserSet);
+            if (remoteUsers != null) {
+
+                chat.setRemoteUsers(remoteUsers);
 
                 return chat;
             }
@@ -267,22 +266,23 @@ public class ChatService implements ChatListener {
                 //Chat already exist..
             } else {
 
+                //This should no longer be required...
 
-                try {
-                    //We need to check if incoming user is registered as a remote user...if not add them.
-                    //This is lazy loading remote users into the active conversation.
-                    if (chat.getRemoteUsers().stream().filter(symUser -> symUser.getId().equals(message.getFromUserId())).findAny().orElse(null) == null) {
-
-                        //Get full detail for the remote users..and add to existing Chat.
-                        SymUser symUser = symClient.getUsersClient().getUserFromId(message.getFromUserId());
-                        if (symUser != null) {
-                            chat.getRemoteUsers().add(symUser);
-                            logger.info("Added user {}:{} to conversation.", symUser.getId(), symUser.getDisplayName());
-                        }
-                    }
-                } catch (UsersClientException e) {
-                    logger.error("Failed to add user to multi-party chat. Failed to identify user ID: {}", message.getFromUserId());
-                }
+//                try {
+//                    //We need to check if incoming user is registered as a remote user...if not add them.
+//                    //This is lazy loading remote users into the active conversation.
+//                    if (chat.getRemoteUsers().stream().filter(symUser -> symUser.getId().equals(message.getFromUserId())).findAny().orElse(null) == null) {
+//
+//                        //Get full detail for the remote users..and add to existing Chat.
+//                        SymUser symUser = symClient.getUsersClient().getUserFromId(message.getFromUserId());
+//                        if (symUser != null) {
+//                            chat.getRemoteUsers().add(symUser);
+//                            logger.info("Added user {}:{} to conversation.", symUser.getId(), symUser.getDisplayName());
+//                        }
+//                    }
+//                } catch (UsersClientException e) {
+//                    logger.error("Failed to add user to multi-party chat. Failed to identify user ID: {}", message.getFromUserId());
+//                }
 
                 //Inform all Chat listners of new message..
                 chat.onChatMessage(message);

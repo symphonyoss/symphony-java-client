@@ -25,13 +25,20 @@ package org.symphonyoss.symphony.clients.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.model.SymAuth;
+import org.symphonyoss.exceptions.SymException;
 import org.symphonyoss.exceptions.UserNotFoundException;
 import org.symphonyoss.exceptions.UsersClientException;
 import org.symphonyoss.symphony.clients.model.SymUser;
+import org.symphonyoss.symphony.pod.api.RoomMembershipApi;
 import org.symphonyoss.symphony.pod.api.UsersApi;
 import org.symphonyoss.symphony.pod.invoker.ApiClient;
 import org.symphonyoss.symphony.pod.invoker.ApiException;
+import org.symphonyoss.symphony.pod.model.MemberInfo;
+import org.symphonyoss.symphony.pod.model.MembershipList;
 import org.symphonyoss.symphony.pod.model.UserV2;
+
+import java.util.HashSet;
+import java.util.Set;
 
 
 /**
@@ -97,8 +104,8 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
 
         UserV2 user;
         try {
-            user =  usersApi.v2UserGet(symAuth.getSessionToken().getToken(), userId, null, null, false);
-        }catch(ApiException e){
+            user = usersApi.v2UserGet(symAuth.getSessionToken().getToken(), userId, null, null, false);
+        } catch (ApiException e) {
             throw new UsersClientException("API Error communicating with POD, while retrieving user details for " + userId, e);
         }
 
@@ -126,8 +133,8 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
 
         UserV2 user;
         try {
-            user =  usersApi.v2UserGet(symAuth.getSessionToken().getToken(), null, null, userName, false);
-        }catch(ApiException e){
+            user = usersApi.v2UserGet(symAuth.getSessionToken().getToken(), null, null, userName, false);
+        } catch (ApiException e) {
             throw new UsersClientException("API Error communicating with POD, while retrieving user details for " + userName, e);
         }
 
@@ -139,6 +146,35 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
 
 
         throw new UserNotFoundException("Could not find user from user name: " + userName);
+    }
+
+    @Override
+    public Set<SymUser> getUsersFromStream(String streamId) throws UsersClientException {
+
+        if (streamId == null) {
+            throw new NullPointerException("Stream ID was not provided...");
+        }
+
+        //A bit odd that its coming from room membership API!
+        RoomMembershipApi roomMembershipApi = new RoomMembershipApi(apiClient);
+
+        try {
+            MembershipList memberInfos = roomMembershipApi.v1RoomIdMembershipListGet(streamId, symAuth.getSessionToken().getToken());
+
+            Set<SymUser> users = new HashSet<>();
+            for (MemberInfo memberInfo : memberInfos) {
+
+                users.add(getUserFromId(memberInfo.getId()));
+
+
+            }
+            return users;
+
+        } catch (ApiException e) {
+            throw new UsersClientException("Failed to retrieve room membership for room ID: " + streamId, e);
+        }
+
+
     }
 
 }

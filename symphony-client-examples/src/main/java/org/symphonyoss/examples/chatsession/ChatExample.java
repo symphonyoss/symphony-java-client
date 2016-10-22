@@ -139,10 +139,9 @@ public class ChatExample implements ChatListener, ChatServiceListener {
             chat.setLocalUser(symClient.getLocalUser());
             Set<SymUser> remoteUsers = new HashSet<>();
             remoteUsers.add(symClient.getUsersClient().getUserFromEmail(System.getProperty("user.call.home")));
-           // remoteUsers.add(symClient.getUsersClient().getUserFromId(Long.valueOf("69956427334318")));
             chat.setRemoteUsers(remoteUsers);
             chat.addListener(this);
-            chat.setStream(symClient.getStreamsClient().getStream(remoteUsers));
+
 
             //Add the chat to the chat service, in case the "master" continues the conversation.
             symClient.getChatService().addChat(chat);
@@ -156,8 +155,6 @@ public class ChatExample implements ChatListener, ChatServiceListener {
 
             logger.error(ae.getMessage(), ae);
 
-        } catch (StreamsException e) {
-            logger.error("error", e);
         } catch (MessagesException e) {
             logger.error("error", e);
         } catch (UsersClientException e) {
@@ -185,7 +182,7 @@ public class ChatExample implements ChatListener, ChatServiceListener {
         Chat chat = symClient.getChatService().getChatByStream(message.getStreamId());
 
         if(chat!=null)
-            logger.debug("New message is related to chat with users: {}", chat.getRemoteUsers());
+            logger.debug("New message is related to chat with users: {}", remoteUsersString(chat.getRemoteUsers()));
 
 
 
@@ -197,12 +194,25 @@ public class ChatExample implements ChatListener, ChatServiceListener {
 
         chat.addListener(this);
 
-        logger.debug("New chat session detected on stream {} with {}", chat.getStream().getId(), chat.getRemoteUsers());
+        logger.debug("New chat session detected on stream {} with {}", chat.getStream().getId(), remoteUsersString(chat.getRemoteUsers()));
+
+
     }
 
     @Override
     public void onRemovedChat(Chat chat) {
 
+    }
+
+    private  String remoteUsersString(Set<SymUser> symUsers){
+
+        String output = "";
+        for(SymUser symUser: symUsers){
+            output += "[" + symUser.getId() + ":" + symUser.getDisplayName() + "] ";
+
+        }
+
+        return output;
     }
 
 }
