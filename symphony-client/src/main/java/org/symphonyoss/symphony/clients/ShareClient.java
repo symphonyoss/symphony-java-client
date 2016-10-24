@@ -1,5 +1,6 @@
 /*
  *
+ *
  * Copyright 2016 The Symphony Software Foundation
  *
  * Licensed to The Symphony Software Foundation (SSF) under one
@@ -10,7 +11,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -18,24 +19,20 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
+ *
+ *
  */
 
 package org.symphonyoss.symphony.clients;
 
-import org.symphonyoss.exceptions.UsersClientException;
-import org.symphonyoss.symphony.clients.model.SymUser;
 
-import java.util.Set;
+import org.symphonyoss.client.model.SymShareArticle;
+import org.symphonyoss.exceptions.ShareException;
 
 /**
- * Created by frank.tarsillo on 6/6/2016.
+ * Created by frank.tarsillo on 9/9/2016.
  */
-public interface UsersClient {
-    SymUser getUserFromEmail(String email) throws UsersClientException;
+public interface ShareClient {
 
-    SymUser getUserFromId(Long userId) throws UsersClientException;
-
-    SymUser getUserFromName(String userName) throws UsersClientException;
-
-    Set<SymUser> getUsersFromStream(String streamId) throws UsersClientException;
+    void shareArticle(String streamId, SymShareArticle article) throws ShareException;
 }

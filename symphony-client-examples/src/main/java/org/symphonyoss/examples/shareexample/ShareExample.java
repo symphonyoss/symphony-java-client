@@ -1,5 +1,6 @@
 /*
  *
+ *
  * Copyright 2016 The Symphony Software Foundation
  *
  * Licensed to The Symphony Software Foundation (SSF) under one
@@ -10,7 +11,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -18,9 +19,11 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
+ *
+ *
  */
 
-package org.symphonyoss.examples.chatsession;
+package org.symphonyoss.examples.shareexample;
 
 
 import org.slf4j.Logger;
@@ -29,6 +32,7 @@ import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.client.SymphonyClientFactory;
 import org.symphonyoss.client.model.Chat;
 import org.symphonyoss.client.model.SymAuth;
+import org.symphonyoss.client.model.SymShareArticle;
 import org.symphonyoss.client.services.ChatListener;
 import org.symphonyoss.client.services.ChatServiceListener;
 import org.symphonyoss.exceptions.*;
@@ -41,9 +45,7 @@ import java.util.Set;
 
 
 /**
- * Simple example of the ChatService.
- * <p>
- * It will send a message to a call.home.user and listen/create new Chat sessions.
+ * * Simple example of the ShareClient which will send a ShareArticle to a stream.
  * <p>
  * <p>
  * <p>
@@ -66,14 +68,14 @@ import java.util.Set;
  * <p>
  * Created by Frank Tarsillo on 5/15/2016.
  */
-public class ChatExample implements ChatListener, ChatServiceListener {
+public class ShareExample  {
 
 
-    private final Logger logger = LoggerFactory.getLogger(org.symphonyoss.examples.chatsession.ChatExample.class);
+    private final Logger logger = LoggerFactory.getLogger(ShareExample.class);
 
     private SymphonyClient symClient;
 
-    public ChatExample() {
+    public ShareExample() {
 
 
         init();
@@ -83,7 +85,7 @@ public class ChatExample implements ChatListener, ChatServiceListener {
 
     public static void main(String[] args) {
 
-        new org.symphonyoss.examples.chatsession.ChatExample();
+        new ShareExample();
 
     }
 
@@ -125,94 +127,37 @@ public class ChatExample implements ChatListener, ChatServiceListener {
                     System.getProperty("symphony.agent.pod.url")
             );
 
-            //Will notify the bot of new Chat conversations.
-            symClient.getChatService().addListener(this);
+            SymShareArticle shareArticle = new SymShareArticle();
 
-            //A message to send when the BOT comes online.
-            SymMessage aMessage = new SymMessage();
-            aMessage.setFormat(SymMessage.Format.TEXT);
-            aMessage.setMessage("Hello master, I'm alive again....");
+            shareArticle.setArticleId("ID ID");
+            shareArticle.setTitle("TEST");
+            shareArticle.setSummary(" TEST SUMMARY");
+            shareArticle.setMessage("A message from bot..");
+            shareArticle.setArticleUrl("http://www.cnn.com");
+            shareArticle.setSubTitle("TEST Subtitle");
+            shareArticle.setPublisher("A publisher");
+            shareArticle.setAuthor("Frank Tarsillo");
+            shareArticle.setAppId("APP ID");
 
+            symClient.getShareClient().shareArticle(symClient.getStreamsClient().getStreamFromEmail("frank.tarsillo@markit.com").getId(),shareArticle);
 
-            //Creates a Chat session with that will receive the online message.
-            Chat chat = new Chat();
-            chat.setLocalUser(symClient.getLocalUser());
-            Set<SymUser> remoteUsers = new HashSet<>();
-            remoteUsers.add(symClient.getUsersClient().getUserFromEmail(System.getProperty("user.call.home")));
-            chat.setRemoteUsers(remoteUsers);
-            chat.addListener(this);
-
-
-            //Add the chat to the chat service, in case the "master" continues the conversation.
-            symClient.getChatService().addChat(chat);
-
-
-            //Send a message to the master user.
-            symClient.getMessageService().sendMessage(chat, aMessage);
 
 
         } catch (AuthorizationException ae) {
 
             logger.error(ae.getMessage(), ae);
 
-        } catch (MessagesException e) {
+        }catch (InitException e) {
             logger.error("error", e);
-        } catch (UsersClientException e) {
-            logger.error("error", e);
-        } catch (InitException e) {
-            logger.error("error", e);
+        } catch (StreamsException e) {
+            e.printStackTrace();
+        } catch (ShareException e) {
+            e.printStackTrace();
         }
 
     }
 
 
 
-    //Chat sessions callback method.
-    @Override
-    public void onChatMessage(SymMessage message) {
-        if (message == null)
-            return;
-
-        logger.debug("TS: {}\nFrom ID: {}\nSymMessage: {}\nSymMessage Type: {}",
-                message.getTimestamp(),
-                message.getFromUserId(),
-                message.getMessage(),
-                message.getMessageType());
-
-        Chat chat = symClient.getChatService().getChatByStream(message.getStreamId());
-
-        if(chat!=null)
-            logger.debug("New message is related to chat with users: {}", remoteUsersString(chat.getRemoteUsers()));
-
-
-
-
-    }
-
-    @Override
-    public void onNewChat(Chat chat) {
-
-        chat.addListener(this);
-
-        logger.debug("New chat session detected on stream {} with {}", chat.getStream().getId(), remoteUsersString(chat.getRemoteUsers()));
-
-
-    }
-
-    @Override
-    public void onRemovedChat(Chat chat) {
-
-    }
-
-    private  String remoteUsersString(Set<SymUser> symUsers){
-
-        String output = "";
-        for(SymUser symUser: symUsers){
-            output += "[" + symUser.getId() + ":" + symUser.getDisplayName() + "] ";
-
-        }
-
-        return output;
-    }
 
 }

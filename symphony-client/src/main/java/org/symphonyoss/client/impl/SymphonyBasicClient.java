@@ -26,6 +26,7 @@ package org.symphonyoss.client.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.client.common.Constants;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.client.services.ChatService;
 import org.symphonyoss.client.services.MessageService;
@@ -35,6 +36,9 @@ import org.symphonyoss.exceptions.InitException;
 import org.symphonyoss.exceptions.SymException;
 import org.symphonyoss.symphony.clients.*;
 import org.symphonyoss.symphony.clients.model.SymUser;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Implements a full abstraction of underlying clients and exposes services to simplify
@@ -68,7 +72,8 @@ public class SymphonyBasicClient implements SymphonyClient {
     private RoomMembershipClient roomMembershipClient;
     private AttachmentsClient attachmentsClient;
     private ConnectionsClient connectionsClient;
-
+    private ShareClient shareClient;
+    private final long SYMAUTH_REFRESH_TIME= Long.valueOf(System.getProperty(Constants.SYMAUTH_REFRESH_TIME,"7200000"));
 
     public SymphonyBasicClient() {
 
@@ -106,6 +111,7 @@ public class SymphonyBasicClient implements SymphonyClient {
         presenceClient = PresenceFactory.getClient(this, PresenceFactory.TYPE.DEFAULT);
         streamsClient = StreamsFactory.getClient(this, StreamsFactory.TYPE.DEFAULT);
         usersClient = UsersFactory.getClient(this, UsersFactory.TYPE.DEFAULT);
+        shareClient = ShareFactory.getClient(this,ShareFactory.TYPE.DEFAULT);
         attachmentsClient = AttachmentsFactory.getClient(this, AttachmentsFactory.TYPE.DEFAULT);
         roomMembershipClient = RoomMembershipFactory.getClient(this, RoomMembershipFactory.TYPE.DEFAULT);
         connectionsClient = ConnectionsFactory.getClient(this, ConnectionsFactory.TYPE.DEFAULT);
@@ -131,6 +137,13 @@ public class SymphonyBasicClient implements SymphonyClient {
                     "AgentUrl: " + agentUrl + "\n" +
                     "ServiceUrl: " + serviceUrl);
         }
+
+
+        //Refresh token every so often..
+        TimerTask authRefreshTask = new AuthRefreshTask(this);
+        // running timer task as daemon thread
+        Timer timer = new Timer(true);
+        timer.scheduleAtFixedRate(authRefreshTask, SYMAUTH_REFRESH_TIME, SYMAUTH_REFRESH_TIME);
 
 
     }
@@ -242,6 +255,9 @@ public class SymphonyBasicClient implements SymphonyClient {
     public ConnectionsClient getConnectionsClient() {
         return connectionsClient;
     }
+
+    @Override
+    public ShareClient getShareClient(){return shareClient;}
 
 
 }

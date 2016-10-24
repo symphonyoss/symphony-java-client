@@ -1,5 +1,6 @@
 /*
  *
+ *
  * Copyright 2016 The Symphony Software Foundation
  *
  * Licensed to The Symphony Software Foundation (SSF) under one
@@ -10,7 +11,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -18,6 +19,8 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
+ *
+ *
  */
 
 package org.symphonyoss.symphony.clients.impl;
@@ -25,32 +28,34 @@ package org.symphonyoss.symphony.clients.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.model.SymAuth;
-import org.symphonyoss.exceptions.SymException;
-import org.symphonyoss.symphony.clients.RoomMembershipClient;
-import org.symphonyoss.symphony.pod.api.RoomMembershipApi;
-import org.symphonyoss.symphony.pod.invoker.ApiClient;
-import org.symphonyoss.symphony.pod.invoker.ApiException;
-import org.symphonyoss.symphony.pod.model.MembershipList;
-
-
+import org.symphonyoss.client.model.SymShareArticle;
+import org.symphonyoss.exceptions.ShareException;
+import org.symphonyoss.symphony.agent.api.ShareApi;
+import org.symphonyoss.symphony.agent.invoker.ApiException;
+import org.symphonyoss.symphony.agent.model.ShareContent;
+import org.symphonyoss.symphony.clients.ShareClient;
+import org.symphonyoss.symphony.agent.invoker.ApiClient;
 
 
 /**
- * Created by Frank Tarsillo on 5/15/2016.
+ * @author Frank Tarsillo on 10/22/2016.
  */
-public class RoomMembershipClientImpl implements RoomMembershipClient {
+public class ShareClientImpl implements ShareClient{
+
     private final SymAuth symAuth;
+    private final String serviceUrl;
     private final ApiClient apiClient;
 
-    private Logger logger = LoggerFactory.getLogger(RoomMembershipClientImpl.class);
+    private final Logger logger = LoggerFactory.getLogger(StreamsClientImpl.class);
 
-    public RoomMembershipClientImpl(SymAuth symAuth, String serviceUrl) {
+    public ShareClientImpl(SymAuth symAuth, String serviceUrl) {
 
         this.symAuth = symAuth;
+        this.serviceUrl = serviceUrl;
 
 
         //Get Service client to query for userID.
-        apiClient = org.symphonyoss.symphony.pod.invoker.Configuration.getDefaultApiClient();
+        apiClient = org.symphonyoss.symphony.agent.invoker.Configuration.getDefaultApiClient();
         apiClient.setBasePath(serviceUrl);
 
         apiClient.addDefaultHeader(symAuth.getSessionToken().getName(), symAuth.getSessionToken().getToken());
@@ -58,26 +63,21 @@ public class RoomMembershipClientImpl implements RoomMembershipClient {
 
     }
 
+    @Override
+    public void shareArticle(String streamId, SymShareArticle article) throws ShareException{
 
-    public MembershipList getRoomMembership(String roomId) throws SymException {
+        ShareApi shareApi = new ShareApi(apiClient);
 
-
-        if (roomId == null) {
-            throw new NullPointerException("Room ID was not provided...");
-        }
-        RoomMembershipApi roomMembershipApi = new RoomMembershipApi(apiClient);
+        ShareContent shareContent = new ShareContent();
+        shareContent.setContent(SymShareArticle.toShareArticle(article));
+        shareContent.setType("com.symphony.sharing.article");
 
         try {
-            return roomMembershipApi.v1RoomIdMembershipListGet(roomId,symAuth.getSessionToken().getToken());
+            shareApi.v1StreamSidSharePost(streamId, symAuth.getSessionToken().getToken(),symAuth.getKeyToken().getToken(),shareContent);
         } catch (ApiException e) {
-            throw new SymException("Failed to retrieve room membership for room ID: " + roomId, e);
+          throw new ShareException(e);
         }
 
 
     }
-
-
-
-
-
 }

@@ -25,6 +25,7 @@ package org.symphonyoss.client.services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.client.common.Constants;
 import org.symphonyoss.exceptions.ConnectionsException;
 import org.symphonyoss.symphony.clients.model.SymUserConnection;
 
@@ -34,7 +35,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by Frank Tarsillo on 5/15/2016.
+ * Connections worker thread will poll for changes in connection requests and issue a callback to the registered
+ * {@link #connectionsListener}
+ *
+ *
+ * @author Frank Tarsillo
  */
 class ConnectionsWorker implements Runnable {
     private final SymphonyClient symClient;
@@ -42,6 +47,7 @@ class ConnectionsWorker implements Runnable {
     private final ConcurrentHashMap<Long, SymUserConnection> pendingConnections = new ConcurrentHashMap<>();
     private final Logger logger = LoggerFactory.getLogger(ConnectionsWorker.class);
     private boolean KILL = false;
+    private final int CONNECTIONS_POLL_SLEEP=Integer.valueOf(System.getProperty(Constants.CONNECTIONS_POLL_SLEEP,"30"));
 
 
     public ConnectionsWorker(SymphonyClient symClient, ConnectionsListener connectionsListener) {
@@ -58,9 +64,12 @@ class ConnectionsWorker implements Runnable {
 
         List<SymUserConnection> symUserConnectionList;
 
+        //Poll
         while (true) {
+
+            //Delay
             try {
-                TimeUnit.SECONDS.sleep(30);
+                TimeUnit.SECONDS.sleep(CONNECTIONS_POLL_SLEEP);
             } catch (InterruptedException ie) {
                 logger.error("Interrupt failed on presence retrieval",ie);
             }
