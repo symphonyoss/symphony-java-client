@@ -30,12 +30,15 @@ import org.symphonyoss.symphony.clients.impl.ConnectionsClientImpl;
  */
 public class ConnectionsFactory {
 
-    public enum TYPE { DEFAULT }
+    public enum TYPE { DEFAULT, HTTPCLIENT }
 
     public static ConnectionsClient getClient(SymphonyClient symClient, TYPE type){
 
+        if(type.equals(TYPE.HTTPCLIENT)) {
+            return new ConnectionsClientImpl(symClient.getSymAuth(), symClient.getServiceUrl(),symClient.getDefaultHttpClient());
+        }else{
             return new ConnectionsClientImpl(symClient.getSymAuth(), symClient.getServiceUrl());
-
+        }
     }
 
 }

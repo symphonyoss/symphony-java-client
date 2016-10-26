@@ -34,12 +34,15 @@ import org.symphonyoss.symphony.clients.impl.ShareClientImpl;
  */
 public class ShareFactory {
 
-    public enum TYPE { DEFAULT }
+    public enum TYPE {DEFAULT, HTTPCLIENT}
 
-    public static ShareClient getClient(SymphonyClient symClient, TYPE type){
+    public static ShareClient getClient(SymphonyClient symClient, TYPE type) {
 
+        if (type.equals(TYPE.HTTPCLIENT)) {
+            return new ShareClientImpl(symClient.getSymAuth(), symClient.getServiceUrl(), symClient.getDefaultHttpClient());
+        } else {
             return new ShareClientImpl(symClient.getSymAuth(), symClient.getServiceUrl());
-
+        }
     }
 
 }

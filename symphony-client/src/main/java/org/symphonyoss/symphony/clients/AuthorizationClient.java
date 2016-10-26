@@ -31,6 +31,8 @@ import org.symphonyoss.symphony.authenticator.invoker.ApiException;
 import org.symphonyoss.symphony.authenticator.invoker.Configuration;
 import org.symphonyoss.symphony.authenticator.model.Token;
 
+import javax.ws.rs.client.Client;
+
 /**
  * Created by Frank Tarsillo on 5/15/2016.
  */
@@ -41,19 +43,28 @@ public class AuthorizationClient {
     private final String keyUrl;
     private boolean loginStatus = false;
     private final Logger logger = LoggerFactory.getLogger(AuthorizationClient.class);
-
+    private Client httpClient= null;
 
 
     public AuthorizationClient(String sessionUrl, String keyUrl){
 
 
         this.sessionUrl = sessionUrl;
-
         this.keyUrl = keyUrl;
 
 
 
     }
+
+    public AuthorizationClient(String sessionUrl, String keyUrl, Client httpClient){
+        this.sessionUrl = sessionUrl;
+        this.keyUrl = keyUrl;
+
+        this.httpClient = httpClient;
+
+
+    }
+
 
     public SymAuth authenticate() throws AuthorizationException{
 
@@ -67,8 +78,15 @@ public class AuthorizationClient {
             symAuth = new SymAuth();
             org.symphonyoss.symphony.authenticator.invoker.ApiClient authenticatorClient = Configuration.getDefaultApiClient();
 
+
+
+            if(httpClient != null)
+                authenticatorClient.setHttpClient(httpClient);
+
+
             // Configure the authenticator connection
             authenticatorClient.setBasePath(sessionUrl);
+
 
             // Get the authentication API
             AuthenticationApi authenticationApi = new AuthenticationApi(authenticatorClient);

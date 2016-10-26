@@ -36,6 +36,8 @@ import org.symphonyoss.symphony.agent.model.ShareContent;
 import org.symphonyoss.symphony.clients.ShareClient;
 import org.symphonyoss.symphony.agent.invoker.ApiClient;
 
+import javax.ws.rs.client.Client;
+
 
 /**
  * @author Frank Tarsillo on 10/22/2016.
@@ -62,6 +64,28 @@ public class ShareClientImpl implements ShareClient{
         apiClient.addDefaultHeader(symAuth.getKeyToken().getName(), symAuth.getKeyToken().getToken());
 
     }
+
+    /**
+     * If you need to override HttpClient.  Important for handling individual client certs.
+     * @param symAuth
+     * @param serviceUrl
+     * @param httpClient
+     */
+    public ShareClientImpl(SymAuth symAuth, String serviceUrl, Client httpClient) {
+        this.symAuth = symAuth;
+        this.serviceUrl = serviceUrl;
+
+        //Get Service client to query for userID.
+        apiClient = org.symphonyoss.symphony.agent.invoker.Configuration.getDefaultApiClient();
+        apiClient.setHttpClient(httpClient);
+        apiClient.setBasePath(serviceUrl);
+
+        apiClient.addDefaultHeader(symAuth.getSessionToken().getName(), symAuth.getSessionToken().getToken());
+        apiClient.addDefaultHeader(symAuth.getKeyToken().getName(), symAuth.getKeyToken().getToken());
+
+
+    }
+
 
     @Override
     public void shareArticle(String streamId, SymShareArticle article) throws ShareException{

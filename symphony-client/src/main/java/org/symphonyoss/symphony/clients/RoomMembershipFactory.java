@@ -30,12 +30,15 @@ import org.symphonyoss.symphony.clients.impl.RoomMembershipClientImpl;
  */
 public class RoomMembershipFactory {
 
-    public enum TYPE { DEFAULT }
+    public enum TYPE { DEFAULT, HTTPCLIENT }
 
     public static RoomMembershipClient getClient(SymphonyClient symClient, TYPE type){
 
+        if(type.equals(TYPE.HTTPCLIENT)) {
+            return new RoomMembershipClientImpl(symClient.getSymAuth(), symClient.getServiceUrl(), symClient.getDefaultHttpClient());
+        }else{
             return new RoomMembershipClientImpl(symClient.getSymAuth(), symClient.getServiceUrl());
-
+        }
     }
 
 }

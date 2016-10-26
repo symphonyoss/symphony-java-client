@@ -37,6 +37,7 @@ import org.symphonyoss.exceptions.SymException;
 import org.symphonyoss.symphony.clients.*;
 import org.symphonyoss.symphony.clients.model.SymUser;
 
+import javax.ws.rs.client.Client;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -73,6 +74,7 @@ public class SymphonyBasicClient implements SymphonyClient {
     private AttachmentsClient attachmentsClient;
     private ConnectionsClient connectionsClient;
     private ShareClient shareClient;
+    private Client defaultHttpClient;
     private final long SYMAUTH_REFRESH_TIME= Long.valueOf(System.getProperty(Constants.SYMAUTH_REFRESH_TIME,"7200000"));
 
     public SymphonyBasicClient() {
@@ -105,16 +107,17 @@ public class SymphonyBasicClient implements SymphonyClient {
         this.serviceUrl = serviceUrl;
 
 
+
         //Init all clients.
-        dataFeedClient = DataFeedFactory.getClient(this, DataFeedFactory.TYPE.DEFAULT);
-        messagesClient = MessagesFactory.getClient(this, MessagesFactory.TYPE.DEFAULT);
-        presenceClient = PresenceFactory.getClient(this, PresenceFactory.TYPE.DEFAULT);
-        streamsClient = StreamsFactory.getClient(this, StreamsFactory.TYPE.DEFAULT);
-        usersClient = UsersFactory.getClient(this, UsersFactory.TYPE.DEFAULT);
-        shareClient = ShareFactory.getClient(this,ShareFactory.TYPE.DEFAULT);
-        attachmentsClient = AttachmentsFactory.getClient(this, AttachmentsFactory.TYPE.DEFAULT);
-        roomMembershipClient = RoomMembershipFactory.getClient(this, RoomMembershipFactory.TYPE.DEFAULT);
-        connectionsClient = ConnectionsFactory.getClient(this, ConnectionsFactory.TYPE.DEFAULT);
+        dataFeedClient = (defaultHttpClient==null)?DataFeedFactory.getClient(this, DataFeedFactory.TYPE.DEFAULT):DataFeedFactory.getClient(this, DataFeedFactory.TYPE.HTTPCLIENT);
+        messagesClient = (defaultHttpClient==null)?MessagesFactory.getClient(this, MessagesFactory.TYPE.DEFAULT):MessagesFactory.getClient(this, MessagesFactory.TYPE.HTTPCLIENT);
+        presenceClient = (defaultHttpClient==null)?PresenceFactory.getClient(this, PresenceFactory.TYPE.DEFAULT):PresenceFactory.getClient(this, PresenceFactory.TYPE.HTTPCLIENT);
+        streamsClient = (defaultHttpClient==null)?StreamsFactory.getClient(this, StreamsFactory.TYPE.DEFAULT):StreamsFactory.getClient(this, StreamsFactory.TYPE.HTTPCLIENT);
+        usersClient = (defaultHttpClient==null)?UsersFactory.getClient(this, UsersFactory.TYPE.DEFAULT):UsersFactory.getClient(this, UsersFactory.TYPE.HTTPCLIENT);
+        shareClient = (defaultHttpClient==null)?ShareFactory.getClient(this,ShareFactory.TYPE.DEFAULT):ShareFactory.getClient(this,ShareFactory.TYPE.DEFAULT);
+        attachmentsClient = (defaultHttpClient==null)?AttachmentsFactory.getClient(this, AttachmentsFactory.TYPE.DEFAULT):AttachmentsFactory.getClient(this, AttachmentsFactory.TYPE.HTTPCLIENT);
+        roomMembershipClient = (defaultHttpClient==null)?RoomMembershipFactory.getClient(this, RoomMembershipFactory.TYPE.DEFAULT):RoomMembershipFactory.getClient(this, RoomMembershipFactory.TYPE.HTTPCLIENT);
+        connectionsClient = (defaultHttpClient==null)?ConnectionsFactory.getClient(this, ConnectionsFactory.TYPE.DEFAULT):ConnectionsFactory.getClient(this, ConnectionsFactory.TYPE.HTTPCLIENT);
 
 
         try {
@@ -146,6 +149,24 @@ public class SymphonyBasicClient implements SymphonyClient {
         timer.scheduleAtFixedRate(authRefreshTask, SYMAUTH_REFRESH_TIME, SYMAUTH_REFRESH_TIME);
 
 
+    }
+
+    /**
+     * Purpose of this constructor is to support multiple SymphonyClient instances running within a single VM with
+     * different client certs.
+     *
+     * @param httpClient
+     * @param symAuth
+     * @param email
+     * @param agentUrl
+     * @param serviceUrl
+     * @throws InitException
+     */
+    @Override
+    public void init(Client httpClient, SymAuth symAuth, String email, String agentUrl, String serviceUrl) throws InitException {
+
+        this.defaultHttpClient = httpClient;
+        init(symAuth,email,agentUrl,serviceUrl);
     }
 
     public SymAuth getSymAuth() {
@@ -259,7 +280,20 @@ public class SymphonyBasicClient implements SymphonyClient {
     @Override
     public ShareClient getShareClient(){return shareClient;}
 
+    /**
+     * Provides the default http client if one is set.
+     *
+     * @return Default http client if set
+     */
+    @Override
+    public Client getDefaultHttpClient() {
+        return defaultHttpClient;
+    }
 
+    @Override
+    public void setDefaultHttpClient(Client defaultHttpClient) {
+        this.defaultHttpClient = defaultHttpClient;
+    }
 }
 
 
