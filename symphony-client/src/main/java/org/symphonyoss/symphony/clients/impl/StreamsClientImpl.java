@@ -38,6 +38,7 @@ import org.symphonyoss.symphony.pod.invoker.ApiException;
 import org.symphonyoss.symphony.pod.model.Stream;
 import org.symphonyoss.symphony.pod.model.UserIdList;
 
+import javax.ws.rs.client.Client;
 import java.util.Set;
 
 
@@ -48,6 +49,7 @@ public class StreamsClientImpl implements org.symphonyoss.symphony.clients.Strea
     private final SymAuth symAuth;
     private final String serviceUrl;
     private final ApiClient apiClient;
+    private Client httpClient = null;
 
     private final Logger logger = LoggerFactory.getLogger(StreamsClientImpl.class);
 
@@ -64,6 +66,28 @@ public class StreamsClientImpl implements org.symphonyoss.symphony.clients.Strea
 
         apiClient.addDefaultHeader(symAuth.getSessionToken().getName(), symAuth.getSessionToken().getToken());
         apiClient.addDefaultHeader(symAuth.getKeyToken().getName(), symAuth.getKeyToken().getToken());
+
+    }
+
+    /**
+     * If you need to override HttpClient.  Important for handling individual client certs.
+     *
+     * @param symAuth
+     * @param serviceUrl
+     * @param httpClient
+     */
+    public StreamsClientImpl(SymAuth symAuth, String serviceUrl, Client httpClient) {
+        this.symAuth = symAuth;
+        this.serviceUrl = serviceUrl;
+        this.httpClient = httpClient;
+        //Get Service client to query for userID.
+        apiClient = org.symphonyoss.symphony.pod.invoker.Configuration.getDefaultApiClient();
+        apiClient.setHttpClient(httpClient);
+        apiClient.setBasePath(serviceUrl);
+
+        apiClient.addDefaultHeader(symAuth.getSessionToken().getName(), symAuth.getSessionToken().getToken());
+        apiClient.addDefaultHeader(symAuth.getKeyToken().getName(), symAuth.getKeyToken().getToken());
+
 
     }
 
@@ -87,7 +111,7 @@ public class StreamsClientImpl implements org.symphonyoss.symphony.clients.Strea
 
     public Stream getStream(Set<SymUser> users) throws StreamsException {
         if (users == null) {
-             throw new NullPointerException("Users were not provided...");
+            throw new NullPointerException("Users were not provided...");
         }
 
         UserIdList userIdList = new UserIdList();
@@ -129,7 +153,13 @@ public class StreamsClientImpl implements org.symphonyoss.symphony.clients.Strea
             throw new NullPointerException("Email was not provided...");
         }
 
-        UsersClient usersClient = UsersFactory.getClient(symAuth,serviceUrl, UsersFactory.TYPE.DEFAULT);
+        UsersClient usersClient;
+        if (httpClient == null) {
+            usersClient = UsersFactory.getClient(symAuth, serviceUrl, UsersFactory.TYPE.DEFAULT);
+        } else {
+            //not pretty..
+            usersClient = UsersFactory.getClient(symAuth, serviceUrl, httpClient);
+        }
 
 
         try {
@@ -140,7 +170,7 @@ public class StreamsClientImpl implements org.symphonyoss.symphony.clients.Strea
     }
 
 
-    public SymRoomDetail getRoomDetail(String roomId) throws StreamsException{
+    public SymRoomDetail getRoomDetail(String roomId) throws StreamsException {
 
         if (roomId == null) {
             throw new NullPointerException("Room ID was not provided..");
@@ -148,7 +178,7 @@ public class StreamsClientImpl implements org.symphonyoss.symphony.clients.Strea
         StreamsApi streamsApi = new StreamsApi(apiClient);
 
         try {
-            return SymRoomDetail.toSymRoomDetail(streamsApi.v2RoomIdInfoGet(roomId,symAuth.getSessionToken().getToken()));
+            return SymRoomDetail.toSymRoomDetail(streamsApi.v2RoomIdInfoGet(roomId, symAuth.getSessionToken().getToken()));
         } catch (ApiException e) {
             throw new StreamsException("Failed to obtain room information from ID: " + roomId, e);
         }
@@ -156,7 +186,7 @@ public class StreamsClientImpl implements org.symphonyoss.symphony.clients.Strea
     }
 
     @Override
-    public SymRoomDetail createChatRoom(SymRoomAttributes roomAttributes) throws StreamsException{
+    public SymRoomDetail createChatRoom(SymRoomAttributes roomAttributes) throws StreamsException {
 
         if (roomAttributes == null) {
             throw new NullPointerException("Room Attributes were not provided..");
@@ -165,7 +195,7 @@ public class StreamsClientImpl implements org.symphonyoss.symphony.clients.Strea
 
         try {
             return SymRoomDetail.toSymRoomDetail(streamsApi.v2RoomCreatePost(
-                    SymRoomAttributes.toV2RoomAttributes(roomAttributes),symAuth.getSessionToken().getToken())
+                    SymRoomAttributes.toV2RoomAttributes(roomAttributes), symAuth.getSessionToken().getToken())
             );
         } catch (ApiException e) {
             throw new StreamsException("Failed to obtain room information while creating room: " + roomAttributes.getName(), e);
@@ -175,7 +205,7 @@ public class StreamsClientImpl implements org.symphonyoss.symphony.clients.Strea
     }
 
     @Override
-    public SymRoomDetail updateChatRoom(String streamId, SymRoomAttributes roomAttributes) throws StreamsException{
+    public SymRoomDetail updateChatRoom(String streamId, SymRoomAttributes roomAttributes) throws StreamsException {
 
         if (roomAttributes == null) {
             throw new NullPointerException("Room Attributes were not provided..");
@@ -183,8 +213,8 @@ public class StreamsClientImpl implements org.symphonyoss.symphony.clients.Strea
         StreamsApi streamsApi = new StreamsApi(apiClient);
 
         try {
-            return SymRoomDetail.toSymRoomDetail(streamsApi.v2RoomIdUpdatePost( streamId,
-                    SymRoomAttributes.toV2RoomAttributes(roomAttributes),symAuth.getSessionToken().getToken())
+            return SymRoomDetail.toSymRoomDetail(streamsApi.v2RoomIdUpdatePost(streamId,
+                    SymRoomAttributes.toV2RoomAttributes(roomAttributes), symAuth.getSessionToken().getToken())
             );
         } catch (ApiException e) {
             throw new StreamsException("Failed to obtain room information while updating attributes on room: " + roomAttributes.getName(), e);
@@ -192,8 +222,6 @@ public class StreamsClientImpl implements org.symphonyoss.symphony.clients.Strea
 
 
     }
-
-
 
 
 }

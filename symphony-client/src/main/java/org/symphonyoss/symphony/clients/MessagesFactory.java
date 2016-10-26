@@ -30,12 +30,15 @@ import org.symphonyoss.symphony.clients.impl.MessagesClientImpl;
  */
 public class MessagesFactory {
 
-    public enum TYPE { DEFAULT }
+    public enum TYPE {DEFAULT, HTTPCLIENT}
 
-    public static MessagesClient getClient(SymphonyClient symClient, TYPE type){
+    public static MessagesClient getClient(SymphonyClient symClient, TYPE type) {
 
+        if (type.equals(TYPE.HTTPCLIENT)) {
+            return new MessagesClientImpl(symClient.getSymAuth(), symClient.getAgentUrl(), symClient.getDefaultHttpClient());
+        } else {
             return new MessagesClientImpl(symClient.getSymAuth(), symClient.getAgentUrl());
-
+        }
     }
 
 }

@@ -37,6 +37,7 @@ import org.symphonyoss.symphony.pod.model.MemberInfo;
 import org.symphonyoss.symphony.pod.model.MembershipList;
 import org.symphonyoss.symphony.pod.model.UserV2;
 
+import javax.ws.rs.client.Client;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -64,6 +65,29 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
         apiClient.addDefaultHeader(symAuth.getKeyToken().getName(), symAuth.getKeyToken().getToken());
 
     }
+
+    /**
+     * If you need to override HttpClient.  Important for handling individual client certs.
+     * @param symAuth
+     * @param serviceUrl
+     * @param httpClient
+     */
+    public UsersClientImpl(SymAuth symAuth, String serviceUrl, Client httpClient) {
+        this.symAuth = symAuth;
+
+
+        //Get Service client to query for userID.
+        apiClient = org.symphonyoss.symphony.pod.invoker.Configuration.getDefaultApiClient();
+        apiClient.setHttpClient(httpClient);
+        apiClient.setBasePath(serviceUrl);
+
+        apiClient.addDefaultHeader(symAuth.getSessionToken().getName(), symAuth.getSessionToken().getToken());
+        apiClient.addDefaultHeader(symAuth.getKeyToken().getName(), symAuth.getKeyToken().getToken());
+
+
+    }
+
+
 
     public SymUser getUserFromEmail(String email) throws UsersClientException {
 

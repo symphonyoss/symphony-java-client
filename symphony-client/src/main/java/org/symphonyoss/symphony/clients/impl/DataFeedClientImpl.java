@@ -33,6 +33,7 @@ import org.symphonyoss.symphony.agent.model.Datafeed;
 import org.symphonyoss.symphony.agent.model.V2BaseMessage;
 import org.symphonyoss.symphony.clients.DataFeedClient;
 
+import javax.ws.rs.client.Client;
 import java.util.List;
 
 
@@ -58,7 +59,21 @@ public class DataFeedClientImpl implements DataFeedClient {
         apiClient.setBasePath(agentUrl);
 
     }
+    /**
+     * If you need to override HttpClient.  Important for handling individual client certs.
+     * @param symAuth
+     * @param serviceUrl
+     * @param httpClient
+     */
+    public DataFeedClientImpl(SymAuth symAuth, String serviceUrl, Client httpClient) {
+        this.symAuth = symAuth;
 
+        //Get Service client to query for userID.
+        apiClient = org.symphonyoss.symphony.agent.invoker.Configuration.getDefaultApiClient();
+        apiClient.setHttpClient(httpClient);
+        apiClient.setBasePath(serviceUrl);
+
+    }
 
     public Datafeed createDatafeed() throws DataFeedException {
 

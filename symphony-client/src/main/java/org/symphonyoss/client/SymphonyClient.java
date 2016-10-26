@@ -28,11 +28,15 @@ import org.symphonyoss.symphony.clients.*;
 import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.client.services.*;
 
+import javax.ws.rs.client.Client;
+
 /**
  * Created by Frank Tarsillo on 5/14/2016.
  */
 
 public interface SymphonyClient {
+
+    void init(Client httpClient, SymAuth symAuth, String email, String agentUrl, String serviceUrl) throws InitException;
 
     SymAuth getSymAuth();
 
@@ -70,6 +74,9 @@ public interface SymphonyClient {
 
     String getServiceUrl();
 
-
     ShareClient getShareClient();
+
+    Client getDefaultHttpClient();
+
+    void setDefaultHttpClient(Client defaultHttpClient);
 }

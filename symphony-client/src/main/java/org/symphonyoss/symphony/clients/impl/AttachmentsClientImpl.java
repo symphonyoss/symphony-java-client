@@ -34,6 +34,7 @@ import org.symphonyoss.symphony.clients.AttachmentsClient;
 import org.symphonyoss.symphony.clients.model.SymAttachmentInfo;
 import org.symphonyoss.symphony.clients.model.SymMessage;
 
+import javax.ws.rs.client.Client;
 import java.io.File;
 import java.util.Base64;
 
@@ -58,6 +59,21 @@ public class AttachmentsClientImpl implements AttachmentsClient {
 
     }
 
+    /**
+     * If you need to override HttpClient.  Important for handling individual client certs.
+     * @param symAuth
+     * @param serviceUrl
+     * @param httpClient
+     */
+    public AttachmentsClientImpl(SymAuth symAuth, String serviceUrl, Client httpClient) {
+        this.symAuth = symAuth;
+
+        //Get Service client to query for userID.
+        apiClient = org.symphonyoss.symphony.agent.invoker.Configuration.getDefaultApiClient();
+        apiClient.setHttpClient(httpClient);
+        apiClient.setBasePath(serviceUrl);
+
+    }
 
     public byte[] getAttachmentData(SymAttachmentInfo symAttachmentInfo, SymMessage symMessage) throws AttachmentsException {
 

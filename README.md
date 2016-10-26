@@ -46,12 +46,14 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 ### V1.0.0 (SNAPSHOT)
 * Compatible with 1.40.1 API, V2 and Agent 1.39+
 * ShareAPI supporting article (news) posts implemented
+* Support for custom HTTP Clients when initiating SymphonyClient.
+* Can support multiple SymphonyClient instances running in a single JVM representing different users.
 * Automatic Auth refresh in client
 * ChatService enhancements including remote user identification on Chat creation.
 * Added get users by stream
 * Performance Updates
 * Command Framework (TBD)
-* Bug fixes and documentation
+* Bug fixes, documentation, new examples
 
 ### V0.9.1 (Stable)
 
@@ -95,6 +97,9 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 
         Server Truststore = Contains server certs
         User Keystore = Symphony user client certificate
+
+        Note: The latest version of the SymphonyClient object supports the ability to create custom HTTP Clients, which
+        means you can bind different .p12 certs representing different BOT users.
 
 
 ####Required System Properties:

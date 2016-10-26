@@ -32,7 +32,7 @@ import org.symphonyoss.symphony.pod.invoker.ApiClient;
 import org.symphonyoss.symphony.pod.invoker.ApiException;
 import org.symphonyoss.symphony.pod.model.MembershipList;
 
-
+import javax.ws.rs.client.Client;
 
 
 /**
@@ -57,6 +57,26 @@ public class RoomMembershipClientImpl implements RoomMembershipClient {
         apiClient.addDefaultHeader(symAuth.getKeyToken().getName(), symAuth.getKeyToken().getToken());
 
     }
+
+    /**
+     * If you need to override HttpClient.  Important for handling individual client certs.
+     * @param symAuth
+     * @param serviceUrl
+     * @param httpClient
+     */
+    public RoomMembershipClientImpl(SymAuth symAuth, String serviceUrl, Client httpClient) {
+        this.symAuth = symAuth;
+
+        //Get Service client to query for userID.
+        apiClient = org.symphonyoss.symphony.pod.invoker.Configuration.getDefaultApiClient();
+        apiClient.setHttpClient(httpClient);
+        apiClient.setBasePath(serviceUrl);
+
+        apiClient.addDefaultHeader(symAuth.getSessionToken().getName(), symAuth.getSessionToken().getToken());
+        apiClient.addDefaultHeader(symAuth.getKeyToken().getName(), symAuth.getKeyToken().getToken());
+
+    }
+
 
 
     public MembershipList getRoomMembership(String roomId) throws SymException {

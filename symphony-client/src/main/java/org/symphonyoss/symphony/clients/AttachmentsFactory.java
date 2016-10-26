@@ -30,12 +30,16 @@ import org.symphonyoss.symphony.clients.impl.AttachmentsClientImpl;
  */
 public class AttachmentsFactory {
 
-    public enum TYPE { DEFAULT }
+    public enum TYPE { DEFAULT, HTTPCLIENT }
 
     public static AttachmentsClient getClient(SymphonyClient symClient, TYPE type){
 
-            return new AttachmentsClientImpl(symClient.getSymAuth(), symClient.getAgentUrl());
+            if(type.equals(TYPE.HTTPCLIENT)) {
+                return new AttachmentsClientImpl(symClient.getSymAuth(), symClient.getAgentUrl(), symClient.getDefaultHttpClient());
+            }else{
 
+                return new AttachmentsClientImpl(symClient.getSymAuth(), symClient.getAgentUrl());
+            }
     }
 
 }

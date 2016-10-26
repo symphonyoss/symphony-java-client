@@ -30,12 +30,16 @@ import org.symphonyoss.symphony.clients.impl.StreamsClientImpl;
  */
 public class StreamsFactory {
 
-    public enum TYPE { DEFAULT }
+    public enum TYPE { DEFAULT, HTTPCLIENT }
 
     public static StreamsClient getClient(SymphonyClient symClient, TYPE type){
 
-            return new StreamsClientImpl(symClient.getSymAuth(), symClient.getServiceUrl());
 
+        if(type.equals(TYPE.HTTPCLIENT)) {
+            return new StreamsClientImpl(symClient.getSymAuth(), symClient.getServiceUrl(), symClient.getDefaultHttpClient());
+        }else{
+            return new StreamsClientImpl(symClient.getSymAuth(), symClient.getServiceUrl());
+        }
     }
 
 }

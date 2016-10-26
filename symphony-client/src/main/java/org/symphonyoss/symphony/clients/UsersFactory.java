@@ -26,22 +26,35 @@ import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.symphony.clients.impl.UsersClientImpl;
 import org.symphonyoss.client.model.SymAuth;
 
+import javax.ws.rs.client.Client;
+import javax.xml.ws.http.HTTPBinding;
+
 /**
  * Created by frank.tarsillo on 6/6/2016.
  */
 public class UsersFactory {
 
-    public enum TYPE { DEFAULT }
+    public enum TYPE { DEFAULT, HTTPCLIENT }
 
     public static UsersClient getClient(SymphonyClient symClient, TYPE type){
 
+        if(type.equals(TYPE.HTTPCLIENT)) {
+            return new UsersClientImpl(symClient.getSymAuth(), symClient.getServiceUrl(), symClient.getDefaultHttpClient());
+        }else{
             return new UsersClientImpl(symClient.getSymAuth(), symClient.getServiceUrl());
-
+        }
     }
     public static UsersClient getClient(SymAuth symAuth, String serviceUrl, TYPE type){
 
         return new UsersClientImpl(symAuth, serviceUrl);
 
     }
+
+    public static UsersClient getClient(SymAuth symAuth, String serviceUrl, Client httpClient){
+
+        return new UsersClientImpl(symAuth, serviceUrl, httpClient);
+
+    }
+
 
 }

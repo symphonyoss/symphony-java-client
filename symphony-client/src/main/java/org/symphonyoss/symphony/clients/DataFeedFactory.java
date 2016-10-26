@@ -30,12 +30,15 @@ import org.symphonyoss.symphony.clients.impl.DataFeedClientImpl;
  */
 public class DataFeedFactory {
 
-    public enum TYPE { DEFAULT }
+    public enum TYPE { DEFAULT, HTTPCLIENT }
 
     public static DataFeedClient getClient(SymphonyClient symClient, TYPE type){
 
+        if(type.equals(TYPE.HTTPCLIENT)) {
+            return new DataFeedClientImpl(symClient.getSymAuth(), symClient.getAgentUrl(), symClient.getDefaultHttpClient());
+        }else{
             return new DataFeedClientImpl(symClient.getSymAuth(), symClient.getAgentUrl());
-
+        }
     }
 
 }

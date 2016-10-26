@@ -30,11 +30,15 @@ import org.symphonyoss.symphony.clients.impl.PresenceClientImpl;
  */
 public class PresenceFactory {
 
-    public enum TYPE { DEFAULT }
+    public enum TYPE {DEFAULT, HTTPCLIENT}
 
-    public static PresenceClient getClient(SymphonyClient symClient, TYPE type){
+    public static PresenceClient getClient(SymphonyClient symClient, TYPE type) {
 
+        if (type.equals(TYPE.HTTPCLIENT)) {
+            return new PresenceClientImpl(symClient.getSymAuth(), symClient.getServiceUrl(), symClient.getDefaultHttpClient());
+        } else {
             return new PresenceClientImpl(symClient.getSymAuth(), symClient.getServiceUrl());
+        }
 
     }
 
