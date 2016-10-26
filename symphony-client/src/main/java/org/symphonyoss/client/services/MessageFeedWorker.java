@@ -56,50 +56,62 @@ class MessageFeedWorker implements Runnable {
         //noinspection InfiniteLoopStatement
         while (true) {
 
+                initDatafeed();
 
-            try {
-
-                if (datafeed == null) {
-                    try {
-                        logger.info("Creating datafeed with pod...");
-
-                        datafeed = symClient.getDataFeedClient().createDatafeed();
-
-                    } catch (DataFeedException e) {
-
-                        logger.error("Failed to create datafeed with pod, please check connection..", e);
-                        datafeed = null;
-                        try {
-                            TimeUnit.SECONDS.sleep(5);
-                        } catch (InterruptedException e1) {
-                            logger.error("Interrupt.. ", e1);
-                        }
-                        continue;
-                    }
-
-                }
-
-
-                List<V2BaseMessage> messageList = symClient.getDataFeedClient().getMessagesFromDatafeed(datafeed);
-
-                if(messageList != null) {
-
-                    logger.debug("Received {} messages..", messageList.size());
-
-                    //logger.debug("SymMessage received from stream {} {}", message.getId(),message.getStream());
-                    messageList.forEach(dataFeedListener::onMessage);
-                }
-
-            } catch (DataFeedException e) {
-                logger.error("Failed to create read datafeed from pod, please check connection..resetting.", e);
-                datafeed = null;
-
-            }
-
+                readDatafeed();
 
         }
 
     }
+
+
+    private void initDatafeed(){
+
+
+        while(datafeed == null) {
+            try {
+                logger.info("Creating datafeed with pod...");
+
+                datafeed = symClient.getDataFeedClient().createDatafeed();
+
+                break;
+            } catch (DataFeedException e) {
+
+                logger.error("Failed to create datafeed with pod, please check connection..", e);
+                datafeed = null;
+                try {
+                    TimeUnit.SECONDS.sleep(5);
+                } catch (InterruptedException e1) {
+                    logger.error("Interrupt.. ", e1);
+                }
+                continue;
+            }
+
+        }
+
+
+    }
+
+    private void readDatafeed(){
+
+        try {
+            List<V2BaseMessage> messageList = symClient.getDataFeedClient().getMessagesFromDatafeed(datafeed);
+
+            if(messageList != null) {
+
+                logger.debug("Received {} messages..", messageList.size());
+
+                messageList.forEach(dataFeedListener::onMessage);
+            }
+
+        } catch (DataFeedException e) {
+            logger.error("Failed to create read datafeed from pod, please check connection..resetting.", e);
+            datafeed = null;
+
+        }
+
+    }
+
 
 }
 

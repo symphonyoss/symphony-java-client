@@ -32,27 +32,27 @@ import java.util.List;
 /**
  * Created by frank.tarsillo on 9/8/2016.
  */
-public class SymUser  {
+public class SymUser {
 
-    private Long id = null;
+    private Long id;
 
-    private String emailAddress = null;
+    private String emailAddress;
 
-    private String firstName = null;
+    private String firstName;
 
-    private String lastName = null;
+    private String lastName;
 
-    private String displayName = null;
+    private String displayName;
 
-    private String title = null;
+    private String title;
 
-    private String company = null;
+    private String company;
 
-    private String username = null;
+    private String username;
 
-    private String location = null;
+    private String location;
 
-    private List<SymAvatar> avatars = null;
+    private List<SymAvatar> avatars;
 
     public Long getId() {
         return id;
@@ -134,22 +134,22 @@ public class SymUser  {
         this.avatars = avatars;
     }
 
-    public static UserV2 toUserV2(SymUser symUser){
-       UserV2 userV2 = new UserV2();
+    public static UserV2 toUserV2(SymUser symUser) {
+        UserV2 userV2 = new UserV2();
 
 
-       userV2.setCompany(symUser.getCompany());
-       userV2.setDisplayName(symUser.getDisplayName());
-       userV2.setEmailAddress(symUser.getEmailAddress());
-       userV2.setFirstName(symUser.getFirstName());
-       userV2.setLastName(symUser.getLastName());
-       userV2.setId(symUser.getId());
-       userV2.setLocation(symUser.getLocation());
-       userV2.setTitle(symUser.getTitle());
-       userV2.setUsername(symUser.getUsername());
+        userV2.setCompany(symUser.getCompany());
+        userV2.setDisplayName(symUser.getDisplayName());
+        userV2.setEmailAddress(symUser.getEmailAddress());
+        userV2.setFirstName(symUser.getFirstName());
+        userV2.setLastName(symUser.getLastName());
+        userV2.setId(symUser.getId());
+        userV2.setLocation(symUser.getLocation());
+        userV2.setTitle(symUser.getTitle());
+        userV2.setUsername(symUser.getUsername());
 
         AvatarList avatars = new AvatarList();
-        for(SymAvatar symAvatar: symUser.getAvatars()){
+        for (SymAvatar symAvatar : symUser.getAvatars()) {
             Avatar avatar = new Avatar();
             avatar.setSize(symAvatar.getSize());
             avatar.setUrl(symAvatar.getUrl());
@@ -157,12 +157,11 @@ public class SymUser  {
         }
         userV2.setAvatars(avatars);
 
-       return userV2;
-   }
+        return userV2;
+    }
 
 
     public static SymUser toSymUser(UserV2 user) {
-
 
 
         SymUser symUser = new SymUser();
@@ -179,7 +178,7 @@ public class SymUser  {
         symUser.setUsername(user.getUsername());
 
         List<SymAvatar> avatars = new ArrayList<>();
-        for(Avatar avatar: user.getAvatars()){
+        for (Avatar avatar : user.getAvatars()) {
             SymAvatar symAvatar = new SymAvatar();
             symAvatar.setSize(avatar.getSize());
             symAvatar.setUrl(avatar.getUrl());
