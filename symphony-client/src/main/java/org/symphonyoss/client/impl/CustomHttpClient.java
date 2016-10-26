@@ -25,6 +25,8 @@
 
 package org.symphonyoss.client.impl;
 
+import org.glassfish.jersey.client.ClientConfig;
+
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import java.security.KeyStore;
@@ -58,6 +60,31 @@ public class CustomHttpClient {
 
 
         return ClientBuilder.newBuilder().keyStore(cks,clientKeyStorePass.toCharArray()).trustStore(tks).build();
+
+
+
+
+    }
+
+    /**
+     * Create custom client with specific keystores.
+     * @param clientKeyStore
+     * @param clientKeyStorePass
+     * @param trustStore
+     * @param trustStorePass
+     * @return
+     */
+    public static Client getClient(String clientKeyStore, String clientKeyStorePass, String trustStore, String trustStorePass, ClientConfig clientConfig) throws Exception{
+
+
+        KeyStore cks = KeyStore.getInstance("PKCS12");
+        KeyStore tks = KeyStore.getInstance("JKS");
+
+        loadKeyStore(cks,clientKeyStore,clientKeyStorePass);
+        loadKeyStore(tks,trustStore,trustStorePass);
+
+
+        return ClientBuilder.newBuilder().keyStore(cks,clientKeyStorePass.toCharArray()).trustStore(tks).withConfig(clientConfig).build();
 
 
 
