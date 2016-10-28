@@ -129,7 +129,7 @@ class ConnectionsWorker implements Runnable {
     }
 
 
-    public void kill() {
+    public void shutdown() {
         KILL = true;
 
     }

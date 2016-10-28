@@ -52,12 +52,13 @@ public class MessageService implements DataFeedListener {
     private final Set<RoomServiceListener> roomServiceListeners = ConcurrentHashMap.newKeySet();
     private final Set<String> roomStreamCache = ConcurrentHashMap.newKeySet();
     private final Set<String> chatStreamCache = ConcurrentHashMap.newKeySet();
+    MessageFeedWorker messageFeedWorker;
 
     public MessageService(SymphonyClient symClient) {
 
         this.symClient = symClient;
 
-        MessageFeedWorker messageFeedWorker = new MessageFeedWorker(symClient, this);
+        messageFeedWorker = new MessageFeedWorker(symClient, this);
         new Thread(messageFeedWorker).start();
 
     }
@@ -288,6 +289,12 @@ public class MessageService implements DataFeedListener {
     public boolean removeChatListener(ChatListener chatListener) {
 
         return chatListeners.remove(chatListener);
+
+    }
+
+    public void shutdown(){
+        messageFeedWorker.shutdown();
+        messageFeedWorker = null;
 
     }
 

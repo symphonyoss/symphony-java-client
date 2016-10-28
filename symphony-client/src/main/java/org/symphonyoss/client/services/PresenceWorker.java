@@ -38,7 +38,7 @@ class PresenceWorker implements Runnable {
     private final PresenceListener presenceListener;
     private final PresenceList presenceList;
     private final Logger logger = LoggerFactory.getLogger(PresenceWorker.class);
-    private boolean KILL = false;
+    private boolean shutdown = false;
 
 
     public PresenceWorker(SymphonyClient symphonyClient, PresenceListener presenceListener, PresenceList presenceList) {
@@ -86,7 +86,7 @@ class PresenceWorker implements Runnable {
 
             }
 
-            if (KILL) {
+            if (shutdown) {
                 logger.debug("Presence worker thread killed..");
                 return;
             }
@@ -100,10 +100,7 @@ class PresenceWorker implements Runnable {
     }
 
 
-    public void kill() {
-        KILL = true;
 
-    }
 
     private UserPresence findUserPresenceById(Long userId){
 
@@ -121,4 +118,8 @@ class PresenceWorker implements Runnable {
         return null;
     }
 
+    public void shutdown() {
+        shutdown = true;
+
+    }
 }

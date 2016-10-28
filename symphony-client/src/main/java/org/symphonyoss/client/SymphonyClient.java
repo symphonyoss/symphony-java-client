@@ -79,4 +79,6 @@ public interface SymphonyClient {
     Client getDefaultHttpClient();
 
     void setDefaultHttpClient(Client defaultHttpClient);
+
+    void shutdown();
 }

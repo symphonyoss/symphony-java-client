@@ -294,6 +294,14 @@ public class SymphonyBasicClient implements SymphonyClient {
     public void setDefaultHttpClient(Client defaultHttpClient) {
         this.defaultHttpClient = defaultHttpClient;
     }
+
+
+    @Override
+    public void shutdown(){
+        getMessageService().shutdown();
+        getPresenceService().shutdown();
+    }
+
 }
 
 

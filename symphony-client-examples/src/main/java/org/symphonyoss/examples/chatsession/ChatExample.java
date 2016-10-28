@@ -38,6 +38,7 @@ import org.symphonyoss.symphony.clients.model.SymUser;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -150,6 +151,9 @@ public class ChatExample implements ChatListener, ChatServiceListener {
             //Send a message to the master user.
             symClient.getMessageService().sendMessage(chat, aMessage);
 
+            symClient.shutdown();
+
+            logger.info("Finished");
 
         } catch (AuthorizationException ae) {
 
