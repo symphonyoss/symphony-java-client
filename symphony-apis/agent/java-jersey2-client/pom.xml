@@ -158,11 +158,35 @@
 									<directory>src/main/resources/model</directory>
 									<includes>
 										<include>V2BaseMessage.java</include>
+										<include>Firehose.java</include>
 									</includes>
 								</resource>
+
 							</resources>
 						</configuration>
 					</execution>
+					<execution>
+						<id>copy-resource-two</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+
+						<configuration>
+							<overwrite>true</overwrite>
+							<outputDirectory>target/generated-sources/swagger/src/main/java/org/symphonyoss/symphony/agent/api</outputDirectory>
+							<resources>
+								<resource>
+									<directory>src/main/resources/api</directory>
+									<includes>
+										<include>FirehoseApi.java</include>
+									</includes>
+								</resource>
+
+							</resources>
+						</configuration>
+					</execution>
+
 				</executions>
 			</plugin>
 

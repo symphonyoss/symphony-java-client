@@ -23,10 +23,13 @@
 package org.symphonyoss.client;
 
 import org.symphonyoss.client.model.SymAuth;
+import org.symphonyoss.client.services.ChatService;
+import org.symphonyoss.client.services.MessageService;
+import org.symphonyoss.client.services.PresenceService;
+import org.symphonyoss.client.services.RoomService;
 import org.symphonyoss.exceptions.InitException;
 import org.symphonyoss.symphony.clients.*;
 import org.symphonyoss.symphony.clients.model.SymUser;
-import org.symphonyoss.client.services.*;
 
 import javax.ws.rs.client.Client;
 
@@ -79,4 +82,8 @@ public interface SymphonyClient {
     Client getDefaultHttpClient();
 
     void setDefaultHttpClient(Client defaultHttpClient);
+
+    FirehoseClient getFirehoseClient();
+
+    void shutdown();
 }

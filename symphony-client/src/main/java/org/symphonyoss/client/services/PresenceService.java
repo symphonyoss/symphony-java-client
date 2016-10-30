@@ -75,25 +75,26 @@ public class PresenceService implements PresenceListener {
 
     public Presence getUserPresence(String email) throws PresenceException {
 
-        if(email==null)
+        if (email == null)
             throw new NullPointerException("Email was not provided..");
 
         SymUser user;
         try {
             user = symClient.getUsersClient().getUserFromEmail(email);
         } catch (UsersClientException e) {
-            logger.error("Failed to obtain userID from email",e);
+            logger.error("Failed to obtain userID from email", e);
             throw new PresenceException("Failed to obtain user from email: " + email, e);
         }
 
-        return (user != null)?
-            symClient.getPresenceClient().getUserPresence(user.getId()) : null;
+        return (user != null) ?
+                symClient.getPresenceClient().getUserPresence(user.getId()) : null;
 
 
     }
 
     /**
      * Please use {@link #addPresenceListener(PresenceListener)}
+     *
      * @param presenceListener
      */
     public void registerPresenceListener(PresenceListener presenceListener) {
@@ -119,7 +120,7 @@ public class PresenceService implements PresenceListener {
         presenceListeners.remove(presenceListener);
 
         if (presenceListeners.isEmpty()) {
-            presenceWorker.kill();
+            presenceWorker.shutdown();
             presenceWorker = null;
 
             logger.debug("Killing presence worker thread..");
@@ -139,5 +140,13 @@ public class PresenceService implements PresenceListener {
 
     }
 
+
+    public void shutdown() {
+
+        if (presenceWorker != null) {
+            presenceWorker.shutdown();
+            presenceWorker = null;
+        }
+    }
 
 }

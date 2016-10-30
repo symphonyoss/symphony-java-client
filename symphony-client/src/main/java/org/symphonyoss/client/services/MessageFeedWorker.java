@@ -41,6 +41,8 @@ class MessageFeedWorker implements Runnable {
     private final SymphonyClient symClient;
     private final Logger logger = LoggerFactory.getLogger(MessageFeedWorker.class);
     private Datafeed datafeed;
+    private boolean shutdown;
+
 
 
     public MessageFeedWorker(SymphonyClient symClient, DataFeedListener dataFeedListener) {
@@ -54,11 +56,13 @@ class MessageFeedWorker implements Runnable {
 
 
         //noinspection InfiniteLoopStatement
-        while (true) {
+        while (!shutdown) {
 
                 initDatafeed();
 
                 readDatafeed();
+
+
 
         }
 
@@ -110,6 +114,10 @@ class MessageFeedWorker implements Runnable {
 
         }
 
+    }
+
+    public void shutdown(){
+        shutdown = true;
     }
 
 

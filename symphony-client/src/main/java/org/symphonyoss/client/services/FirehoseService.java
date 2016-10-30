@@ -1,23 +1,25 @@
 /*
  *
- * Copyright 2016 The Symphony Software Foundation
+ *  *
+ *  * Copyright 2016 The Symphony Software Foundation
+ *  *
+ *  * Licensed to The Symphony Software Foundation (SSF) under one
+ *  * or more contributor license agreements.  See the NOTICE file
+ *  * distributed with this work for additional information
+ *  * regarding copyright ownership.  The ASF licenses this file
+ *  * to you under the Apache License, Version 2.0 (the
+ *  * "License"); you may not use this file except in compliance
+ *  * with the License.  You may obtain a copy of the License at
+ *  *
+ *  *   http://www.apache.org/licenses/LICENSE-2.0
+ *  *
+ *  * Unless required by applicable law or agreed to in writing,
+ *  * software distributed under the License is distributed on an
+ *  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ *  * KIND, either express or implied.  See the License for the
+ *  * specific language governing permissions and limitations
+ *  * under the License.
  *
- * Licensed to The Symphony Software Foundation (SSF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
  */
 
 package org.symphonyoss.client.services;
@@ -25,103 +27,50 @@ package org.symphonyoss.client.services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
-import org.symphonyoss.client.model.Chat;
-import org.symphonyoss.client.model.Room;
-import org.symphonyoss.exceptions.MessagesException;
 import org.symphonyoss.exceptions.StreamsException;
-import org.symphonyoss.exceptions.UsersClientException;
 import org.symphonyoss.symphony.agent.model.*;
 import org.symphonyoss.symphony.clients.model.SymMessage;
-import org.symphonyoss.symphony.clients.model.SymUser;
-import org.symphonyoss.symphony.pod.model.Stream;
 
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * [Experimental]  Implementation of firehose for a given POD.
+ *
+ * Is equivalent to the MessageService, but broader coverage.
+ *
  * Created by Frank Tarsillo on 5/15/2016.
  */
-public class MessageService implements DataFeedListener {
+public class FirehoseService implements DataFeedListener {
 
     private final SymphonyClient symClient;
     private org.symphonyoss.symphony.agent.invoker.ApiClient agentClient;
-    private final Logger logger = LoggerFactory.getLogger(MessageService.class);
+    private final Logger logger = LoggerFactory.getLogger(FirehoseService.class);
     private final Set<MessageListener> messageListeners = ConcurrentHashMap.newKeySet();
     private final Set<ChatListener> chatListeners = ConcurrentHashMap.newKeySet();
     private final Set<RoomServiceListener> roomServiceListeners = ConcurrentHashMap.newKeySet();
     private final Set<String> roomStreamCache = ConcurrentHashMap.newKeySet();
     private final Set<String> chatStreamCache = ConcurrentHashMap.newKeySet();
-    MessageFeedWorker messageFeedWorker;
+    FirehoseWorker firehoseWorker;
 
-    public MessageService(SymphonyClient symClient) {
+    /**
+     *
+     * @param symClient
+     */
+    public FirehoseService(SymphonyClient symClient) {
 
         this.symClient = symClient;
 
-        messageFeedWorker = new MessageFeedWorker(symClient, this);
-        new Thread(messageFeedWorker).start();
+        firehoseWorker = new FirehoseWorker(symClient, this);
+        new Thread(firehoseWorker).start();
 
     }
 
 
-    public void sendMessage(Room room, SymMessage message) throws MessagesException {
-
-        symClient.getMessagesClient().sendMessage(room.getStream(), message);
-
-    }
-
-
-    public void sendMessage(Chat chat, SymMessage message) throws MessagesException {
-
-        symClient.getMessagesClient().sendMessage(chat.getStream(), message);
-
-    }
-
-
-
-    public void sendMessage(String email, SymMessage message) throws MessagesException {
-
-        SymUser remoteUser;
-        try {
-
-            remoteUser = symClient.getUsersClient().getUserFromEmail(email);
-
-            symClient.getMessagesClient().sendMessage(symClient.getStreamsClient().getStream(remoteUser), message);
-
-        } catch (UsersClientException e) {
-            throw new MessagesException("Failed to find user from email address: " + email, e);
-        } catch (StreamsException e) {
-            throw new MessagesException("Failed to send message. Unable to identify stream from email: " + email, e);
-        }
-
-    }
-
-    private List<SymMessage> getMessagesFromStream(Stream stream, Long since, Integer offset, Integer maxMessages) throws MessagesException {
-
-        return symClient.getMessagesClient().getMessagesFromStream(
-                stream, since, offset, maxMessages);
-
-    }
-
-
-    public List<SymMessage> getMessagesFromUserId(long userId, Long since, Integer offset, Integer maxMessages) throws MessagesException {
-
-
-        SymUser user = new SymUser();
-        user.setId(userId);
-
-
-        try {
-            return getMessagesFromStream(
-                    symClient.getStreamsClient().getStream(user), since, offset, maxMessages);
-        } catch (StreamsException e) {
-            throw new MessagesException("Failed to retrieve messages. Unable to identity stream for userId: " + userId, e);
-        }
-
-
-    }
-
-
+    /**
+     * Message callback from firehose datafeed.
+     * @param message
+     */
     public void onMessage(V2BaseMessage message) {
 
         logger.debug("MessageID: {} StreamID: {}", message.getId(), message.getStreamId());
@@ -187,6 +136,11 @@ public class MessageService implements DataFeedListener {
 
     }
 
+    /**
+     * Verify if incoming message is a associated with a room
+     * @param message
+     * @return
+     */
     private boolean isRoomMessage(V2BaseMessage message) {
 
 
@@ -292,9 +246,12 @@ public class MessageService implements DataFeedListener {
 
     }
 
+    /**
+     * Shutdown underlying threads associated with datafeed reads.
+     */
     public void shutdown(){
-        messageFeedWorker.shutdown();
-        messageFeedWorker = null;
+        firehoseWorker.shutdown();
+        firehoseWorker = null;
 
     }
 

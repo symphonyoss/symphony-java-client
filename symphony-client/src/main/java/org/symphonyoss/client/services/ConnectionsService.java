@@ -44,10 +44,12 @@ public class ConnectionsService implements ConnectionsListener{
     private boolean autoAccept;
     private final Set<ConnectionsListener> connectionsListeners =  ConcurrentHashMap.newKeySet();
     private final Logger logger = LoggerFactory.getLogger(ChatService.class);
+    private ConnectionsWorker connectionsWorker;
 
     public ConnectionsService(SymphonyClient symClient){
         this.symClient = symClient;
-        new Thread(new ConnectionsWorker(symClient,this)).start();
+        connectionsWorker = new ConnectionsWorker(symClient,this);
+        new Thread(connectionsWorker).start();
 
     }
 
@@ -115,5 +117,14 @@ public class ConnectionsService implements ConnectionsListener{
 
     public void setAutoAccept(boolean autoAccept) {
         this.autoAccept = autoAccept;
+    }
+
+
+
+    public void shutdown(){
+
+        connectionsWorker.shutdown();
+        connectionsWorker=null;
+
     }
 }
