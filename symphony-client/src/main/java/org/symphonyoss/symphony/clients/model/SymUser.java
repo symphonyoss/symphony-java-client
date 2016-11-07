@@ -190,4 +190,17 @@ public class SymUser {
         return symUser;
 
     }
+
+    @Override
+    public boolean equals(Object o) {
+
+        if (o == this) return true;
+        if (!(o instanceof SymUser)) {
+            return false;
+        }
+        SymUser symUser = (SymUser) o;
+        return id.equals(symUser.id);
+    }
+
+
 }
