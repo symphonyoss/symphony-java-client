@@ -1,0 +1,5 @@
+src.main.java.org.symphonyoss.symphony.authenticator.api
+src.main.java.org.symphonyoss.symphony.authenticator.invoker
+src.main.java.org.symphonyoss.symphony.authenticator.invoker.auth
+src.main.java.org.symphonyoss.symphony.authenticator.model
+src.test.java.org.symphonyoss.symphony.authenticator.api
