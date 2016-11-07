@@ -199,7 +199,7 @@ public class SymUser {
             return false;
         }
         SymUser symUser = (SymUser) o;
-        return id.equals(symUser.id)
+        return id.equals(symUser.id);
     }
 
 
