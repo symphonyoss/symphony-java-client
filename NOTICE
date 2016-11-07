@@ -3,3 +3,23 @@ Copyright 2016 The Symphony Software Foundation
 
 This product includes software developed at
 The Symphony Software Foundation (http://symphony.foundation).
+
+========================================================================
+Common Development and Distribution License 1.0
+========================================================================
+
+The following components are provided under the Common Development and Distribution License 1.0. See project link for details.
+
+     (CDDL 1.1-GPL2 w/ CPE) JAX-RS (javax.ws.rs.javax.ws.rs-api:2.0.1) (https://jax-rs-spec.java.net/)
+     (CDDL 1.0) (GPL2 w/ CPE) javax.annotation API (javax.annotation.*)
+     (CDDL + GPLv2 with classpath exception) Jersey (org.glassfish.jersey.*) - https://jersey.java.net/
+     (CDDL 1.1 + GPLv2 with classpath exception) HK2 (org.glassfish.hk2.*) - https://hk2.java.net
+     (CDDL 1.1-GPL2 w/ CPE) Mimepull (org.jvnet.mimepull.mimepull:1.9.6) - https://mimepull.java.net/
+
+ ========================================================================
+ Eclipse Public License 1.0
+ ========================================================================
+
+ The following components are provided under the Eclipse Public License 1.0. See project link for details.
+
+     (Eclipse Public License 1.0) Junit (junit.junit:4.12) - http://junit.org/junit4
