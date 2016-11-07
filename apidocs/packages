@@ -1,0 +1,5 @@
+src.main.java.org.symphonyoss.symphony.pod.api
+src.main.java.org.symphonyoss.symphony.pod.invoker
+src.main.java.org.symphonyoss.symphony.pod.invoker.auth
+src.main.java.org.symphonyoss.symphony.pod.model
+src.test.java.org.symphonyoss.symphony.pod.api
