@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>Symphony Agent Service - Dependency Information</title>
+    <title>Symphony Agent Service API - Dependency Information</title>
     <style type="text/css" media="all">
       @import url("./css/maven-base.css");
       @import url("./css/maven-theme.css");
@@ -17,7 +17,7 @@
   <body class="composite">
     <div id="banner">
                     <div id="bannerLeft">
-                Symphony Agent Service
+                Symphony Agent Service API
                 </div>
                     <div class="clear">
         <hr/>
@@ -30,7 +30,7 @@
         <span id="publishDate">Last Published: 2016-11-07</span>
                   &nbsp;| <span id="projectVersion">Version: 1.0.0-SNAPSHOT</span>
                       </div>
-            <div class="xright">                    <a href="./" title="Symphony Agent Service">Symphony Agent Service</a>
+            <div class="xright">                    <a href="./" title="Symphony Agent Service API">Symphony Agent Service API</a>
               
                     
       </div>
@@ -45,21 +45,12 @@
                                 <h5>Parent Project</h5>
                   <ul>
                   <li class="none">
-                          <a href="../index.html" title="Symphony Apis">Symphony Apis</a>
-            </li>
-          </ul>
-                       <h5>Modules</h5>
-                  <ul>
-                  <li class="none">
-                          <a href="symphony-agent-api/index.html" title="Symphony Agent Service API">Symphony Agent Service API</a>
-            </li>
-                  <li class="none">
-                          <a href="symphony-agent-java-jersey2-client/index.html" title="Symphony Agent Service Java Client">Symphony Agent Service Java Client</a>
+                          <a href="../index.html" title="Symphony Agent Service">Symphony Agent Service</a>
             </li>
           </ul>
                        <h5>Project Documentation</h5>
                   <ul>
-                                                                                                                                                                                                                                                                                                                        <li class="expanded">
+                                                                                                                                                                                                                                                                                                      <li class="expanded">
                           <a href="project-info.html" title="Project Information">Project Information</a>
                     <ul>
                       <li class="none">
@@ -85,9 +76,6 @@
             </li>
                       <li class="none">
                           <a href="mail-lists.html" title="Mailing Lists">Mailing Lists</a>
-            </li>
-                      <li class="none">
-                          <a href="modules.html" title="Project Modules">Project Modules</a>
             </li>
                       <li class="none">
                           <a href="plugin-management.html" title="Plugin Management">Plugin Management</a>
@@ -123,38 +111,37 @@
 <div class="source">
 <pre>&lt;dependency&gt;
   &lt;groupId&gt;org.symphonyoss.symphony&lt;/groupId&gt;
-  &lt;artifactId&gt;symphony-agent&lt;/artifactId&gt;
+  &lt;artifactId&gt;symphony-agent-api&lt;/artifactId&gt;
   &lt;version&gt;1.0.0-SNAPSHOT&lt;/version&gt;
-  &lt;type&gt;pom&lt;/type&gt;
 &lt;/dependency&gt;</pre></div></div>
 <div class="section">
 <h3>Apache Buildr<a name="Apache_Buildr"></a></h3><a name="Apache_Buildr"></a>
 <div class="source">
-<pre>'org.symphonyoss.symphony:symphony-agent:pom:1.0.0-SNAPSHOT'</pre></div></div>
+<pre>'org.symphonyoss.symphony:symphony-agent-api:jar:1.0.0-SNAPSHOT'</pre></div></div>
 <div class="section">
 <h3>Apache Ivy<a name="Apache_Ivy"></a></h3><a name="Apache_Ivy"></a>
 <div class="source">
-<pre>&lt;dependency org=&quot;org.symphonyoss.symphony&quot; name=&quot;symphony-agent&quot; rev=&quot;1.0.0-SNAPSHOT&quot;&gt;
-  &lt;artifact name=&quot;symphony-agent&quot; type=&quot;pom&quot; /&gt;
+<pre>&lt;dependency org=&quot;org.symphonyoss.symphony&quot; name=&quot;symphony-agent-api&quot; rev=&quot;1.0.0-SNAPSHOT&quot;&gt;
+  &lt;artifact name=&quot;symphony-agent-api&quot; type=&quot;jar&quot; /&gt;
 &lt;/dependency&gt;</pre></div></div>
 <div class="section">
 <h3>Groovy Grape<a name="Groovy_Grape"></a></h3><a name="Groovy_Grape"></a>
 <div class="source">
 <pre>@Grapes(
-@Grab(group='org.symphonyoss.symphony', module='symphony-agent', version='1.0.0-SNAPSHOT')
+@Grab(group='org.symphonyoss.symphony', module='symphony-agent-api', version='1.0.0-SNAPSHOT')
 )</pre></div></div>
 <div class="section">
 <h3>Gradle/Grails<a name="GradleGrails"></a></h3><a name="GradleGrails"></a>
 <div class="source">
-<pre>compile 'org.symphonyoss.symphony:symphony-agent:1.0.0-SNAPSHOT'</pre></div></div>
+<pre>compile 'org.symphonyoss.symphony:symphony-agent-api:1.0.0-SNAPSHOT'</pre></div></div>
 <div class="section">
 <h3>Scala SBT<a name="Scala_SBT"></a></h3><a name="Scala_SBT"></a>
 <div class="source">
-<pre>libraryDependencies += &quot;org.symphonyoss.symphony&quot; % &quot;symphony-agent&quot; % &quot;1.0.0-SNAPSHOT&quot;</pre></div></div>
+<pre>libraryDependencies += &quot;org.symphonyoss.symphony&quot; % &quot;symphony-agent-api&quot; % &quot;1.0.0-SNAPSHOT&quot;</pre></div></div>
 <div class="section">
 <h3>Leiningen<a name="Leiningen"></a></h3><a name="Leiningen"></a>
 <div class="source">
-<pre>[org.symphonyoss.symphony/symphony-agent &quot;1.0.0-SNAPSHOT&quot;]</pre></div></div></div>
+<pre>[org.symphonyoss.symphony/symphony-agent-api &quot;1.0.0-SNAPSHOT&quot;]</pre></div></div></div>
       </div>
     </div>
     <div class="clear">
