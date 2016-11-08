@@ -27,6 +27,7 @@ import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.pod.model.Stream;
 
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -169,6 +170,13 @@ public class Chat {
         final Chat other = (Chat) obj;
 
         return !(this.stream == null || !this.stream.equals(other.stream));
+    }
+
+
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(stream, remoteUsers);
     }
 
 }

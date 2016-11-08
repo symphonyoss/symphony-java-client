@@ -25,8 +25,11 @@ package org.symphonyoss.client.model;
 
 import org.symphonyoss.client.services.RoomListener;
 import org.symphonyoss.symphony.clients.model.SymRoomDetail;
+import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.pod.model.MembershipList;
 import org.symphonyoss.symphony.pod.model.Stream;
+
+import java.util.Objects;
 
 /**
  * Room abstraction object which identifies and holds all properties of a Symphony Room.
@@ -95,5 +98,22 @@ public class Room {
 
     public void setRoomListener(RoomListener roomListener) {
         this.roomListener = roomListener;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+
+        if (o == this) return true;
+        if (!(o instanceof Room)) {
+            return false;
+        }
+        Room room = (Room) o;
+        return id.equals(room.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, stream);
     }
 }

@@ -28,6 +28,7 @@ import org.symphonyoss.symphony.pod.model.UserV2;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by frank.tarsillo on 9/8/2016.
@@ -202,5 +203,9 @@ public class SymUser {
         return id.equals(symUser.id);
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, emailAddress);
+    }
 
 }

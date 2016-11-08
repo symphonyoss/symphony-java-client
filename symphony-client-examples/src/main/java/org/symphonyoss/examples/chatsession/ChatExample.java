@@ -155,6 +155,9 @@ public class ChatExample implements ChatListener, ChatServiceListener {
 
             logger.info("Finished");
 
+
+
+
         } catch (AuthorizationException ae) {
 
             logger.error(ae.getMessage(), ae);
