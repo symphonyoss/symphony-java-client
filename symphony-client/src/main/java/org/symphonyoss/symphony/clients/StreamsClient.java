@@ -23,9 +23,7 @@
 package org.symphonyoss.symphony.clients;
 
 import org.symphonyoss.exceptions.StreamsException;
-import org.symphonyoss.symphony.clients.model.SymRoomAttributes;
-import org.symphonyoss.symphony.clients.model.SymRoomDetail;
-import org.symphonyoss.symphony.clients.model.SymUser;
+import org.symphonyoss.symphony.clients.model.*;
 import org.symphonyoss.symphony.pod.model.*;
 
 import java.util.Set;
@@ -47,4 +45,6 @@ public interface StreamsClient {
     SymRoomDetail createChatRoom(SymRoomAttributes roomAttributes) throws StreamsException;
 
     SymRoomDetail updateChatRoom(String streamId, SymRoomAttributes roomAttributes) throws StreamsException;
+
+    SymRoomSearchResults roomSearch(SymRoomSearchCriteria searchCriteria, Integer skip, Integer limit) throws StreamsException;
 }

@@ -29,9 +29,7 @@ import org.symphonyoss.exceptions.StreamsException;
 import org.symphonyoss.exceptions.UsersClientException;
 import org.symphonyoss.symphony.clients.UsersClient;
 import org.symphonyoss.symphony.clients.UsersFactory;
-import org.symphonyoss.symphony.clients.model.SymRoomAttributes;
-import org.symphonyoss.symphony.clients.model.SymRoomDetail;
-import org.symphonyoss.symphony.clients.model.SymUser;
+import org.symphonyoss.symphony.clients.model.*;
 import org.symphonyoss.symphony.pod.api.StreamsApi;
 import org.symphonyoss.symphony.pod.invoker.ApiClient;
 import org.symphonyoss.symphony.pod.invoker.ApiException;
@@ -40,6 +38,8 @@ import org.symphonyoss.symphony.pod.model.UserIdList;
 
 import javax.ws.rs.client.Client;
 import java.util.Set;
+
+import  org.symphonyoss.symphony.clients.model.SymRoomSearchResults;
 
 
 /**
@@ -222,6 +222,28 @@ public class StreamsClientImpl implements org.symphonyoss.symphony.clients.Strea
 
 
     }
+
+
+    @Override
+    public SymRoomSearchResults roomSearch(SymRoomSearchCriteria searchCriteria, Integer skip, Integer limit) throws StreamsException{
+
+        if (searchCriteria == null) {
+            throw new NullPointerException("Room search criteria was not provided..");
+        }
+        StreamsApi streamsApi = new StreamsApi(apiClient);
+
+        try {
+
+            return SymRoomSearchResults.toSymRoomSearchResults(streamsApi.v2RoomSearchPost(symAuth.getSessionToken().getToken(), SymRoomSearchCriteria.toRoomSearchCriteria(searchCriteria), skip, limit));
+
+
+        } catch (ApiException e) {
+            throw new StreamsException("Failed room search...", e);
+        }
+
+
+    }
+
 
 
 }

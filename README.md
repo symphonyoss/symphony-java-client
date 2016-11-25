@@ -52,7 +52,8 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 * Automatic Auth refresh in client
 * ChatService enhancements including remote user identification on Chat creation.
 * Added get users by stream
-* Experimental firehose service implemented.
+* Added room search under streams client
+* Experimental firehose service implemented
 * Performance Updates
 * Command Framework (TBD)
 * Bug fixes, documentation, new examples

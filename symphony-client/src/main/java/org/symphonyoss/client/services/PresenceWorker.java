@@ -25,6 +25,7 @@ package org.symphonyoss.client.services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.client.common.Constants;
 import org.symphonyoss.symphony.pod.model.PresenceList;
 import org.symphonyoss.symphony.pod.model.UserPresence;
 
@@ -91,7 +92,7 @@ class PresenceWorker implements Runnable {
                 return;
             }
 
-            try{TimeUnit.SECONDS.sleep(2);}catch(InterruptedException e){
+            try{TimeUnit.SECONDS.sleep(Long.getLong(System.getProperty(Constants.PRESENCE_POLL_SLEEP,"30")));}catch(InterruptedException e){
                 logger.error("Sleep timer interrupted",e);}
 
         }
