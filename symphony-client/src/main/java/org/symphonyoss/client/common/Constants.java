@@ -31,6 +31,7 @@ package org.symphonyoss.client.common;
 public class Constants {
 
     public final static String CONNECTIONS_POLL_SLEEP = "connections.poll.sleep";
+    public final static String PRESENCE_POLL_SLEEP = "presence.poll.sleep";
     public final static String SYMAUTH_REFRESH_TIME = "symauth.refresh.time";
 
 }
