@@ -68,7 +68,7 @@ class PresenceWorker implements Runnable {
 
                 UserPresence presence = findUserPresenceById(cPresence.getUid());
 
-                if(presence == null) {
+                if (presence == null) {
                     presenceList.add(cPresence);
                     presenceListener.onUserPresence(cPresence);
                     logger.debug("Adding new user presence to cache for {}:{}", cPresence.getUid(), cPresence.getCategory());
@@ -76,7 +76,7 @@ class PresenceWorker implements Runnable {
                 }
 
 
-                if(cPresence.getCategory() != presence.getCategory()){
+                if (cPresence.getCategory() != presence.getCategory()) {
 
                     logger.debug("Presence change for {}: from: {}  to:{}", cPresence.getUid(), presence.getCategory(), cPresence.getCategory());
                     presence.setCategory(cPresence.getCategory());
@@ -92,8 +92,12 @@ class PresenceWorker implements Runnable {
                 return;
             }
 
-            try{TimeUnit.SECONDS.sleep(Long.getLong(System.getProperty(Constants.PRESENCE_POLL_SLEEP,"30")));}catch(InterruptedException e){
-                logger.error("Sleep timer interrupted",e);}
+            try {
+                TimeUnit.SECONDS.sleep(
+                        Long.valueOf(System.getProperty(Constants.PRESENCE_POLL_SLEEP, "30")));
+            } catch (InterruptedException e) {
+                logger.error("Sleep timer interrupted", e);
+            }
 
         }
 
@@ -101,17 +105,15 @@ class PresenceWorker implements Runnable {
     }
 
 
+    private UserPresence findUserPresenceById(Long userId) {
 
 
-    private UserPresence findUserPresenceById(Long userId){
-
-
-        if(presenceList == null)
+        if (presenceList == null)
             return null;
 
-        for(UserPresence userPresence: presenceList){
+        for (UserPresence userPresence : presenceList) {
 
-            if(userPresence.getUid().equals(userId))
+            if (userPresence.getUid().equals(userId))
                 return userPresence;
 
         }
