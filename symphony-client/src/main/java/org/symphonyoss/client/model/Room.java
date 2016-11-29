@@ -24,12 +24,14 @@
 package org.symphonyoss.client.model;
 
 import org.symphonyoss.client.services.RoomListener;
+import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.clients.model.SymRoomDetail;
-import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.pod.model.MembershipList;
 import org.symphonyoss.symphony.pod.model.Stream;
 
 import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Room abstraction object which identifies and holds all properties of a Symphony Room.
@@ -43,6 +45,7 @@ public class Room {
     private MembershipList membershipList;
     private SymRoomDetail roomDetail;
     private RoomListener roomListener;
+    private final Set<RoomListener> roomListeners = ConcurrentHashMap.newKeySet();
 
     public String getStreamId() {
         return streamId;
@@ -92,14 +95,45 @@ public class Room {
             streamId=stream.getId();
     }
 
+
+
+
+    @Deprecated
     public RoomListener getRoomListener() {
         return roomListener;
     }
 
+
+    @Deprecated
     public void setRoomListener(RoomListener roomListener) {
         this.roomListener = roomListener;
+        roomListeners.add(roomListener);
     }
 
+
+    /**
+     * Push message to all registered listeners.
+     * @param message
+     */
+    public void onRoomMessage(SymMessage message) {
+
+
+        for (RoomListener roomListener : roomListeners)
+            roomListener.onRoomMessage(message);
+
+    }
+
+    public void addListener(RoomListener roomListener){
+        roomListeners.add(roomListener);
+
+    }
+
+    public void removeListener(RoomListener roomListener){
+
+        roomListeners.remove(roomListener);
+
+
+    }
 
     @Override
     public boolean equals(Object o) {

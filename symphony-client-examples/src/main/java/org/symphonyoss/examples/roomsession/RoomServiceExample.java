@@ -204,6 +204,8 @@ public class RoomServiceExample implements RoomServiceListener, RoomListener {
 
                 );
 
+
+
     }
 
     @Override
@@ -219,7 +221,7 @@ public class RoomServiceExample implements RoomServiceListener, RoomListener {
     @Override
     public void onNewRoom(Room room) {
         logger.info("Created new room instance from incoming message..{} {}", room.getId(), room.getRoomDetail().getRoomAttributes().getName());
-        room.setRoomListener(this);
+        room.addListener(this);
     }
 
     @Override
