@@ -11,7 +11,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -20,22 +20,37 @@
  * specific language governing permissions and limitations
  * under the License.
  *
- *
  */
 
-package org.symphonyoss.client.common;
+package org.symphonyoss.client.ai;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
- * @author Frank Tarsillo on 10/22/2016.
+ * Created by nicktarsillo on 6/20/16.
+ * A model that represents a sequence of responses from the ai
  */
-public class Constants {
+public class AiResponseSequence {
+    private Set<AiResponse> aiResponseSet = new HashSet<AiResponse>();
 
-    public final static String CONNECTIONS_POLL_SLEEP = "connections.poll.sleep";
-    public final static String PRESENCE_POLL_SLEEP = "presence.poll.sleep";
-    public final static String SYMAUTH_REFRESH_TIME = "symauth.refresh.time";
+    public AiResponseSequence() {
 
+    }
 
+    public void addResponse(AiResponse response) {
+        aiResponseSet.add(response);
+    }
 
+    public void removeResponse(AiResponse response) {
+        aiResponseSet.remove(response);
+    }
 
+    public Set<AiResponse> getAiResponseSet() {
+        return aiResponseSet;
+    }
 
+    public void setAiResponseSet(Set<AiResponse> aiResponseSet) {
+        this.aiResponseSet = aiResponseSet;
+    }
 }

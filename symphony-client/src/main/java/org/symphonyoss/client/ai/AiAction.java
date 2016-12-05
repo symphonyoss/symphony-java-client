@@ -11,7 +11,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -20,22 +20,17 @@
  * specific language governing permissions and limitations
  * under the License.
  *
- *
  */
 
-package org.symphonyoss.client.common;
+package org.symphonyoss.client.ai;
+
+import org.symphonyoss.client.util.MlMessageParser;
+import org.symphonyoss.symphony.clients.model.SymMessage;
 
 /**
- * @author Frank Tarsillo on 10/22/2016.
+ * Created by nicktarsillo on 6/20/16.
+ * An interface that developers can implement to create their own actions
  */
-public class Constants {
-
-    public final static String CONNECTIONS_POLL_SLEEP = "connections.poll.sleep";
-    public final static String PRESENCE_POLL_SLEEP = "presence.poll.sleep";
-    public final static String SYMAUTH_REFRESH_TIME = "symauth.refresh.time";
-
-
-
-
-
+public interface AiAction {
+    AiResponseSequence respond(MlMessageParser mlMessageParser, SymMessage message, AiCommand command);
 }

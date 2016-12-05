@@ -11,7 +11,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -20,22 +20,22 @@
  * specific language governing permissions and limitations
  * under the License.
  *
- *
  */
 
 package org.symphonyoss.client.common;
 
 /**
- * @author Frank Tarsillo on 10/22/2016.
+ * Created by nicktarsillo on 6/16/16.
  */
-public class Constants {
+public class AiConstants {
+    public static final char COMMAND = '/';
+    public static final String RUN_LAST_COMMAND = "Run Last";
 
-    public final static String CONNECTIONS_POLL_SLEEP = "connections.poll.sleep";
-    public final static String PRESENCE_POLL_SLEEP = "presence.poll.sleep";
-    public final static String SYMAUTH_REFRESH_TIME = "symauth.refresh.time";
-
-
-
-
-
+    public static final String SUGGEST = "Did you mean ";
+    public static final String USE_SUGGESTION = "? (Type " + MLTypes.START_BOLD + AiConstants.COMMAND + "Run Last"
+            + MLTypes.END_BOLD + " to run command)";
+    public static final String NO_PERMISSION = "Sorry, you do not have permission to use that command.";
+    public static final String NOT_INTERPRETABLE = " is not a command or wrong # of arguments.";
+    public static final String USAGE = "Check the usage:";
+    public static final double CORRECTFACTOR = 0.5;
 }

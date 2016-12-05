@@ -55,7 +55,7 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 * Added room search under streams client
 * Experimental firehose service implemented
 * Performance Updates
-* Command Framework (TBD)
+* Command Framework (AI Package) supporting command parsing and actions
 * Bug fixes, documentation, new examples
 
 ### V0.9.1 (Stable)
