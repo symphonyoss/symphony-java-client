@@ -38,4 +38,6 @@ public interface UsersClient {
     SymUser getUserFromName(String userName) throws UsersClientException;
 
     Set<SymUser> getUsersFromStream(String streamId) throws UsersClientException;
+
+    Set<SymUser> getAllUsers() throws UsersClientException;
 }

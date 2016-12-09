@@ -35,7 +35,5 @@ public class Constants {
     public final static String SYMAUTH_REFRESH_TIME = "symauth.refresh.time";
 
 
-
-
-
+    public static final String USERSCLIENT_GETALLUSERS_THREADPOOL ="usersclient.getallusers.threadpool" ;
 }

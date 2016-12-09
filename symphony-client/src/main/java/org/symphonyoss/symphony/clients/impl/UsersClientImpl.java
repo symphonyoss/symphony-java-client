@@ -24,22 +24,28 @@ package org.symphonyoss.symphony.clients.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.symphonyoss.client.common.Constants;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.exceptions.SymException;
 import org.symphonyoss.exceptions.UserNotFoundException;
 import org.symphonyoss.exceptions.UsersClientException;
 import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.pod.api.RoomMembershipApi;
+import org.symphonyoss.symphony.pod.api.UserApi;
 import org.symphonyoss.symphony.pod.api.UsersApi;
 import org.symphonyoss.symphony.pod.invoker.ApiClient;
 import org.symphonyoss.symphony.pod.invoker.ApiException;
 import org.symphonyoss.symphony.pod.model.MemberInfo;
 import org.symphonyoss.symphony.pod.model.MembershipList;
+import org.symphonyoss.symphony.pod.model.UserIdList;
 import org.symphonyoss.symphony.pod.model.UserV2;
 
 import javax.ws.rs.client.Client;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 /**
@@ -68,6 +74,7 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
 
     /**
      * If you need to override HttpClient.  Important for handling individual client certs.
+     *
      * @param symAuth
      * @param serviceUrl
      * @param httpClient
@@ -86,7 +93,6 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
 
 
     }
-
 
 
     public SymUser getUserFromEmail(String email) throws UsersClientException {
@@ -197,6 +203,85 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
         } catch (ApiException e) {
             throw new UsersClientException("Failed to retrieve room membership for room ID: " + streamId, e);
         }
+
+
+    }
+
+
+    /**
+     * This method could require elevated privileges
+     *
+     * @return
+     * @throws UsersClientException
+     */
+    @Override
+    public Set<SymUser> getAllUsers() throws UsersClientException {
+
+        UserApi userApi = new UserApi(apiClient);
+
+        Set<SymUser> symUsers = ConcurrentHashMap.newKeySet();
+
+
+        UserV2 user;
+        try {
+            UserIdList userIdList = userApi.v1AdminUserListGet(symAuth.getSessionToken().getToken());
+
+            int nThreads  = Integer.valueOf(System.getProperty(Constants.USERSCLIENT_GETALLUSERS_THREADPOOL,"16"));
+
+            ExecutorService executor = Executors.newFixedThreadPool(nThreads);
+
+            long startTime = System.currentTimeMillis();
+            logger.debug("Started to retrieve all users..");
+
+            for (Long userId : userIdList) {
+
+
+                executor.execute((new Thread() {
+                    public void run() {
+
+                        UsersApi usersApi2 = new UsersApi(apiClient);
+                        SymUser symUser = null;
+
+                        if (userId == null)
+                            throw new NullPointerException("UserId was null...");
+
+                        UserV2 user;
+                        try {
+                            user = usersApi2.v2UserGet(symAuth.getSessionToken().getToken(), userId, null, null, false);
+                        } catch (ApiException e) {
+                            return;
+                        }
+
+                        if (user != null) {
+
+                            //logger.debug("Found User: {}:{}", user.getDisplayName(), user.getId());
+                            symUser = SymUser.toSymUser(user);
+                            symUsers.add(symUser);
+                        }
+
+                    }
+                }));
+
+            }
+
+
+            executor.shutdown();
+
+            while (!executor.isTerminated()) {
+
+            }
+
+            logger.debug("Finished all threads. Total time retrieving users: {} sec", (System.currentTimeMillis() - startTime)/1000);
+
+
+
+
+        } catch (ApiException e) {
+            throw new UsersClientException("API Error communicating with POD, while retrieving all user details", e);
+        }
+
+
+        return symUsers;
 
 
     }
