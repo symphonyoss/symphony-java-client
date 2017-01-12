@@ -73,7 +73,6 @@ public class SymphonyBasicClient implements SymphonyClient {
     private RoomMembershipClient roomMembershipClient;
     private AttachmentsClient attachmentsClient;
     private ConnectionsClient connectionsClient;
-    private FirehoseClient firehoseClient;
     private ShareClient shareClient;
     private Client defaultHttpClient;
     private final long SYMAUTH_REFRESH_TIME= Long.valueOf(System.getProperty(Constants.SYMAUTH_REFRESH_TIME,"7200000"));
@@ -119,7 +118,6 @@ public class SymphonyBasicClient implements SymphonyClient {
         attachmentsClient = (defaultHttpClient==null)?AttachmentsFactory.getClient(this, AttachmentsFactory.TYPE.DEFAULT):AttachmentsFactory.getClient(this, AttachmentsFactory.TYPE.HTTPCLIENT);
         roomMembershipClient = (defaultHttpClient==null)?RoomMembershipFactory.getClient(this, RoomMembershipFactory.TYPE.DEFAULT):RoomMembershipFactory.getClient(this, RoomMembershipFactory.TYPE.HTTPCLIENT);
         connectionsClient = (defaultHttpClient==null)?ConnectionsFactory.getClient(this, ConnectionsFactory.TYPE.DEFAULT):ConnectionsFactory.getClient(this, ConnectionsFactory.TYPE.HTTPCLIENT);
-        firehoseClient = (defaultHttpClient==null)?FirehoseFactory.getClient(this,FirehoseFactory.TYPE.DEFAULT):FirehoseFactory.getClient(this, FirehoseFactory.TYPE.HTTPCLIENT);
 
         try {
             messageService = new MessageService(this);
@@ -296,10 +294,6 @@ public class SymphonyBasicClient implements SymphonyClient {
         this.defaultHttpClient = defaultHttpClient;
     }
 
-    @Override
-    public FirehoseClient getFirehoseClient() {
-        return firehoseClient;
-    }
 
     @Override
     public void shutdown(){

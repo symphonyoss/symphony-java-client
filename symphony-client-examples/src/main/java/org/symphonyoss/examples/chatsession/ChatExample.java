@@ -151,9 +151,9 @@ public class ChatExample implements ChatListener, ChatServiceListener {
             //Send a message to the master user.
             symClient.getMessageService().sendMessage(chat, aMessage);
 
-            symClient.shutdown();
+            //symClient.shutdown();
 
-            logger.info("Finished");
+            //logger.info("Finished");
 
 
 
@@ -180,11 +180,12 @@ public class ChatExample implements ChatListener, ChatServiceListener {
         if (message == null)
             return;
 
-        logger.debug("TS: {}\nFrom ID: {}\nSymMessage: {}\nSymMessage Type: {}",
+        logger.debug("TS: {}\nFrom ID: {}\nSymMessage: {}\nSymMessage Type: {}\nSymMessage Format: {}",
                 message.getTimestamp(),
                 message.getFromUserId(),
                 message.getMessage(),
-                message.getMessageType());
+                message.getMessageType(),
+                message.getFormat().toString());
 
         Chat chat = symClient.getChatService().getChatByStream(message.getStreamId());
 

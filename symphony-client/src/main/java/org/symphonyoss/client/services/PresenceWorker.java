@@ -51,8 +51,18 @@ class PresenceWorker implements Runnable {
 
     public void run() {
 
+
+        if (!Boolean.valueOf(System.getProperty(Constants.PRESENCE_POLL, "false"))) {
+
+            logger.error("Presence polling is no longer supported.  There will be no presence events published.");
+            return;
+
+        }
+
         PresenceList cPresenceList;
+
         while (true) {
+
 
             try {
                 cPresenceList = symphonyClient.getPresenceService().getAllUserPresence();

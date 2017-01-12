@@ -46,7 +46,7 @@
     </licenses>
 
     <scm>
-      <connection>scm:git:git://github.com/symphonyoss/symphony-java-client.git</connection>
+      <connection>scm:git:git://github.com/ftbb/vote-api.git</connection>
       <developerConnection>scm:git:git@github.com:symphonyoss/symphony-java-client.git</developerConnection>
       <url>https://github.com/symphonyoss/symphony-java-client</url>
       <tag>HEAD</tag>

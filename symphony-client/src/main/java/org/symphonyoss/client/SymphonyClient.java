@@ -83,7 +83,5 @@ public interface SymphonyClient {
 
     void setDefaultHttpClient(Client defaultHttpClient);
 
-    FirehoseClient getFirehoseClient();
-
     void shutdown();
 }

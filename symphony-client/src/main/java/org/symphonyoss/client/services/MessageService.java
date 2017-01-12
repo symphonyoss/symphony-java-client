@@ -134,6 +134,9 @@ public class MessageService implements DataFeedListener {
         if (message instanceof V2Message) {
             SymMessage symMessage = SymMessage.toSymMessage(message);
 
+            //All incoming messages from POD are MESSAGEML based.
+            symMessage.setFormat(SymMessage.Format.MESSAGEML);
+
             if (symClient.getLocalUser().getId().equals(symMessage.getFromUserId()))
                 return;
 

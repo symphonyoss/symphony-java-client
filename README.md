@@ -24,14 +24,13 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
     * Real-time listeners on all room events
     * Enriches Room objects with associated system attributes
     * X-Pod Support
-* Presence Service
+* Presence Service (Disabled by default and NOT recommended for use)
     * Maintains an active cache of endpoint presence associated with single POD.
     * Real-time listeners on all presence changes
     * Request user presence
 * Connections request handling including auto-accept.
 * Attachment Support
 * Publish formatted articles (news) using ShareApi
-* Experimental firehose service
 * MessageML utilities
     * Support for command line processing
     * Conversion from MessageML to Text
@@ -46,6 +45,7 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 ##Change log and notes
 ### V1.0.0 (SNAPSHOT)
 * Compatible with 1.40.1 API, V2 and Agent 1.39+
+* Presence service is now disabled by default 
 * ShareAPI supporting article (news) posts implemented
 * Support for custom HTTP Clients when initiating SymphonyClient.
 * Can support multiple SymphonyClient instances running in a single JVM representing different users.
@@ -53,8 +53,9 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 * ChatService enhancements including remote user identification on Chat creation.
 * Added get users by stream
 * Added room search under streams client
-* Experimental firehose service implemented
+* REMOVED Experimental firehose service as per LLC
 * Performance Updates
+* All incoming SymMessages from MessageService are now set to MessageML format
 * Command Framework (AI Package) supporting command parsing and actions
 * Bug fixes, documentation, new examples
 
