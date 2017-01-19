@@ -22,6 +22,8 @@
 
 package org.symphonyoss.symphony.clients.impl;
 
+import javax.ws.rs.client.Client;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.model.SymAuth;
@@ -31,8 +33,9 @@ import org.symphonyoss.symphony.pod.api.RoomMembershipApi;
 import org.symphonyoss.symphony.pod.invoker.ApiClient;
 import org.symphonyoss.symphony.pod.invoker.ApiException;
 import org.symphonyoss.symphony.pod.model.MembershipList;
+import org.symphonyoss.symphony.pod.model.UserId;
 
-import javax.ws.rs.client.Client;
+import com.google.common.base.Strings;
 
 
 /**
@@ -74,14 +77,9 @@ public class RoomMembershipClientImpl implements RoomMembershipClient {
 
         apiClient.addDefaultHeader(symAuth.getSessionToken().getName(), symAuth.getSessionToken().getToken());
         apiClient.addDefaultHeader(symAuth.getKeyToken().getName(), symAuth.getKeyToken().getToken());
-
     }
 
-
-
     public MembershipList getRoomMembership(String roomId) throws SymException {
-
-
         if (roomId == null) {
             throw new NullPointerException("Room ID was not provided...");
         }
@@ -92,12 +90,21 @@ public class RoomMembershipClientImpl implements RoomMembershipClient {
         } catch (ApiException e) {
             throw new SymException("Failed to retrieve room membership for room ID: " + roomId, e);
         }
-
-
     }
 
+    @Override
+    public void addMemberToRoom (String roomStreamId, long userId) throws Exception {
+        if (Strings.isNullOrEmpty(roomStreamId)) {
+            throw new IllegalArgumentException("Argument roomStreamId must not be empty or null");
+        } 
 
-
-
-
+        RoomMembershipApi roomMembershipApi = new RoomMembershipApi(apiClient);
+        String sessionToken = symAuth.getSessionToken().getToken();
+        
+        if (!Strings.isNullOrEmpty(sessionToken)) {
+            roomMembershipApi.v1RoomIdMembershipAddPost(roomStreamId, new UserId().id(userId), sessionToken);
+        } else {
+            throw new IllegalStateException("Invalid session token. It must not be null or empty");
+        }
+    }
 }
