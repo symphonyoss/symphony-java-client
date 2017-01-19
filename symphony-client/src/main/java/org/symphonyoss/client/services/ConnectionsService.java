@@ -60,7 +60,7 @@ public class ConnectionsService implements ConnectionsListener{
      *
      * Option to auto-accept on new event.
      *
-     * @param userConnection
+     * @param userConnection User connection detail
      */
     @Override
     public void onConnectionNotification(SymUserConnection userConnection) {
@@ -84,7 +84,7 @@ public class ConnectionsService implements ConnectionsListener{
 
     /**
      * Please use {@link #addListener(ConnectionsListener)}
-     * @param connectionsListener
+     * @param connectionsListener Listner for callbacks
      */
     @Deprecated
     public void registerListener(ConnectionsListener connectionsListener){
@@ -101,7 +101,7 @@ public class ConnectionsService implements ConnectionsListener{
 
     /**
      *
-     * @param connectionsListener
+     * @param connectionsListener Listener for callbacks
      */
     public void removeListener(ConnectionsListener connectionsListener){
 

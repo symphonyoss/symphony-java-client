@@ -36,6 +36,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Room abstraction object which identifies and holds all properties of a Symphony Room.
  * Room objects work directly with the RoomService, which supports all room events.
+ *
  * @author Frank Tarsillo
  */
 public class Room {

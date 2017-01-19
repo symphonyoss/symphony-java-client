@@ -40,18 +40,30 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * The room service provides capabilities that support room access and events.  The running service will construct
+ * room objects detected from new message events.  The service supports listeners that provide callbacks to all
+ * registered room events and general messaging.
+ *
+ * Its important to note the distinction between creating a room and joining a room.  Creating a room implies the
+ * creation of the room object, but not the monitoring of it by the service.  You must explicitly join a room (register
+ * with the RoomService) in order to receive individual room events.
+ *
  * Created by Frank Tarsillo on 7/8/2016.
  */
 public class RoomService implements RoomServiceListener {
 
 
     private final ConcurrentHashMap<String, Room> roomsByStream = new ConcurrentHashMap<>();
-
-
     private final SymphonyClient symClient;
     private final Logger logger = LoggerFactory.getLogger(RoomService.class);
     private final Set<RoomServiceListener> roomServiceListeners = ConcurrentHashMap.newKeySet();
 
+    /**
+     *
+     * @param symClient SymphonyClient provides access to client implementations and dependant services such as the
+     *                  {@link MessageService}
+     *
+     */
     public RoomService(SymphonyClient symClient) {
         this.symClient = symClient;
 
@@ -60,17 +72,33 @@ public class RoomService implements RoomServiceListener {
     }
 
 
+    /**
+     * Create a new room object from {@link SymRoomAttributes} provided.  The room object will be enriched with all
+     * associated room metadata at the point of creation.
+     *
+     * Note: Future lifecycle room events are not automatically reflected in the created room object.
+     * updated.
+     * @param symRoomAttributes Room attributes required to create the room object
+     * @return Fully populated {@link Room} object
+     * @throws RoomException
+     */
     public Room createRoom(SymRoomAttributes symRoomAttributes) throws RoomException {
 
         if (symRoomAttributes == null)
             throw new NullPointerException("Room attributes were not provided..");
 
+
         try {
+
+            //Create the room if it doesn't exist or retrieve the detail fo pre-existing room
             SymRoomDetail symRoomDetail = symClient.getStreamsClient().createChatRoom(symRoomAttributes);
 
+            //Construct the room object
             Room room = new Room();
             room.setId(symRoomDetail.getRoomSystemInfo().getId());
             room.setRoomDetail(symRoomDetail);
+
+            //Enrich
             room.setMembershipList(symClient.getRoomMembershipClient().getRoomMembership(room.getId()));
 
             return room;
@@ -85,12 +113,23 @@ public class RoomService implements RoomServiceListener {
 
     }
 
+    /**
+     * Return registered room by provided stream.  The room object must be registered to the service through the
+     * {@link #joinRoom(Room)} method.
+     *
+     * @param stream Stream ID as key to lookup registered room
+     * @return {@link Room} based on stream ID provided
+     */
     public Room getRoom(String stream) {
 
         return roomsByStream.get(stream);
     }
 
-    //Logical join of the room which registers the listeners.
+    /**
+     * Logical join of the room which registers the listeners and the Room object to the service.
+     *
+     * This call will also update room details within the Room object.
+     */
     public void joinRoom(Room room) throws RoomException {
 
         if (room.getStream() == null || room.getStreamId() == null || room.getId() == null)
@@ -98,7 +137,10 @@ public class RoomService implements RoomServiceListener {
 
 
         try {
+            //Lets refresh the room details
             room.setRoomDetail(symClient.getStreamsClient().getRoomDetail(room.getStreamId()));
+
+            //Register room object to internal cache
             roomsByStream.put(room.getStreamId(), room);
         } catch (StreamsException e) {
             logger.error("Failed to obtain room detail...", e);
@@ -109,28 +151,40 @@ public class RoomService implements RoomServiceListener {
     }
 
 
+    /**
+     * Callback from registered room listener on the MessageService.  All messages will be associated with Rooms.
+     * If a message underlying stream is not associated with a registered room, then a new room object is created and
+     * events are published to registered {@link RoomServiceListener}
+     *
+     * Messages associated with registered rooms are published to room object listeners.
+     *
+     * @param symMessage Room messages detected and published
+     */
     @Override
     public void onMessage(SymMessage symMessage) {
 
         try {
+
+            //Automatically register new room events
             if (roomsByStream.get(symMessage.getStreamId()) == null) {
                 addRoom(symMessage.getStreamId());
             }
 
 
+            //Publish messages to any generic RoomService Listners
             for(RoomServiceListener roomServiceListener: roomServiceListeners){
 
                 roomServiceListener.onMessage(symMessage);
 
             }
 
-
-
+            //For specific rooms that are registered publish new message events
             for (String stream : roomsByStream.keySet()) {
 
 
                 Room room = roomsByStream.get(symMessage.getStreamId());
 
+                //Publish a message event to a room
                 if (room != null)
                     room.onRoomMessage(symMessage);
 
@@ -141,8 +195,14 @@ public class RoomService implements RoomServiceListener {
         }
     }
 
+    /**
+     * Add a room to the service
+     * @param streamId Stream ID of the room
+     * @throws RoomException
+     */
     private void addRoom(String streamId) throws RoomException {
 
+        //Create a new room object and register to the service
         Room room = new Room();
 
         Stream stream = new Stream();
@@ -155,6 +215,10 @@ public class RoomService implements RoomServiceListener {
         onNewRoom(room);
     }
 
+    /**
+     * Publish new room objects based on detection and/or registration to the service
+     * @param room
+     */
     @Override
     public void onNewRoom(Room room) {
 
@@ -162,6 +226,10 @@ public class RoomService implements RoomServiceListener {
             roomServiceListener.onNewRoom(room);
     }
 
+    /**
+     * Events provided by the MessageService related to new rooms created (defined)
+     * @param roomCreatedMessage {@link RoomCreatedMessage}
+     */
     @Override
     public void onRoomCreatedMessage(RoomCreatedMessage roomCreatedMessage) {
 
@@ -173,6 +241,10 @@ public class RoomService implements RoomServiceListener {
 
     }
 
+    /**
+     * Room deactivated events triggered by administration event.
+     * @param roomDeactivatedMessage {@link RoomDeactivatedMessage}
+     */
     @Override
     public void onRoomDeactivatedMessage(RoomDeactivatedMessage roomDeactivatedMessage) {
 
@@ -185,6 +257,11 @@ public class RoomService implements RoomServiceListener {
         }
     }
 
+    /**
+     * Room member demotion event triggered from administration changes
+     *
+     * @param roomMemberDemotedFromOwnerMessage {@link RoomMemberDemotedFromOwnerMessage}
+     */
     @Override
     public void onRoomMemberDemotedFromOwnerMessage(RoomMemberDemotedFromOwnerMessage roomMemberDemotedFromOwnerMessage) {
         for (Map.Entry<String, Room> entry : roomsByStream.entrySet()) {
@@ -196,6 +273,10 @@ public class RoomService implements RoomServiceListener {
         }
     }
 
+    /**
+     * Room member promotion event triggered from administration changes
+     * @param roomMemberPromotedToOwnerMessage {@link RoomMemberPromotedToOwnerMessage}
+     */
     @Override
     public void onRoomMemberPromotedToOwnerMessage(RoomMemberPromotedToOwnerMessage roomMemberPromotedToOwnerMessage) {
 
@@ -208,6 +289,10 @@ public class RoomService implements RoomServiceListener {
         }
     }
 
+    /**
+     * Room reactivated event triggered from administration changes
+     * @param roomReactivatedMessage  {@link RoomReactivatedMessage}
+     */
     @Override
     public void onRoomReactivatedMessage(RoomReactivatedMessage roomReactivatedMessage) {
         for (Map.Entry<String, Room> entry : roomsByStream.entrySet()) {

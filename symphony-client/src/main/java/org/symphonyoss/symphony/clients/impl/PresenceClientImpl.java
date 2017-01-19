@@ -66,9 +66,9 @@ public class PresenceClientImpl implements org.symphonyoss.symphony.clients.Pres
 
     /**
      * If you need to override HttpClient.  Important for handling individual client certs.
-     * @param symAuth
-     * @param serviceUrl
-     * @param httpClient
+     * @param symAuth Authorization object holding session and key tokens
+     * @param serviceUrl The Symphony service URL
+     * @param httpClient The HttpClient to use when calling Symphony API
      */
     public PresenceClientImpl(SymAuth symAuth, String serviceUrl, Client httpClient) {
         this.symAuth = symAuth;

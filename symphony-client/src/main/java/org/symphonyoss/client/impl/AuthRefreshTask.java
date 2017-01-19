@@ -36,6 +36,8 @@ import java.util.TimerTask;
 
 /**
  * Created by frank.tarsillo on 9/19/2016.
+ *
+ * Task will refresh session tokens when called.
  */
 public class AuthRefreshTask extends TimerTask {
 

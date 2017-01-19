@@ -25,6 +25,9 @@ package org.symphonyoss.client.services;
 import org.symphonyoss.symphony.clients.model.SymMessage;
 
 /**
+ *
+ * Callback listener for the {@link MessageService} publishing SymMessages.
+ *
  * Created by Frank Tarsillo on 5/15/2016.
  */
 public interface MessageListener {

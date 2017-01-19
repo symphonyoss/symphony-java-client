@@ -25,6 +25,8 @@ package org.symphonyoss.client.model;
 import org.symphonyoss.symphony.authenticator.model.Token;
 
 /**
+ * Simple abstraction object to hold session and key tokens retrieved from authorization process.
+ *
  * Created by Frank Tarsillo on 5/15/2016.
  */
 public class SymAuth {

@@ -28,6 +28,10 @@ package org.symphonyoss.client.model;
 import org.symphonyoss.symphony.agent.model.ShareArticle;
 
 /**
+ *
+ * An abstraction object representing a Share Article entity.  This is a pre-built component that is populated by the
+ * client and published into Symphony.  In simple terms the output looks like a standard news headline.
+ *
  * @author Frank Tarsillo on 10/22/2016.
  */
 public class SymShareArticle {

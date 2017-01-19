@@ -27,6 +27,8 @@ import org.symphonyoss.symphony.agent.model.*;
 import org.symphonyoss.symphony.clients.model.SymMessage;
 
 /**
+ * Callback interface for room events
+ *
  * Created by Frank Tarsillo on 7/8/2016.
  */
 public interface RoomListener {

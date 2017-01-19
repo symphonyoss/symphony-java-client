@@ -23,6 +23,9 @@
 package org.symphonyoss.client.model;
 
 /**
+ *
+ * Provides an enum of supported ML tags
+ *
  * @author Frank Tarsillo
  */
 public enum NodeTypes {

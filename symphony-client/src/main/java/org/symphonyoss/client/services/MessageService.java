@@ -40,6 +40,22 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ *
+ * MessageService listens for all messages for a given BOT identity, identifies the type (Message, Chat, Room) of
+ * message and then publishes the message registered listeners associated with type.
+ *
+ * The service exposes methods for retrieving messages for a given stream or user historically.
+ *
+ * The service provides convenience methods to support the sending of messages using standard models (Chat, Room)
+ *
+ * The service converts all base messages to {@link SymMessage}.
+ *
+ * Multiple listeners of different types can be registered at any time.
+ *
+ * MessageListener - Listen for all messages
+ * ChatListener - Listen for chat conversations (1:1 or multi-party)
+ * RoomServiceListener - Listen for all Room related events.
+ *
  * Created by Frank Tarsillo on 5/15/2016.
  */
 public class MessageService implements DataFeedListener {
@@ -54,39 +70,62 @@ public class MessageService implements DataFeedListener {
     private final Set<String> chatStreamCache = ConcurrentHashMap.newKeySet();
     MessageFeedWorker messageFeedWorker;
 
+
+    /**
+     * Constructor
+     * @param symClient Identifies the BOT user and exposes client APIs
+     */
     public MessageService(SymphonyClient symClient) {
 
         this.symClient = symClient;
 
+        //Lets startup the worker thread to listen for raw datafeed messages.
         messageFeedWorker = new MessageFeedWorker(symClient, this);
         new Thread(messageFeedWorker).start();
 
     }
 
 
-    public void sendMessage(Room room, SymMessage message) throws MessagesException {
+    /**
+     * Convenience method for sending messages to a room
+     * @param room Room object
+     * @param symMessage Message to send to the room
+     * @throws MessagesException
+     */
+    public void sendMessage(Room room, SymMessage symMessage) throws MessagesException {
 
-        symClient.getMessagesClient().sendMessage(room.getStream(), message);
+        symClient.getMessagesClient().sendMessage(room.getStream(), symMessage);
 
     }
 
 
-    public void sendMessage(Chat chat, SymMessage message) throws MessagesException {
+    /**
+     * Convenience method for sending messages to chat conversation (1:1 or Multi-party)
+     * @param chat Chat object representing conversation
+     * @param symMessage Message to send to the conversation
+     * @throws MessagesException
+     */
+    public void sendMessage(Chat chat, SymMessage symMessage) throws MessagesException {
 
-        symClient.getMessagesClient().sendMessage(chat.getStream(), message);
+        symClient.getMessagesClient().sendMessage(chat.getStream(), symMessage);
 
     }
 
 
-
-    public void sendMessage(String email, SymMessage message) throws MessagesException {
+    /**
+     * Convenience method to send a message to a given user by email address
+     * @param email email of destination user
+     * @param symMessage Message to send
+     * @throws MessagesException
+     */
+    public void sendMessage(String email, SymMessage symMessage) throws MessagesException {
 
         SymUser remoteUser;
         try {
 
             remoteUser = symClient.getUsersClient().getUserFromEmail(email);
 
-            symClient.getMessagesClient().sendMessage(symClient.getStreamsClient().getStream(remoteUser), message);
+            symClient.getMessagesClient().sendMessage(symClient.getStreamsClient().getStream(remoteUser), symMessage);
 
         } catch (UsersClientException e) {
             throw new MessagesException("Failed to find user from email address: " + email, e);
@@ -96,6 +135,16 @@ public class MessageService implements DataFeedListener {
 
     }
 
+    /**
+     * Retrieve messages for a given stream based on window of time
+     * @param stream Identifier for the conversation (or room)
+     * @param since Starting point date (long value)
+     * @param offset (Optional) No. of messages to skip.
+     * @param maxMessages (Optional) Maximum number of messages to retrieve from the starting point
+     * @return {@link List<SymMessage>}  List of messages
+     * @throws MessagesException
+     */
+
     private List<SymMessage> getMessagesFromStream(Stream stream, Long since, Integer offset, Integer maxMessages) throws MessagesException {
 
         return symClient.getMessagesClient().getMessagesFromStream(
@@ -103,7 +152,15 @@ public class MessageService implements DataFeedListener {
 
     }
 
-
+    /**
+     * Retrieve messages for a given user ID based on window of time
+     * @param userId A userId (long value)
+     * @param since Starting point date (long value)
+     * @param offset (Optional) No. of messages to skip.
+     * @param maxMessages (Optional) Maximum number of messages to retrieve from the starting point
+     * @return {@link List<SymMessage>}  List of messages
+     * @throws MessagesException
+     */
     public List<SymMessage> getMessagesFromUserId(long userId, Long since, Integer offset, Integer maxMessages) throws MessagesException {
 
 
@@ -121,7 +178,12 @@ public class MessageService implements DataFeedListener {
 
     }
 
-
+    /**
+     *
+     * Process new Datafeed messages from worker
+     *
+     * @param message Incoming message from {@link DataFeedListener} registered to the {@link MessageFeedWorker}
+     */
     public void onMessage(V2BaseMessage message) {
 
         logger.debug("MessageID: {} StreamID: {}", message.getId(), message.getStreamId());
@@ -131,28 +193,35 @@ public class MessageService implements DataFeedListener {
             return;
 
 
+        //Check for a basic message event as part of a chat or room
         if (message instanceof V2Message) {
+
+            //Convert to SymMessage
             SymMessage symMessage = SymMessage.toSymMessage(message);
 
             //All incoming messages from POD are MESSAGEML based.
             symMessage.setFormat(SymMessage.Format.MESSAGEML);
 
+            //Ignore messages the BOT is sending out.
             if (symClient.getLocalUser().getId().equals(symMessage.getFromUserId()))
                 return;
 
 
+            //Verify if this message is part of room conversation
             if (isRoomMessage(message)) {
 
+                //Publish room messages to associated listeners
                 for (RoomServiceListener roomServiceListener : roomServiceListeners)
                     roomServiceListener.onMessage(symMessage);
             } else {
 
+                //Then it has to be a chat conversation (1:1 or Multi-Party)
                 for (ChatListener chatListener : chatListeners)
                     chatListener.onChatMessage(symMessage);
             }
 
 
-            //Listen for all messages...
+            //Publish all messages to registered Message Listeners...
             for (MessageListener messageListener : messageListeners) {
                 messageListener.onMessage(symMessage);
             }
@@ -164,6 +233,7 @@ public class MessageService implements DataFeedListener {
                     symMessage.getMessageType());
 
 
+        //Publish associated room event messages
         }else if(message instanceof UserJoinedRoomMessage){
             for (RoomServiceListener roomServiceListener : roomServiceListeners)
                 roomServiceListener.onUserJoinedRoomMessage((UserJoinedRoomMessage) message);
@@ -190,15 +260,22 @@ public class MessageService implements DataFeedListener {
 
     }
 
+    /**
+     * Identify if the message is associated with a room or chat conversation
+     * @param message base message being verified
+     * @return
+     */
     private boolean isRoomMessage(V2BaseMessage message) {
 
-
+        //We keep an internal cache to expedite future checks
         if (roomStreamCache.contains(message.getStreamId()))
             return true;
 
         if (chatStreamCache.contains(message.getStreamId()))
             return false;
 
+        // #LLC-IMPROVEMENT
+        //Unfortunately there is no easy way to identify stream types...so enter hacks.
 
         try {
             if (symClient.getStreamsClient().getRoomDetail(message.getStreamId()) != null) {
@@ -212,6 +289,8 @@ public class MessageService implements DataFeedListener {
 
 
         }
+
+        //By default its a Chat stream..
         chatStreamCache.add(message.getStreamId());
         logger.debug("Found new chat stream to cache: {}", message.getStreamId());
         return false;
@@ -232,13 +311,21 @@ public class MessageService implements DataFeedListener {
 
     }
 
+
+    /**
+     * Add {@link MessageListener} to receive for all new messages
+     * @param messageListener listener that will be notified of events
+     */
     public void addMessageListener(MessageListener messageListener) {
 
          messageListeners.add(messageListener);
 
     }
 
-
+    /**
+     * Remove a registered {@link MessageListener} t
+     * @param messageListener listener that will removed from service
+     */
     public boolean removeMessageListener(MessageListener messageListener) {
 
         return messageListeners.remove(messageListener);
@@ -246,6 +333,10 @@ public class MessageService implements DataFeedListener {
     }
 
 
+    /**
+     * Add {@link RoomListener} to service to receive new Room events
+     * @param roomServiceListener listener to register
+     */
     public void addRoomListener(RoomServiceListener roomServiceListener) {
 
          roomServiceListeners.add(roomServiceListener);
@@ -263,6 +354,11 @@ public class MessageService implements DataFeedListener {
 
     }
 
+    /**
+     * Remove room listener from service
+     * @param roomServiceListener listener to remove
+     * @return
+     */
     public boolean removeRoomListener(RoomServiceListener roomServiceListener) {
 
         return roomServiceListeners.remove(roomServiceListener);
@@ -270,7 +366,10 @@ public class MessageService implements DataFeedListener {
     }
 
 
-
+    /**
+     * Add {@link ChatListener} to receive new conversation chat messages
+     * @param chatListener listener to register
+     */
     public void addChatListener(ChatListener chatListener) {
 
          chatListeners.add(chatListener);
@@ -289,12 +388,20 @@ public class MessageService implements DataFeedListener {
 
     }
 
+    /**
+     * Remove a registered chat listener
+     * @param chatListener listener to remove
+     * @return
+     */
     public boolean removeChatListener(ChatListener chatListener) {
 
         return chatListeners.remove(chatListener);
 
     }
 
+    /**
+     * Shutdown the underlying threads and workers.
+     */
     public void shutdown(){
         messageFeedWorker.shutdown();
         messageFeedWorker = null;

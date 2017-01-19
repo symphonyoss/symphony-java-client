@@ -34,6 +34,11 @@ import org.symphonyoss.symphony.clients.model.SymUser;
 import javax.ws.rs.client.Client;
 
 /**
+ *
+ * General interface for all Symphony client implementations
+ *
+ * This interface provides access to all client API implementations and services.
+ *
  * Created by Frank Tarsillo on 5/14/2016.
  */
 

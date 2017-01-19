@@ -25,6 +25,7 @@ package org.symphonyoss.client.services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.client.common.Constants;
 import org.symphonyoss.exceptions.DataFeedException;
 import org.symphonyoss.symphony.agent.model.Datafeed;
 import org.symphonyoss.symphony.agent.model.V2BaseMessage;
@@ -33,6 +34,9 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * This thread will long-poll for Symphony base messages based on a specific BOT user identified through the
+ * {@link SymphonyClient} and publish on the provided {@link DataFeedListener} interface.
+ * <p>
  * Created by Frank Tarsillo on 5/21/2016.
  */
 class MessageFeedWorker implements Runnable {
@@ -44,7 +48,12 @@ class MessageFeedWorker implements Runnable {
     private boolean shutdown;
 
 
-
+    /**
+     * Constructor
+     *
+     * @param symClient        Identifies the BOT user and exposes client APIs
+     * @param dataFeedListener Callback listener to publish new base messages on.
+     */
     public MessageFeedWorker(SymphonyClient symClient, DataFeedListener dataFeedListener) {
         this.symClient = symClient;
         this.dataFeedListener = dataFeedListener;
@@ -58,10 +67,11 @@ class MessageFeedWorker implements Runnable {
         //noinspection InfiniteLoopStatement
         while (!shutdown) {
 
-                initDatafeed();
+            //Make sure its active
+            initDatafeed();
 
-                readDatafeed();
-
+            //Poll it
+            readDatafeed();
 
 
         }
@@ -69,10 +79,13 @@ class MessageFeedWorker implements Runnable {
     }
 
 
-    private void initDatafeed(){
+    /**
+     * Create or restore an instance of the {@link Datafeed}
+     */
+    private void initDatafeed() {
 
 
-        while(datafeed == null) {
+        while (datafeed == null) {
             try {
                 logger.info("Creating datafeed with pod...");
 
@@ -83,8 +96,13 @@ class MessageFeedWorker implements Runnable {
 
                 logger.error("Failed to create datafeed with pod, please check connection..", e);
                 datafeed = null;
+
+                //Can use properties to override default time wait
                 try {
-                    TimeUnit.SECONDS.sleep(5);
+
+                    TimeUnit.SECONDS.sleep(
+                            Long.valueOf(System.getProperty(Constants.DATAFEED_RECOVERY_WAIT_TIME, "5"))
+                    );
                 } catch (InterruptedException e1) {
                     logger.error("Interrupt.. ", e1);
                 }
@@ -96,12 +114,16 @@ class MessageFeedWorker implements Runnable {
 
     }
 
-    private void readDatafeed(){
+    /**
+     * Reads in raw messages from {@link org.symphonyoss.symphony.clients.DataFeedClient} and publishes out through
+     * {@link DataFeedListener}
+     */
+    private void readDatafeed() {
 
         try {
             List<V2BaseMessage> messageList = symClient.getDataFeedClient().getMessagesFromDatafeed(datafeed);
 
-            if(messageList != null) {
+            if (messageList != null) {
 
                 logger.debug("Received {} messages..", messageList.size());
 
@@ -116,7 +138,7 @@ class MessageFeedWorker implements Runnable {
 
     }
 
-    public void shutdown(){
+    public void shutdown() {
         shutdown = true;
     }
 

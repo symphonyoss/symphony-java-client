@@ -25,6 +25,8 @@ package org.symphonyoss.client.services;
 import org.symphonyoss.client.model.Chat;
 
 /**
+ * Callback listener for the {@link ChatService} providing detection for new chat conversations.
+ *
  * Created by Frank Tarsillo on 5/21/2016.
  */
 public interface ChatServiceListener {

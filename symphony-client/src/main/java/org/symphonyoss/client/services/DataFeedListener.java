@@ -25,6 +25,10 @@ package org.symphonyoss.client.services;
 import org.symphonyoss.symphony.agent.model.V2BaseMessage;
 
 /**
+ *
+ * Callback listener used by the {@link MessageService} to read in base level messages.
+ *
+ *
  * Created by frank.tarsillo on 9/12/2016.
  */
 interface DataFeedListener {

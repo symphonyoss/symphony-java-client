@@ -26,6 +26,12 @@
 package org.symphonyoss.client.common;
 
 /**
+ *
+ * Constants
+ *
+ * All time units are in Seconds
+ *
+ *
  * @author Frank Tarsillo on 10/22/2016.
  */
 public class Constants {
@@ -33,6 +39,7 @@ public class Constants {
     public final static String CONNECTIONS_POLL_SLEEP = "connections.poll.sleep";
     public final static String PRESENCE_POLL_SLEEP = "presence.poll.sleep";
     public final static String SYMAUTH_REFRESH_TIME = "symauth.refresh.time";
+    public final static String DATAFEED_RECOVERY_WAIT_TIME = "datafeed.recovery.wait.time";
     public static final String USERSCLIENT_GETALLUSERS_THREADPOOL ="usersclient.getallusers.threadpool";
     public static final String PRESENCE_POLL = "presence.poll";
 }

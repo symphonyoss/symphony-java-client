@@ -25,6 +25,10 @@ package org.symphonyoss.client.services;
 import org.symphonyoss.symphony.clients.model.SymUserConnection;
 
 /**
+ *
+ * Callback listener for use with the {@link ConnectionsService} which will provide notification of external connection
+ * requests.
+ *
  * Created by frank.tarsillo on 9/9/2016.
  */
 public interface ConnectionsListener  {

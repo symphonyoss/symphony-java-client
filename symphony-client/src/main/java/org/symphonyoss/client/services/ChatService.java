@@ -163,7 +163,7 @@ public class ChatService implements ChatListener {
 
     /**
      * Remove Chat conversation
-     * @param chat
+     * @param chat Chat object to remove
      * @return Removed chat
      */
     public boolean removeChat(Chat chat) {
@@ -229,15 +229,16 @@ public class ChatService implements ChatListener {
 
     /**
      * Process incoming message from ChatListener
-     * @param {@link SymMessage } incoming from remote user.
+     *
+     * @param symMessage Incoming {@link  SymMessage}
      */
     @Override
-    public void onChatMessage(SymMessage message) {
-        if (message == null)
+    public void onChatMessage(SymMessage symMessage) {
+        if (symMessage == null)
             return;
 
 
-        String streamId = message.getStreamId();
+        String streamId = symMessage.getStreamId();
 
 
         logger.debug("New message from stream {}", streamId);
@@ -251,7 +252,7 @@ public class ChatService implements ChatListener {
             //Create a chat from the message if Chat doesn't exist.
             if (chat == null) {
                 //Construct it.
-                chat = createNewChatFromMessage(message);
+                chat = createNewChatFromMessage(symMessage);
 
                 //Good...
                 if (chat != null) {
@@ -261,31 +262,14 @@ public class ChatService implements ChatListener {
                     addChat(chat, false);
 
                 } else {
-                    logger.error("Failed to add new chat from message {} {}", message.getStreamId(), message.getFromUserId());
+                    logger.error("Failed to add new chat from message {} {}", symMessage.getStreamId(), symMessage.getFromUserId());
                 }
                 //Chat already exist..
             } else {
 
-                //This should no longer be required...
-
-//                try {
-//                    //We need to check if incoming user is registered as a remote user...if not add them.
-//                    //This is lazy loading remote users into the active conversation.
-//                    if (chat.getRemoteUsers().stream().filter(symUser -> symUser.getId().equals(message.getFromUserId())).findAny().orElse(null) == null) {
-//
-//                        //Get full detail for the remote users..and add to existing Chat.
-//                        SymUser symUser = symClient.getUsersClient().getUserFromId(message.getFromUserId());
-//                        if (symUser != null) {
-//                            chat.getRemoteUsers().add(symUser);
-//                            logger.info("Added user {}:{} to conversation.", symUser.getId(), symUser.getDisplayName());
-//                        }
-//                    }
-//                } catch (UsersClientException e) {
-//                    logger.error("Failed to add user to multi-party chat. Failed to identify user ID: {}", message.getFromUserId());
-//                }
 
                 //Inform all Chat listners of new message..
-                chat.onChatMessage(message);
+                chat.onChatMessage(symMessage);
 
             }
 
@@ -329,7 +313,7 @@ public class ChatService implements ChatListener {
     /**
      * Returns a set of chats from a given email address (resolved to UserID). This can be BOT or users that
      * the BOT is communicating with.
-     * @param email
+     * @param email User email
      * @return A set of Chats associated with the given user.
      */
     public Set<Chat> getChatsByEmail(String email) {
@@ -362,7 +346,7 @@ public class ChatService implements ChatListener {
 
     /**
      * Get a given Chat by streamId
-     * @param streamId
+     * @param streamId Stream ID
      * @return A Chat
      */
     public Chat getChatByStream(String streamId) {
