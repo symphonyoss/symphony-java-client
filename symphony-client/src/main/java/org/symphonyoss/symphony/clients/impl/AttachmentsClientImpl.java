@@ -40,6 +40,8 @@ import java.util.Base64;
 
 
 /**
+ * Support for message attachments
+ *
  * Created by Frank Tarsillo on 5/15/2016.
  */
 public class AttachmentsClientImpl implements AttachmentsClient {
@@ -61,17 +63,17 @@ public class AttachmentsClientImpl implements AttachmentsClient {
 
     /**
      * If you need to override HttpClient.  Important for handling individual client certs.
-     * @param symAuth
-     * @param serviceUrl
-     * @param httpClient
+     * @param symAuth Authorization model containing session and key tokens
+     * @param agentUrl Agent URL
+     * @param httpClient Custom client utilized to access Symphony APIs
      */
-    public AttachmentsClientImpl(SymAuth symAuth, String serviceUrl, Client httpClient) {
+    public AttachmentsClientImpl(SymAuth symAuth, String agentUrl, Client httpClient) {
         this.symAuth = symAuth;
 
         //Get Service client to query for userID.
         apiClient = org.symphonyoss.symphony.agent.invoker.Configuration.getDefaultApiClient();
         apiClient.setHttpClient(httpClient);
-        apiClient.setBasePath(serviceUrl);
+        apiClient.setBasePath(agentUrl);
 
     }
 

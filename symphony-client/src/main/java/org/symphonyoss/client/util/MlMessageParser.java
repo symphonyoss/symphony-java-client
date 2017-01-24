@@ -39,6 +39,11 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import java.util.List;
 
+/**
+ * Provides simple utility to parse MlMessage formated text
+ *
+ * @author Frank Tarsillo
+ */
 public class MlMessageParser extends DefaultHandler {
 
     private String messageMl;

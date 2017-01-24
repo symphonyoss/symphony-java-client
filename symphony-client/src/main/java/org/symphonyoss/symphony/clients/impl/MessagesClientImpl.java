@@ -60,10 +60,10 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
     }
 
     /**
-     * If you need to override HttpClient.  Important for handling individual client certs.
-     * @param symAuth
-     * @param serviceUrl
-     * @param httpClient
+     * Constructor supports custom HTTP clients
+     * @param symAuth Authorization model containing session and key tokens
+     * @param serviceUrl Service URL
+     * @param httpClient Custom HTTP Client
      */
     public MessagesClientImpl(SymAuth symAuth, String serviceUrl, Client httpClient) {
         this.symAuth = symAuth;
@@ -75,6 +75,15 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
 
     }
 
+    /**
+     * Send a message using Symphony defined model. Please use {@link #sendMessage(Stream, SymMessage)} which supports
+     * {@link SymMessage}.
+     *
+     * @param stream Stream object identifying destination endpoint
+     * @param message Message to send leveraging the MessageSubmission message
+     * @return Message that was submitted
+     * @throws MessagesException Caused by Symphony API problems
+     */
     @Deprecated
     public Message sendMessage(Stream stream, MessageSubmission message) throws MessagesException {
         if (stream == null || message == null) {
@@ -95,7 +104,13 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
     }
 
 
-
+    /**
+     * Send message to stream
+     * @param stream Stream to send message to
+     * @param message Message to send
+     * @return Message sent
+     * @throws MessagesException Exception caused by Symphony API calls
+     */
     public SymMessage sendMessage(Stream stream, SymMessage message) throws MessagesException {
 
         if (stream == null || message == null) {
@@ -127,7 +142,16 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
     }
 
 
-
+    /**
+     * Retrieve historical messages from a given stream.  This is NOT a blocking call.
+     *
+     * @param stream Stream to retrieve messages from
+     * @param since Date (long) from point in time
+     * @param offset Offset
+     * @param maxMessages Maximum number of messages to retrieve from the specified time (since)
+     * @return List of messages
+     * @throws MessagesException Exception caused by Symphony API calls
+     */
     public List<SymMessage> getMessagesFromStream(Stream stream, Long since, Integer offset, Integer maxMessages) throws MessagesException {
 
         if (stream == null ) {

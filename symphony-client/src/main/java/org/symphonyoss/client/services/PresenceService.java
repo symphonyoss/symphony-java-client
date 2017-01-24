@@ -95,7 +95,7 @@ public class PresenceService implements PresenceListener {
     /**
      * Please use {@link #addPresenceListener(PresenceListener)}
      *
-     * @param presenceListener
+     * @param presenceListener Listener to register
      */
     public void registerPresenceListener(PresenceListener presenceListener) {
 

@@ -90,7 +90,7 @@ public class MessageService implements DataFeedListener {
      * Convenience method for sending messages to a room
      * @param room Room object
      * @param symMessage Message to send to the room
-     * @throws MessagesException
+     * @throws MessagesException Generated from API calls into Symphony
      */
     public void sendMessage(Room room, SymMessage symMessage) throws MessagesException {
 
@@ -103,7 +103,7 @@ public class MessageService implements DataFeedListener {
      * Convenience method for sending messages to chat conversation (1:1 or Multi-party)
      * @param chat Chat object representing conversation
      * @param symMessage Message to send to the conversation
-     * @throws MessagesException
+     * @throws MessagesException Generated from API calls into Symphony
      */
     public void sendMessage(Chat chat, SymMessage symMessage) throws MessagesException {
 
@@ -116,7 +116,7 @@ public class MessageService implements DataFeedListener {
      * Convenience method to send a message to a given user by email address
      * @param email email of destination user
      * @param symMessage Message to send
-     * @throws MessagesException
+     * @throws MessagesException Generated from API calls into Symphony
      */
     public void sendMessage(String email, SymMessage symMessage) throws MessagesException {
 
@@ -142,7 +142,7 @@ public class MessageService implements DataFeedListener {
      * @param offset (Optional) No. of messages to skip.
      * @param maxMessages (Optional) Maximum number of messages to retrieve from the starting point
      * @return {@link List<SymMessage>}  List of messages
-     * @throws MessagesException
+     * @throws MessagesException Generated from API calls into Symphony
      */
 
     private List<SymMessage> getMessagesFromStream(Stream stream, Long since, Integer offset, Integer maxMessages) throws MessagesException {
@@ -158,8 +158,8 @@ public class MessageService implements DataFeedListener {
      * @param since Starting point date (long value)
      * @param offset (Optional) No. of messages to skip.
      * @param maxMessages (Optional) Maximum number of messages to retrieve from the starting point
-     * @return {@link List<SymMessage>}  List of messages
-     * @throws MessagesException
+     * @return {@link List}  List of messages
+     * @throws MessagesException Generated from API calls into Symphony
      */
     public List<SymMessage> getMessagesFromUserId(long userId, Long since, Integer offset, Integer maxMessages) throws MessagesException {
 
@@ -301,8 +301,8 @@ public class MessageService implements DataFeedListener {
 
     /**
      * Please use {@link #addMessageListener(MessageListener)}
-     * @param messageListener
-     * @return
+     * @param messageListener Listener to register
+     * @return True if listener is registered successfully
      */
     @Deprecated
     public boolean registerMessageListener(MessageListener messageListener) {
@@ -325,13 +325,13 @@ public class MessageService implements DataFeedListener {
     /**
      * Remove a registered {@link MessageListener} t
      * @param messageListener listener that will removed from service
+     * @return True if listener is removed
      */
     public boolean removeMessageListener(MessageListener messageListener) {
 
         return messageListeners.remove(messageListener);
 
     }
-
 
     /**
      * Add {@link RoomListener} to service to receive new Room events
@@ -344,8 +344,8 @@ public class MessageService implements DataFeedListener {
     }
     /**
      * Please use {@link #addRoomListener(RoomServiceListener)}
-     * @param roomServiceListener
-     * @return
+     * @param roomServiceListener Listener to register
+     * @return True if registered without issue
      */
     @Deprecated
     public boolean registerRoomListener(RoomServiceListener roomServiceListener) {
@@ -357,7 +357,7 @@ public class MessageService implements DataFeedListener {
     /**
      * Remove room listener from service
      * @param roomServiceListener listener to remove
-     * @return
+     * @return True if listener is removed
      */
     public boolean removeRoomListener(RoomServiceListener roomServiceListener) {
 
@@ -378,8 +378,8 @@ public class MessageService implements DataFeedListener {
 
     /**
      * Please use {@link #addChatListener(ChatListener)}
-     * @param chatListener
-     * @return
+     * @param chatListener Listener to register
+     * @return True if registered
      */
     @Deprecated
     public boolean registerChatListener(ChatListener chatListener) {
@@ -391,7 +391,7 @@ public class MessageService implements DataFeedListener {
     /**
      * Remove a registered chat listener
      * @param chatListener listener to remove
-     * @return
+     * @return True if listener is registered
      */
     public boolean removeChatListener(ChatListener chatListener) {
 

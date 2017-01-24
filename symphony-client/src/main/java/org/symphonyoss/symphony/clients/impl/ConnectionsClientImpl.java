@@ -40,6 +40,8 @@ import java.util.stream.Collectors;
 
 
 /**
+ * Client for accessing connections functions.
+ *
  * Created by Frank Tarsillo on 5/15/2016.
  */
 public class ConnectionsClientImpl implements ConnectionsClient {
@@ -62,9 +64,9 @@ public class ConnectionsClientImpl implements ConnectionsClient {
 
     /**
      * If you need to override HttpClient.  Important for handling individual client certs.
-     * @param symAuth
-     * @param serviceUrl
-     * @param httpClient
+     * @param symAuth Authorization model containing session and key tokens
+     * @param serviceUrl Service URL
+     * @param httpClient Custom HTTP Client to use
      */
     public ConnectionsClientImpl(SymAuth symAuth, String serviceUrl, Client httpClient) {
         this.symAuth = symAuth;

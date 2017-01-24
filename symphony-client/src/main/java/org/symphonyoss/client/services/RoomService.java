@@ -80,7 +80,7 @@ public class RoomService implements RoomServiceListener {
      * updated.
      * @param symRoomAttributes Room attributes required to create the room object
      * @return Fully populated {@link Room} object
-     * @throws RoomException
+     * @throws RoomException Exception generated from the logical creation of the room object
      */
     public Room createRoom(SymRoomAttributes symRoomAttributes) throws RoomException {
 
@@ -129,6 +129,11 @@ public class RoomService implements RoomServiceListener {
      * Logical join of the room which registers the listeners and the Room object to the service.
      *
      * This call will also update room details within the Room object.
+     *
+     * @param room Room to register
+     *
+     * @throws RoomException Caused by room details that prevent logical monitoring of the room object
+     *
      */
     public void joinRoom(Room room) throws RoomException {
 
@@ -217,7 +222,7 @@ public class RoomService implements RoomServiceListener {
 
     /**
      * Publish new room objects based on detection and/or registration to the service
-     * @param room
+     * @param room Room object published from callback
      */
     @Override
     public void onNewRoom(Room room) {
@@ -341,12 +346,13 @@ public class RoomService implements RoomServiceListener {
 
     /**
      * Please use {@link #addRoomServiceListener(RoomServiceListener)}
-     * @param roomServiceListener
+     * @param roomServiceListener Listener to register
      */
     @Deprecated
     public void registerRoomServiceListener(RoomServiceListener roomServiceListener) {
         addRoomServiceListener(roomServiceListener);
     }
+
 
     public void addRoomServiceListener(RoomServiceListener roomServiceListener) {
         roomServiceListeners.add(roomServiceListener);
