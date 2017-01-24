@@ -182,7 +182,6 @@ public class StreamsClientImpl implements org.symphonyoss.symphony.clients.Strea
         } catch (ApiException e) {
             throw new StreamsException("Failed to obtain room information from ID: " + roomId, e);
         }
-
     }
 
     @Override
@@ -200,8 +199,6 @@ public class StreamsClientImpl implements org.symphonyoss.symphony.clients.Strea
         } catch (ApiException e) {
             throw new StreamsException("Failed to obtain room information while creating room: " + roomAttributes.getName(), e);
         }
-
-
     }
 
     @Override
@@ -219,8 +216,6 @@ public class StreamsClientImpl implements org.symphonyoss.symphony.clients.Strea
         } catch (ApiException e) {
             throw new StreamsException("Failed to obtain room information while updating attributes on room: " + roomAttributes.getName(), e);
         }
-
-
     }
 
 
@@ -240,10 +235,24 @@ public class StreamsClientImpl implements org.symphonyoss.symphony.clients.Strea
         } catch (ApiException e) {
             throw new StreamsException("Failed room search...", e);
         }
-
-
     }
-
-
-
+    
+	@Override
+	public void deactivateRoom(String roomId) throws StreamsException {
+       if (roomId == null) {
+            throw new IllegalArgumentException("Argument roomId must not be null");
+        }
+	       
+       StreamsApi streamsApi = new StreamsApi(apiClient);
+	    
+       try {
+            String sessionToken = symAuth.getSessionToken().getToken();
+            
+            streamsApi.v1RoomIdSetActivePost(roomId, false, sessionToken);
+       } catch (Exception e) {
+            String message = "Failed to deactivate room for roomId: " + roomId;
+            logger.error(message, e);
+            throw new StreamsException(message, e);
+        }  
+	}
 }
