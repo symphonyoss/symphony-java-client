@@ -1,4 +1,6 @@
 org.symphonyoss.client
+org.symphonyoss.client.ai
+org.symphonyoss.client.ai.utils
 org.symphonyoss.client.common
 org.symphonyoss.client.impl
 org.symphonyoss.client.model
