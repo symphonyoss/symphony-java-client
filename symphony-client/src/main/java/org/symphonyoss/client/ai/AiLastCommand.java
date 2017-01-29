@@ -27,8 +27,9 @@ package org.symphonyoss.client.ai;
 import org.symphonyoss.client.util.MlMessageParser;
 
 /**
- * Created by nicktarsillo on 6/15/16.
  * A model for saving the last command used by the ai.
+ *
+ * @author Nicholas Tarsillo
  */
 public class AiLastCommand {
     private MlMessageParser mlMessageParser;
@@ -39,17 +40,33 @@ public class AiLastCommand {
         this.mlMessageParser = mlMessageParser;
     }
 
+    /**
+     * Retrieve message parser containing the last command message
+     *
+     * @return {@link MlMessageParser}
+     */
     public MlMessageParser getMlMessageParser() {
         return mlMessageParser;
     }
 
+    /**
+     * Set the ML message parser
+     *
+     * @param mlMessageParser ML message parser
+     */
     public void setMlMessageParser(MlMessageParser mlMessageParser) {
         this.mlMessageParser = mlMessageParser;
     }
 
+    /**
+     * Retrieve the last command
+     *
+     * @return {@link AiCommand}  the last command
+     */
     public AiCommand getAiCommand() {
         return aiCommand;
     }
+
 
     public void setAiCommandImpl(AiCommand aiCommand) {
         this.aiCommand = aiCommand;

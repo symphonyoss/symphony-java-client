@@ -56,7 +56,7 @@ import com.google.common.base.Strings;
 
 
 /**
- * Created by Frank Tarsillo on 5/15/2016.
+ * @author Frank Tarsillo
  */
 public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersClient {
     private final SymAuth symAuth;
@@ -82,9 +82,9 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
     /**
      * If you need to override HttpClient.  Important for handling individual client certs.
      *
-     * @param symAuth
-     * @param serviceUrl
-     * @param httpClient
+     * @param symAuth    Authorization model containing session and key tokens
+     * @param serviceUrl Service URL used to access API
+     * @param httpClient Custom HTTP client
      */
     public UsersClientImpl(SymAuth symAuth, String serviceUrl, Client httpClient) {
         this.symAuth = symAuth;
@@ -216,10 +216,11 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
 
 
     /**
+     * Retrieve all users
      * This method could require elevated privileges
      *
-     * @return
-     * @throws UsersClientException
+     * @return All users as part of a set
+     * @throws UsersClientException Exceptions thrown from Symphony API's
      */
     @Override
     public Set<SymUser> getAllUsers() throws UsersClientException {
@@ -233,7 +234,7 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
         try {
             UserIdList userIdList = userApi.v1AdminUserListGet(symAuth.getSessionToken().getToken());
 
-            int nThreads  = Integer.valueOf(System.getProperty(Constants.USERSCLIENT_GETALLUSERS_THREADPOOL,"16"));
+            int nThreads = Integer.valueOf(System.getProperty(Constants.USERSCLIENT_GETALLUSERS_THREADPOOL, "16"));
 
             ExecutorService executor = Executors.newFixedThreadPool(nThreads);
 
@@ -278,9 +279,7 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
 
             }
 
-            logger.debug("Finished all threads. Total time retrieving users: {} sec", (System.currentTimeMillis() - startTime)/1000);
-
-
+            logger.debug("Finished all threads. Total time retrieving users: {} sec", (System.currentTimeMillis() - startTime) / 1000);
 
 
         } catch (ApiException e) {
@@ -292,100 +291,100 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
 
 
     }
-    
-	@Override
-	public void setUserStatus(long userId, UserStatus userStatus) throws UsersClientException {
-		if (userStatus == null) {
-			throw new IllegalArgumentException("Argument userStatus must not be null");
-		}
 
-		UserApi usersApi = new UserApi(apiClient);
+    @Override
+    public void setUserStatus(long userId, UserStatus userStatus) throws UsersClientException {
+        if (userStatus == null) {
+            throw new IllegalArgumentException("Argument userStatus must not be null");
+        }
 
-		try {
-			String sessionToken = getSessionToken();
+        UserApi usersApi = new UserApi(apiClient);
 
-			SuccessResponse successResponse = usersApi.v1AdminUserUidStatusUpdatePost(sessionToken, userId, userStatus);
+        try {
+            String sessionToken = getSessionToken();
 
-			if (successResponse == null) {
-				throw new IllegalStateException("Update user status response must not be null");
-			}
-		} catch (ApiException e) {
-			String message = "API error communicating with POD, while settIng status " + userStatus.getStatus() + " for user id: " + userId;
-			logger.error(message, e);
-			throw new UsersClientException(message, e);
-		} catch (IllegalStateException e) {
-			String message = "Failed to set status " + userStatus.getStatus() + " for user id: " + userId;
-			logger.error(message, e);
-			throw new UsersClientException(message, e);
-		}
-	}
-    
-	@Override
-	public SymUser updateUser(long userId, SymUser symUser) throws UsersClientException {
-		UserApi usersApi = new UserApi(apiClient);
-		SymUser updatedSymUser = null;
+            SuccessResponse successResponse = usersApi.v1AdminUserUidStatusUpdatePost(sessionToken, userId, userStatus);
 
-		try {
-			String sessionToken = getSessionToken();
-			UserAttributes userAttributes = SymUser.toUserAttributes(symUser);
+            if (successResponse == null) {
+                throw new IllegalStateException("Update user status response must not be null");
+            }
+        } catch (ApiException e) {
+            String message = "API error communicating with POD, while settIng status " + userStatus.getStatus() + " for user id: " + userId;
+            logger.error(message, e);
+            throw new UsersClientException(message, e);
+        } catch (IllegalStateException e) {
+            String message = "Failed to set status " + userStatus.getStatus() + " for user id: " + userId;
+            logger.error(message, e);
+            throw new UsersClientException(message, e);
+        }
+    }
 
-			UserDetail userDetail = usersApi.v1AdminUserUidUpdatePost(sessionToken, userId, userAttributes);
+    @Override
+    public SymUser updateUser(long userId, SymUser symUser) throws UsersClientException {
+        UserApi usersApi = new UserApi(apiClient);
+        SymUser updatedSymUser = null;
 
-			if (userDetail != null) {
-				updatedSymUser = SymUser.toSymUser(userDetail);
-			} else {
-				throw new IllegalStateException("Update user response must not be null");
-			}
-		} catch (ApiException e) {
-			String message = "API error communicating with POD, while updating user";
-			logger.error(message, e);
-			throw new UsersClientException(message, e);
-		} catch (IllegalStateException e) {
-			String message = "Failed to update user";
-			logger.error(message, e);
-			throw new UsersClientException(message, e);
-		}
+        try {
+            String sessionToken = getSessionToken();
+            UserAttributes userAttributes = SymUser.toUserAttributes(symUser);
 
-		return updatedSymUser;
-	}
+            UserDetail userDetail = usersApi.v1AdminUserUidUpdatePost(sessionToken, userId, userAttributes);
 
-	@Override
-	public SymUser createUser(UserCreate userCreate) throws UsersClientException {
-		UserApi usersApi = new UserApi(apiClient);
-		UserDetail userDetail = null;
+            if (userDetail != null) {
+                updatedSymUser = SymUser.toSymUser(userDetail);
+            } else {
+                throw new IllegalStateException("Update user response must not be null");
+            }
+        } catch (ApiException e) {
+            String message = "API error communicating with POD, while updating user";
+            logger.error(message, e);
+            throw new UsersClientException(message, e);
+        } catch (IllegalStateException e) {
+            String message = "Failed to update user";
+            logger.error(message, e);
+            throw new UsersClientException(message, e);
+        }
 
-		try {
-			String sessionToken = getSessionToken();
+        return updatedSymUser;
+    }
 
-			userDetail = usersApi.v1AdminUserCreatePost(sessionToken, userCreate);
+    @Override
+    public SymUser createUser(UserCreate userCreate) throws UsersClientException {
+        UserApi usersApi = new UserApi(apiClient);
+        UserDetail userDetail = null;
 
-			if (userDetail == null) {
-				throw new IllegalStateException("User Detail must not be null");
-			}
-		} catch (ApiException e) {
-			String message = "API error communicating with POD, while creating user";
-			logger.error(message, e);
-			throw new UsersClientException(message, e);
-		} catch (IllegalStateException e) {
-			String message = "Failed to create user";
-			logger.error(message, e);
-			throw new UsersClientException(message, e);
-		}
+        try {
+            String sessionToken = getSessionToken();
 
-		return SymUser.toSymUser(userDetail);
-	}
+            userDetail = usersApi.v1AdminUserCreatePost(sessionToken, userCreate);
+
+            if (userDetail == null) {
+                throw new IllegalStateException("User Detail must not be null");
+            }
+        } catch (ApiException e) {
+            String message = "API error communicating with POD, while creating user";
+            logger.error(message, e);
+            throw new UsersClientException(message, e);
+        } catch (IllegalStateException e) {
+            String message = "Failed to create user";
+            logger.error(message, e);
+            throw new UsersClientException(message, e);
+        }
+
+        return SymUser.toSymUser(userDetail);
+    }
 
 	/* ************************************************************************
-	 * Private Methods
+     * Private Methods
 	 * ***********************************************************************/
 
-	private String getSessionToken() throws IllegalStateException {
-		String sessionToken = symAuth.getSessionToken().getToken();
+    private String getSessionToken() throws IllegalStateException {
+        String sessionToken = symAuth.getSessionToken().getToken();
 
-		if (Strings.isNullOrEmpty(sessionToken)) {
-			throw new IllegalStateException("Invalid session token string: it must not be null or empty");
-		}
-		return sessionToken;
-	}
+        if (Strings.isNullOrEmpty(sessionToken)) {
+            throw new IllegalStateException("Invalid session token string: it must not be null or empty");
+        }
+        return sessionToken;
+    }
 
 }

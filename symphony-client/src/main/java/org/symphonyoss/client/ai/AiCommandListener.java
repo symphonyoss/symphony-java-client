@@ -42,9 +42,10 @@ import java.util.LinkedHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Created by nicktarsillo on 6/13/16.
  * A class that listens in on a chat, and determines if the user's input
  * matches a command.
+ *
+ * @author Nichalas Tarsillo
  */
 public class AiCommandListener implements ChatListener {
     private static final Logger logger = LoggerFactory.getLogger(AiCommandListener.class);
@@ -67,8 +68,9 @@ public class AiCommandListener implements ChatListener {
      * A method that allows other classes to determine if a given message
      * matches a command in this command listener
      *
-     * @param message the message
-     * @return if the message is a command
+     * @param message   the message
+     * @param symClient Symphony client
+     * @return True if the message is a command
      */
     public static boolean isCommand(SymMessage message, SymphonyClient symClient) {
 
@@ -95,11 +97,8 @@ public class AiCommandListener implements ChatListener {
     /**
      * When a chat message is received, check if it starts with
      * the command char. If it does, process message.
-     * <p>
-     * <p>
      *
      * @param message the received message
-     *                </p>
      */
 
     public void onChatMessage(SymMessage message) {

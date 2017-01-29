@@ -42,7 +42,7 @@ import java.util.Base64;
 /**
  * Support for message attachments
  *
- * Created by Frank Tarsillo on 5/15/2016.
+ * @author  Frank Tarsillo
  */
 public class AttachmentsClientImpl implements AttachmentsClient {
 
@@ -76,6 +76,7 @@ public class AttachmentsClientImpl implements AttachmentsClient {
         apiClient.setBasePath(agentUrl);
 
     }
+
 
     public byte[] getAttachmentData(SymAttachmentInfo symAttachmentInfo, SymMessage symMessage) throws AttachmentsException {
 

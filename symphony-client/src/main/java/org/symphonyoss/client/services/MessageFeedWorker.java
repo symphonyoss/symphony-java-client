@@ -37,7 +37,8 @@ import java.util.concurrent.TimeUnit;
  * This thread will long-poll for Symphony base messages based on a specific BOT user identified through the
  * {@link SymphonyClient} and publish on the provided {@link DataFeedListener} interface.
  * <p>
- * Created by Frank Tarsillo on 5/21/2016.
+ *
+ * @author Frank Tarsillo
  */
 class MessageFeedWorker implements Runnable {
 

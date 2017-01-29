@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
 /**
  * Client for accessing connections functions.
  *
- * Created by Frank Tarsillo on 5/15/2016.
+ * @author Frank Tarsillo
  */
 public class ConnectionsClientImpl implements ConnectionsClient {
 
@@ -64,7 +64,8 @@ public class ConnectionsClientImpl implements ConnectionsClient {
 
     /**
      * If you need to override HttpClient.  Important for handling individual client certs.
-     * @param symAuth Authorization model containing session and key tokens
+     *
+     * @param symAuth    Authorization model containing session and key tokens
      * @param serviceUrl Service URL
      * @param httpClient Custom HTTP Client to use
      */
@@ -211,7 +212,7 @@ public class ConnectionsClientImpl implements ConnectionsClient {
 
         ConnectionApi connectionApi = new ConnectionApi(apiClient);
 
-        if(status == null)
+        if (status == null)
             status = SymUserConnection.Status.ALL;
 
         UserConnectionList userConnectionList;

@@ -28,7 +28,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.symphonyoss.symphony.pod.model.FacetedMatchCount;
 
 /**
- * Created by frank on 11/25/16.
+ * @author Frank Tarsillo
  */
 public class SymFacetedMatchCount {
 

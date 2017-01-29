@@ -150,17 +150,7 @@ public class SymphonyBasicClient implements SymphonyClient {
 
     }
 
-    /**
-     * Purpose of this constructor is to support multiple SymphonyClient instances running within a single VM with
-     * different client certs.
-     *
-     * @param httpClient
-     * @param symAuth
-     * @param email
-     * @param agentUrl
-     * @param serviceUrl
-     * @throws InitException
-     */
+
     @Override
     public void init(Client httpClient, SymAuth symAuth, String email, String agentUrl, String serviceUrl) throws InitException {
 

@@ -27,8 +27,9 @@ import org.symphonyoss.symphony.pod.model.RoomTag;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
 /**
- * Created by frank.tarsillo on 9/12/2016.
+ * @author Frank Tarsillo
  */
 public class SymRoomTag {
     private String key = null;

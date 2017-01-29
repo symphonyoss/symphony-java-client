@@ -25,9 +25,17 @@
 package org.symphonyoss.client.ai;
 
 /**
- * Created by nicktarsillo on 6/20/16.
  * An interface that developers can implement to create their own command permissions
+ *
+ * @author Nicholas Tarsillo
  */
 public interface AiPermission {
+
+    /**
+     * Check if user is allowed to run command
+     *
+     * @param userID UserId
+     * @return True if allowed
+     */
     boolean userHasPermission(Long userID);
 }

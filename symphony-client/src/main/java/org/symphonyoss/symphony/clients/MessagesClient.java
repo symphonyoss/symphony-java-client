@@ -34,8 +34,25 @@ import java.util.List;
  * Created by frank.tarsillo on 6/6/2016.
  */
 public interface MessagesClient {
+
+    /**
+     * Send message to stream
+     * @param stream Stream to send message to
+     * @param message Message to send
+     * @return Message sent
+     * @throws MessagesException Exception caused by Symphony API calls
+     */
     SymMessage sendMessage(Stream stream, SymMessage message) throws MessagesException;
 
-
+    /**
+     * Retrieve historical messages from a given stream.  This is NOT a blocking call.
+     *
+     * @param stream Stream to retrieve messages from
+     * @param since Date (long) from point in time
+     * @param offset Offset
+     * @param maxMessages Maximum number of messages to retrieve from the specified time (since)
+     * @return List of messages
+     * @throws MessagesException Exception caused by Symphony API calls
+     */
     List<SymMessage> getMessagesFromStream(Stream stream, Long since, Integer offset, Integer maxMessages) throws MessagesException;
 }

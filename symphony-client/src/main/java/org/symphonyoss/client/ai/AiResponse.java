@@ -31,10 +31,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by nicktarsillo on 6/20/16.
  * A model that represents a single response from the ai.
+ *
+ * @author Nicholas Tarsillo
  */
-public class AiResponse{
+public class AiResponse {
     private String message;
     private SymMessage.Format type;
     private List<SymUser> symUsers = new ArrayList<>();
@@ -48,12 +49,16 @@ public class AiResponse{
     /**
      * @return the response message
      */
-    
     public String getMessage() {
         return message;
     }
 
-    
+
+    /**
+     * Set response message
+     *
+     * @param message Response message
+     */
     public void setMessage(String message) {
         this.message = message;
     }
@@ -61,22 +66,26 @@ public class AiResponse{
     /**
      * @return the format of the message
      */
-    
     public SymMessage.Format getType() {
         return type;
     }
 
-    
+
+    /**
+     * Set the type of the message
+     *
+     * @param type Text of MLMESSAGE
+     */
     public void setType(SymMessage.Format type) {
         this.type = type;
     }
 
-    
+
     public List<SymUser> getSymUsers() {
         return symUsers;
     }
 
-    
+
     public void setSymUsers(List<SymUser> symUsers) {
         this.symUsers = symUsers;
     }

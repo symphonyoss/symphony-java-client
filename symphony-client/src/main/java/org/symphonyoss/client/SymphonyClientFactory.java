@@ -25,26 +25,28 @@ package org.symphonyoss.client;
 import org.symphonyoss.client.impl.SymphonyBasicClient;
 
 /**
- *
  * Supports the creation of SymphonyClient implementations.
  *
- * Created by frank.tarsillo on 6/6/2016.
+ * @author Frank Tarsillo
  */
 public class SymphonyClientFactory {
 
     /**
      * Currently only one SymphonyClient implementation called BASIC
      */
-    public enum TYPE { BASIC }
+    public enum TYPE {
+        BASIC
+    }
 
     /**
      * Generate a new SymphonyClient based on type
+     *
      * @param type The type of SymphonyClient.  Currently only BASIC is available.
      * @return A SymphonyClient instance based on type
      */
-    public static SymphonyClient getClient( TYPE type){
+    public static SymphonyClient getClient(TYPE type) {
 
-            return new SymphonyBasicClient();
+        return new SymphonyBasicClient();
 
     }
 

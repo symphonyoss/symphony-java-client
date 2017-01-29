@@ -28,9 +28,19 @@ import org.symphonyoss.client.util.MlMessageParser;
 import org.symphonyoss.symphony.clients.model.SymMessage;
 
 /**
- * Created by nicktarsillo on 6/20/16.
  * An interface that developers can implement to create their own actions
+ *
+ * @author Nicholas Tarsillo
  */
 public interface AiAction {
+
+    /**
+     * Provides a sequence of responses to send back to user executing command
+     *
+     * @param mlMessageParser Parser used to process incoming message
+     * @param message         Message sent from user
+     * @param command         Command being requested by user
+     * @return {@link AiResponseSequence}
+     */
     AiResponseSequence respond(MlMessageParser mlMessageParser, SymMessage message, AiCommand command);
 }

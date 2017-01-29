@@ -28,8 +28,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Created by nicktarsillo on 6/20/16.
  * A model that represents a sequence of responses from the ai
+ *
+ * @author Nicholas Tarsillo
  */
 public class AiResponseSequence {
     private Set<AiResponse> aiResponseSet = new HashSet<AiResponse>();
@@ -38,18 +39,38 @@ public class AiResponseSequence {
 
     }
 
+    /**
+     * Add a response to the sequence
+     *
+     * @param response {@link AiResponse} to add to sequence
+     */
     public void addResponse(AiResponse response) {
         aiResponseSet.add(response);
     }
 
+    /**
+     * Remove response from sequence
+     *
+     * @param response {@link AiResponse} to remove from sequence
+     */
     public void removeResponse(AiResponse response) {
         aiResponseSet.remove(response);
     }
 
+    /**
+     * Retrieve all the responses set in the sequence
+     *
+     * @return Set of AI responses
+     */
     public Set<AiResponse> getAiResponseSet() {
         return aiResponseSet;
     }
 
+    /**
+     * Set the entire sequence of responses
+     *
+     * @param aiResponseSet Responses to set
+     */
     public void setAiResponseSet(Set<AiResponse> aiResponseSet) {
         this.aiResponseSet = aiResponseSet;
     }

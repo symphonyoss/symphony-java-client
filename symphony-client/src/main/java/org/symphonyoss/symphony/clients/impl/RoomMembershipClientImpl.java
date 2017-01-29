@@ -39,7 +39,10 @@ import com.google.common.base.Strings;
 
 
 /**
- * Created by Frank Tarsillo on 5/15/2016.
+ * Supports the ability to identify and administrate members of a room (stream).
+ * It also supports identification of users for any streamID.  This includes 1:1 and multi-party chat conversations.
+ *
+ * @author Frank Tarsillo
  */
 public class RoomMembershipClientImpl implements RoomMembershipClient {
     private final SymAuth symAuth;
@@ -63,9 +66,10 @@ public class RoomMembershipClientImpl implements RoomMembershipClient {
 
     /**
      * If you need to override HttpClient.  Important for handling individual client certs.
-     * @param symAuth
-     * @param serviceUrl
-     * @param httpClient
+     *
+     * @param symAuth    Authorization object holding session and key tokens
+     * @param serviceUrl The Symphony service URL
+     * @param httpClient The HttpClient to use when calling Symphony API
      */
     public RoomMembershipClientImpl(SymAuth symAuth, String serviceUrl, Client httpClient) {
         this.symAuth = symAuth;
@@ -79,28 +83,44 @@ public class RoomMembershipClientImpl implements RoomMembershipClient {
         apiClient.addDefaultHeader(symAuth.getKeyToken().getName(), symAuth.getKeyToken().getToken());
     }
 
-    public MembershipList getRoomMembership(String roomId) throws SymException {
-        if (roomId == null) {
+    /**
+     * Provides room membership
+     *
+     * @param roomStreamId - stream-id of the chat room you want to add the member to
+     * @return {@link MembershipList}
+     * @throws SymException Exceptions from API calls into Symphony
+     */
+    public MembershipList getRoomMembership(String roomStreamId) throws SymException {
+        if (roomStreamId == null) {
             throw new NullPointerException("Room ID was not provided...");
         }
         RoomMembershipApi roomMembershipApi = new RoomMembershipApi(apiClient);
 
         try {
-            return roomMembershipApi.v1RoomIdMembershipListGet(roomId,symAuth.getSessionToken().getToken());
+            return roomMembershipApi.v1RoomIdMembershipListGet(roomStreamId, symAuth.getSessionToken().getToken());
         } catch (ApiException e) {
-            throw new SymException("Failed to retrieve room membership for room ID: " + roomId, e);
+            throw new SymException("Failed to retrieve room membership for room ID: " + roomStreamId, e);
         }
     }
 
+    /**
+     * Call this method to add a member to a chat room. Pass in two parameters - chat-room stream-id and user-id
+     *
+     * @param roomStreamId - stream-id of the chat room you want to add the member to
+     * @param userId       userId for the user in Symphony
+     * @throws Exception throws an {@link org.symphonyoss.symphony.pod.invoker.ApiException} if there were any issues while invoking the endpoint,
+     *                   {@link IllegalArgumentException} if the arguments were wrong, {@link IllegalStateException} if the
+     *                   session-token is null
+     */
     @Override
-    public void addMemberToRoom (String roomStreamId, long userId) throws Exception {
+    public void addMemberToRoom(String roomStreamId, long userId) throws Exception {
         if (Strings.isNullOrEmpty(roomStreamId)) {
             throw new IllegalArgumentException("Argument roomStreamId must not be empty or null");
-        } 
+        }
 
         RoomMembershipApi roomMembershipApi = new RoomMembershipApi(apiClient);
         String sessionToken = symAuth.getSessionToken().getToken();
-        
+
         if (!Strings.isNullOrEmpty(sessionToken)) {
             roomMembershipApi.v1RoomIdMembershipAddPost(roomStreamId, new UserId().id(userId), sessionToken);
         } else {

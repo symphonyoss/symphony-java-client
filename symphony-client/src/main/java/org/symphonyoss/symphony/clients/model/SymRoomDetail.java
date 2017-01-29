@@ -24,8 +24,9 @@ package org.symphonyoss.symphony.clients.model;
 
 import org.symphonyoss.symphony.pod.model.V2RoomDetail;
 
+
 /**
- * Created by frank.tarsillo on 9/12/2016.
+ * @author Frank Tarsillo
  */
 public class SymRoomDetail {
 

@@ -31,7 +31,9 @@ import org.symphonyoss.symphony.pod.model.Stream;
 import org.symphonyoss.symphony.pod.model.UserIdList;
 
 /**
- * Created by nicktarsillo on 6/14/16.
+ * AI messenger internal utility to send response messages back to users issuing commands.
+ *
+ * @author Nicholas Tarsillo
  */
 public class Messenger {
     public static void sendMessage(String message, SymMessage.Format type, Long userID, SymphonyClient symClient) {

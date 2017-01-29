@@ -26,7 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.exceptions.UsersClientException;
-import org.symphonyoss.symphony.clients.impl.PresenceException;
+import org.symphonyoss.exceptions.PresenceException;
 import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.pod.model.Presence;
 import org.symphonyoss.symphony.pod.model.PresenceList;
@@ -36,7 +36,14 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Created by Frank Tarsillo on 5/15/2016.
+ * **NOTE** This service has been suspended for real-time monitoring of events as per LLC.  Polling for all user
+ * could cause head end (POD) failure.
+ * <p>
+ * Presence service provides monitoring of user presence events.  It also provides helper methods to retrieve user
+ * presence.  Alternatively the {@link org.symphonyoss.symphony.clients.PresenceClient} can be used directly.
+ *
+ *
+ * @author Frank Tarsillo
  */
 public class PresenceService implements PresenceListener {
 
@@ -60,6 +67,13 @@ public class PresenceService implements PresenceListener {
     }
 
 
+    /**
+     * Retrieve all user presence for connected Symphony POD
+     * **Caution** Repeated calls could cause POD failure.
+     *
+     * @return List of presence objects for all POD users.
+     * @throws PresenceException Thrown by underlying Symphony API calls
+     */
     public PresenceList getAllUserPresence() throws PresenceException {
 
 
@@ -67,12 +81,26 @@ public class PresenceService implements PresenceListener {
 
     }
 
+    /**
+     * Return a individual user presence by userID
+     *
+     * @param userId userID to lookup
+     * @return User presence
+     * @throws PresenceException hrown by underlying Symphony API calls
+     */
     public Presence getUserPresence(Long userId) throws PresenceException {
 
         return symClient.getPresenceClient().getUserPresence(userId);
 
     }
 
+    /**
+     * Return a individual user presence by email
+     *
+     * @param email email to lookup
+     * @return User presence
+     * @throws PresenceException hrown by underlying Symphony API calls
+     */
     public Presence getUserPresence(String email) throws PresenceException {
 
         if (email == null)
@@ -141,6 +169,9 @@ public class PresenceService implements PresenceListener {
     }
 
 
+    /**
+     * Shutdown all underlying threads
+     */
     public void shutdown() {
 
         if (presenceWorker != null) {

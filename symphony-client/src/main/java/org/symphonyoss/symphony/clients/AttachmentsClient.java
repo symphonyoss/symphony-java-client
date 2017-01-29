@@ -29,10 +29,29 @@ import org.symphonyoss.symphony.clients.model.SymMessage;
 import java.io.File;
 
 /**
- * Created by frank.tarsillo on 8/12/2016.
+ * Support for message attachments
+ *
+ * Created by Frank Tarsillo on 5/15/2016.
  */
 public interface AttachmentsClient {
+
+    /**
+     * Retrieve attachment data from message
+     *
+     * @param symAttachmentInfo Attachment details
+     * @param symMessage Message containing the attachment
+     * @return byte stream
+     * @throws AttachmentsException Exceptions generated from underlying Symphony API calls
+     */
     byte[] getAttachmentData(SymAttachmentInfo symAttachmentInfo, SymMessage symMessage) throws AttachmentsException;
 
-    SymAttachmentInfo postAttachment(String sid, File attachment) throws AttachmentsException;
+    /**
+     * Send  attachment to a given stream
+     *
+     * @param streamId StreamID to send the attachment
+     * @param attachment File to send
+     * @return Attachment details associated the file transmission
+     * @throws AttachmentsException Exceptions generated from underlying Symphony API calls
+     */
+    SymAttachmentInfo postAttachment(String streamId, File attachment) throws AttachmentsException;
 }

@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 
 
 /**
- * Created by frank.tarsillo on 8/12/2016.
+ * @author Frank Tarsillo
  */
 public class SymAttachmentInfo {
     private String id = null;
@@ -62,36 +62,36 @@ public class SymAttachmentInfo {
     }
 
 
-public static List<AttachmentInfo> toV2AttachmentsInfo(List<SymAttachmentInfo> symAttachmentsInfo){
+    public static List<AttachmentInfo> toV2AttachmentsInfo(List<SymAttachmentInfo> symAttachmentsInfo) {
 
-    List<AttachmentInfo> attachmentInfos = new ArrayList<>();
+        List<AttachmentInfo> attachmentInfos = new ArrayList<>();
 
-    for(SymAttachmentInfo symAttachmentInfo: symAttachmentsInfo) {
-        AttachmentInfo attachmentInfo = new AttachmentInfo();
-        attachmentInfo.setId(symAttachmentInfo.getId());
-        attachmentInfo.setName(symAttachmentInfo.getName());
-        attachmentInfo.setSize(symAttachmentInfo.getSize());
-        attachmentInfos.add(attachmentInfo);
+        for (SymAttachmentInfo symAttachmentInfo : symAttachmentsInfo) {
+            AttachmentInfo attachmentInfo = new AttachmentInfo();
+            attachmentInfo.setId(symAttachmentInfo.getId());
+            attachmentInfo.setName(symAttachmentInfo.getName());
+            attachmentInfo.setSize(symAttachmentInfo.getSize());
+            attachmentInfos.add(attachmentInfo);
+        }
+
+        return attachmentInfos;
     }
 
-    return attachmentInfos;
-}
 
-
-    public static SymAttachmentInfo toAttachmentInfo(AttachmentInfo attachmentInfo){
+    public static SymAttachmentInfo toAttachmentInfo(AttachmentInfo attachmentInfo) {
 
         SymAttachmentInfo symAttachmentInfo = new SymAttachmentInfo();
-            symAttachmentInfo.setId(attachmentInfo.getId());
-            symAttachmentInfo.setName(attachmentInfo.getName());
-            symAttachmentInfo.setSize(attachmentInfo.getSize());
+        symAttachmentInfo.setId(attachmentInfo.getId());
+        symAttachmentInfo.setName(attachmentInfo.getName());
+        symAttachmentInfo.setSize(attachmentInfo.getSize());
 
         return symAttachmentInfo;
     }
 
 
-    public static List<SymAttachmentInfo> toAttachmentsInfo(List<AttachmentInfo> attachmentInfos){
+    public static List<SymAttachmentInfo> toAttachmentsInfo(List<AttachmentInfo> attachmentInfos) {
 
-        return  attachmentInfos.stream().map(SymAttachmentInfo::toAttachmentInfo).collect(Collectors.toList());
+        return attachmentInfos.stream().map(SymAttachmentInfo::toAttachmentInfo).collect(Collectors.toList());
 
     }
 

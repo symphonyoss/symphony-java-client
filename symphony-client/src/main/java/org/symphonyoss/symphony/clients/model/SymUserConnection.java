@@ -25,8 +25,9 @@ package org.symphonyoss.symphony.clients.model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import org.symphonyoss.symphony.pod.model.UserConnection;
 
+
 /**
- * Created by frank.tarsillo on 9/8/2016.
+ * @author Frank Tarsillo
  */
 public class SymUserConnection extends UserConnection{
 

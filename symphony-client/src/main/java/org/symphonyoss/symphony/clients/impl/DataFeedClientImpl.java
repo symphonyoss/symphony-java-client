@@ -40,7 +40,7 @@ import java.util.List;
 /**
  * Provides access to datafeed in order to stream all message events (messages) through blocking calls.
  *
- * Created by Frank Tarsillo on 5/15/2016.
+ * @author  Frank Tarsillo
  */
 public class DataFeedClientImpl implements DataFeedClient {
 
@@ -61,6 +61,7 @@ public class DataFeedClientImpl implements DataFeedClient {
         apiClient.setBasePath(agentUrl);
 
     }
+
     /**
      * If you need to override HttpClient.  Important for handling individual client certs.
      * @param symAuth Authorization model containing session and key tokens
@@ -78,11 +79,7 @@ public class DataFeedClientImpl implements DataFeedClient {
     }
 
 
-    /**
-     * Create a datafeed to consume messages from
-     * @return Datafeed object to process messages from
-     * @throws DataFeedException Caused by Symphony API calls
-     */
+
     public Datafeed createDatafeed() throws DataFeedException {
 
         DatafeedApi datafeedApi = new DatafeedApi(apiClient);
@@ -96,13 +93,7 @@ public class DataFeedClientImpl implements DataFeedClient {
     }
 
 
-    /**
-     * This will return messages from datafeed object through underlying blocking calls.  This method should be called
-     * repeatedly to pull message data.
-     * @param datafeed Datafeed object associated with BOT user
-     * @return List of base messages
-     * @throws DataFeedException Caused by Symphony API calls
-     */
+
     public List<V2BaseMessage> getMessagesFromDatafeed(Datafeed datafeed) throws DataFeedException {
 
         DatafeedApi datafeedApi = new DatafeedApi(apiClient);

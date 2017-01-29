@@ -129,6 +129,9 @@ class ConnectionsWorker implements Runnable {
     }
 
 
+    /**
+     * Shutdown running threads
+     */
     public void shutdown() {
         KILL = true;
 

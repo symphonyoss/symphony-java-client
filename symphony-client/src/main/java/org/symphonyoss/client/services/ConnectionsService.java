@@ -33,22 +33,21 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * This service handles incoming connection requests and provides options for automatically accepting requests.
- *
+ * <p>
  * All actions for connection requests should be handled through {@link org.symphonyoss.symphony.clients.ConnectionsClient  }
- *
  *
  * @author Frank Tarsillo on 5/16/2016.
  */
-public class ConnectionsService implements ConnectionsListener{
+public class ConnectionsService implements ConnectionsListener {
     private final SymphonyClient symClient;
     private boolean autoAccept;
-    private final Set<ConnectionsListener> connectionsListeners =  ConcurrentHashMap.newKeySet();
+    private final Set<ConnectionsListener> connectionsListeners = ConcurrentHashMap.newKeySet();
     private final Logger logger = LoggerFactory.getLogger(ChatService.class);
     private ConnectionsWorker connectionsWorker;
 
-    public ConnectionsService(SymphonyClient symClient){
+    public ConnectionsService(SymphonyClient symClient) {
         this.symClient = symClient;
-        connectionsWorker = new ConnectionsWorker(symClient,this);
+        connectionsWorker = new ConnectionsWorker(symClient, this);
         new Thread(connectionsWorker).start();
 
     }
@@ -57,7 +56,7 @@ public class ConnectionsService implements ConnectionsListener{
     /**
      * New connection request notification message from callback.
      * Issue event to all registered listeners.
-     *
+     * <p>
      * Option to auto-accept on new event.
      *
      * @param userConnection User connection detail
@@ -65,50 +64,49 @@ public class ConnectionsService implements ConnectionsListener{
     @Override
     public void onConnectionNotification(SymUserConnection userConnection) {
 
-    for(ConnectionsListener connectionsListener : connectionsListeners){
+        for (ConnectionsListener connectionsListener : connectionsListeners) {
 
-        connectionsListener.onConnectionNotification(userConnection);
+            connectionsListener.onConnectionNotification(userConnection);
 
-    }
+        }
 
-    //Auto Accept if true.
-    try {
-        if (autoAccept)
-            symClient.getConnectionsClient().acceptConnectionRequest(userConnection);
+        //Auto Accept if true.
+        try {
+            if (autoAccept)
+                symClient.getConnectionsClient().acceptConnectionRequest(userConnection);
 
-    }catch (ConnectionsException e){
-        logger.error("Could not autoaccept connection request from {}",userConnection.getUserId(),e);
+        } catch (ConnectionsException e) {
+            logger.error("Could not autoaccept connection request from {}", userConnection.getUserId(), e);
 
-    }
+        }
     }
 
     /**
      * Please use {@link #addListener(ConnectionsListener)}
+     *
      * @param connectionsListener Listner for callbacks
      */
     @Deprecated
-    public void registerListener(ConnectionsListener connectionsListener){
+    public void registerListener(ConnectionsListener connectionsListener) {
 
         addListener(connectionsListener);
 
     }
 
-    public void addListener(ConnectionsListener connectionsListener){
+    public void addListener(ConnectionsListener connectionsListener) {
 
         connectionsListeners.add(connectionsListener);
 
     }
 
     /**
-     *
      * @param connectionsListener Listener for callbacks
      */
-    public void removeListener(ConnectionsListener connectionsListener){
+    public void removeListener(ConnectionsListener connectionsListener) {
 
         connectionsListeners.remove(connectionsListener);
 
     }
-
 
 
     public boolean isAutoAccept() {
@@ -120,11 +118,10 @@ public class ConnectionsService implements ConnectionsListener{
     }
 
 
-
-    public void shutdown(){
+    public void shutdown() {
 
         connectionsWorker.shutdown();
-        connectionsWorker=null;
+        connectionsWorker = null;
 
     }
 }

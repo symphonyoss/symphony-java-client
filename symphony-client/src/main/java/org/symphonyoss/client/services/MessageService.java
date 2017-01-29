@@ -40,23 +40,22 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- *
  * MessageService listens for all messages for a given BOT identity, identifies the type (Message, Chat, Room) of
  * message and then publishes the message registered listeners associated with type.
- *
+ * <p>
  * The service exposes methods for retrieving messages for a given stream or user historically.
- *
+ * <p>
  * The service provides convenience methods to support the sending of messages using standard models (Chat, Room)
- *
+ * <p>
  * The service converts all base messages to {@link SymMessage}.
- *
+ * <p>
  * Multiple listeners of different types can be registered at any time.
- *
+ * <p>
  * MessageListener - Listen for all messages
  * ChatListener - Listen for chat conversations (1:1 or multi-party)
  * RoomServiceListener - Listen for all Room related events.
  *
- * Created by Frank Tarsillo on 5/15/2016.
+ * @author Frank Tarsillo on 5/15/2016.
  */
 public class MessageService implements DataFeedListener {
 
@@ -73,6 +72,7 @@ public class MessageService implements DataFeedListener {
 
     /**
      * Constructor
+     *
      * @param symClient Identifies the BOT user and exposes client APIs
      */
     public MessageService(SymphonyClient symClient) {
@@ -88,7 +88,8 @@ public class MessageService implements DataFeedListener {
 
     /**
      * Convenience method for sending messages to a room
-     * @param room Room object
+     *
+     * @param room       Room object
      * @param symMessage Message to send to the room
      * @throws MessagesException Generated from API calls into Symphony
      */
@@ -101,7 +102,8 @@ public class MessageService implements DataFeedListener {
 
     /**
      * Convenience method for sending messages to chat conversation (1:1 or Multi-party)
-     * @param chat Chat object representing conversation
+     *
+     * @param chat       Chat object representing conversation
      * @param symMessage Message to send to the conversation
      * @throws MessagesException Generated from API calls into Symphony
      */
@@ -114,7 +116,8 @@ public class MessageService implements DataFeedListener {
 
     /**
      * Convenience method to send a message to a given user by email address
-     * @param email email of destination user
+     *
+     * @param email      email of destination user
      * @param symMessage Message to send
      * @throws MessagesException Generated from API calls into Symphony
      */
@@ -137,9 +140,10 @@ public class MessageService implements DataFeedListener {
 
     /**
      * Retrieve messages for a given stream based on window of time
-     * @param stream Identifier for the conversation (or room)
-     * @param since Starting point date (long value)
-     * @param offset (Optional) No. of messages to skip.
+     *
+     * @param stream      Identifier for the conversation (or room)
+     * @param since       Starting point date (long value)
+     * @param offset      (Optional) No. of messages to skip.
      * @param maxMessages (Optional) Maximum number of messages to retrieve from the starting point
      * @return {@link List<SymMessage>}  List of messages
      * @throws MessagesException Generated from API calls into Symphony
@@ -154,9 +158,10 @@ public class MessageService implements DataFeedListener {
 
     /**
      * Retrieve messages for a given user ID based on window of time
-     * @param userId A userId (long value)
-     * @param since Starting point date (long value)
-     * @param offset (Optional) No. of messages to skip.
+     *
+     * @param userId      A userId (long value)
+     * @param since       Starting point date (long value)
+     * @param offset      (Optional) No. of messages to skip.
      * @param maxMessages (Optional) Maximum number of messages to retrieve from the starting point
      * @return {@link List}  List of messages
      * @throws MessagesException Generated from API calls into Symphony
@@ -179,7 +184,6 @@ public class MessageService implements DataFeedListener {
     }
 
     /**
-     *
      * Process new Datafeed messages from worker
      *
      * @param message Incoming message from {@link DataFeedListener} registered to the {@link MessageFeedWorker}
@@ -233,26 +237,26 @@ public class MessageService implements DataFeedListener {
                     symMessage.getMessageType());
 
 
-        //Publish associated room event messages
-        }else if(message instanceof UserJoinedRoomMessage){
+            //Publish associated room event messages
+        } else if (message instanceof UserJoinedRoomMessage) {
             for (RoomServiceListener roomServiceListener : roomServiceListeners)
                 roomServiceListener.onUserJoinedRoomMessage((UserJoinedRoomMessage) message);
-        }else if(message instanceof UserLeftRoomMessage){
+        } else if (message instanceof UserLeftRoomMessage) {
             for (RoomServiceListener roomServiceListener : roomServiceListeners)
                 roomServiceListener.onUserLeftRoomMessage((UserLeftRoomMessage) message);
-        }else if(message instanceof RoomCreatedMessage){
+        } else if (message instanceof RoomCreatedMessage) {
             for (RoomServiceListener roomServiceListener : roomServiceListeners)
                 roomServiceListener.onRoomCreatedMessage((RoomCreatedMessage) message);
-        }else if(message instanceof RoomDeactivatedMessage){
+        } else if (message instanceof RoomDeactivatedMessage) {
             for (RoomServiceListener roomServiceListener : roomServiceListeners)
                 roomServiceListener.onRoomDeactivatedMessage((RoomDeactivatedMessage) message);
-        }else if(message instanceof RoomMemberDemotedFromOwnerMessage){
+        } else if (message instanceof RoomMemberDemotedFromOwnerMessage) {
             for (RoomServiceListener roomServiceListener : roomServiceListeners)
                 roomServiceListener.onRoomMemberDemotedFromOwnerMessage((RoomMemberDemotedFromOwnerMessage) message);
-        }else if(message instanceof RoomMemberPromotedToOwnerMessage){
+        } else if (message instanceof RoomMemberPromotedToOwnerMessage) {
             for (RoomServiceListener roomServiceListener : roomServiceListeners)
                 roomServiceListener.onRoomMemberPromotedToOwnerMessage((RoomMemberPromotedToOwnerMessage) message);
-        }else if(message instanceof RoomUpdatedMessage){
+        } else if (message instanceof RoomUpdatedMessage) {
             for (RoomServiceListener roomServiceListener : roomServiceListeners)
                 roomServiceListener.onRoomUpdatedMessage((RoomUpdatedMessage) message);
         }
@@ -262,6 +266,7 @@ public class MessageService implements DataFeedListener {
 
     /**
      * Identify if the message is associated with a room or chat conversation
+     *
      * @param message base message being verified
      * @return
      */
@@ -301,6 +306,7 @@ public class MessageService implements DataFeedListener {
 
     /**
      * Please use {@link #addMessageListener(MessageListener)}
+     *
      * @param messageListener Listener to register
      * @return True if listener is registered successfully
      */
@@ -314,16 +320,18 @@ public class MessageService implements DataFeedListener {
 
     /**
      * Add {@link MessageListener} to receive for all new messages
+     *
      * @param messageListener listener that will be notified of events
      */
     public void addMessageListener(MessageListener messageListener) {
 
-         messageListeners.add(messageListener);
+        messageListeners.add(messageListener);
 
     }
 
     /**
      * Remove a registered {@link MessageListener} t
+     *
      * @param messageListener listener that will removed from service
      * @return True if listener is removed
      */
@@ -335,15 +343,18 @@ public class MessageService implements DataFeedListener {
 
     /**
      * Add {@link RoomListener} to service to receive new Room events
+     *
      * @param roomServiceListener listener to register
      */
     public void addRoomListener(RoomServiceListener roomServiceListener) {
 
-         roomServiceListeners.add(roomServiceListener);
+        roomServiceListeners.add(roomServiceListener);
 
     }
+
     /**
      * Please use {@link #addRoomListener(RoomServiceListener)}
+     *
      * @param roomServiceListener Listener to register
      * @return True if registered without issue
      */
@@ -356,6 +367,7 @@ public class MessageService implements DataFeedListener {
 
     /**
      * Remove room listener from service
+     *
      * @param roomServiceListener listener to remove
      * @return True if listener is removed
      */
@@ -368,16 +380,18 @@ public class MessageService implements DataFeedListener {
 
     /**
      * Add {@link ChatListener} to receive new conversation chat messages
+     *
      * @param chatListener listener to register
      */
     public void addChatListener(ChatListener chatListener) {
 
-         chatListeners.add(chatListener);
+        chatListeners.add(chatListener);
 
     }
 
     /**
      * Please use {@link #addChatListener(ChatListener)}
+     *
      * @param chatListener Listener to register
      * @return True if registered
      */
@@ -390,6 +404,7 @@ public class MessageService implements DataFeedListener {
 
     /**
      * Remove a registered chat listener
+     *
      * @param chatListener listener to remove
      * @return True if listener is registered
      */
@@ -402,7 +417,7 @@ public class MessageService implements DataFeedListener {
     /**
      * Shutdown the underlying threads and workers.
      */
-    public void shutdown(){
+    public void shutdown() {
         messageFeedWorker.shutdown();
         messageFeedWorker = null;
 

@@ -151,9 +151,9 @@ public class ChatExample implements ChatListener, ChatServiceListener {
             //Send a message to the master user.
             symClient.getMessageService().sendMessage(chat, aMessage);
 
-            //symClient.shutdown();
+            symClient.shutdown();
 
-            //logger.info("Finished");
+            logger.info("Finished");
 
 
 

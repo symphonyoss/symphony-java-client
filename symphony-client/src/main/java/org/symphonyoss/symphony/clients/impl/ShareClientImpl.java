@@ -40,6 +40,7 @@ import javax.ws.rs.client.Client;
 
 
 /**
+ *
  * @author Frank Tarsillo on 10/22/2016.
  */
 public class ShareClientImpl implements ShareClient{
@@ -67,9 +68,9 @@ public class ShareClientImpl implements ShareClient{
 
     /**
      * If you need to override HttpClient.  Important for handling individual client certs.
-     * @param symAuth
-     * @param serviceUrl
-     * @param httpClient
+     * @param symAuth Authorization model containing session and key tokens
+     * @param serviceUrl Service URL used to access API
+     * @param httpClient Custom HTTP client
      */
     public ShareClientImpl(SymAuth symAuth, String serviceUrl, Client httpClient) {
         this.symAuth = symAuth;

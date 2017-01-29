@@ -28,8 +28,9 @@ import org.symphonyoss.symphony.pod.model.UserId;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
- * Created by frank on 11/25/16.
+ * @author Frank Tarsillo
  */
 public class SymRoomSearchCriteria {
 

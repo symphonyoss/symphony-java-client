@@ -43,12 +43,13 @@ import java.util.concurrent.ConcurrentHashMap;
  * The room service provides capabilities that support room access and events.  The running service will construct
  * room objects detected from new message events.  The service supports listeners that provide callbacks to all
  * registered room events and general messaging.
- *
+ * <p>
  * Its important to note the distinction between creating a room and joining a room.  Creating a room implies the
  * creation of the room object, but not the monitoring of it by the service.  You must explicitly join a room (register
  * with the RoomService) in order to receive individual room events.
+ * <p>
  *
- * Created by Frank Tarsillo on 7/8/2016.
+ * @author Frank Tarsillo
  */
 public class RoomService implements RoomServiceListener {
 
@@ -59,10 +60,8 @@ public class RoomService implements RoomServiceListener {
     private final Set<RoomServiceListener> roomServiceListeners = ConcurrentHashMap.newKeySet();
 
     /**
-     *
      * @param symClient SymphonyClient provides access to client implementations and dependant services such as the
      *                  {@link MessageService}
-     *
      */
     public RoomService(SymphonyClient symClient) {
         this.symClient = symClient;
@@ -75,9 +74,10 @@ public class RoomService implements RoomServiceListener {
     /**
      * Create a new room object from {@link SymRoomAttributes} provided.  The room object will be enriched with all
      * associated room metadata at the point of creation.
-     *
+     * <p>
      * Note: Future lifecycle room events are not automatically reflected in the created room object.
      * updated.
+     *
      * @param symRoomAttributes Room attributes required to create the room object
      * @return Fully populated {@link Room} object
      * @throws RoomException Exception generated from the logical creation of the room object
@@ -127,13 +127,11 @@ public class RoomService implements RoomServiceListener {
 
     /**
      * Logical join of the room which registers the listeners and the Room object to the service.
-     *
+     * <p>
      * This call will also update room details within the Room object.
      *
      * @param room Room to register
-     *
      * @throws RoomException Caused by room details that prevent logical monitoring of the room object
-     *
      */
     public void joinRoom(Room room) throws RoomException {
 
@@ -160,7 +158,7 @@ public class RoomService implements RoomServiceListener {
      * Callback from registered room listener on the MessageService.  All messages will be associated with Rooms.
      * If a message underlying stream is not associated with a registered room, then a new room object is created and
      * events are published to registered {@link RoomServiceListener}
-     *
+     * <p>
      * Messages associated with registered rooms are published to room object listeners.
      *
      * @param symMessage Room messages detected and published
@@ -177,7 +175,7 @@ public class RoomService implements RoomServiceListener {
 
 
             //Publish messages to any generic RoomService Listners
-            for(RoomServiceListener roomServiceListener: roomServiceListeners){
+            for (RoomServiceListener roomServiceListener : roomServiceListeners) {
 
                 roomServiceListener.onMessage(symMessage);
 
@@ -202,6 +200,7 @@ public class RoomService implements RoomServiceListener {
 
     /**
      * Add a room to the service
+     *
      * @param streamId Stream ID of the room
      * @throws RoomException
      */
@@ -222,6 +221,7 @@ public class RoomService implements RoomServiceListener {
 
     /**
      * Publish new room objects based on detection and/or registration to the service
+     *
      * @param room Room object published from callback
      */
     @Override
@@ -233,6 +233,7 @@ public class RoomService implements RoomServiceListener {
 
     /**
      * Events provided by the MessageService related to new rooms created (defined)
+     *
      * @param roomCreatedMessage {@link RoomCreatedMessage}
      */
     @Override
@@ -248,6 +249,7 @@ public class RoomService implements RoomServiceListener {
 
     /**
      * Room deactivated events triggered by administration event.
+     *
      * @param roomDeactivatedMessage {@link RoomDeactivatedMessage}
      */
     @Override
@@ -280,6 +282,7 @@ public class RoomService implements RoomServiceListener {
 
     /**
      * Room member promotion event triggered from administration changes
+     *
      * @param roomMemberPromotedToOwnerMessage {@link RoomMemberPromotedToOwnerMessage}
      */
     @Override
@@ -296,7 +299,8 @@ public class RoomService implements RoomServiceListener {
 
     /**
      * Room reactivated event triggered from administration changes
-     * @param roomReactivatedMessage  {@link RoomReactivatedMessage}
+     *
+     * @param roomReactivatedMessage {@link RoomReactivatedMessage}
      */
     @Override
     public void onRoomReactivatedMessage(RoomReactivatedMessage roomReactivatedMessage) {
@@ -346,6 +350,7 @@ public class RoomService implements RoomServiceListener {
 
     /**
      * Please use {@link #addRoomServiceListener(RoomServiceListener)}
+     *
      * @param roomServiceListener Listener to register
      */
     @Deprecated

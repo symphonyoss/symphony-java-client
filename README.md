@@ -51,7 +51,8 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 * Can support multiple SymphonyClient instances running in a single JVM representing different users.
 * Automatic Auth refresh in client
 * ChatService enhancements including remote user identification on Chat creation.
-* Added get users by stream
+* Added ability to retrieve users by stream
+* New admin features, creating users, updating user details, modify room membership
 * Added room search under streams client
 * REMOVED Experimental firehose service as per LLC
 * Performance Updates
@@ -121,7 +122,7 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 
 
 ##API Docs
-[API Documentation](http://ftbb.github.io/symphony-java-client/index.html)
+[API Documentation](http://symphonyoss.github.io/symphony-java-client/index.html)
 
 ## Contribute
 This project was initiated at [IHS Markit](https://www.ihsmarkit.com) and has been developed as open-source from the very beginning.

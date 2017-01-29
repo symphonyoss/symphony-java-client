@@ -33,7 +33,10 @@ import org.symphonyoss.symphony.pod.model.UserDetail;
 import org.symphonyoss.symphony.pod.model.UserV2;
 
 /**
- * Created by frank.tarsillo on 9/8/2016.
+ *
+ * Model describing Symphony User
+ *
+ * @author Frank Tarsillo
  */
 public class SymUser {
 
@@ -193,21 +196,22 @@ public class SymUser {
         return symUser;
 
     }
-    
+
     /**
-     * This method takes a userDetail and converts it into SymUser. <br/>
+     * This method takes a userDetail and converts it into SymUser.
      * <b>NOTE:</b> Avatars and Company are not exposed by UserDetail
      * and so are not set as part of this implementation
-     * @param userDetail
-     * @return symUser
+     *
+     * @param userDetail User detail
+     * @return symUser User object
      */
     public static SymUser toSymUser(UserDetail userDetail) {
         if (userDetail == null) {
             throw new IllegalStateException("User Detail must not be null");
         }
-        
+
         SymUser symUser = new SymUser();
-        
+
         symUser.setDisplayName(userDetail.getUserAttributes().getDisplayName());
         symUser.setEmailAddress(userDetail.getUserAttributes().getEmailAddress());
         symUser.setFirstName(userDetail.getUserAttributes().getFirstName());
@@ -216,24 +220,25 @@ public class SymUser {
         symUser.setLocation(userDetail.getUserAttributes().getLocation());
         symUser.setTitle(userDetail.getUserAttributes().getTitle());
         symUser.setUsername(userDetail.getUserAttributes().getUserName());
-        
+
         return symUser;
     }
-    
+
     /**
-     * This method takes a SymUser and converts it into UserAttributes. <br/>
+     * This method takes a SymUser and converts it into UserAttributes.
      * <b>NOTE:</b> department is not part of SymUser and needs to be implemented
      * and so is set to null
-     * @param symUser
-     * @return userAttributes
+     *
+     * @param symUser Uesr object
+     * @return userAttributes User attributes
      */
     public static UserAttributes toUserAttributes(SymUser symUser) {
         if (symUser == null) {
             throw new IllegalStateException("symUser must not be null");
         }
-        
+
         UserAttributes userAttributes = new UserAttributes();
-        
+
         userAttributes.setDisplayName(symUser.getDisplayName());
         userAttributes.setEmailAddress(symUser.getEmailAddress());
         userAttributes.setFirstName(symUser.getFirstName());
@@ -241,8 +246,8 @@ public class SymUser {
         userAttributes.setLocation(symUser.getLocation());
         userAttributes.setTitle(symUser.getTitle());
         userAttributes.setUserName(symUser.getUsername());
-        userAttributes.setDepartment(null); 
-        
+        userAttributes.setDepartment(null);
+
         return userAttributes;
     }
 

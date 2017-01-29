@@ -29,8 +29,9 @@ import org.symphonyoss.symphony.pod.model.V2RoomAttributes;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
- * Created by frank.tarsillo on 9/12/2016.
+ * @author Frank Tarsillo
  */
 public class SymRoomAttributes {
 

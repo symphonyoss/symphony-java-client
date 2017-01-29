@@ -99,7 +99,8 @@ public class Chat {
 
     /**
      * Push message to all registered listeners.
-     * @param message
+     *
+     * @param message Message
      */
     public void onChatMessage(SymMessage message) {
 
@@ -113,7 +114,8 @@ public class Chat {
     /**
      * Register Chat listeners. A chat can have more than one listener at any time.
      * Please use {@link #addListener(ChatListener)}
-     * @param chatListener
+     *
+     * @param chatListener Listener to register
      * @return Success
      */
     @Deprecated
@@ -126,7 +128,8 @@ public class Chat {
 
     /**
      * Add Chat listeners. A chat can have more than one listener at any time.
-     * @param chatListener
+     *
+     * @param chatListener Listener to add
      * @return Success
      */
     public boolean addListener(ChatListener chatListener) {
@@ -140,8 +143,9 @@ public class Chat {
 
     /**
      * Remove a specific listener
-     * @param chatListener
-     * @return
+     *
+     * @param chatListener Listener to remove
+     * @return True if listener was removed
      */
     public boolean removeListener(ChatListener chatListener) {
         return chatListeners.remove(chatListener);
@@ -155,7 +159,8 @@ public class Chat {
 
     /**
      * Sometimes you want to have the last message...just in case!
-     * @param lastMessage
+     *
+     * @param lastMessage Last message recorded
      */
     public void setLastMessage(SymMessage lastMessage) {
         this.lastMessage = lastMessage;
@@ -171,7 +176,6 @@ public class Chat {
 
         return !(this.stream == null || !this.stream.equals(other.stream));
     }
-
 
 
     @Override

@@ -54,7 +54,7 @@ public class Room {
 
     public void setStreamId(String streamId) {
         this.streamId = streamId;
-        if(stream == null){
+        if (stream == null) {
             stream = new Stream();
             stream.setId(streamId);
         }
@@ -92,11 +92,9 @@ public class Room {
 
     public void setStream(Stream stream) {
         this.stream = stream;
-        if(streamId == null)
-            streamId=stream.getId();
+        if (streamId == null)
+            streamId = stream.getId();
     }
-
-
 
 
     @Deprecated
@@ -114,7 +112,8 @@ public class Room {
 
     /**
      * Push message to all registered listeners.
-     * @param message
+     *
+     * @param message New incoming message.
      */
     public void onRoomMessage(SymMessage message) {
 
@@ -124,12 +123,12 @@ public class Room {
 
     }
 
-    public void addListener(RoomListener roomListener){
+    public void addListener(RoomListener roomListener) {
         roomListeners.add(roomListener);
 
     }
 
-    public void removeListener(RoomListener roomListener){
+    public void removeListener(RoomListener roomListener) {
 
         roomListeners.remove(roomListener);
 

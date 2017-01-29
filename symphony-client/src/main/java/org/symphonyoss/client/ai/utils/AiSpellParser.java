@@ -25,7 +25,6 @@
 package org.symphonyoss.client.ai.utils;
 
 
-
 import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.client.ai.AiCommand;
 import org.symphonyoss.client.ai.AiLastCommand;
@@ -35,8 +34,9 @@ import org.symphonyoss.client.util.MlMessageParser;
 import java.util.ArrayList;
 
 /**
- * Created by nicktarsillo on 6/15/16.
  * A static class used to determine if a command suggestion can be made.
+ *
+ * @author Nicholas Tarsillo
  */
 public class AiSpellParser {
     /**

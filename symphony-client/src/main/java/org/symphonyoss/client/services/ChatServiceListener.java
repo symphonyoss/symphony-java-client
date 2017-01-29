@@ -27,11 +27,22 @@ import org.symphonyoss.client.model.Chat;
 /**
  * Callback listener for the {@link ChatService} providing detection for new chat conversations.
  *
- * Created by Frank Tarsillo on 5/21/2016.
+ * @author Frank Tarsillo
  */
 public interface ChatServiceListener {
 
+    /**
+     * New chat session detected from service
+     *
+     * @param chat Object representing the chat session
+     */
     void onNewChat(Chat chat);
+
+    /**
+     * Remove chat session detected from service
+     *
+     * @param chat Object representing the chat session
+     */
     void onRemovedChat(Chat chat);
 
 

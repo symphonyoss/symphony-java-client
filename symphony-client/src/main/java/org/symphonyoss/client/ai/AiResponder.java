@@ -39,10 +39,11 @@ import java.util.ArrayList;
 import java.util.Set;
 
 /**
- * Created by nicktarsillo on 6/20/16.
  * A part of the ai with the main purpose of responding back to a user
+ *
+ * @author Nichalas Tarsillo
  */
-public class AiResponder{
+public class AiResponder {
     private SymphonyClient symClient;
 
     public AiResponder(SymphonyClient symClient) {
@@ -57,7 +58,7 @@ public class AiResponder{
      * @param userID    the id of the user
      * @param symClient the org.org.symphonyoss.ai's sym client
      */
-    
+
     public void sendMessage(String message, SymMessage.Format type, Long userID, SymphonyClient symClient) {
 
         SymUser symUser = new SymUser();
@@ -66,7 +67,7 @@ public class AiResponder{
 
         try {
 
-            sendMessage(message,type,symClient.getStreamsClient().getStream(symUser),symClient);
+            sendMessage(message, type, symClient.getStreamsClient().getStream(symUser), symClient);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -83,7 +84,7 @@ public class AiResponder{
      * @param stream    the message stream
      * @param symClient the org.org.symphonyoss.ai's sym client
      */
-    
+
     public void sendMessage(String message, SymMessage.Format type, Stream stream, SymphonyClient symClient) {
 
         SymMessage userMessage = new SymMessage();
@@ -108,20 +109,20 @@ public class AiResponder{
      *
      * @param responseLists the set of responses
      */
-    
+
     public void respondToEachUserWith(Set<AiResponseSequence> responseLists) {
 
         System.out.println("Responding to each user...");
 
         for (AiResponseSequence list : responseLists) {
-            if(list!=null)
-            for (AiResponse response : list.getAiResponseSet()) {
+            if (list != null)
+                for (AiResponse response : list.getAiResponseSet()) {
 
-                for (SymUser symUser : response.getSymUsers()) {
-                    sendMessage(response.getMessage(), response.getType(), symUser.getId(), symClient);
+                    for (SymUser symUser : response.getSymUsers()) {
+                        sendMessage(response.getMessage(), response.getType(), symUser.getId(), symClient);
+                    }
+
                 }
-
-            }
         }
 
     }
@@ -131,17 +132,18 @@ public class AiResponder{
      * Respond to stream (all users), based on the values and ids given in the set of responses
      *
      * @param responseLists the set of responses
+     * @param streamId      Stream ID
      */
-    
+
     public void respond(Set<AiResponseSequence> responseLists, String streamId) {
 
         for (AiResponseSequence list : responseLists) {
-            if(list!=null)
+            if (list != null)
                 for (AiResponse response : list.getAiResponseSet()) {
 
                     Stream stream = new Stream();
                     stream.setId(streamId);
-                    sendMessage(response.getMessage(), response.getType(),stream, symClient);
+                    sendMessage(response.getMessage(), response.getType(), stream, symClient);
 
 
                 }
@@ -155,7 +157,7 @@ public class AiResponder{
      * @param suggestion the suggested command
      * @param message    the message received from the user
      */
-    
+
     public void sendSuggestionMessage(AiLastCommand suggestion, SymMessage message) {
 
         sendMessage(MLTypes.START_ML + AiConstants.SUGGEST
@@ -172,7 +174,7 @@ public class AiResponder{
      * @param mlMessageParser a parser that contains the input in ML
      * @param activeCommands  the active set of commands within the org.org.symphonyoss.ai command listener
      */
-    
+
     public void sendUsage(SymMessage message, MlMessageParser mlMessageParser, ArrayList<AiCommand> activeCommands) {
 
         SymMessage aMessage = new SymMessage();
@@ -202,7 +204,7 @@ public class AiResponder{
      *
      * @param message the message reveived back from the user
      */
-    
+
     public void sendNoPermission(SymMessage message) {
 
         Messenger.sendMessage(AiConstants.NO_PERMISSION,
@@ -210,12 +212,22 @@ public class AiResponder{
 
     }
 
-    
+
+    /**
+     * Return Symphony client used with responder
+     *
+     * @return {@link SymphonyClient}
+     */
     public SymphonyClient getSymClient() {
         return symClient;
     }
 
-    
+
+    /**
+     * Set symphony client supporting internal calls
+     *
+     * @param symClient Symphony client
+     */
     public void setSymClient(SymphonyClient symClient) {
         this.symClient = symClient;
     }

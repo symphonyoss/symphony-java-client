@@ -25,10 +25,16 @@ package org.symphonyoss.client.services;
 import org.symphonyoss.symphony.pod.model.UserPresence;
 
 /**
- *
- * Created by Frank Tarsillo on 5/15/2016.
+ * Listener will provide user presence events
+ * <p>
+ * @author Frank Tarsillo
  */
 public interface PresenceListener {
 
+    /**
+     * Detected user presence events
+     *
+     * @param userPresence User presence changes
+     */
     void onUserPresence(UserPresence userPresence);
 }

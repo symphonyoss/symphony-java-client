@@ -29,8 +29,9 @@ import org.symphonyoss.symphony.agent.model.V2Message;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
- * Created by frank.tarsillo on 8/12/2016.
+ * @author Frank Tarsillo
  */
 public class SymMessage {
 

@@ -25,6 +25,7 @@ package org.symphonyoss.symphony.clients.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.model.SymAuth;
+import org.symphonyoss.exceptions.PresenceException;
 import org.symphonyoss.symphony.pod.api.PresenceApi;
 import org.symphonyoss.symphony.pod.invoker.ApiClient;
 import org.symphonyoss.symphony.pod.invoker.ApiException;
@@ -41,7 +42,7 @@ import java.util.Map;
 
 
 /**
- * Created by Frank Tarsillo on 5/15/2016.
+ * @author  Frank Tarsillo
  */
 public class PresenceClientImpl implements org.symphonyoss.symphony.clients.PresenceClient {
     private final SymAuth symAuth;

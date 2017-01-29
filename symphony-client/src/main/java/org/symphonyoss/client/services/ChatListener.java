@@ -26,11 +26,15 @@ import org.symphonyoss.symphony.clients.model.SymMessage;
 
 /**
  * Callback interface for message events on the {@link org.symphonyoss.client.model.Chat} object.
- *
+ * <p>
  * Created by Frank Tarsillo on 5/22/2016.
  */
 public interface ChatListener {
 
-
+    /**
+     * Callback for chat messages
+     *
+     * @param message Incoming message from feed
+     */
     void onChatMessage(SymMessage message);
 }

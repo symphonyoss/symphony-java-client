@@ -32,7 +32,9 @@ import org.symphonyoss.symphony.pod.model.UserPresence;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by Frank Tarsillo on 5/15/2016.
+ * Worker to poll for presence updates.
+ *
+ * @author Frank Tarsillo
  */
 class PresenceWorker implements Runnable {
     private final SymphonyClient symphonyClient;
@@ -130,6 +132,7 @@ class PresenceWorker implements Runnable {
 
         return null;
     }
+
 
     public void shutdown() {
         shutdown = true;

@@ -30,11 +30,25 @@ import org.symphonyoss.symphony.agent.model.V2BaseMessage;
 import java.util.List;
 
 /**
- * Created by frank.tarsillo on 6/6/2016.
+ * Provides access to datafeed in order to stream all message events (messages) through blocking calls.
+ *
+ * Created by Frank Tarsillo on 5/15/2016.
  */
 public interface DataFeedClient {
+    /**
+     * Create a datafeed to consume messages from
+     * @return Datafeed object to process messages from
+     * @throws DataFeedException Caused by Symphony API calls
+     */
     Datafeed createDatafeed() throws DataFeedException;
 
+    /**
+     * This will return messages from datafeed object through underlying blocking calls.  This method should be called
+     * repeatedly to pull message data.
+     * @param datafeed Datafeed object associated with BOT user
+     * @return List of base messages
+     * @throws DataFeedException Caused by Symphony API calls
+     */
     List<V2BaseMessage> getMessagesFromDatafeed(Datafeed datafeed) throws DataFeedException;
 
     }

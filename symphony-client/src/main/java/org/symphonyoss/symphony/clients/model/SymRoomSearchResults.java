@@ -31,8 +31,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
+
 /**
- * Created by frank on 11/25/16.
+ * @author Frank Tarsillo
  */
 public class SymRoomSearchResults {
     private Long count = null;

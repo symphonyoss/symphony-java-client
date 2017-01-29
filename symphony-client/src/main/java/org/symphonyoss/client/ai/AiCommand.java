@@ -35,11 +35,12 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
- * Created by nicktarsillo on 6/13/16.
  * A model for ai commands.
  * Used to compare input and command, and check for a match.
+ *
+ * @author Nicholas Tarsillo
  */
-public class AiCommand{
+public class AiCommand {
     private final Logger logger = LoggerFactory.getLogger(AiCommand.class);
 
     private String command;
@@ -59,12 +60,9 @@ public class AiCommand{
 
     /**
      * Checks to see if the user's input fulfills the ai command requirements
-     * <p>
-     * <p>
      *
      * @param chunks the user's input in text chunks
      * @return if the user input fulfills the command requirements
-     * </p>
      */
     public boolean isCommand(String[] chunks) {
         String[] checkCommand = command.split("\\s+");
@@ -98,7 +96,7 @@ public class AiCommand{
      *
      * @return the usage string in HTML
      */
-    
+
     public String toMLCommand() {
         String toML = "    <b>" + command + "</b> ";
 
@@ -177,7 +175,7 @@ public class AiCommand{
     public int getNumArguments() {
         return numArguments;
     }
-    
+
     public void setNumArguments(int numArguments) {
 
         this.numArguments = numArguments;
@@ -185,7 +183,7 @@ public class AiCommand{
 
     }
 
-    
+
     public void setPrefixRequirement(int argumentIndex, String requirement) {
 
         if (argumentIndex > numArguments) {
@@ -201,12 +199,12 @@ public class AiCommand{
 
     }
 
-  
+
     public void setAllPrefixRequirements(String[] prefixRequirements) {
         this.prefixRequirements = prefixRequirements;
     }
 
-  
+
     public String getPrefixRequirement(int argumentIndex) {
 
         if (prefixRequirements.length > argumentIndex) {
@@ -217,7 +215,7 @@ public class AiCommand{
 
     }
 
- 
+
     public void setArgument(int argumentIndex, String holder) {
 
         if (argumentIndex > numArguments) {
@@ -233,12 +231,12 @@ public class AiCommand{
 
     }
 
-    
+
     public void setAllArguments(String[] placeHolders) {
         this.arguments = placeHolders;
     }
 
-    
+
     public String getArguments(int argumentIndex) {
 
         if (arguments.length < argumentIndex) {
@@ -249,52 +247,52 @@ public class AiCommand{
 
     }
 
-   
+
     public String getCommand() {
         return command;
     }
 
-    
+
     public void setCommand(String command) {
         this.command = command;
     }
 
-    
+
     public Set<AiPermission> getPermissions() {
         return permissions;
     }
 
-    
+
     public void setPermissions(Set<AiPermission> permissions) {
         this.permissions = permissions;
     }
 
-    
+
     public Set<AiAction> getActions() {
         return actions;
     }
 
-    
+
     public void setActions(Set<AiAction> actions) {
         this.actions = actions;
     }
 
-    
+
     public void addPermission(AiPermission permission) {
         permissions.add(permission);
     }
 
-    
+
     public void addAction(AiAction action) {
         actions.add(action);
     }
 
-    
+
     public void removePermission(AiPermission permission) {
         permissions.remove(permission);
     }
 
-    
+
     public void removeAction(AiAction action) {
         actions.remove(action);
     }
