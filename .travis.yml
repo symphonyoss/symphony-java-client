@@ -26,7 +26,7 @@
 language: java
 install: true
 script:
-- "[[ $TRAVIS_BRANCH =~ master ]] && mvn clean deploy versioneye,sonar --settings settings.xml || true"
+- "[[ $TRAVIS_BRANCH =~ master ]] && mvn clean deploy versioneye sonar --settings settings.xml || true"
 - "[[ $TRAVIS_BRANCH =~ dev ]] && mvn clean deploy --settings settings.xml || true"
 
 jdk:
