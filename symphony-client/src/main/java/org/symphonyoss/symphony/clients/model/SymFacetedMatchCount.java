@@ -24,12 +24,12 @@
 
 package org.symphonyoss.symphony.clients.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.symphonyoss.symphony.pod.model.FacetedMatchCount;
 
 /**
  * @author Frank Tarsillo
  */
+@SuppressWarnings("WeakerAccess")
 public class SymFacetedMatchCount {
 
     private String facet = null;

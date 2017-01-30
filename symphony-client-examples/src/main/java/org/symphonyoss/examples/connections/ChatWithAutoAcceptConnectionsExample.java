@@ -64,12 +64,10 @@ import java.util.Set;
  * -Dbot.user=bot.user1
  * -Dbot.domain=@domain.com
  * -Duser.call.home=frank.tarsillo@markit.com
- * <p>
- * <p>
- * <p>
- * <p>
- * Created by Frank Tarsillo on 5/15/2016.
+ *
+ * @author Frank Tarsillo
  */
+//NOSONAR
 public class ChatWithAutoAcceptConnectionsExample implements ChatListener, ChatServiceListener, ConnectionsListener {
 
 
@@ -164,15 +162,7 @@ public class ChatWithAutoAcceptConnectionsExample implements ChatListener, ChatS
 
             logger.error("Failed to find user....", ue);
 
-        } catch (UsersClientException e) {
-            logger.error("error", e);
-        } catch (AuthorizationException e) {
-            logger.error("error", e);
-        } catch (MessagesException e) {
-            logger.error("error", e);
-        } catch (StreamsException e) {
-            logger.error("error", e);
-        } catch (InitException e) {
+        } catch (UsersClientException | AuthorizationException | MessagesException | StreamsException | InitException e) {
             logger.error("error", e);
         }
 
@@ -192,7 +182,7 @@ public class ChatWithAutoAcceptConnectionsExample implements ChatListener, ChatS
                 message.getMessageType());
 
 
-        if (message.getMessage().indexOf("life") > -1) {
+        if (message.getMessage().contains("life")) {
             message.setMessage("The meaning of life is 42!..silly");
 
         } else {
@@ -227,9 +217,9 @@ public class ChatWithAutoAcceptConnectionsExample implements ChatListener, ChatS
 
     @Override
     public void onConnectionNotification(SymUserConnection userConnection) {
-        if (userConnection.getStatus().equals(SymUserConnection.Status.PENDING_INCOMING)) {
+        if (userConnection.getStatus().equals(SymUserConnection.StatusEnum.PENDING_INCOMING)) {
             logger.info("Received new connection request from {}", userConnection.getUserId());
-        } else if (userConnection.getStatus().equals(SymUserConnection.Status.ACCEPTED)) {
+        } else if (userConnection.getStatus().equals(SymUserConnection.StatusEnum.ACCEPTED)) {
             logger.info("Accepted connection request from {}", userConnection.getUserId());
 
         }

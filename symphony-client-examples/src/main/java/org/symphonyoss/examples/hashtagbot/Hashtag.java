@@ -29,8 +29,10 @@ import java.util.ArrayList;
 
 
 /**
- * Created by Frank Tarsillo on 5/22/2016.
+ *
+ * @author Frank Tarsillo
  */
+//NOSONAR
 @XmlRootElement
 public class Hashtag extends NodeObject {
 

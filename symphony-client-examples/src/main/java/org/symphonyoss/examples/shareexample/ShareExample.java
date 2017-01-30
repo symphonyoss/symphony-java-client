@@ -62,13 +62,11 @@ import java.util.Set;
  * -Dbot.user=bot.user1
  * -Dbot.domain=@domain.com
  * -Duser.call.home=frank.tarsillo@markit.com
- * <p>
- * <p>
- * <p>
- * <p>
- * Created by Frank Tarsillo on 5/15/2016.
+ *
+ * @author Frank Tarsillo
  */
-public class ShareExample  {
+//NOSONAR
+public class ShareExample {
 
 
     private final Logger logger = LoggerFactory.getLogger(ShareExample.class);
@@ -139,25 +137,18 @@ public class ShareExample  {
             shareArticle.setAuthor("Frank Tarsillo");
             shareArticle.setAppId("APP ID");
 
-            symClient.getShareClient().shareArticle(symClient.getStreamsClient().getStreamFromEmail("frank.tarsillo@markit.com").getId(),shareArticle);
-
+            symClient.getShareClient().shareArticle(symClient.getStreamsClient().getStreamFromEmail("frank.tarsillo@markit.com").getId(), shareArticle);
 
 
         } catch (AuthorizationException ae) {
 
             logger.error(ae.getMessage(), ae);
 
-        }catch (InitException e) {
+        } catch (InitException | StreamsException | ShareException e) {
             logger.error("error", e);
-        } catch (StreamsException e) {
-            e.printStackTrace();
-        } catch (ShareException e) {
-            e.printStackTrace();
         }
 
     }
-
-
 
 
 }

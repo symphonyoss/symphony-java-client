@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 /**
  * @author Frank Tarsillo
  */
+@SuppressWarnings("WeakerAccess")
 public class SymRoomTag {
     private String key = null;
 

@@ -33,7 +33,7 @@ import java.util.Set;
  * @author Nicholas Tarsillo
  */
 public class AiResponseSequence {
-    private Set<AiResponse> aiResponseSet = new HashSet<AiResponse>();
+    private Set<AiResponse> aiResponseSet = new HashSet<>();
 
     public AiResponseSequence() {
 

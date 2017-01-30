@@ -33,6 +33,7 @@ import java.util.List;
 /**
  * @author Frank Tarsillo
  */
+@SuppressWarnings("WeakerAccess")
 public class SymRoomAttributes {
 
 

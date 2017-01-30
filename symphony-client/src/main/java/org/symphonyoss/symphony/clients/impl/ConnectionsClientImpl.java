@@ -208,16 +208,19 @@ public class ConnectionsClientImpl implements ConnectionsClient {
     }
 
 
+    @SuppressWarnings("SameParameterValue")
     private List<SymUserConnection> getAllConnections(SymUserConnection.Status status, String userIds) throws ConnectionsException {
 
         ConnectionApi connectionApi = new ConnectionApi(apiClient);
 
-        if (status == null)
-            status = SymUserConnection.Status.ALL;
+        SymUserConnection.Status theStatus = status;
+
+        if (theStatus == null)
+            theStatus = SymUserConnection.Status.ALL;
 
         UserConnectionList userConnectionList;
         try {
-            userConnectionList = connectionApi.v1ConnectionListGet(symAuth.getSessionToken().getToken(), status.toString(), userIds);
+            userConnectionList = connectionApi.v1ConnectionListGet(symAuth.getSessionToken().getToken(), theStatus.toString(), userIds);
         } catch (ApiException e) {
             throw new ConnectionsException("Unable to retrieve all known connections..", e);
         }

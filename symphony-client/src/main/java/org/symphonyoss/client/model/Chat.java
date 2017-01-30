@@ -147,6 +147,7 @@ public class Chat {
      * @param chatListener Listener to remove
      * @return True if listener was removed
      */
+    @SuppressWarnings("UnusedReturnValue")
     public boolean removeListener(ChatListener chatListener) {
         return chatListeners.remove(chatListener);
     }
@@ -171,6 +172,9 @@ public class Chat {
         if (obj == null) {
             return false;
         }
+
+        if (this.getClass() != obj.getClass())
+            return false;
 
         final Chat other = (Chat) obj;
 

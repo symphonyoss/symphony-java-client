@@ -25,6 +25,8 @@
 package org.symphonyoss.client.ai;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.client.ai.utils.Messenger;
 import org.symphonyoss.client.common.AiConstants;
@@ -43,7 +45,9 @@ import java.util.Set;
  *
  * @author Nichalas Tarsillo
  */
+@SuppressWarnings("WeakerAccess")
 public class AiResponder {
+    private final Logger logger = LoggerFactory.getLogger(AiResponder.class);
     private SymphonyClient symClient;
 
     public AiResponder(SymphonyClient symClient) {
@@ -70,7 +74,7 @@ public class AiResponder {
             sendMessage(message, type, symClient.getStreamsClient().getStream(symUser), symClient);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Error sending message", e);
         }
 
     }
@@ -98,7 +102,9 @@ public class AiResponder {
             symClient.getMessagesClient().sendMessage(stream, userMessage);
 
         } catch (MessagesException e) {
-            e.printStackTrace();
+            logger.error("API exception with POD while sending a message", e);
+        } catch (Exception e) {
+            logger.error("Unknown Exception while sending a message", e);
         }
 
     }
@@ -180,21 +186,28 @@ public class AiResponder {
         SymMessage aMessage = new SymMessage();
         aMessage.setFormat(SymMessage.Format.MESSAGEML);
 
-        String usage = MLTypes.START_ML + mlMessageParser.getText() + AiConstants.NOT_INTERPRETABLE
-                + MLTypes.BREAK + MLTypes.START_BOLD
-                + AiConstants.USAGE + MLTypes.END_BOLD + MLTypes.BREAK;
+        StringBuilder usage = new StringBuilder();
+        usage.append(MLTypes.START_ML);
+        usage.append(mlMessageParser.getText());
+        usage.append(AiConstants.NOT_INTERPRETABLE);
+        usage.append(MLTypes.BREAK);
+        usage.append(MLTypes.START_BOLD);
+        usage.append(AiConstants.USAGE);
+        usage.append(MLTypes.END_BOLD);
+        usage.append(MLTypes.BREAK);
+
 
         for (AiCommand command : activeCommands) {
 
             if (command.userIsPermitted(message.getFromUserId())) {
-                usage += command.toMLCommand();
+                usage.append(command.toMLCommand());
             }
 
         }
 
-        usage += MLTypes.END_ML;
+        usage.append(MLTypes.END_ML);
 
-        sendMessage(usage, SymMessage.Format.MESSAGEML, message.getFromUserId(), symClient);
+        sendMessage(usage.toString(), SymMessage.Format.MESSAGEML, message.getFromUserId(), symClient);
 
     }
 
@@ -202,7 +215,7 @@ public class AiResponder {
      * Send a message back to the user, informing them that they do not have the
      * required permission
      *
-     * @param message the message reveived back from the user
+     * @param message the message received back from the user
      */
 
     public void sendNoPermission(SymMessage message) {

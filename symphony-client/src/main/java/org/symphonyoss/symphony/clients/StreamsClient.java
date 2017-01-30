@@ -28,9 +28,11 @@ import org.symphonyoss.symphony.pod.model.*;
 
 import java.util.Set;
 
+
 /**
- * Created by frank.tarsillo on 6/6/2016.
+ * @author Frank Tarsillo
  */
+@SuppressWarnings("unused")
 public interface StreamsClient {
     Stream getStream(SymUser user) throws StreamsException;
 
@@ -47,7 +49,7 @@ public interface StreamsClient {
     SymRoomDetail updateChatRoom(String streamId, SymRoomAttributes roomAttributes) throws StreamsException;
 
     SymRoomSearchResults roomSearch(SymRoomSearchCriteria searchCriteria, Integer skip, Integer limit) throws StreamsException;
-    
+
     /**
      * Deactivates a room for a given roomId
      * @param roomId 
@@ -55,5 +57,5 @@ public interface StreamsClient {
      * @throws StreamsException
      *              if the deactivation failed
      */
-    public void deactivateRoom(String roomId) throws StreamsException;
+    void deactivateRoom(String roomId) throws StreamsException;
 }

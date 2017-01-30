@@ -39,8 +39,6 @@ import org.symphonyoss.symphony.pod.model.UserIdList;
 import javax.ws.rs.client.Client;
 import java.util.Set;
 
-import org.symphonyoss.symphony.clients.model.SymRoomSearchResults;
-
 
 /**
  * Supports all stream lookup and create functions.

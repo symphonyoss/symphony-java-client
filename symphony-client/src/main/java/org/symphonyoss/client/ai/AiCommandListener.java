@@ -50,13 +50,13 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AiCommandListener implements ChatListener {
     private static final Logger logger = LoggerFactory.getLogger(AiCommandListener.class);
 
-    private static LinkedHashMap<String, HashSet<AiCommandListener>> listeners = new LinkedHashMap<String, HashSet<AiCommandListener>>();
-    private static SymMessage lastAnsweredMessage;
+    private static LinkedHashMap<String, HashSet<AiCommandListener>> listeners = new LinkedHashMap<>();
+    private SymMessage lastAnsweredMessage;
 
-    protected SymphonyClient symClient;
+    private final SymphonyClient symClient;
 
     private ArrayList<AiCommand> activeCommands = new ArrayList<>();
-    private ConcurrentHashMap<String, AiLastCommand> lastResponse = new ConcurrentHashMap<String, AiLastCommand>();
+    private ConcurrentHashMap<String, AiLastCommand> lastResponse = new ConcurrentHashMap<>();
     private AiResponder aiResponder;
 
     public AiCommandListener(SymphonyClient symClient) {
@@ -177,7 +177,7 @@ public class AiCommandListener implements ChatListener {
      */
     private void processMessage(MlMessageParser mlMessageParser, String[] chunks, SymMessage message) {
 
-        if (activeCommands == null || activeCommands.size() == 0) {
+        if (activeCommands == null || activeCommands.isEmpty()) {
 
             if (logger != null)
                 logger.warn("There are no active commands added to the listener. " +
@@ -216,8 +216,10 @@ public class AiCommandListener implements ChatListener {
 
             AiLastCommand lastCommand = AiSpellParser.parse(activeCommands, chunks, symClient, AiConstants.CORRECTFACTOR);
 
-            aiResponder.sendSuggestionMessage(lastCommand, message);
-            lastResponse.put(message.getFromUserId().toString(), lastCommand);
+            if (lastCommand != null) {
+                aiResponder.sendSuggestionMessage(lastCommand, message);
+                lastResponse.put(message.getFromUserId().toString(), lastCommand);
+            }
 
         } else {
 
@@ -251,19 +253,8 @@ public class AiCommandListener implements ChatListener {
 
         }
 
-        if (!equalsRunLastCommand(mlMessageParser, message)
-                && !canSuggest(chunks)) {
-            return false;
-
-        } else if (!equalsRunLastCommand(mlMessageParser, message)) {
-
-            return false;
-
-        } else {
-
-            return true;
-
-        }
+        return !(!equalsRunLastCommand(mlMessageParser, message)
+                && !canSuggest(chunks)) && equalsRunLastCommand(mlMessageParser, message);
 
     }
 
@@ -306,7 +297,7 @@ public class AiCommandListener implements ChatListener {
 
             } else {
 
-                HashSet<AiCommandListener> newChat = new HashSet<AiCommandListener>();
+                HashSet<AiCommandListener> newChat = new HashSet<>();
                 newChat.add(this);
 
                 listeners.put(chat.getStream().getId(), newChat);
@@ -344,12 +335,12 @@ public class AiCommandListener implements ChatListener {
             }
 
         } else {
-            logChatError(chat, new NullPointerException());
+            logChatError(null, new NullPointerException());
         }
 
     }
 
-    public void logChatError(Chat chat, Exception e) {
+    private void logChatError(Chat chat, Exception e) {
         if (logger != null) {
 
             if (chat == null) {
@@ -399,4 +390,9 @@ public class AiCommandListener implements ChatListener {
         return symClient;
     }
 
+    public SymMessage getLastAnsweredMessage() {
+        return lastAnsweredMessage;
+    }
 }
+
+

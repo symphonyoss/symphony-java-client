@@ -63,12 +63,10 @@ import java.util.Set;
  * -Dbot.user=bot.user1
  * -Dbot.domain=@domain.com
  * -Duser.call.home=frank.tarsillo@markit.com
- * <p>
- * <p>
- * <p>
- * <p>
- * Created by Frank Tarsillo on 5/15/2016.
+ *
+ * @author  Frank Tarsillo
  */
+//NOSONAR
 public class BotIt {
 
 
@@ -160,11 +158,7 @@ public class BotIt {
 
             logger.error(ae.getMessage(), ae);
 
-        } catch (MessagesException e) {
-            logger.error("error", e);
-        } catch (UsersClientException e) {
-            logger.error("error", e);
-        } catch (InitException e) {
+        } catch (MessagesException | UsersClientException | InitException e) {
             logger.error("error", e);
         }
 
@@ -215,7 +209,7 @@ public class BotIt {
         public AiResponseSequence respond(MlMessageParser mlMessageParser, SymMessage message, AiCommand command) {
 
             AiResponseSequence responseSequence = new AiResponseSequence();
-            AiResponse aiResponse = null;
+            AiResponse aiResponse;
 
             String[] chunks = mlMessageParser.getTextChunks();
 
@@ -242,7 +236,7 @@ public class BotIt {
 
 
             AiResponseSequence responseSequence = new AiResponseSequence();
-            AiResponse aiResponse = null;
+            AiResponse aiResponse;
 
             String[] chunks = mlMessageParser.getTextChunks();
 

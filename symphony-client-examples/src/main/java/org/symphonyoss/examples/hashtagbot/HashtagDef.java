@@ -25,8 +25,10 @@ package org.symphonyoss.examples.hashtagbot;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * Created by Frank Tarsillo on 5/22/2016.
+ *
+ * @author Frank Tarsillo
  */
+//NOSONAR
 @XmlRootElement
 public class HashtagDef {
 

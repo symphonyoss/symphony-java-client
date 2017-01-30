@@ -67,8 +67,9 @@ import java.util.concurrent.TimeUnit;
  *
  *
  *
- * Created by Frank Tarsillo on 5/15/2016.
+ * @author  Frank Tarsillo
  */
+//NOSONAR
 public class SetPresenceExample implements PresenceListener {
 
 

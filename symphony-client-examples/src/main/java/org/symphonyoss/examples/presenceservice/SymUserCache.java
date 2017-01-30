@@ -61,8 +61,9 @@ import java.util.Set;
  * -Dbot.domain=@domain.com
  * -Duser.call.home=frank.tarsillo@markit.com
  *
- * Created by Frank Tarsillo
+ * @author  Frank Tarsillo
  */
+//NOSONAR
 public class SymUserCache implements PresenceListener {
 
 
@@ -156,8 +157,6 @@ public class SymUserCache implements PresenceListener {
 
                 if(aUser!=null) {
                     logger.debug("User: {} Status: {}", aUser.getDisplayName(), userPresence.getCategory().toString());
-                }else{
-
                 }
             }
 

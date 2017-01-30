@@ -27,6 +27,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import javax.ws.rs.client.Client;
 
@@ -244,39 +245,40 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
             for (Long userId : userIdList) {
 
 
-                executor.execute((new Thread() {
-                    public void run() {
+                executor.execute((new Thread(() -> {
 
-                        UsersApi usersApi2 = new UsersApi(apiClient);
-                        SymUser symUser = null;
+                    UsersApi usersApi2 = new UsersApi(apiClient);
+                    SymUser symUser;
 
-                        if (userId == null)
-                            throw new NullPointerException("UserId was null...");
+                    if (userId == null)
+                        throw new NullPointerException("UserId was null...");
 
-                        UserV2 user;
-                        try {
-                            user = usersApi2.v2UserGet(symAuth.getSessionToken().getToken(), userId, null, null, false);
-                        } catch (ApiException e) {
-                            return;
-                        }
-
-                        if (user != null) {
-
-                            //logger.debug("Found User: {}:{}", user.getDisplayName(), user.getId());
-                            symUser = SymUser.toSymUser(user);
-                            symUsers.add(symUser);
-                        }
-
+                    UserV2 user1;
+                    try {
+                        user1 = usersApi2.v2UserGet(symAuth.getSessionToken().getToken(), userId, null, null, false);
+                    } catch (ApiException e) {
+                        logger.error("API Error while communicating with POD while retrieving user details");
+                        return;
                     }
-                }));
+
+                    if (user1 != null) {
+
+                        //logger.debug("Found User: {}:{}", user.getDisplayName(), user.getId());
+                        symUser = SymUser.toSymUser(user1);
+                        symUsers.add(symUser);
+                    }
+
+                })));
 
             }
 
 
             executor.shutdown();
 
-            while (!executor.isTerminated()) {
-
+            try {
+                executor.awaitTermination(5, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+               logger.error("Executor failed ot terminate after retrieving all users.",e);
             }
 
             logger.debug("Finished all threads. Total time retrieving users: {} sec", (System.currentTimeMillis() - startTime) / 1000);
@@ -322,7 +324,7 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
     @Override
     public SymUser updateUser(long userId, SymUser symUser) throws UsersClientException {
         UserApi usersApi = new UserApi(apiClient);
-        SymUser updatedSymUser = null;
+        SymUser updatedSymUser;
 
         try {
             String sessionToken = getSessionToken();
@@ -351,7 +353,7 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
     @Override
     public SymUser createUser(UserCreate userCreate) throws UsersClientException {
         UserApi usersApi = new UserApi(apiClient);
-        UserDetail userDetail = null;
+        UserDetail userDetail ;
 
         try {
             String sessionToken = getSessionToken();

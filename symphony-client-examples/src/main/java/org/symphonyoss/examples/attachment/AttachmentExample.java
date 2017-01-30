@@ -69,12 +69,10 @@ import java.util.Set;
  * -Dbot.user=bot.user1
  * -Dbot.domain=@domain.com
  * -Duser.call.home=frank.tarsillo@markit.com
- * <p>
- * <p>
- * <p>
- * <p>
- * Created by Frank Tarsillo on 5/15/2016.
+ *
+ * @author  Frank Tarsillo
  */
+//NOSONAR
 public class AttachmentExample implements ChatListener, ChatServiceListener {
 
 

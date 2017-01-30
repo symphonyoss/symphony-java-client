@@ -28,6 +28,7 @@ import org.symphonyoss.symphony.pod.model.RoomSystemInfo;
 /**
  * @author Frank Tarsillo
  */
+@SuppressWarnings("WeakerAccess")
 public class SymRoomSystemInfo {
     private String id = null;
 

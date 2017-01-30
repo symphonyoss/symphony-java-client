@@ -32,11 +32,12 @@ import javax.ws.rs.client.ClientBuilder;
 import java.security.KeyStore;
 
 /**
- * A custome HTTP client can be used when there are specific connectivity requirements or there is a need to support
+ * A custom HTTP client can be used when there are specific connectivity requirements or there is a need to support
  * multiple keystores.
  *
  * @author Frank Tarsillo on 10/26/2016.
  */
+@SuppressWarnings("unused")
 public class CustomHttpClient {
 
     public CustomHttpClient() {
@@ -102,7 +103,7 @@ public class CustomHttpClient {
      * @param ks     Keystore object which defines the expected type (PKCS12, JKS)
      * @param ksFile Keystore file to process
      * @param ksPass Keystore password for file to process
-     * @throws Exception
+     * @throws Exception Generally IOExceptions generated from file read
      */
     private static void loadKeyStore(KeyStore ks, String ksFile, String ksPass) throws Exception {
 

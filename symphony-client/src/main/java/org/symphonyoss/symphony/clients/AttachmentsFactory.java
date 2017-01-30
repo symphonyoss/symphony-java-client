@@ -26,7 +26,7 @@ import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.symphony.clients.impl.AttachmentsClientImpl;
 
 /**
- * Created by frank.tarsillo on 6/6/2016.
+ * @author Frank Tarsillo
  */
 public class AttachmentsFactory {
 

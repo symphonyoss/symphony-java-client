@@ -25,7 +25,7 @@
 package org.symphonyoss.client.common;
 
 /**
- * Created by nicktarsillo on 6/16/16.
+ * @author  Nicholas Tarsillo
  */
 public class AiConstants {
     public static final char COMMAND = '/';

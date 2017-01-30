@@ -86,7 +86,7 @@ public class PresenceService implements PresenceListener {
      *
      * @param userId userID to lookup
      * @return User presence
-     * @throws PresenceException hrown by underlying Symphony API calls
+     * @throws PresenceException Thrown by underlying Symphony API calls
      */
     public Presence getUserPresence(Long userId) throws PresenceException {
 
@@ -99,7 +99,7 @@ public class PresenceService implements PresenceListener {
      *
      * @param email email to lookup
      * @return User presence
-     * @throws PresenceException hrown by underlying Symphony API calls
+     * @throws PresenceException Thrown by underlying Symphony API calls
      */
     public Presence getUserPresence(String email) throws PresenceException {
 

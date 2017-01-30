@@ -28,6 +28,7 @@ import org.symphonyoss.symphony.pod.model.V2RoomDetail;
 /**
  * @author Frank Tarsillo
  */
+@SuppressWarnings("WeakerAccess")
 public class SymRoomDetail {
 
     private SymRoomAttributes roomAttributes = null;

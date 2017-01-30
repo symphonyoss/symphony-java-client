@@ -61,12 +61,10 @@ import java.util.concurrent.TimeUnit;
  * -Dbot.user=bot.user1
  * -Dbot.domain=@domain.com
  * -Duser.call.home=frank.tarsillo@markit.com
- * <p>
- * <p>
- * <p>
- * <p>
- * Created by Frank Tarsillo on 5/15/2016.
+ *
+ * @author  Frank Tarsillo
  */
+//NOSONAR
 public class ChatExample implements ChatListener, ChatServiceListener {
 
 
@@ -162,11 +160,7 @@ public class ChatExample implements ChatListener, ChatServiceListener {
 
             logger.error(ae.getMessage(), ae);
 
-        } catch (MessagesException e) {
-            logger.error("error", e);
-        } catch (UsersClientException e) {
-            logger.error("error", e);
-        } catch (InitException e) {
+        } catch (MessagesException | UsersClientException | InitException e) {
             logger.error("error", e);
         }
 

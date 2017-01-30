@@ -23,15 +23,14 @@
 package org.symphonyoss.symphony.clients;
 
 import org.symphonyoss.exceptions.MessagesException;
-import org.symphonyoss.symphony.agent.model.Message;
-import org.symphonyoss.symphony.agent.model.MessageSubmission;
 import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.pod.model.Stream;
 
 import java.util.List;
 
+
 /**
- * Created by frank.tarsillo on 6/6/2016.
+ * @author Frank Tarsillo
  */
 public interface MessagesClient {
 

@@ -79,10 +79,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * -Dbot.domain=@markit.com
  * -Duser.call.home=frank.tarsillo@markit.com
  * -Dfiles.json=/dev/json/
- * <p>
- * <p>
- * <p>
- * Created by Frank Tarsillo on 5/15/2016.
+ *
+ * @author  Frank Tarsillo
  */
 //NOSONAR
 public class HashtagBot implements ChatListener, ChatServiceListener, PresenceListener {
@@ -592,7 +590,7 @@ public class HashtagBot implements ChatListener, ChatServiceListener, PresenceLi
     private void removeHashtagFile(Hashtag hashtag) {
 
 
-        new File(System.getProperty("files.json") + hashtag.getName() + ".json").delete();
+        final boolean delete = new File(System.getProperty("files.json") + hashtag.getName() + ".json").delete();
 
 
     }

@@ -29,6 +29,7 @@ import org.symphonyoss.symphony.clients.model.SymMessage;
  *
  * @author Frank Tarsillo
  */
+@SuppressWarnings("WeakerAccess")
 public interface MessageListener {
 
     /**

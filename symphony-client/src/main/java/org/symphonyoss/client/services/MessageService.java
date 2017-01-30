@@ -57,6 +57,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author Frank Tarsillo on 5/15/2016.
  */
+@SuppressWarnings("WeakerAccess")
 public class MessageService implements DataFeedListener {
 
     private final SymphonyClient symClient;
@@ -268,7 +269,7 @@ public class MessageService implements DataFeedListener {
      * Identify if the message is associated with a room or chat conversation
      *
      * @param message base message being verified
-     * @return
+     * @return True if room message type
      */
     private boolean isRoomMessage(V2BaseMessage message) {
 
@@ -290,7 +291,7 @@ public class MessageService implements DataFeedListener {
             }
         } catch (StreamsException e) {
             //Exception will be common here, so we are not going to throw exceptions every time.
-            logger.debug("Failed to retrieve room detail, so this is a chat stream.");
+            logger.debug("Failed to retrieve room detail, so this is a chat stream. {}",e);
 
 
         }

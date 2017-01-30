@@ -39,10 +39,11 @@ import java.util.TimerTask;
  *
  * Task will refresh session tokens when called.
  */
+@SuppressWarnings("WeakerAccess")
 public class AuthRefreshTask extends TimerTask {
 
     private final Logger logger = LoggerFactory.getLogger(AuthRefreshTask.class);
-    private SymphonyClient symClient;
+    private final SymphonyClient symClient;
 
     public AuthRefreshTask(SymphonyClient symClient){
         this.symClient = symClient;
@@ -55,6 +56,7 @@ public class AuthRefreshTask extends TimerTask {
 
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public SymAuth runTask(){
 
         SymAuth symAuth = null;

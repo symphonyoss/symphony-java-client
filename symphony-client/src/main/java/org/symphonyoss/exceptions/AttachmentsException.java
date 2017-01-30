@@ -24,8 +24,9 @@
 package org.symphonyoss.exceptions;
 
 /**
- * Created by Frank Tarsillo on 9/11/2016.
+ * @author Frank Tarsillo
  */
+@SuppressWarnings("SameParameterValue")
 public class AttachmentsException extends SymException{
     public AttachmentsException(String message) {
         super(message);

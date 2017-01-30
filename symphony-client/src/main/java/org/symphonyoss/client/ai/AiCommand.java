@@ -40,6 +40,7 @@ import java.util.Set;
  *
  * @author Nicholas Tarsillo
  */
+@SuppressWarnings("WeakerAccess")
 public class AiCommand {
     private final Logger logger = LoggerFactory.getLogger(AiCommand.class);
 
@@ -49,8 +50,8 @@ public class AiCommand {
     private String[] arguments = new String[0];
     private String usage;
 
-    private Set<AiAction> actions = new LinkedHashSet<AiAction>();
-    private Set<AiPermission> permissions = new HashSet<AiPermission>();
+    private Set<AiAction> actions = new LinkedHashSet<>();
+    private Set<AiPermission> permissions = new HashSet<>();
 
     public AiCommand(String command, int numArguments, String usage) {
         setCommand(command);
@@ -98,20 +99,30 @@ public class AiCommand {
      */
 
     public String toMLCommand() {
-        String toML = "    <b>" + command + "</b> ";
+        StringBuilder toML = new StringBuilder();
+        toML.append("    <b>");
+        toML.append(command);
+        toML.append("</b> ");
 
         for (int index = 0; index < numArguments; index++) {
-            toML += prefixRequirements[index] + arguments[index] + "     (" + usage + ")";
+            toML.append( prefixRequirements[index]);
+            toML.append( arguments[index]);
+            toML.append("     (");
+            toML.append(usage);
+            toML.append(")");
         }
 
-        return toML + "<br/>";
+        toML.append("<br/>");
+
+
+        return toML.toString();
     }
 
     /**
      * Determines if a user is allowed to use this command
      *
      * @param userID the user's id
-     * @return if the user is permited to use this command
+     * @return if the user is permitted to use this command
      */
     public boolean userIsPermitted(Long userID) {
         for (AiPermission permission : permissions) {
@@ -134,7 +145,7 @@ public class AiCommand {
      * @return a set of responses, given by completing all the commands actions
      */
     public Set<AiResponseSequence> getResponses(MlMessageParser mlMessageParser, SymMessage message) {
-        Set<AiResponseSequence> responses = new LinkedHashSet<AiResponseSequence>();
+        Set<AiResponseSequence> responses = new LinkedHashSet<>();
 
         for (AiAction action : getActions()) {
             responses.add(action.respond(mlMessageParser, message, this));

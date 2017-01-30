@@ -40,10 +40,11 @@ import org.xml.sax.helpers.DefaultHandler;
 import java.util.List;
 
 /**
- * Provides simple utility to parse MlMessage formated text
+ * Provides simple utility to parse MlMessage formatted text
  *
  * @author Frank Tarsillo
  */
+@SuppressWarnings("WeakerAccess")
 public class MlMessageParser extends DefaultHandler {
 
     private String messageMl;
@@ -51,13 +52,13 @@ public class MlMessageParser extends DefaultHandler {
     private Document doc;
     private Document originalDoc;
     private StringBuilder textDoc = new StringBuilder();
-    private String [] textChunks;
+    private String[] textChunks;
 
     private SymphonyClient symClient;
     private final Logger logger = LoggerFactory.getLogger(MlMessageParser.class);
 
 
-    public MlMessageParser(SymphonyClient symClient){
+    public MlMessageParser(SymphonyClient symClient) {
         this.symClient = symClient;
 
     }
@@ -71,17 +72,21 @@ public class MlMessageParser extends DefaultHandler {
         originalDoc = doc.clone();
         Element elementErrors = doc.body().getElementsByTag("errors").first();
 
+        String elementErrorsOuterHtml = elementErrors.outerHtml();
+
         if (elementErrors != null)
-            logger.debug("Errors found in message: {}", elementErrors.outerHtml());
+            logger.debug("Errors found in message: {}", elementErrorsOuterHtml);
 
         //Lets remove the errors elements
         doc.select("errors").remove();
 
         elementMessageML = doc.select("messageML").first();
 
+        String elementMessageMLOuterHtml = elementMessageML.outerHtml();
+
         if (elementMessageML != null) {
 
-            logger.debug("Doc parsed: {}", elementMessageML.outerHtml());
+            logger.debug("Doc parsed: {}", elementMessageMLOuterHtml);
         } else {
 
             logger.error("Could not parse document for message {}", message);
@@ -92,7 +97,6 @@ public class MlMessageParser extends DefaultHandler {
         stripTags(textDoc, elementMessageML.childNodes());
 
         textChunks = textDoc.toString().split("\\s+");
-
 
 
     }
@@ -140,7 +144,7 @@ public class MlMessageParser extends DefaultHandler {
                             try {
                                 user = symClient.getUsersClient().getUserFromId(Long.valueOf(node.attr(AttribTypes.UID.toString())));
                             } catch (UsersClientException e) {
-                                logger.error("Could not identify user from userID",e);
+                                logger.error("Could not identify user from userID", e);
                             }
 
 
@@ -163,9 +167,6 @@ public class MlMessageParser extends DefaultHandler {
             }
         }
     }
-
-
-
 
 
     public String getText() {
@@ -225,12 +226,12 @@ public class MlMessageParser extends DefaultHandler {
 
             if (append) {
 
-                if(node.nodeName().equalsIgnoreCase("#text") && node.outerHtml().charAt(0) != ' ')
+                if (node.nodeName().equalsIgnoreCase("#text") && node.outerHtml().charAt(0) != ' ')
                     builder.append(" ");
 
                 builder.append(node.outerHtml());
 
-                if(!node.nodeName().equalsIgnoreCase("#text"))
+                if (!node.nodeName().equalsIgnoreCase("#text"))
                     builder.append(" ");
 
                 continue;
@@ -248,12 +249,13 @@ public class MlMessageParser extends DefaultHandler {
     }
 
 
-    public void updateMentionUidToEmail(SymphonyClient symClient){
+    public void updateMentionUidToEmail(SymphonyClient symClient) {
 
-        updateMentionUidToEmail(symClient,elementMessageML.childNodes());
+        updateMentionUidToEmail(symClient, elementMessageML.childNodes());
     }
+
     //Terrible that Symphony publishes UID on mention but only allows EMAIL on message submission.
-    private void updateMentionUidToEmail(SymphonyClient symClient, List<Node> nodesList){
+    private void updateMentionUidToEmail(SymphonyClient symClient, List<Node> nodesList) {
 
 
         for (Node node : nodesList) {
@@ -262,9 +264,9 @@ public class MlMessageParser extends DefaultHandler {
 
             if (nodeName.equalsIgnoreCase(NodeTypes.MENTION.toString())) {
 
-                if (node.attributes().hasKey(AttribTypes.UID.toString())){
+                if (node.attributes().hasKey(AttribTypes.UID.toString())) {
 
-                      String uid = node.attr(AttribTypes.UID.toString());
+                    String uid = node.attr(AttribTypes.UID.toString());
 
                     SymUser user = null;
                     try {
@@ -272,17 +274,17 @@ public class MlMessageParser extends DefaultHandler {
 
                         logger.info("Translated mention uid {} to email {}", uid, user.getEmailAddress());
                     } catch (UsersClientException e) {
-                        logger.error("Could not identify user email from id",e);
+                        logger.error("Could not identify user email from id", e);
                     }
 
-                    if(user != null && user.getEmailAddress() != null){
-                            uid = user.getEmailAddress();
-                        }
+                    if (user != null && user.getEmailAddress() != null) {
+                        uid = user.getEmailAddress();
+                    }
 
-                      Attribute emailAttribute = new Attribute(AttribTypes.EMAIL.toString(),uid);
+                    Attribute emailAttribute = new Attribute(AttribTypes.EMAIL.toString(), uid);
 
-                        node.attributes().put(emailAttribute);
-                        node.removeAttr(AttribTypes.UID.toString());
+                    node.attributes().put(emailAttribute);
+                    node.removeAttr(AttribTypes.UID.toString());
 
                 }
 
@@ -293,11 +295,11 @@ public class MlMessageParser extends DefaultHandler {
 
     }
 
-    public Elements getAllElements(){
+    public Elements getAllElements() {
         return elementMessageML.getAllElements();
     }
 
-    public List<Node> getChildNodes(){
+    public List<Node> getChildNodes() {
 
         return elementMessageML.childNodes();
     }

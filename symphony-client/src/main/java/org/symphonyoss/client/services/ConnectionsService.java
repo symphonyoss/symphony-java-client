@@ -38,6 +38,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author Frank Tarsillo on 5/16/2016.
  */
+@SuppressWarnings("WeakerAccess")
 public class ConnectionsService implements ConnectionsListener {
     private final SymphonyClient symClient;
     private boolean autoAccept;
@@ -84,7 +85,7 @@ public class ConnectionsService implements ConnectionsListener {
     /**
      * Please use {@link #addListener(ConnectionsListener)}
      *
-     * @param connectionsListener Listner for callbacks
+     * @param connectionsListener Listener for callbacks
      */
     @Deprecated
     public void registerListener(ConnectionsListener connectionsListener) {

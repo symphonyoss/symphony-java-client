@@ -25,12 +25,11 @@
 package org.symphonyoss.client.common;
 
 /**
- * Created by nicktarsillo on 6/20/16.
- */
-
-/**
+ *
  * A set of enums, representing ML strings, that make coding
  * ML types a lot easier.
+ *
+ * @author Nicholas Tarsillo
  */
 public enum MLTypes {
     START_ML("<messageML>"),

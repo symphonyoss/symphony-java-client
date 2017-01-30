@@ -23,11 +23,12 @@
 
 package org.symphonyoss.exceptions;
 
-import org.symphonyoss.exceptions.SymException;
+
 
 /**
- * Created by Frank Tarsillo on 9/10/2016.
+ * @author Frank Tarsillo
  */
+@SuppressWarnings("WeakerAccess")
 public class UsersClientException extends SymException {
     public UsersClientException(String message) {
         super(message);

@@ -60,8 +60,9 @@ import org.symphonyoss.symphony.pod.model.UserPresence;
  *
  *
  *
- * Created by Frank Tarsillo on 5/15/2016.
+ * @author  Frank Tarsillo
  */
+//NOSONAR
 public class PresenceServiceExample implements PresenceListener {
 
 

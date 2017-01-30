@@ -148,14 +148,10 @@ public class RoomSearchExample  {
             System.exit(1);
 
 
-        } catch (StreamsException e) {
-            logger.error("error", e);
-        } catch (InitException e) {
-            logger.error("error", e);
-        } catch (AuthorizationException e) {
+        } catch (StreamsException | InitException | AuthorizationException e) {
             logger.error("error", e);
         } catch (Exception e) {
-            logger.error("error", e);
+            logger.error("Unkown Exception", e);
         }
 
     }

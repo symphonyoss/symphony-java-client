@@ -27,11 +27,12 @@ import org.symphonyoss.symphony.clients.impl.UsersClientImpl;
 import org.symphonyoss.client.model.SymAuth;
 
 import javax.ws.rs.client.Client;
-import javax.xml.ws.http.HTTPBinding;
+
 
 /**
- * Created by frank.tarsillo on 6/6/2016.
+ * @author Frank Tarsillo
  */
+@SuppressWarnings("SameParameterValue")
 public class UsersFactory {
 
     public enum TYPE { DEFAULT, HTTPCLIENT }

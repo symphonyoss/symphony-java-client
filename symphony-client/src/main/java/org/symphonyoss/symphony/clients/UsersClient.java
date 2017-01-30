@@ -29,9 +29,11 @@ import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.pod.model.UserCreate;
 import org.symphonyoss.symphony.pod.model.UserStatus;
 
+
 /**
- * Created by frank.tarsillo on 6/6/2016.
+ * @author Frank Tarsillo
  */
+@SuppressWarnings("unused")
 public interface UsersClient {
     SymUser getUserFromEmail(String email) throws UsersClientException;
 
@@ -43,9 +45,9 @@ public interface UsersClient {
 
     Set<SymUser> getAllUsers() throws UsersClientException;
     
-    public void setUserStatus(long userId, UserStatus userStatus) throws UsersClientException;
+    void setUserStatus(long userId, UserStatus userStatus) throws UsersClientException;
 
-    public SymUser updateUser(long userId, SymUser symUser) throws UsersClientException;
+    SymUser updateUser(long userId, SymUser symUser) throws UsersClientException;
 
-    public SymUser createUser(UserCreate userCreate) throws UsersClientException;
+    SymUser createUser(UserCreate userCreate) throws UsersClientException;
 }

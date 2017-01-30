@@ -24,8 +24,12 @@
 
 package org.symphonyoss.client.ai.utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.client.model.Chat;
+import org.symphonyoss.exceptions.MessagesException;
+import org.symphonyoss.exceptions.StreamsException;
 import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.pod.model.Stream;
 import org.symphonyoss.symphony.pod.model.UserIdList;
@@ -35,7 +39,10 @@ import org.symphonyoss.symphony.pod.model.UserIdList;
  *
  * @author Nicholas Tarsillo
  */
+@SuppressWarnings("SameParameterValue")
 public class Messenger {
+    private static final Logger logger = LoggerFactory.getLogger(Messenger.class);
+
     public static void sendMessage(String message, SymMessage.Format type, Long userID, SymphonyClient symClient) {
         SymMessage userMessage = new SymMessage();
         userMessage.setFormat(type);
@@ -45,8 +52,11 @@ public class Messenger {
         list.add(userID);
         try {
             symClient.getMessagesClient().sendMessage(symClient.getStreamsClient().getStream(list), userMessage);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (MessagesException e) {
+            logger.error("API exception when communicating with POD while sending message",e);
+        }catch(Exception e){
+            logger.error("Unknown exception when communicating with POD while sending message",e);
+
         }
     }
 
@@ -57,8 +67,11 @@ public class Messenger {
 
         try {
             symClient.getMessageService().sendMessage(email, userMessage);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (MessagesException e) {
+            logger.error("API exception when communicating with POD while sending message",e);
+        }catch(Exception e){
+            logger.error("Unknown exception when communicating with POD while sending message",e);
+
         }
     }
 
@@ -71,8 +84,11 @@ public class Messenger {
         stream.setId(refMes.getStreamId());
         try {
             symClient.getMessagesClient().sendMessage(stream, userMessage);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (MessagesException e) {
+            logger.error("API exception when communicating with POD while sending message",e);
+        }catch(Exception e){
+            logger.error("Unknown exception when communicating with POD while sending message",e);
+
         }
     }
 
@@ -83,8 +99,11 @@ public class Messenger {
 
         try {
             symClient.getMessageService().sendMessage(chat, userMessage);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (MessagesException e) {
+            logger.error("API exception when communicating with POD while sending message",e);
+        }catch(Exception e){
+            logger.error("Unknown exception when communicating with POD while sending message",e);
+
         }
     }
 
@@ -94,10 +113,13 @@ public class Messenger {
         Stream stream = null;
         try {
             stream = symClient.getStreamsClient().getStream(list);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (StreamsException e) {
+            logger.error("API exception when communicating with POD while retrieving stream",e);
+        }catch(Exception e){
+            logger.error("Unknown exception when communicating with POD while retrieving stream",e);
+
         }
 
-        return symClient.getChatService().getChatByStream(stream.getId());
+        return symClient.getChatService().getChatByStream(stream != null ? stream.getId() : null);
     }
 }

@@ -21,7 +21,6 @@
  */
 package org.symphonyoss.symphony.clients.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.symphonyoss.symphony.pod.model.RoomSearchCriteria;
 import org.symphonyoss.symphony.pod.model.UserId;
 
@@ -32,13 +31,14 @@ import java.util.List;
 /**
  * @author Frank Tarsillo
  */
+@SuppressWarnings("WeakerAccess")
 public class SymRoomSearchCriteria {
 
 
     private String query = null;
 
 
-    private List<String> labels = new ArrayList<String>();
+    private List<String> labels = new ArrayList<>();
 
 
     private Boolean active = null;

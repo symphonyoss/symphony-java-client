@@ -114,7 +114,7 @@ public class SymphonyBasicClient implements SymphonyClient {
         presenceClient = (defaultHttpClient==null)?PresenceFactory.getClient(this, PresenceFactory.TYPE.DEFAULT):PresenceFactory.getClient(this, PresenceFactory.TYPE.HTTPCLIENT);
         streamsClient = (defaultHttpClient==null)?StreamsFactory.getClient(this, StreamsFactory.TYPE.DEFAULT):StreamsFactory.getClient(this, StreamsFactory.TYPE.HTTPCLIENT);
         usersClient = (defaultHttpClient==null)?UsersFactory.getClient(this, UsersFactory.TYPE.DEFAULT):UsersFactory.getClient(this, UsersFactory.TYPE.HTTPCLIENT);
-        shareClient = (defaultHttpClient==null)?ShareFactory.getClient(this,ShareFactory.TYPE.DEFAULT):ShareFactory.getClient(this,ShareFactory.TYPE.DEFAULT);
+        shareClient = (defaultHttpClient==null)?ShareFactory.getClient(this,ShareFactory.TYPE.DEFAULT):ShareFactory.getClient(this,ShareFactory.TYPE.HTTPCLIENT);
         attachmentsClient = (defaultHttpClient==null)?AttachmentsFactory.getClient(this, AttachmentsFactory.TYPE.DEFAULT):AttachmentsFactory.getClient(this, AttachmentsFactory.TYPE.HTTPCLIENT);
         roomMembershipClient = (defaultHttpClient==null)?RoomMembershipFactory.getClient(this, RoomMembershipFactory.TYPE.DEFAULT):RoomMembershipFactory.getClient(this, RoomMembershipFactory.TYPE.HTTPCLIENT);
         connectionsClient = (defaultHttpClient==null)?ConnectionsFactory.getClient(this, ConnectionsFactory.TYPE.DEFAULT):ConnectionsFactory.getClient(this, ConnectionsFactory.TYPE.HTTPCLIENT);

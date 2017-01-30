@@ -24,8 +24,9 @@
 package org.symphonyoss.exceptions;
 
 /**
- * Created by Frank Tarsillo on 9/10/2016.
+ * @author Frank Tarsillo
  */
+@SuppressWarnings("WeakerAccess")
 public class SymException extends Exception{
 
     public SymException(String message) {

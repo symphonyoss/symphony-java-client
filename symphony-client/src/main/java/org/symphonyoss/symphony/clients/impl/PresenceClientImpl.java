@@ -122,7 +122,7 @@ public class PresenceClientImpl implements org.symphonyoss.symphony.clients.Pres
     public Presence setUserPresence(Long userId, Presence presence) throws PresenceException {
         // INFO: This uses code from pod-api 0.9.0 as version 0.9.1 does not contain that
         //       functionality anymore. If/When Symphony put that functionality back in its
-        //       pod-api, then we can invoke the set presence endpoint like done elswhere.
+        //       pod-api, then we can invoke the set presence endpoint like done elsewhere.
 
         if (userId == null) {
             throw new PresenceException("Failed to set user presence. User id must not be null");

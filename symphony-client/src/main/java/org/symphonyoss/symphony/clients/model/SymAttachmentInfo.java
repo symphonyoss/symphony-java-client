@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 /**
  * @author Frank Tarsillo
  */
+@SuppressWarnings("WeakerAccess")
 public class SymAttachmentInfo {
     private String id = null;
     private String name = null;

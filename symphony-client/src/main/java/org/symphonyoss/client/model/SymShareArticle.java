@@ -34,6 +34,7 @@ import org.symphonyoss.symphony.agent.model.ShareArticle;
  *
  * @author Frank Tarsillo on 10/22/2016.
  */
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class SymShareArticle {
 
     private String articleId = null;

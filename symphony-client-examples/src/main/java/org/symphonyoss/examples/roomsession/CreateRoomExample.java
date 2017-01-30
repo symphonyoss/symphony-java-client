@@ -64,12 +64,9 @@ import org.symphonyoss.symphony.pod.model.Stream;
  * -Dbot.domain=@domain.com
  * -Duser.call.home=frank.tarsillo@markit.com
  * -Droom.stream=(Stream)
- * <p>
- * <p>
- * <p>
- * <p>
- * Created by Frank Tarsillo on 5/15/2016.
+ * @author  Frank Tarsillo
  */
+//NOSONAR
 public class CreateRoomExample implements RoomServiceListener, RoomListener {
 
 

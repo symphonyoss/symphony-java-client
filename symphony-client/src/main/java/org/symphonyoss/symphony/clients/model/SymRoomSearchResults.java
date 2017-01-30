@@ -22,10 +22,8 @@
 
 package org.symphonyoss.symphony.clients.model;
 
-import org.symphonyoss.symphony.pod.model.RoomDetail;
 import org.symphonyoss.symphony.pod.model.RoomSearchCriteria;
 import org.symphonyoss.symphony.pod.model.RoomSearchResults;
-import org.symphonyoss.symphony.pod.model.V2RoomDetail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +34,7 @@ import java.util.stream.Collectors;
 /**
  * @author Frank Tarsillo
  */
+@SuppressWarnings("WeakerAccess")
 public class SymRoomSearchResults {
     private Long count = null;
 
@@ -45,9 +44,9 @@ public class SymRoomSearchResults {
 
     private RoomSearchCriteria query = null;
 
-    private List<SymRoomDetail> rooms = new ArrayList<SymRoomDetail>();
+    private List<SymRoomDetail> rooms = new ArrayList<>();
 
-    private List<SymFacetedMatchCount> facetedMatchCount = new ArrayList<SymFacetedMatchCount>();
+    private List<SymFacetedMatchCount> facetedMatchCount = new ArrayList<>();
 
 
     public Long getCount() {

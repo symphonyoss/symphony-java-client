@@ -47,6 +47,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author Frank Tarsillo on 5/16/2016.
  */
+@SuppressWarnings("unused")
 public class ChatService implements ChatListener {
 
 
@@ -87,9 +88,9 @@ public class ChatService implements ChatListener {
     }
 
     /**
-     * @param chat
+     * @param chat Chat with remote users defined.
      * @param updateStream Verify and generate stream.  This should be false for generated chats from incoming messages
-     * @return
+     * @return True if validated and accepted
      * @see #addChat(Chat)
      */
     private boolean addChat(Chat chat, boolean updateStream) {
@@ -130,12 +131,7 @@ public class ChatService implements ChatListener {
 
             for (SymUser user : chat.getRemoteUsers()) {
 
-                Set<Chat> userChats = chatsByUser.get(user.getId());
-
-                if (userChats == null) {
-                    userChats = new HashSet<>();
-                    chatsByUser.put(user.getId(), userChats);
-                }
+                Set<Chat> userChats = chatsByUser.computeIfAbsent(user.getId(), k -> new HashSet<>());
 
 
                 if (userChats.add(chat)) {
@@ -268,7 +264,7 @@ public class ChatService implements ChatListener {
             } else {
 
 
-                //Inform all Chat listners of new message..
+                //Inform all Chat listeners of new message..
                 chat.onChatMessage(symMessage);
 
             }
@@ -357,7 +353,7 @@ public class ChatService implements ChatListener {
 
     /**
      * Enrich users from a given chat
-     * @param chat
+     * @param chat Chat object to be updated
      * @return Success
      */
     private boolean updateSymUsers(Chat chat) {

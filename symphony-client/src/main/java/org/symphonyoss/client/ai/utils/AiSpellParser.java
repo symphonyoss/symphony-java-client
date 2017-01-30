@@ -25,6 +25,8 @@
 package org.symphonyoss.client.ai.utils;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.client.ai.AiCommand;
 import org.symphonyoss.client.ai.AiLastCommand;
@@ -38,7 +40,9 @@ import java.util.ArrayList;
  *
  * @author Nicholas Tarsillo
  */
+@SuppressWarnings("SameParameterValue")
 public class AiSpellParser {
+    private static final Logger logger = LoggerFactory.getLogger(AiSpellParser.class);
     /**
      * Determines if a given input matches another command closely enough,
      * in order to suggest a command
@@ -117,19 +121,25 @@ public class AiSpellParser {
                             arguments[index] = chunks[(chunks.length - 1) - index];
                         }
 
-                        String fullCommand = response.getCommand() + " ";
+                        StringBuilder fullCommand = new StringBuilder();
+                        fullCommand.append(response.getCommand());
+                        fullCommand.append(" ");
+
                         for (int index = arguments.length - 1; index >= 0; index--) {
-                            fullCommand += response.getPrefixRequirement((arguments.length - 1) - index) + arguments[index] + " ";
+                            fullCommand.append(response.getPrefixRequirement((arguments.length - 1) - index));
+                            fullCommand.append(arguments[index]);
+                            fullCommand.append(" ");
+
                         }
 
                         MlMessageParser mlMessageParser = new MlMessageParser(symClient);
 
                         try {
 
-                            mlMessageParser.parseMessage(MLTypes.START_ML + fullCommand + MLTypes.END_ML);
+                            mlMessageParser.parseMessage(MLTypes.START_ML + fullCommand.toString() + MLTypes.END_ML);
 
                         } catch (Exception e) {
-                            e.printStackTrace();
+                           logger.error("While parsing message",e);
                         }
 
                         return new AiLastCommand(mlMessageParser, response);

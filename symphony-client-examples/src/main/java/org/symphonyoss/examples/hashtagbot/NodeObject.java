@@ -25,8 +25,9 @@ package org.symphonyoss.examples.hashtagbot;
 import org.symphonyoss.client.model.NodeTypes;
 
 /**
- * Created by Frank Tarsillo on 5/27/2016.
+ * @author Frank Tarsillo
  */
+@SuppressWarnings("unused")
 public class NodeObject {
     private NodeTypes type;
     private String name;

@@ -29,7 +29,7 @@ import org.symphonyoss.symphony.clients.model.SymUserConnectionRequest;
 import java.util.List;
 
 /**
- * Created by frank.tarsillo on 9/9/2016.
+ * @author frank.tarsillo
  */
 public interface ConnectionsClient {
     List<SymUserConnection> getIncomingRequests() throws ConnectionsException;

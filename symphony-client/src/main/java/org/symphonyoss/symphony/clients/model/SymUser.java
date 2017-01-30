@@ -38,6 +38,7 @@ import org.symphonyoss.symphony.pod.model.UserV2;
  *
  * @author Frank Tarsillo
  */
+@SuppressWarnings("WeakerAccess")
 public class SymUser {
 
     private Long id;
@@ -229,7 +230,7 @@ public class SymUser {
      * <b>NOTE:</b> department is not part of SymUser and needs to be implemented
      * and so is set to null
      *
-     * @param symUser Uesr object
+     * @param symUser User object
      * @return userAttributes User attributes
      */
     public static UserAttributes toUserAttributes(SymUser symUser) {

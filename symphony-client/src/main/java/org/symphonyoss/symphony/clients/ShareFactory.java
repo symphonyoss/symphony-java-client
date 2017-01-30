@@ -26,11 +26,10 @@
 package org.symphonyoss.symphony.clients;
 
 import org.symphonyoss.client.SymphonyClient;
-import org.symphonyoss.symphony.clients.impl.ConnectionsClientImpl;
 import org.symphonyoss.symphony.clients.impl.ShareClientImpl;
 
 /**
- * Created by frank.tarsillo on 6/6/2016.
+ * @author Frank Tarsillo
  */
 public class ShareFactory {
 
