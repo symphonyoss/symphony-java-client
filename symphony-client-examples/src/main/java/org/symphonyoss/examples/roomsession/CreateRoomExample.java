@@ -1,5 +1,6 @@
 /*
  *
+ *
  * Copyright 2016 The Symphony Software Foundation
  *
  * Licensed to The Symphony Software Foundation (SSF) under one
@@ -18,6 +19,7 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
+ *
  */
 
 package org.symphonyoss.examples.roomsession;
@@ -32,22 +34,19 @@ import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.client.services.RoomListener;
 import org.symphonyoss.client.services.RoomService;
 import org.symphonyoss.client.services.RoomServiceListener;
-import org.symphonyoss.exceptions.AuthorizationException;
-import org.symphonyoss.exceptions.InitException;
-import org.symphonyoss.exceptions.MessagesException;
-import org.symphonyoss.exceptions.RoomException;
+import org.symphonyoss.exceptions.*;
 import org.symphonyoss.symphony.agent.model.*;
 import org.symphonyoss.symphony.clients.AuthorizationClient;
 import org.symphonyoss.symphony.clients.model.SymMessage;
+import org.symphonyoss.symphony.clients.model.SymRoomAttributes;
+import org.symphonyoss.symphony.clients.model.SymRoomDetail;
 import org.symphonyoss.symphony.pod.model.Stream;
 
 
 /**
- * Simple example of the RoomService.
+ * Simple example to create a chat room
  * <p>
- * It will send a message to a room through from a stream (property: room.stream)
- * This will create a Room object, which is populated with all room attributes and
- * membership.  Adding a listener, will provide callbacks.
+ * <p>
  * <p>
  * <p>
  * <p>
@@ -71,13 +70,13 @@ import org.symphonyoss.symphony.pod.model.Stream;
  * <p>
  * Created by Frank Tarsillo on 5/15/2016.
  */
-public class RoomServiceExample implements RoomServiceListener, RoomListener {
+public class CreateRoomExample implements RoomServiceListener, RoomListener {
 
 
-    private final Logger logger = LoggerFactory.getLogger(RoomServiceExample.class);
+    private final Logger logger = LoggerFactory.getLogger(CreateRoomExample.class);
     private RoomService roomService;
 
-     RoomServiceExample() {
+     CreateRoomExample() {
 
 
         init();
@@ -87,7 +86,7 @@ public class RoomServiceExample implements RoomServiceListener, RoomListener {
 
     public static void main(String[] args) {
 
-        new RoomServiceExample();
+        new CreateRoomExample();
 
     }
 
@@ -136,17 +135,22 @@ public class RoomServiceExample implements RoomServiceListener, RoomListener {
             aMessage.setMessage("Hello master, I'm alive again in this room....");
 
 
-            Stream stream = new Stream();
-            stream.setId(System.getProperty("room.stream"));
+            //Define the room to create
+            SymRoomAttributes roomAttributes = new SymRoomAttributes();
+            roomAttributes.setName("TEST ROOM 1");
+            roomAttributes.setDescription("SJC Test room creation");
+            roomAttributes.setDiscoverable(true);
+            roomAttributes.setPublic(true);
+
+            //Create the room
+            Room room = symClient.getRoomService().createRoom(roomAttributes);
 
 
+            //Add the listener
             symClient.getRoomService().addRoomServiceListener(this);
 
-            Room room = new Room();
-            room.setStream(stream);
-            room.setId(stream.getId());
-            room.addListener(this);
 
+            //Register the room to the service
             symClient.getRoomService().joinRoom(room);
 
 
@@ -154,7 +158,8 @@ public class RoomServiceExample implements RoomServiceListener, RoomListener {
             symClient.getMessageService().sendMessage(room, aMessage);
 
 
-        } catch (RoomException | MessagesException | InitException | AuthorizationException e) {
+
+        } catch (RoomException | MessagesException | AuthorizationException | InitException e) {
             logger.error("error", e);
         }
 

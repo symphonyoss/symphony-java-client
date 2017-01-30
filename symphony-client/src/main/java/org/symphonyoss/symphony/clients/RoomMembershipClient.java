@@ -4,7 +4,9 @@ import org.symphonyoss.exceptions.SymException;
 import org.symphonyoss.symphony.pod.model.MembershipList;
 
 /**
- * Created by Frank Tarsillo on 6/12/2016.
+ * Supports adding/removing members from a room.  Also provides members lookup for a given stream
+ *
+ * @author  Frank Tarsillo
  */
 public interface RoomMembershipClient {
 
@@ -30,5 +32,17 @@ public interface RoomMembershipClient {
      *             {@link IllegalArgumentException} if the arguments were wrong, {@link IllegalStateException} if the
      *             session-token is null
      */
-    public void addMemberToRoom(String roomStreamId, long userId) throws Exception;
+     void addMemberToRoom(String roomStreamId, long userId) throws Exception;
+
+
+    /**
+     * Call this method to remove a member from a chat room. Pass in two parameters - chat-room stream-id and user-id
+     *
+     * @param roomStreamId - stream-id of the chat room you want to add the member to
+     * @param userId       userId for the user in Symphony
+     * @throws Exception throws an {@link org.symphonyoss.symphony.pod.invoker.ApiException} if there were any issues while invoking the endpoint,
+     *                   {@link IllegalArgumentException} if the arguments were wrong, {@link IllegalStateException} if the
+     *                   session-token is null
+     */
+    void removeMemberFromRoom(String roomStreamId, long userId) throws Exception;
 }

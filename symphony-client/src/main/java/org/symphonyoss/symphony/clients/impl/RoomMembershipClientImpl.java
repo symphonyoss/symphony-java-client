@@ -126,5 +126,33 @@ public class RoomMembershipClientImpl implements RoomMembershipClient {
         } else {
             throw new IllegalStateException("Invalid session token. It must not be null or empty");
         }
+
+
+    }
+
+    /**
+     * Call this method to remove a member from a chat room. Pass in two parameters - chat-room stream-id and user-id
+     *
+     * @param roomStreamId - stream-id of the chat room you want to add the member to
+     * @param userId       userId for the user in Symphony
+     * @throws Exception throws an {@link org.symphonyoss.symphony.pod.invoker.ApiException} if there were any issues while invoking the endpoint,
+     *                   {@link IllegalArgumentException} if the arguments were wrong, {@link IllegalStateException} if the
+     *                   session-token is null
+     */
+    @Override
+    public void removeMemberFromRoom(String roomStreamId, long userId) throws Exception {
+        if (Strings.isNullOrEmpty(roomStreamId)) {
+            throw new IllegalArgumentException("Argument roomStreamId must not be empty or null");
+        }
+
+        RoomMembershipApi roomMembershipApi = new RoomMembershipApi(apiClient);
+        String sessionToken = symAuth.getSessionToken().getToken();
+
+        if (!Strings.isNullOrEmpty(sessionToken)) {
+            roomMembershipApi.v1RoomIdMembershipRemovePost(roomStreamId, new UserId().id(userId), sessionToken);
+        } else {
+            throw new IllegalStateException("Invalid session token. It must not be null or empty");
+        }
+
     }
 }
