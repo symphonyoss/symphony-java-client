@@ -72,21 +72,20 @@ public class MlMessageParser extends DefaultHandler {
         originalDoc = doc.clone();
         Element elementErrors = doc.body().getElementsByTag("errors").first();
 
-        String elementErrorsOuterHtml = elementErrors.outerHtml();
 
-        if (elementErrors != null)
-            logger.debug("Errors found in message: {}", elementErrorsOuterHtml);
-
+        if (elementErrors != null) {
+            if (elementErrors.outerHtml() != null)
+                logger.debug("Errors found in message: {}", elementErrors.outerHtml());
+        }
         //Lets remove the errors elements
         doc.select("errors").remove();
 
         elementMessageML = doc.select("messageML").first();
 
-        String elementMessageMLOuterHtml = elementMessageML.outerHtml();
 
         if (elementMessageML != null) {
-
-            logger.debug("Doc parsed: {}", elementMessageMLOuterHtml);
+            if (elementMessageML.outerHtml() != null)
+                logger.debug("Doc parsed: {}", elementMessageML.outerHtml());
         } else {
 
             logger.error("Could not parse document for message {}", message);

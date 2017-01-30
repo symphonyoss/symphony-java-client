@@ -110,9 +110,16 @@ public class Messenger {
     public static Chat getChat(Long userID, SymphonyClient symClient) {
         UserIdList list = new UserIdList();
         list.add(userID);
-        Stream stream = null;
+        Stream stream;
         try {
+
             stream = symClient.getStreamsClient().getStream(list);
+
+            if(stream !=null && stream.getId() != null)
+                return symClient.getChatService().getChatByStream(stream != null ? stream.getId() : null);
+
+
+
         } catch (StreamsException e) {
             logger.error("API exception when communicating with POD while retrieving stream",e);
         }catch(Exception e){
@@ -120,6 +127,8 @@ public class Messenger {
 
         }
 
-        return symClient.getChatService().getChatByStream(stream != null ? stream.getId() : null);
+        return null;
+
+
     }
 }

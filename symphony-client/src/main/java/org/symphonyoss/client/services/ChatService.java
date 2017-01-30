@@ -88,7 +88,7 @@ public class ChatService implements ChatListener {
     }
 
     /**
-     * @param chat Chat with remote users defined.
+     * @param chat         Chat with remote users defined.
      * @param updateStream Verify and generate stream.  This should be false for generated chats from incoming messages
      * @return True if validated and accepted
      * @see #addChat(Chat)
@@ -134,7 +134,7 @@ public class ChatService implements ChatListener {
                 Set<Chat> userChats = chatsByUser.computeIfAbsent(user.getId(), k -> new HashSet<>());
 
 
-                if (userChats.add(chat)) {
+                if (userChats != null && userChats.add(chat)) {
                     logger.debug("Adding new chat for user {}:{}", user.getId(), user.getEmailAddress());
                 } else {
                     logger.debug("Chat with user {}:{} already exists..ignoring", user.getId(), user.getEmailAddress());
@@ -159,13 +159,14 @@ public class ChatService implements ChatListener {
 
     /**
      * Remove Chat conversation
+     *
      * @param chat Chat object to remove
      * @return Removed chat
      */
     public boolean removeChat(Chat chat) {
 
         //Make sure something exists..
-        if (chat != null && chat.getStreamId()!=null && chatsByStream.remove(chat.getStreamId()) != null) {
+        if (chat != null && chat.getStreamId() != null && chatsByStream.remove(chat.getStreamId()) != null) {
 
             for (SymUser user : chat.getRemoteUsers()) {
 
@@ -192,6 +193,7 @@ public class ChatService implements ChatListener {
 
     /**
      * Construct a Chat from incoming message.  This includes enrichment of user detail.
+     *
      * @param message Incoming {@link SymMessage}
      * @return Constructed chat
      */
@@ -288,7 +290,6 @@ public class ChatService implements ChatListener {
     }
 
     /**
-     *
      * @param chatServiceListener {@link ChatServiceListener}
      * @return True if successful.
      */
@@ -298,7 +299,6 @@ public class ChatService implements ChatListener {
     }
 
     /**
-     *
      * @param chatServiceListener {@link ChatServiceListener}
      * @return True if successful
      */
@@ -309,6 +309,7 @@ public class ChatService implements ChatListener {
     /**
      * Returns a set of chats from a given email address (resolved to UserID). This can be BOT or users that
      * the BOT is communicating with.
+     *
      * @param email User email
      * @return A set of Chats associated with the given user.
      */
@@ -329,6 +330,7 @@ public class ChatService implements ChatListener {
 
     /**
      * Return a set of chats for a given user
+     *
      * @param user {@link SymUser}
      * @return A set of Chats associated with the given user.
      */
@@ -342,6 +344,7 @@ public class ChatService implements ChatListener {
 
     /**
      * Get a given Chat by streamId
+     *
      * @param streamId Stream ID
      * @return A Chat
      */
@@ -353,6 +356,7 @@ public class ChatService implements ChatListener {
 
     /**
      * Enrich users from a given chat
+     *
      * @param chat Chat object to be updated
      * @return Success
      */
