@@ -34,14 +34,17 @@ public class UserNotFoundException extends UsersClientException {
         super(message);
     }
 
+    @SuppressWarnings("unused")
     public UserNotFoundException(Throwable cause) {
         super(cause);
     }
 
+    @SuppressWarnings("unused")
     public UserNotFoundException(String message, Throwable cause) {
         super(message, cause);
     }
 
+    @SuppressWarnings("unused")
     public UserNotFoundException(String userName, String message) {
 
         super(message);

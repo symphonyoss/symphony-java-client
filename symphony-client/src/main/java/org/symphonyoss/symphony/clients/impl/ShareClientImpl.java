@@ -46,9 +46,11 @@ import javax.ws.rs.client.Client;
 public class ShareClientImpl implements ShareClient{
 
     private final SymAuth symAuth;
+    @SuppressWarnings("unused")
     private final String serviceUrl;
     private final ApiClient apiClient;
 
+    @SuppressWarnings("unused")
     private final Logger logger = LoggerFactory.getLogger(StreamsClientImpl.class);
 
     public ShareClientImpl(SymAuth symAuth, String serviceUrl) {

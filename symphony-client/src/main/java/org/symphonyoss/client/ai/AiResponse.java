@@ -59,6 +59,7 @@ public class AiResponse {
      *
      * @param message Response message
      */
+    @SuppressWarnings("unused")
     public void setMessage(String message) {
         this.message = message;
     }
@@ -76,6 +77,7 @@ public class AiResponse {
      *
      * @param type Text of MLMESSAGE
      */
+    @SuppressWarnings("unused")
     public void setType(SymMessage.Format type) {
         this.type = type;
     }
@@ -86,6 +88,7 @@ public class AiResponse {
     }
 
 
+    @SuppressWarnings("unused")
     public void setSymUsers(List<SymUser> symUsers) {
         this.symUsers = symUsers;
     }

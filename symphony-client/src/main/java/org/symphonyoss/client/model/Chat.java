@@ -77,6 +77,7 @@ public class Chat {
         this.remoteUsers = remoteUsers;
     }
 
+    @SuppressWarnings("unused")
     public SymUser getLocalUser() {
         return localUser;
     }
@@ -152,6 +153,7 @@ public class Chat {
         return chatListeners.remove(chatListener);
     }
 
+    @SuppressWarnings("unused")
     public SymMessage getLastMessage() {
 
         return lastMessage;

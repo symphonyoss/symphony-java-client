@@ -56,6 +56,7 @@ public class SymUserConnection extends UserConnection{
         }
 
 
+        @SuppressWarnings("unused")
         @JsonCreator
         public static Status fromValue(String text) {
             for (Status b : Status.values()) {

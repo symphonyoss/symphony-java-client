@@ -31,6 +31,7 @@ public class InitException extends SymException {
         super (message);
     }
 
+    @SuppressWarnings("unused")
     public InitException (Throwable cause) {
         super (cause);
     }

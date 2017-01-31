@@ -34,6 +34,7 @@ public class PresenceException extends SymException {
         super(message);
     }
 
+    @SuppressWarnings("unused")
     public PresenceException(Throwable cause) {
         super(cause);
     }

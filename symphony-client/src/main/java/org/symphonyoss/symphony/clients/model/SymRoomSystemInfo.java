@@ -47,6 +47,7 @@ public class SymRoomSystemInfo {
         this.id = id;
     }
 
+    @SuppressWarnings("unused")
     public Long getCreationDate() {
         return creationDate;
     }
@@ -55,6 +56,7 @@ public class SymRoomSystemInfo {
         this.creationDate = creationDate;
     }
 
+    @SuppressWarnings("unused")
     public Long getCreatedByUserId() {
         return createdByUserId;
     }
@@ -63,6 +65,7 @@ public class SymRoomSystemInfo {
         this.createdByUserId = createdByUserId;
     }
 
+    @SuppressWarnings("unused")
     public Boolean getActive() {
         return active;
     }

@@ -32,9 +32,9 @@ public enum NodeTypes {
     ANCHOR("a"),
     CASHTAG("cash"),
     HASHTAG("hash"),
-    LINEBREAK("br"),
+    @SuppressWarnings("unused")LINEBREAK("br"),
     MENTION("mention"),
-    TEXT("text");
+    @SuppressWarnings("unused")TEXT("text");
 
 
     private final String name;
@@ -43,6 +43,7 @@ public enum NodeTypes {
         name = s;
     }
 
+    @SuppressWarnings("unused")
     public boolean equalsName(String otherName) {
         return otherName != null && name.equals(otherName);
     }

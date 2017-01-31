@@ -54,6 +54,7 @@ public class AiLastCommand {
      *
      * @param mlMessageParser ML message parser
      */
+    @SuppressWarnings("unused")
     public void setMlMessageParser(MlMessageParser mlMessageParser) {
         this.mlMessageParser = mlMessageParser;
     }
@@ -68,6 +69,7 @@ public class AiLastCommand {
     }
 
 
+    @SuppressWarnings("unused")
     public void setAiCommandImpl(AiCommand aiCommand) {
         this.aiCommand = aiCommand;
     }

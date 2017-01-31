@@ -53,6 +53,7 @@ public class AiResponseSequence {
      *
      * @param response {@link AiResponse} to remove from sequence
      */
+    @SuppressWarnings("unused")
     public void removeResponse(AiResponse response) {
         aiResponseSet.remove(response);
     }
@@ -71,6 +72,7 @@ public class AiResponseSequence {
      *
      * @param aiResponseSet Responses to set
      */
+    @SuppressWarnings("unused")
     public void setAiResponseSet(Set<AiResponse> aiResponseSet) {
         this.aiResponseSet = aiResponseSet;
     }

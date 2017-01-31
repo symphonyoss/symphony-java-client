@@ -75,6 +75,7 @@ public class SymMessage {
         return symUser;
     }
 
+    @SuppressWarnings("unused")
     public void setSymUser(SymUser symUser) {
         this.symUser = symUser;
         fromUserId = symUser.getId();

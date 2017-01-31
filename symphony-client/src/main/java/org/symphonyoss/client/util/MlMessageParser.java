@@ -47,8 +47,10 @@ import java.util.List;
 @SuppressWarnings("WeakerAccess")
 public class MlMessageParser extends DefaultHandler {
 
+    @SuppressWarnings("unused")
     private String messageMl;
     private Element elementMessageML;
+    @SuppressWarnings("unused")
     private Document doc;
     private Document originalDoc;
     private StringBuilder textDoc = new StringBuilder();
@@ -104,6 +106,7 @@ public class MlMessageParser extends DefaultHandler {
         return textChunks;
     }
 
+    @SuppressWarnings("unused")
     public void setTextChunks(String[] textChunks) {
         this.textChunks = textChunks;
     }
@@ -172,6 +175,7 @@ public class MlMessageParser extends DefaultHandler {
         return textDoc.toString();
     }
 
+    @SuppressWarnings("unused")
     public String getOuterHtml() {
         return originalDoc.outerHtml();
     }
@@ -294,10 +298,12 @@ public class MlMessageParser extends DefaultHandler {
 
     }
 
+    @SuppressWarnings("unused")
     public Elements getAllElements() {
         return elementMessageML.getAllElements();
     }
 
+    @SuppressWarnings("unused")
     public List<Node> getChildNodes() {
 
         return elementMessageML.childNodes();

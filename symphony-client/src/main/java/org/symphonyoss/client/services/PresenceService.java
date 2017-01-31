@@ -88,6 +88,7 @@ public class PresenceService implements PresenceListener {
      * @return User presence
      * @throws PresenceException Thrown by underlying Symphony API calls
      */
+    @SuppressWarnings("unused")
     public Presence getUserPresence(Long userId) throws PresenceException {
 
         return symClient.getPresenceClient().getUserPresence(userId);
@@ -101,6 +102,7 @@ public class PresenceService implements PresenceListener {
      * @return User presence
      * @throws PresenceException Thrown by underlying Symphony API calls
      */
+    @SuppressWarnings("unused")
     public Presence getUserPresence(String email) throws PresenceException {
 
         if (email == null)
@@ -125,6 +127,7 @@ public class PresenceService implements PresenceListener {
      *
      * @param presenceListener Listener to register
      */
+    @SuppressWarnings("unused")
     public void registerPresenceListener(PresenceListener presenceListener) {
 
         addPresenceListener(presenceListener);
@@ -143,6 +146,7 @@ public class PresenceService implements PresenceListener {
 
     }
 
+    @SuppressWarnings("unused")
     public void removePresenceListener(PresenceListener presenceListener) {
 
         presenceListeners.remove(presenceListener);

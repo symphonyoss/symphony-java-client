@@ -103,6 +103,7 @@ public class ConnectionsService implements ConnectionsListener {
     /**
      * @param connectionsListener Listener for callbacks
      */
+    @SuppressWarnings("unused")
     public void removeListener(ConnectionsListener connectionsListener) {
 
         connectionsListeners.remove(connectionsListener);
@@ -110,6 +111,7 @@ public class ConnectionsService implements ConnectionsListener {
     }
 
 
+    @SuppressWarnings("unused")
     public boolean isAutoAccept() {
         return autoAccept;
     }
@@ -119,6 +121,7 @@ public class ConnectionsService implements ConnectionsListener {
     }
 
 
+    @SuppressWarnings("unused")
     public void shutdown() {
 
         connectionsWorker.shutdown();

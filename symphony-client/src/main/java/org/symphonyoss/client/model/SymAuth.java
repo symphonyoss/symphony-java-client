@@ -52,26 +52,32 @@ public class SymAuth {
         this.keyToken = keyToken;
     }
 
+    @SuppressWarnings("unused")
     public String getServerTruststore() {
         return serverTruststore;
     }
 
+    @SuppressWarnings("unused")
     public void setServerTruststore(String serverTruststore) {
         this.serverTruststore = serverTruststore;
     }
 
+    @SuppressWarnings("unused")
     public String getClientTruststore() {
         return clientTruststore;
     }
 
+    @SuppressWarnings("unused")
     public void setClientTruststore(String clientTruststore) {
         this.clientTruststore = clientTruststore;
     }
 
+    @SuppressWarnings("unused")
     public String getEmail() {
         return email;
     }
 
+    @SuppressWarnings("unused")
     public void setEmail(String email) {
         this.email = email;
     }

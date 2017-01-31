@@ -40,6 +40,7 @@ public enum AttribTypes {
         name = s;
     }
 
+    @SuppressWarnings("unused")
     public boolean equalsName(String otherName) {
         return otherName != null && name.equals(otherName);
     }

@@ -34,20 +34,28 @@ import java.util.List;
 public interface ConnectionsClient {
     List<SymUserConnection> getIncomingRequests() throws ConnectionsException;
 
+    @SuppressWarnings("unused")
     List<SymUserConnection> getPendingRequests() throws ConnectionsException;
 
+    @SuppressWarnings("unused")
     List<SymUserConnection> getRejectedRequests() throws ConnectionsException;
 
+    @SuppressWarnings("unused")
     List<SymUserConnection> getAcceptedRequests() throws ConnectionsException;
 
+    @SuppressWarnings("unused")
     List<SymUserConnection> getAllConnections() throws ConnectionsException;
 
+    @SuppressWarnings("unused")
     SymUserConnection sendConnectionRequest(SymUserConnectionRequest symUserConnectionRequest) throws ConnectionsException;
 
+    @SuppressWarnings("unused")
     SymUserConnection acceptConnectionRequest(SymUserConnectionRequest symUserConnectionRequest) throws ConnectionsException;
 
+    @SuppressWarnings("unused")
     SymUserConnection rejectConnectionRequest(SymUserConnectionRequest symUserConnectionRequest) throws ConnectionsException;
 
+    @SuppressWarnings("unused")
     SymUserConnection getUserConnection(String userId) throws ConnectionsException;
 
     SymUserConnection acceptConnectionRequest(SymUserConnection symUserConnection) throws ConnectionsException;

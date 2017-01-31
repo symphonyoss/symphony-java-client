@@ -27,10 +27,12 @@ package org.symphonyoss.exceptions;
  * Created by Frank Tarsillo on 9/11/2016.
  */
 public class AuthorizationException extends SymException {
+    @SuppressWarnings("unused")
     public AuthorizationException(String message) {
         super(message);
     }
 
+    @SuppressWarnings("unused")
     public AuthorizationException(Throwable cause) {
         super(cause);
     }

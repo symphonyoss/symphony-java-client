@@ -152,6 +152,7 @@ public class AuthorizationClient {
         return symAuth.getSessionToken();
     }
 
+    @SuppressWarnings("unused")
     public void setSessionToken(Token sessionToken) {
         symAuth.setSessionToken(sessionToken);
     }

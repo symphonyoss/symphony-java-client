@@ -43,6 +43,7 @@ import org.symphonyoss.symphony.pod.model.UserIdList;
 public class Messenger {
     private static final Logger logger = LoggerFactory.getLogger(Messenger.class);
 
+    @SuppressWarnings("unused")
     public static void sendMessage(String message, SymMessage.Format type, Long userID, SymphonyClient symClient) {
         SymMessage userMessage = new SymMessage();
         userMessage.setFormat(type);
@@ -60,6 +61,7 @@ public class Messenger {
         }
     }
 
+    @SuppressWarnings("unused")
     public static void sendMessage(String message, SymMessage.Format type, String email, SymphonyClient symClient) {
         SymMessage userMessage = new SymMessage();
         userMessage.setFormat(type);
@@ -92,6 +94,7 @@ public class Messenger {
         }
     }
 
+    @SuppressWarnings("unused")
     public static void sendMessage(String message, SymMessage.Format type, Chat chat, SymphonyClient symClient) {
         SymMessage userMessage = new SymMessage();
         userMessage.setFormat(type);
@@ -107,6 +110,7 @@ public class Messenger {
         }
     }
 
+    @SuppressWarnings("unused")
     public static Chat getChat(Long userID, SymphonyClient symClient) {
         UserIdList list = new UserIdList();
         list.add(userID);
@@ -116,7 +120,7 @@ public class Messenger {
             stream = symClient.getStreamsClient().getStream(list);
 
             if( stream.getId() != null)
-                return symClient.getChatService().getChatByStream(stream != null ? stream.getId() : null);
+                return symClient.getChatService().getChatByStream( stream.getId());
 
 
 

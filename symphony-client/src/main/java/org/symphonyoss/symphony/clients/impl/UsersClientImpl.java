@@ -226,6 +226,7 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
      * @return All users as part of a set
      * @throws UsersClientException Exceptions thrown from Symphony API's
      */
+    @SuppressWarnings("unused")
     @Override
     public Set<SymUser> getAllUsers() throws UsersClientException {
 
@@ -260,7 +261,7 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
                     try {
                         user1 = usersApi2.v2UserGet(symAuth.getSessionToken().getToken(), userId, null, null, false);
                     } catch (ApiException e) {
-                        logger.error("API Error while communicating with POD while retrieving user details",e);
+                        logger.error("API Error while communicating with POD while retrieving user details", e);
                         return;
                     }
 
@@ -278,18 +279,18 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
 
             executor.shutdown();
 
-            try {
-                executor.awaitTermination(5, TimeUnit.SECONDS);
-            } catch (InterruptedException e) {
-               logger.error("Executor failed ot terminate after retrieving all users.",e);
-               throw new UsersClientException("Interrupt waiting for search executor to finish",e);
-            }
+
+            executor.awaitTermination(5, TimeUnit.SECONDS);
+
 
             logger.debug("Finished all threads. Total time retrieving users: {} sec", (System.currentTimeMillis() - startTime) / 1000);
 
 
         } catch (ApiException e) {
             throw new UsersClientException("API Error communicating with POD, while retrieving all user details", e);
+        } catch (InterruptedException e) {
+            logger.error("Executor failed ot terminate after retrieving all users.", e);
+            throw new UsersClientException("Interrupt waiting for search executor to finish", e);
         }
 
 
@@ -357,7 +358,7 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
     @Override
     public SymUser createUser(UserCreate userCreate) throws UsersClientException {
         UserApi usersApi = new UserApi(apiClient);
-        UserDetail userDetail ;
+        UserDetail userDetail;
 
         try {
             String sessionToken = getSessionToken();

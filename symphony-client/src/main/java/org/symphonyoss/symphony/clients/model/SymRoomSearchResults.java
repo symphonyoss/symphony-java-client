@@ -49,6 +49,7 @@ public class SymRoomSearchResults {
     private List<SymFacetedMatchCount> facetedMatchCount = new ArrayList<>();
 
 
+    @SuppressWarnings("unused")
     public Long getCount() {
         return count;
     }
@@ -57,6 +58,7 @@ public class SymRoomSearchResults {
         this.count = count;
     }
 
+    @SuppressWarnings("unused")
     public Integer getSkip() {
         return skip;
     }
@@ -65,6 +67,7 @@ public class SymRoomSearchResults {
         this.skip = skip;
     }
 
+    @SuppressWarnings("unused")
     public Integer getLimit() {
         return limit;
     }
@@ -73,6 +76,7 @@ public class SymRoomSearchResults {
         this.limit = limit;
     }
 
+    @SuppressWarnings("unused")
     public RoomSearchCriteria getQuery() {
         return query;
     }
@@ -89,6 +93,7 @@ public class SymRoomSearchResults {
         this.rooms = rooms;
     }
 
+    @SuppressWarnings("unused")
     public List<SymFacetedMatchCount> getFacetedMatchCount() {
         return facetedMatchCount;
     }

@@ -25,6 +25,7 @@ package org.symphonyoss.symphony.clients.model;
 /**
  * @author Frank Tarsillo
  */
+@SuppressWarnings("WeakerAccess")
 public class SymAvatar {
 
     private String size = null;

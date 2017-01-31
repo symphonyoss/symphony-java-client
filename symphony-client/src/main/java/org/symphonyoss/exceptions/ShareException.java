@@ -29,6 +29,7 @@ package org.symphonyoss.exceptions;
  * Created by Frank Tarsillo on 9/10/2016.
  */
 public class ShareException extends SymException {
+    @SuppressWarnings("unused")
     public ShareException(String message) {
         super(message);
     }
@@ -37,6 +38,7 @@ public class ShareException extends SymException {
         super(cause);
     }
 
+    @SuppressWarnings("unused")
     public ShareException(String message, Throwable cause) {
         super(message, cause);
     }

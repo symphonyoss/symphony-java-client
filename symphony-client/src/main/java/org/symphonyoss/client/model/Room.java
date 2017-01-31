@@ -52,6 +52,7 @@ public class Room {
         return streamId;
     }
 
+    @SuppressWarnings("unused")
     public void setStreamId(String streamId) {
         this.streamId = streamId;
         if (stream == null) {
@@ -70,6 +71,7 @@ public class Room {
         this.id = id;
     }
 
+    @SuppressWarnings("unused")
     public MembershipList getMembershipList() {
         return membershipList;
     }
@@ -97,6 +99,7 @@ public class Room {
     }
 
 
+    @SuppressWarnings("DeprecatedIsStillUsed")
     @Deprecated
     public RoomListener getRoomListener() {
         return roomListener;
@@ -128,6 +131,7 @@ public class Room {
 
     }
 
+    @SuppressWarnings("unused")
     public void removeListener(RoomListener roomListener) {
 
         roomListeners.remove(roomListener);

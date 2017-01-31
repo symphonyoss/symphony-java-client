@@ -27,10 +27,12 @@ package org.symphonyoss.exceptions;
  * Created by Frank Tarsillo on 9/11/2016.
  */
 public class DataFeedException extends SymException {
+    @SuppressWarnings("unused")
     public DataFeedException(String message) {
         super(message);
     }
 
+    @SuppressWarnings("unused")
     public DataFeedException(Throwable cause) {
         super(cause);
     }

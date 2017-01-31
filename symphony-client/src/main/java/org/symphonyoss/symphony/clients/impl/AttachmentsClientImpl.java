@@ -48,6 +48,7 @@ public class AttachmentsClientImpl implements AttachmentsClient {
 
     private final ApiClient apiClient;
     private final SymAuth symAuth;
+    @SuppressWarnings("unused")
     private Logger logger = LoggerFactory.getLogger(AttachmentsClientImpl.class);
 
     public AttachmentsClientImpl(SymAuth symAuth, String agentUrl) {

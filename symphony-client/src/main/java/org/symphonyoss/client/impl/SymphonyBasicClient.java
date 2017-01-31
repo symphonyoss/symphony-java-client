@@ -178,6 +178,7 @@ public class SymphonyBasicClient implements SymphonyClient {
     /**
      * @param agentUrl Agent URL
      */
+    @SuppressWarnings("unused")
     public void setAgentUrl(String agentUrl) {
         this.agentUrl = agentUrl;
     }
@@ -193,6 +194,7 @@ public class SymphonyBasicClient implements SymphonyClient {
     /**
      * @param serviceUrl Service URL which can be either the Agent URL or POD URL
      */
+    @SuppressWarnings("unused")
     public void setServiceUrl(String serviceUrl) {
         this.serviceUrl = serviceUrl;
     }
@@ -236,6 +238,7 @@ public class SymphonyBasicClient implements SymphonyClient {
         return localUser;
     }
 
+    @SuppressWarnings("unused")
     public void setLocalUser(SymUser localUser) {
         this.localUser = localUser;
     }

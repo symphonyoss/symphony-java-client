@@ -47,6 +47,7 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
 
     private final ApiClient apiClient;
     private final SymAuth symAuth;
+    @SuppressWarnings("unused")
     private Logger logger = LoggerFactory.getLogger(MessagesClientImpl.class);
 
     public MessagesClientImpl(SymAuth symAuth, String agentUrl) {

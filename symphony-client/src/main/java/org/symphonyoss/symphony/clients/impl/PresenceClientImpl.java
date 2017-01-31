@@ -48,6 +48,7 @@ public class PresenceClientImpl implements org.symphonyoss.symphony.clients.Pres
     private final SymAuth symAuth;
     private final ApiClient apiClient;
 
+    @SuppressWarnings("unused")
     private Logger logger = LoggerFactory.getLogger(PresenceClientImpl.class);
 
 

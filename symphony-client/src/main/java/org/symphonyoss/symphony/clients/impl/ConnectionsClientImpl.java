@@ -48,6 +48,7 @@ public class ConnectionsClientImpl implements ConnectionsClient {
 
     private final ApiClient apiClient;
     private final SymAuth symAuth;
+    @SuppressWarnings("unused")
     private Logger logger = LoggerFactory.getLogger(ConnectionsClientImpl.class);
 
 

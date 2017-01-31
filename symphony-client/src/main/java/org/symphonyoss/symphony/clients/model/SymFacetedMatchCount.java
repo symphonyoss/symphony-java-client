@@ -39,6 +39,7 @@ public class SymFacetedMatchCount {
     public SymFacetedMatchCount() {
     }
 
+    @SuppressWarnings("unused")
     public String getFacet() {
         return facet;
     }
@@ -47,6 +48,7 @@ public class SymFacetedMatchCount {
         this.facet = facet;
     }
 
+    @SuppressWarnings("unused")
     public Integer getCount() {
         return count;
     }

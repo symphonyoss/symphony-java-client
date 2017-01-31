@@ -45,6 +45,7 @@ public class UsersFactory {
             return new UsersClientImpl(symClient.getSymAuth(), symClient.getServiceUrl());
         }
     }
+    @SuppressWarnings("unused")
     public static UsersClient getClient(SymAuth symAuth, String serviceUrl, TYPE type){
 
         return new UsersClientImpl(symAuth, serviceUrl);

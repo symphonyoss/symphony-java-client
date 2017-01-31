@@ -30,6 +30,7 @@ public class RoomException extends SymException {
         super(message);
     }
 
+    @SuppressWarnings("unused")
     public RoomException(Throwable cause) {
         super(cause);
     }

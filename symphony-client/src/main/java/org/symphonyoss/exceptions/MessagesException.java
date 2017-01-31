@@ -27,10 +27,12 @@ package org.symphonyoss.exceptions;
  * Created by Frank Tarsillo on 9/11/2016.
  */
 public class MessagesException extends SymException {
+    @SuppressWarnings("unused")
     public MessagesException(String message) {
         super(message);
     }
 
+    @SuppressWarnings("unused")
     public MessagesException(Throwable cause) {
         super(cause);
     }

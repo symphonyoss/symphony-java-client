@@ -41,6 +41,7 @@ public interface RoomServiceListener {
 
     void onRoomMemberPromotedToOwnerMessage(RoomMemberPromotedToOwnerMessage roomMemberPromotedToOwnerMessage);
 
+    @SuppressWarnings("unused")
     void onRoomReactivatedMessage(RoomReactivatedMessage roomReactivatedMessage);
 
     void onRoomUpdatedMessage(RoomUpdatedMessage roomUpdatedMessage);

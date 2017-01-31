@@ -61,6 +61,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class MessageService implements DataFeedListener {
 
     private final SymphonyClient symClient;
+    @SuppressWarnings("unused")
     private org.symphonyoss.symphony.agent.invoker.ApiClient agentClient;
     private final Logger logger = LoggerFactory.getLogger(MessageService.class);
     private final Set<MessageListener> messageListeners = ConcurrentHashMap.newKeySet();
@@ -167,6 +168,7 @@ public class MessageService implements DataFeedListener {
      * @return {@link List}  List of messages
      * @throws MessagesException Generated from API calls into Symphony
      */
+    @SuppressWarnings("unused")
     public List<SymMessage> getMessagesFromUserId(long userId, Long since, Integer offset, Integer maxMessages) throws MessagesException {
 
 
@@ -325,6 +327,7 @@ public class MessageService implements DataFeedListener {
      *
      * @param messageListener listener that will be notified of events
      */
+    @SuppressWarnings("unused")
     public void addMessageListener(MessageListener messageListener) {
 
         messageListeners.add(messageListener);
@@ -337,6 +340,7 @@ public class MessageService implements DataFeedListener {
      * @param messageListener listener that will removed from service
      * @return True if listener is removed
      */
+    @SuppressWarnings("unused")
     public boolean removeMessageListener(MessageListener messageListener) {
 
         return messageListeners.remove(messageListener);
@@ -373,6 +377,7 @@ public class MessageService implements DataFeedListener {
      * @param roomServiceListener listener to remove
      * @return True if listener is removed
      */
+    @SuppressWarnings("unused")
     public boolean removeRoomListener(RoomServiceListener roomServiceListener) {
 
         return roomServiceListeners.remove(roomServiceListener);
@@ -410,6 +415,7 @@ public class MessageService implements DataFeedListener {
      * @param chatListener listener to remove
      * @return True if listener is registered
      */
+    @SuppressWarnings("unused")
     public boolean removeChatListener(ChatListener chatListener) {
 
         return chatListeners.remove(chatListener);

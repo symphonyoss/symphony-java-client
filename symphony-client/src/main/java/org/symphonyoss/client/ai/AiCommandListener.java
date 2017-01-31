@@ -50,14 +50,14 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AiCommandListener implements ChatListener {
     private static final Logger logger = LoggerFactory.getLogger(AiCommandListener.class);
 
-    private static LinkedHashMap<String, HashSet<AiCommandListener>> listeners = new LinkedHashMap<>();
+    private static final LinkedHashMap<String, HashSet<AiCommandListener>> listeners = new LinkedHashMap<>();
     private SymMessage lastAnsweredMessage;
 
     private final SymphonyClient symClient;
 
-    private ArrayList<AiCommand> activeCommands = new ArrayList<>();
-    private ConcurrentHashMap<String, AiLastCommand> lastResponse = new ConcurrentHashMap<>();
-    private AiResponder aiResponder;
+    private final ArrayList<AiCommand> activeCommands = new ArrayList<>();
+    private final ConcurrentHashMap<String, AiLastCommand> lastResponse = new ConcurrentHashMap<>();
+    private final AiResponder aiResponder;
 
     public AiCommandListener(SymphonyClient symClient) {
         this.symClient = symClient;
@@ -72,6 +72,7 @@ public class AiCommandListener implements ChatListener {
      * @param symClient Symphony client
      * @return True if the message is a command
      */
+    @SuppressWarnings("unused")
     public static boolean isCommand(SymMessage message, SymphonyClient symClient) {
 
         logger.debug("Received message for response.");
@@ -148,6 +149,7 @@ public class AiCommandListener implements ChatListener {
     }
 
 
+    @SuppressWarnings("unused")
     private boolean isBestResponse(MlMessageParser mlMessageParser, String[] chunks, SymMessage message) {
         if (hasResponse(mlMessageParser, chunks, message))
             return true;
@@ -177,7 +179,7 @@ public class AiCommandListener implements ChatListener {
      */
     private void processMessage(MlMessageParser mlMessageParser, String[] chunks, SymMessage message) {
 
-        if (activeCommands == null || activeCommands.isEmpty()) {
+        if (activeCommands.isEmpty()) {
 
             if (logger != null)
                 logger.warn("There are no active commands added to the listener. " +
@@ -287,6 +289,7 @@ public class AiCommandListener implements ChatListener {
      *
      * @param chat The chat to listen on
      */
+    @SuppressWarnings("unused")
     public void listenOn(Chat chat) {
 
         if (chat != null) {
@@ -314,6 +317,7 @@ public class AiCommandListener implements ChatListener {
      *
      * @param chat The chat to listen on
      */
+    @SuppressWarnings("unused")
     public void stopListening(Chat chat) {
 
         if (chat != null) {
@@ -358,6 +362,7 @@ public class AiCommandListener implements ChatListener {
         }
     }
 
+    @SuppressWarnings("unused")
     public ArrayList<AiCommand> getActiveCommands() {
         return activeCommands;
     }
@@ -374,6 +379,7 @@ public class AiCommandListener implements ChatListener {
     }
 
 
+    @SuppressWarnings("unused")
     public boolean removeCommand(AiCommand command) {
 
         if (!activeCommands.contains(command))
@@ -386,10 +392,12 @@ public class AiCommandListener implements ChatListener {
     }
 
 
+    @SuppressWarnings("unused")
     public SymphonyClient getSymClient() {
         return symClient;
     }
 
+    @SuppressWarnings("unused")
     public SymMessage getLastAnsweredMessage() {
         return lastAnsweredMessage;
     }

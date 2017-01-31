@@ -231,6 +231,7 @@ public class AiResponder {
      *
      * @return {@link SymphonyClient}
      */
+    @SuppressWarnings("unused")
     public SymphonyClient getSymClient() {
         return symClient;
     }
@@ -241,6 +242,7 @@ public class AiResponder {
      *
      * @param symClient Symphony client
      */
+    @SuppressWarnings("unused")
     public void setSymClient(SymphonyClient symClient) {
         this.symClient = symClient;
     }

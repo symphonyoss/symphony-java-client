@@ -252,6 +252,7 @@ public class RoomService implements RoomServiceListener {
      *
      * @param roomDeactivatedMessage {@link RoomDeactivatedMessage}
      */
+    @SuppressWarnings("deprecation")
     @Override
     public void onRoomDeactivatedMessage(RoomDeactivatedMessage roomDeactivatedMessage) {
 
@@ -269,6 +270,7 @@ public class RoomService implements RoomServiceListener {
      *
      * @param roomMemberDemotedFromOwnerMessage {@link RoomMemberDemotedFromOwnerMessage}
      */
+    @SuppressWarnings("deprecation")
     @Override
     public void onRoomMemberDemotedFromOwnerMessage(RoomMemberDemotedFromOwnerMessage roomMemberDemotedFromOwnerMessage) {
         for (Map.Entry<String, Room> entry : roomsByStream.entrySet()) {
@@ -285,6 +287,7 @@ public class RoomService implements RoomServiceListener {
      *
      * @param roomMemberPromotedToOwnerMessage {@link RoomMemberPromotedToOwnerMessage}
      */
+    @SuppressWarnings("deprecation")
     @Override
     public void onRoomMemberPromotedToOwnerMessage(RoomMemberPromotedToOwnerMessage roomMemberPromotedToOwnerMessage) {
 
@@ -302,6 +305,7 @@ public class RoomService implements RoomServiceListener {
      *
      * @param roomReactivatedMessage {@link RoomReactivatedMessage}
      */
+    @SuppressWarnings("deprecation")
     @Override
     public void onRoomReactivatedMessage(RoomReactivatedMessage roomReactivatedMessage) {
         for (Map.Entry<String, Room> entry : roomsByStream.entrySet()) {
@@ -313,6 +317,7 @@ public class RoomService implements RoomServiceListener {
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onRoomUpdatedMessage(RoomUpdatedMessage roomUpdatedMessage) {
         for (Map.Entry<String, Room> entry : roomsByStream.entrySet()) {
@@ -324,6 +329,7 @@ public class RoomService implements RoomServiceListener {
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onUserJoinedRoomMessage(UserJoinedRoomMessage userJoinedRoomMessage) {
 
@@ -336,6 +342,7 @@ public class RoomService implements RoomServiceListener {
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onUserLeftRoomMessage(UserLeftRoomMessage userLeftRoomMessage) {
         for (Map.Entry<String, Room> entry : roomsByStream.entrySet()) {
@@ -363,6 +370,7 @@ public class RoomService implements RoomServiceListener {
         roomServiceListeners.add(roomServiceListener);
     }
 
+    @SuppressWarnings("unused")
     public void removeRoomServiceListener(RoomServiceListener roomServiceListener) {
         roomServiceListeners.remove(roomServiceListener);
     }

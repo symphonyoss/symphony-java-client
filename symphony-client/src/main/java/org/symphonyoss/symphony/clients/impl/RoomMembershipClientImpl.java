@@ -48,6 +48,7 @@ public class RoomMembershipClientImpl implements RoomMembershipClient {
     private final SymAuth symAuth;
     private final ApiClient apiClient;
 
+    @SuppressWarnings("unused")
     private Logger logger = LoggerFactory.getLogger(RoomMembershipClientImpl.class);
 
     public RoomMembershipClientImpl(SymAuth symAuth, String serviceUrl) {
@@ -109,7 +110,7 @@ public class RoomMembershipClientImpl implements RoomMembershipClient {
      *
      * @param roomStreamId - stream-id of the chat room you want to add the member to
      * @param userId       userId for the user in Symphony
-     * @throws Exception throws an {@link org.symphonyoss.symphony.pod.invoker.ApiException} if there were any issues while invoking the endpoint,
+     * @throws SymException throws an {@link org.symphonyoss.symphony.pod.invoker.ApiException} if there were any issues while invoking the endpoint,
      *                   {@link IllegalArgumentException} if the arguments were wrong, {@link IllegalStateException} if the
      *                   session-token is null
      */
@@ -137,9 +138,9 @@ public class RoomMembershipClientImpl implements RoomMembershipClient {
     /**
      * Call this method to remove a member from a chat room. Pass in two parameters - chat-room stream-id and user-id
      *
-     * @param roomStreamId - stream-id of the chat room you want to add the member toUserdfa
+     * @param roomStreamId - stream-id of the chat room you want to add the member to Room
      * @param userId       userId for the user in Symphony
-     * @throws Exception throws an {@link org.symphonyoss.symphony.pod.invoker.ApiException} if there were any issues while invoking the endpoint,
+     * @throws SymException throws an {@link org.symphonyoss.symphony.pod.invoker.ApiException} if there were any issues while invoking the endpoint,
      *                   {@link IllegalArgumentException} if the arguments were wrong, {@link IllegalStateException} if the
      *                   session-token is null
      */

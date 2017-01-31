@@ -195,6 +195,7 @@ public class AiCommand {
     }
 
 
+    @SuppressWarnings("unused")
     public void setPrefixRequirement(int argumentIndex, String requirement) {
 
         if (argumentIndex > numArguments) {
@@ -211,6 +212,7 @@ public class AiCommand {
     }
 
 
+    @SuppressWarnings("unused")
     public void setAllPrefixRequirements(String[] prefixRequirements) {
         this.prefixRequirements = prefixRequirements;
     }
@@ -243,11 +245,13 @@ public class AiCommand {
     }
 
 
+    @SuppressWarnings("unused")
     public void setAllArguments(String[] placeHolders) {
         this.arguments = placeHolders;
     }
 
 
+    @SuppressWarnings("unused")
     public String getArguments(int argumentIndex) {
 
         if (arguments.length < argumentIndex) {
@@ -269,11 +273,13 @@ public class AiCommand {
     }
 
 
+    @SuppressWarnings("unused")
     public Set<AiPermission> getPermissions() {
         return permissions;
     }
 
 
+    @SuppressWarnings("unused")
     public void setPermissions(Set<AiPermission> permissions) {
         this.permissions = permissions;
     }
@@ -284,6 +290,7 @@ public class AiCommand {
     }
 
 
+    @SuppressWarnings("unused")
     public void setActions(Set<AiAction> actions) {
         this.actions = actions;
     }
@@ -299,16 +306,19 @@ public class AiCommand {
     }
 
 
+    @SuppressWarnings("unused")
     public void removePermission(AiPermission permission) {
         permissions.remove(permission);
     }
 
 
+    @SuppressWarnings("unused")
     public void removeAction(AiAction action) {
         actions.remove(action);
     }
 
 
+    @SuppressWarnings("unused")
     public String getUsage() {
         return usage;
     }

@@ -32,6 +32,7 @@ public class AttachmentsException extends SymException{
         super(message);
     }
 
+    @SuppressWarnings("unused")
     public AttachmentsException(Throwable cause) {
         super(cause);
     }

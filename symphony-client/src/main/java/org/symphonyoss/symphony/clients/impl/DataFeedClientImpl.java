@@ -46,6 +46,7 @@ public class DataFeedClientImpl implements DataFeedClient {
 
     private final ApiClient apiClient;
     private final SymAuth symAuth;
+    @SuppressWarnings("unused")
     private Logger logger = LoggerFactory.getLogger(DataFeedClientImpl.class);
 
 

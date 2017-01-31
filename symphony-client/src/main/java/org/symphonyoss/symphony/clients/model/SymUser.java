@@ -141,6 +141,7 @@ public class SymUser {
         this.avatars = avatars;
     }
 
+    @SuppressWarnings("unused")
     public static UserV2 toUserV2(SymUser symUser) {
         UserV2 userV2 = new UserV2();
 

@@ -27,12 +27,13 @@ public interface RoomMembershipClient {
      *            - stream-id of the chat room you want to add the member to
      * @param userId
      *            userId for the user in Symphony
-     * @throws Exception
+     * @throws SymException
      *             throws an {@link org.symphonyoss.symphony.pod.invoker.ApiException} if there were any issues while invoking the endpoint,
      *             {@link IllegalArgumentException} if the arguments were wrong, {@link IllegalStateException} if the
      *             session-token is null
      */
-     void addMemberToRoom(String roomStreamId, long userId) throws SymException;
+    @SuppressWarnings("unused")
+    void addMemberToRoom(String roomStreamId, long userId) throws SymException;
 
 
     /**
@@ -40,9 +41,10 @@ public interface RoomMembershipClient {
      *
      * @param roomStreamId - stream-id of the chat room you want to add the member to
      * @param userId       userId for the user in Symphony
-     * @throws Exception throws an {@link org.symphonyoss.symphony.pod.invoker.ApiException} if there were any issues while invoking the endpoint,
+     * @throws SymException throws an {@link org.symphonyoss.symphony.pod.invoker.ApiException} if there were any issues while invoking the endpoint,
      *                   {@link IllegalArgumentException} if the arguments were wrong, {@link IllegalStateException} if the
      *                   session-token is null
      */
+    @SuppressWarnings("unused")
     void removeMemberFromRoom(String roomStreamId, long userId) throws SymException;
 }

@@ -27,10 +27,12 @@ package org.symphonyoss.exceptions;
  * Created by Frank Tarsillo on 9/11/2016.
  */
 public class StreamsException extends SymException {
+    @SuppressWarnings("unused")
     public StreamsException(String message) {
         super(message);
     }
 
+    @SuppressWarnings("unused")
     public StreamsException(Throwable cause) {
         super(cause);
     }
