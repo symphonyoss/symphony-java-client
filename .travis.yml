@@ -26,8 +26,8 @@
 language: java
 install: true
 script:
-- "[[ $TRAVIS_BRANCH =~ master ]] && mvn clean deploy versioneye sonar --settings settings.xml || true"
-- "[[ $TRAVIS_BRANCH =~ dev ]] && mvn clean deploy --settings settings.xml || true"
+- "if [[ $TRAVIS_BRANCH =~ master ]]; then mvn clean deploy -Pversioneye,sonar --settings settings.xml ; fi"
+- "if [[ $TRAVIS_BRANCH =~ dev ]]; then mvn clean deploy --settings settings.xml ; fi"
 
 jdk:
   - oraclejdk8
