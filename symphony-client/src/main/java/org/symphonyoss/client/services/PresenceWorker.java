@@ -109,6 +109,7 @@ class PresenceWorker implements Runnable {
                         Long.valueOf(System.getProperty(Constants.PRESENCE_POLL_SLEEP, "30")));
             } catch (InterruptedException e) {
                 logger.error("Sleep timer interrupted", e);
+                Thread.currentThread().interrupt();
             }
 
         }

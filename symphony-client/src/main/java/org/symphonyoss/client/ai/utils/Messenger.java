@@ -115,7 +115,7 @@ public class Messenger {
 
             stream = symClient.getStreamsClient().getStream(list);
 
-            if(stream !=null && stream.getId() != null)
+            if( stream.getId() != null)
                 return symClient.getChatService().getChatByStream(stream != null ? stream.getId() : null);
 
 

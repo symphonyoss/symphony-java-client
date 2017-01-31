@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * @author Frank Tarsillo
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class SymRoomSearchCriteria {
 
 
@@ -120,18 +120,22 @@ public class SymRoomSearchCriteria {
         RoomSearchCriteria roomSearchCriteria = new RoomSearchCriteria();
         roomSearchCriteria.setActive(searchCriteria.getActive());
         roomSearchCriteria.setLabels(searchCriteria.getLabels());
-        if (searchCriteria.getMember() != null)
-            roomSearchCriteria.setMember(new UserId() {{
-                setId(searchCriteria.getMember().getId());
-            }});
-        if (searchCriteria.getCreator() != null)
-            roomSearchCriteria.setCreator(new UserId() {{
-                setId(searchCriteria.getCreator().getId());
-            }});
-        if (searchCriteria.getOwner() != null)
-            roomSearchCriteria.setOwner(new UserId() {{
-                setId(searchCriteria.getOwner().getId());
-            }});
+        if (searchCriteria.getMember() != null) {
+
+            UserId memberId = new UserId();
+            memberId.setId(searchCriteria.getMember().getId());
+            roomSearchCriteria.setMember(memberId);
+        }
+        if (searchCriteria.getCreator() != null) {
+            UserId creatorId = new UserId();
+            creatorId.setId(searchCriteria.getCreator().getId());
+            roomSearchCriteria.setCreator(creatorId);
+        }
+        if (searchCriteria.getOwner() != null) {
+            UserId ownerId = new UserId();
+            ownerId.setId(searchCriteria.getOwner().getId());
+            roomSearchCriteria.setOwner(ownerId);
+        }
         roomSearchCriteria.setPrivate(searchCriteria.get_private());
         roomSearchCriteria.setQuery(searchCriteria.getQuery());
 

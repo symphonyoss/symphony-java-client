@@ -32,7 +32,7 @@ public interface RoomMembershipClient {
      *             {@link IllegalArgumentException} if the arguments were wrong, {@link IllegalStateException} if the
      *             session-token is null
      */
-     void addMemberToRoom(String roomStreamId, long userId) throws Exception;
+     void addMemberToRoom(String roomStreamId, long userId) throws SymException;
 
 
     /**
@@ -44,5 +44,5 @@ public interface RoomMembershipClient {
      *                   {@link IllegalArgumentException} if the arguments were wrong, {@link IllegalStateException} if the
      *                   session-token is null
      */
-    void removeMemberFromRoom(String roomStreamId, long userId) throws Exception;
+    void removeMemberFromRoom(String roomStreamId, long userId) throws SymException;
 }

@@ -38,6 +38,7 @@ import java.security.KeyStore;
  * @author Frank Tarsillo on 10/26/2016.
  */
 @SuppressWarnings("unused")
+//NOSONAR
 public class CustomHttpClient {
 
     public CustomHttpClient() {

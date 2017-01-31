@@ -75,7 +75,7 @@ public class SymphonyBasicClient implements SymphonyClient {
     private ConnectionsClient connectionsClient;
     private ShareClient shareClient;
     private Client defaultHttpClient;
-    private final long SYMAUTH_REFRESH_TIME= Long.valueOf(System.getProperty(Constants.SYMAUTH_REFRESH_TIME,"7200000"));
+    private final long SYMAUTH_REFRESH_TIME= Long.parseLong(System.getProperty(Constants.SYMAUTH_REFRESH_TIME,"7200000"));
 
     public SymphonyBasicClient() {
 

@@ -106,6 +106,7 @@ class MessageFeedWorker implements Runnable {
                     );
                 } catch (InterruptedException e1) {
                     logger.error("Interrupt.. ", e1);
+                    Thread.currentThread().interrupt();
                 }
 
             }

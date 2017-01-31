@@ -235,7 +235,7 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
         try {
             UserIdList userIdList = userApi.v1AdminUserListGet(symAuth.getSessionToken().getToken());
 
-            int nThreads = Integer.valueOf(System.getProperty(Constants.USERSCLIENT_GETALLUSERS_THREADPOOL, "16"));
+            int nThreads = Integer.parseInt(System.getProperty(Constants.USERSCLIENT_GETALLUSERS_THREADPOOL, "16"));
 
             ExecutorService executor = Executors.newFixedThreadPool(nThreads);
 
