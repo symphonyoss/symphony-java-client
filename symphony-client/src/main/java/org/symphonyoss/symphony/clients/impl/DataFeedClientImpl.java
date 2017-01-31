@@ -80,6 +80,7 @@ public class DataFeedClientImpl implements DataFeedClient {
 
 
 
+    @Override
     public Datafeed createDatafeed() throws DataFeedException {
 
         DatafeedApi datafeedApi = new DatafeedApi(apiClient);
@@ -94,6 +95,7 @@ public class DataFeedClientImpl implements DataFeedClient {
 
 
 
+    @Override
     public List<V2BaseMessage> getMessagesFromDatafeed(Datafeed datafeed) throws DataFeedException {
 
         DatafeedApi datafeedApi = new DatafeedApi(apiClient);

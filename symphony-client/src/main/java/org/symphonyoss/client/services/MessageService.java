@@ -189,6 +189,7 @@ public class MessageService implements DataFeedListener {
      *
      * @param message Incoming message from {@link DataFeedListener} registered to the {@link MessageFeedWorker}
      */
+    @Override
     public void onMessage(V2BaseMessage message) {
 
         logger.debug("MessageID: {} StreamID: {}", message.getId(), message.getStreamId());

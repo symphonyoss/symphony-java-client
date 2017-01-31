@@ -100,7 +100,7 @@ public class AiCommandListener implements ChatListener {
      *
      * @param message the received message
      */
-
+    @Override
     public void onChatMessage(SymMessage message) {
 
 

@@ -57,6 +57,7 @@ class ConnectionsWorker implements Runnable {
 
 
     //Lets look for all new pending requests..
+    @Override
     public void run() {
 
         logger.info("Starting connections service worker..");

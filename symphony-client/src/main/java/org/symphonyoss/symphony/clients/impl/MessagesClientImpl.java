@@ -112,6 +112,7 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
      * @return Message sent
      * @throws MessagesException Exception caused by Symphony API calls
      */
+    @Override
     public SymMessage sendMessage(Stream stream, SymMessage message) throws MessagesException {
 
         if (stream == null || message == null) {
@@ -152,6 +153,7 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
      * @return List of messages
      * @throws MessagesException Exception caused by Symphony API calls
      */
+    @Override
     public List<SymMessage> getMessagesFromStream(Stream stream, Long since, Integer offset, Integer maxMessages) throws MessagesException {
 
         if (stream == null) {

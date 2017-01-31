@@ -78,6 +78,7 @@ public class AttachmentsClientImpl implements AttachmentsClient {
     }
 
 
+    @Override
     public byte[] getAttachmentData(SymAttachmentInfo symAttachmentInfo, SymMessage symMessage) throws AttachmentsException {
 
         AttachmentsApi attachmentsApi = new AttachmentsApi(apiClient);
@@ -101,6 +102,7 @@ public class AttachmentsClientImpl implements AttachmentsClient {
     }
 
 
+    @Override
     public SymAttachmentInfo postAttachment(String sid, File attachment)throws AttachmentsException {
         AttachmentsApi attachmentsApi = new AttachmentsApi(apiClient);
 

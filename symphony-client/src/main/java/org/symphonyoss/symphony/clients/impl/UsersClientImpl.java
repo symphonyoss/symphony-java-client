@@ -103,6 +103,7 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
     }
 
 
+    @Override
     public SymUser getUserFromEmail(String email) throws UsersClientException {
 
 
@@ -132,6 +133,8 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
 
     }
 
+
+    @Override
     public SymUser getUserFromId(Long userId) throws UsersClientException {
 
         UsersApi usersApi = new UsersApi(apiClient);

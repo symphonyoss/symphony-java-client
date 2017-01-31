@@ -45,13 +45,12 @@ import java.util.TimerTask;
  * Implements a full abstraction of underlying clients and exposes services to simplify
  * functional collaboration elements.  Although all clients are exposed, it's highly recommended
  * to access core functions through services.
- *
+ * <p>
  * You must init this class with valid key and session tokens with stored in a SymAuth object.
  * Please note, that the SymAuth expires and must be updated periodically to maintain access to
  * the Symphony network.
  *
- * @author  Frank Tarsillo
- *
+ * @author Frank Tarsillo
  */
 public class SymphonyBasicClient implements SymphonyClient {
 
@@ -75,7 +74,7 @@ public class SymphonyBasicClient implements SymphonyClient {
     private ConnectionsClient connectionsClient;
     private ShareClient shareClient;
     private Client defaultHttpClient;
-    private final long SYMAUTH_REFRESH_TIME= Long.parseLong(System.getProperty(Constants.SYMAUTH_REFRESH_TIME,"7200000"));
+    private final long SYMAUTH_REFRESH_TIME = Long.parseLong(System.getProperty(Constants.SYMAUTH_REFRESH_TIME, "7200000"));
 
     public SymphonyBasicClient() {
 
@@ -84,12 +83,13 @@ public class SymphonyBasicClient implements SymphonyClient {
     /**
      * Initialize client with required parameters.
      *
-     * @param symAuth Contains valid key and session tokens generated from AuthorizationClient.
-     * @param email Email address of the BOT
-     * @param agentUrl The Agent URL
+     * @param symAuth    Contains valid key and session tokens generated from AuthorizationClient.
+     * @param email      Email address of the BOT
+     * @param agentUrl   The Agent URL
      * @param serviceUrl The Service URL (in most cases it's the POD URL)
      * @throws InitException Failure of a specific service most likely due to connectivity issues
      */
+    @Override
     public void init(SymAuth symAuth, String email, String agentUrl, String serviceUrl) throws InitException {
 
         String NOT_LOGGED_IN_MESSAGE = "Currently not logged into Agent, please check certificates and tokens.";
@@ -107,17 +107,16 @@ public class SymphonyBasicClient implements SymphonyClient {
         this.serviceUrl = serviceUrl;
 
 
-
         //Init all clients.
-        dataFeedClient = (defaultHttpClient==null)?DataFeedFactory.getClient(this, DataFeedFactory.TYPE.DEFAULT):DataFeedFactory.getClient(this, DataFeedFactory.TYPE.HTTPCLIENT);
-        messagesClient = (defaultHttpClient==null)?MessagesFactory.getClient(this, MessagesFactory.TYPE.DEFAULT):MessagesFactory.getClient(this, MessagesFactory.TYPE.HTTPCLIENT);
-        presenceClient = (defaultHttpClient==null)?PresenceFactory.getClient(this, PresenceFactory.TYPE.DEFAULT):PresenceFactory.getClient(this, PresenceFactory.TYPE.HTTPCLIENT);
-        streamsClient = (defaultHttpClient==null)?StreamsFactory.getClient(this, StreamsFactory.TYPE.DEFAULT):StreamsFactory.getClient(this, StreamsFactory.TYPE.HTTPCLIENT);
-        usersClient = (defaultHttpClient==null)?UsersFactory.getClient(this, UsersFactory.TYPE.DEFAULT):UsersFactory.getClient(this, UsersFactory.TYPE.HTTPCLIENT);
-        shareClient = (defaultHttpClient==null)?ShareFactory.getClient(this,ShareFactory.TYPE.DEFAULT):ShareFactory.getClient(this,ShareFactory.TYPE.HTTPCLIENT);
-        attachmentsClient = (defaultHttpClient==null)?AttachmentsFactory.getClient(this, AttachmentsFactory.TYPE.DEFAULT):AttachmentsFactory.getClient(this, AttachmentsFactory.TYPE.HTTPCLIENT);
-        roomMembershipClient = (defaultHttpClient==null)?RoomMembershipFactory.getClient(this, RoomMembershipFactory.TYPE.DEFAULT):RoomMembershipFactory.getClient(this, RoomMembershipFactory.TYPE.HTTPCLIENT);
-        connectionsClient = (defaultHttpClient==null)?ConnectionsFactory.getClient(this, ConnectionsFactory.TYPE.DEFAULT):ConnectionsFactory.getClient(this, ConnectionsFactory.TYPE.HTTPCLIENT);
+        dataFeedClient = (defaultHttpClient == null) ? DataFeedFactory.getClient(this, DataFeedFactory.TYPE.DEFAULT) : DataFeedFactory.getClient(this, DataFeedFactory.TYPE.HTTPCLIENT);
+        messagesClient = (defaultHttpClient == null) ? MessagesFactory.getClient(this, MessagesFactory.TYPE.DEFAULT) : MessagesFactory.getClient(this, MessagesFactory.TYPE.HTTPCLIENT);
+        presenceClient = (defaultHttpClient == null) ? PresenceFactory.getClient(this, PresenceFactory.TYPE.DEFAULT) : PresenceFactory.getClient(this, PresenceFactory.TYPE.HTTPCLIENT);
+        streamsClient = (defaultHttpClient == null) ? StreamsFactory.getClient(this, StreamsFactory.TYPE.DEFAULT) : StreamsFactory.getClient(this, StreamsFactory.TYPE.HTTPCLIENT);
+        usersClient = (defaultHttpClient == null) ? UsersFactory.getClient(this, UsersFactory.TYPE.DEFAULT) : UsersFactory.getClient(this, UsersFactory.TYPE.HTTPCLIENT);
+        shareClient = (defaultHttpClient == null) ? ShareFactory.getClient(this, ShareFactory.TYPE.DEFAULT) : ShareFactory.getClient(this, ShareFactory.TYPE.HTTPCLIENT);
+        attachmentsClient = (defaultHttpClient == null) ? AttachmentsFactory.getClient(this, AttachmentsFactory.TYPE.DEFAULT) : AttachmentsFactory.getClient(this, AttachmentsFactory.TYPE.HTTPCLIENT);
+        roomMembershipClient = (defaultHttpClient == null) ? RoomMembershipFactory.getClient(this, RoomMembershipFactory.TYPE.DEFAULT) : RoomMembershipFactory.getClient(this, RoomMembershipFactory.TYPE.HTTPCLIENT);
+        connectionsClient = (defaultHttpClient == null) ? ConnectionsFactory.getClient(this, ConnectionsFactory.TYPE.DEFAULT) : ConnectionsFactory.getClient(this, ConnectionsFactory.TYPE.HTTPCLIENT);
 
         try {
             messageService = new MessageService(this);
@@ -126,7 +125,7 @@ public class SymphonyBasicClient implements SymphonyClient {
             roomService = new RoomService(this);
 
             localUser = usersClient.getUserFromEmail(email);
-        }catch (SymException e){
+        } catch (SymException e) {
             logger.error("Failed to initialize client..", e);
 
             throw new InitException("Could not initialize one of the Symphony API services." +
@@ -155,27 +154,28 @@ public class SymphonyBasicClient implements SymphonyClient {
     public void init(Client httpClient, SymAuth symAuth, String email, String agentUrl, String serviceUrl) throws InitException {
 
         this.defaultHttpClient = httpClient;
-        init(symAuth,email,agentUrl,serviceUrl);
+        init(symAuth, email, agentUrl, serviceUrl);
     }
 
+    @Override
     public SymAuth getSymAuth() {
         return symAuth;
     }
 
     /**
-     *
      * @param symAuth Contains valid key and session tokens generated from AuthorizationClient.
      */
+    @Override
     public void setSymAuth(SymAuth symAuth) {
         this.symAuth = symAuth;
     }
 
+    @Override
     public String getAgentUrl() {
         return agentUrl;
     }
 
     /**
-     *
      * @param agentUrl Agent URL
      */
     public void setAgentUrl(String agentUrl) {
@@ -183,15 +183,14 @@ public class SymphonyBasicClient implements SymphonyClient {
     }
 
     /**
-     *
      * @return Service URL which can be either the Agent URL or POD URL
      */
+    @Override
     public String getServiceUrl() {
         return serviceUrl;
     }
 
     /**
-     *
      * @param serviceUrl Service URL which can be either the Agent URL or POD URL
      */
     public void setServiceUrl(String serviceUrl) {
@@ -199,37 +198,40 @@ public class SymphonyBasicClient implements SymphonyClient {
     }
 
     /**
-     *
      * @return DataFeedClient
      */
+    @Override
     public DataFeedClient getDataFeedClient() {
         return dataFeedClient;
     }
 
     /**
-     *
      * @return MessagesClient
      */
+    @Override
     public MessagesClient getMessagesClient() {
         return messagesClient;
     }
 
     /**
-     *
      * @return MessagesService
      */
+    @Override
     public MessageService getMessageService() {
         return messageService;
     }
 
+    @Override
     public PresenceService getPresenceService() {
         return presenceService;
     }
 
+    @Override
     public RoomService getRoomService() {
         return roomService;
     }
 
+    @Override
     public SymUser getLocalUser() {
         return localUser;
     }
@@ -238,36 +240,45 @@ public class SymphonyBasicClient implements SymphonyClient {
         this.localUser = localUser;
     }
 
+    @Override
     public ChatService getChatService() {
         return chatService;
     }
 
+    @Override
     public PresenceClient getPresenceClient() {
         return presenceClient;
     }
 
+    @Override
     public StreamsClient getStreamsClient() {
         return streamsClient;
     }
 
+    @Override
     public UsersClient getUsersClient() {
         return usersClient;
     }
 
+    @Override
     public RoomMembershipClient getRoomMembershipClient() {
         return roomMembershipClient;
     }
 
+    @Override
     public AttachmentsClient getAttachmentsClient() {
         return attachmentsClient;
     }
 
+    @Override
     public ConnectionsClient getConnectionsClient() {
         return connectionsClient;
     }
 
     @Override
-    public ShareClient getShareClient(){return shareClient;}
+    public ShareClient getShareClient() {
+        return shareClient;
+    }
 
     /**
      * Provides the default http client if one is set.
@@ -286,7 +297,7 @@ public class SymphonyBasicClient implements SymphonyClient {
 
 
     @Override
-    public void shutdown(){
+    public void shutdown() {
         getMessageService().shutdown();
         getPresenceService().shutdown();
     }

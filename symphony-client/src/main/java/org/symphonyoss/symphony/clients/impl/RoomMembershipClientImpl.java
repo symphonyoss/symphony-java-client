@@ -90,6 +90,7 @@ public class RoomMembershipClientImpl implements RoomMembershipClient {
      * @return {@link MembershipList}
      * @throws SymException Exceptions from API calls into Symphony
      */
+    @Override
     public MembershipList getRoomMembership(String roomStreamId) throws SymException {
         if (roomStreamId == null) {
             throw new NullPointerException("Room ID was not provided...");

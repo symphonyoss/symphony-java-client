@@ -85,6 +85,7 @@ public class PresenceClientImpl implements org.symphonyoss.symphony.clients.Pres
     }
 
 
+    @Override
     public PresenceList getAllUserPresence() throws PresenceException {
 
 
@@ -100,6 +101,7 @@ public class PresenceClientImpl implements org.symphonyoss.symphony.clients.Pres
 
     }
 
+    @Override
     public Presence getUserPresence(Long userId) throws PresenceException {
 
 
