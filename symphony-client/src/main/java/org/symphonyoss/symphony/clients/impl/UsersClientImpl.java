@@ -257,7 +257,7 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
                     try {
                         user1 = usersApi2.v2UserGet(symAuth.getSessionToken().getToken(), userId, null, null, false);
                     } catch (ApiException e) {
-                        logger.error("API Error while communicating with POD while retrieving user details");
+                        logger.error("API Error while communicating with POD while retrieving user details",e);
                         return;
                     }
 
@@ -279,6 +279,7 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
                 executor.awaitTermination(5, TimeUnit.SECONDS);
             } catch (InterruptedException e) {
                logger.error("Executor failed ot terminate after retrieving all users.",e);
+               throw new UsersClientException("Interrupt waiting for search executor to finish",e);
             }
 
             logger.debug("Finished all threads. Total time retrieving users: {} sec", (System.currentTimeMillis() - startTime) / 1000);

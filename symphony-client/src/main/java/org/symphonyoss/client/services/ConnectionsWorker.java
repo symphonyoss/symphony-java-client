@@ -38,7 +38,6 @@ import java.util.concurrent.TimeUnit;
  * Connections worker thread will poll for changes in connection requests and issue a callback to the registered
  * {@link #connectionsListener}
  *
- *
  * @author Frank Tarsillo
  */
 class ConnectionsWorker implements Runnable {
@@ -47,7 +46,7 @@ class ConnectionsWorker implements Runnable {
     private final ConcurrentHashMap<Long, SymUserConnection> pendingConnections = new ConcurrentHashMap<>();
     private final Logger logger = LoggerFactory.getLogger(ConnectionsWorker.class);
     private boolean KILL = false;
-    private final int CONNECTIONS_POLL_SLEEP=Integer.parseInt(System.getProperty(Constants.CONNECTIONS_POLL_SLEEP,"30"));
+    private final int CONNECTIONS_POLL_SLEEP = Integer.parseInt(System.getProperty(Constants.CONNECTIONS_POLL_SLEEP, "30"));
 
 
     public ConnectionsWorker(SymphonyClient symClient, ConnectionsListener connectionsListener) {
@@ -71,7 +70,7 @@ class ConnectionsWorker implements Runnable {
             try {
                 TimeUnit.SECONDS.sleep(CONNECTIONS_POLL_SLEEP);
             } catch (InterruptedException ie) {
-                logger.error("Interrupt failed on presence retrieval",ie);
+                logger.error("Interrupt failed on presence retrieval", ie);
                 Thread.currentThread().interrupt();
             }
 
@@ -106,9 +105,9 @@ class ConnectionsWorker implements Runnable {
                         if (cUserConnection.getStatus() != symUserConnection.getStatus()) {
 
                             //Sonar recommendation
-                            if(logger.isDebugEnabled())
-                            logger.debug("Connection status changed for {}: from: {}  to:{}", cUserConnection.getUserId(), cUserConnection.getStatus().toString(), symUserConnection.getStatus().toString());
-
+                            if (logger.isDebugEnabled()) {
+                                logger.debug("Connection status changed for {}: from: {}  to:{}", cUserConnection.getUserId(), cUserConnection.getStatus().toString(), symUserConnection.getStatus().toString());
+                            }
                             pendingConnections.remove(symUserConnection.getUserId());
                             connectionsListener.onConnectionNotification(symUserConnection);
 

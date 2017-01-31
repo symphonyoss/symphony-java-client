@@ -39,7 +39,9 @@
             <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
         </license>
     </licenses>
-
+    <properties>
+        <sonar.skip>true</sonar.skip>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>org.symphonyoss.symphony</groupId>

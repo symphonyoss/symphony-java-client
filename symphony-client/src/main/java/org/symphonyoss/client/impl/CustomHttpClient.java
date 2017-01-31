@@ -106,6 +106,7 @@ public class CustomHttpClient {
      * @param ksPass Keystore password for file to process
      * @throws Exception Generally IOExceptions generated from file read
      */
+    //NOSONAR
     private static void loadKeyStore(KeyStore ks, String ksFile, String ksPass) throws Exception {
 
         java.io.FileInputStream fis = null;
