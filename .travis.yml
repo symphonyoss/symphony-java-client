@@ -55,4 +55,4 @@ addons:
     notification_email: dev-notify@symphony.foundation
     build_command_prepend: "mvn clean"
     build_command:   "mvn -DskipTests=true compile install"
-    branch_pattern: master
+    branch_pattern: $COVERITY_BRANCH_PATTERN
