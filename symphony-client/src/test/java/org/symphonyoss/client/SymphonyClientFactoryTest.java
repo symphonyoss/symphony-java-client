@@ -33,7 +33,7 @@ import org.symphonyoss.client.impl.SymphonyBasicClient;
 import static org.junit.Assert.*;
 
 /**
- * Created by Frank Tarsillo on 6/18/2016.
+ * @author Frank Tarsillo
  */
 public class SymphonyClientFactoryTest {
 

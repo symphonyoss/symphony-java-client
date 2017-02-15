@@ -95,9 +95,9 @@ public class MessageService implements DataFeedListener {
      * @param symMessage Message to send to the room
      * @throws MessagesException Generated from API calls into Symphony
      */
-    public void sendMessage(Room room, SymMessage symMessage) throws MessagesException {
+    public SymMessage sendMessage(Room room, SymMessage symMessage) throws MessagesException {
 
-        symClient.getMessagesClient().sendMessage(room.getStream(), symMessage);
+        return symClient.getMessagesClient().sendMessage(room.getStream(), symMessage);
 
     }
 
@@ -109,9 +109,9 @@ public class MessageService implements DataFeedListener {
      * @param symMessage Message to send to the conversation
      * @throws MessagesException Generated from API calls into Symphony
      */
-    public void sendMessage(Chat chat, SymMessage symMessage) throws MessagesException {
+    public SymMessage sendMessage(Chat chat, SymMessage symMessage) throws MessagesException {
 
-        symClient.getMessagesClient().sendMessage(chat.getStream(), symMessage);
+       return symClient.getMessagesClient().sendMessage(chat.getStream(), symMessage);
 
     }
 
@@ -123,14 +123,14 @@ public class MessageService implements DataFeedListener {
      * @param symMessage Message to send
      * @throws MessagesException Generated from API calls into Symphony
      */
-    public void sendMessage(String email, SymMessage symMessage) throws MessagesException {
+    public SymMessage sendMessage(String email, SymMessage symMessage) throws MessagesException {
 
         SymUser remoteUser;
         try {
 
             remoteUser = symClient.getUsersClient().getUserFromEmail(email);
 
-            symClient.getMessagesClient().sendMessage(symClient.getStreamsClient().getStream(remoteUser), symMessage);
+            return symClient.getMessagesClient().sendMessage(symClient.getStreamsClient().getStream(remoteUser), symMessage);
 
         } catch (UsersClientException e) {
             throw new MessagesException("Failed to find user from email address: " + email, e);

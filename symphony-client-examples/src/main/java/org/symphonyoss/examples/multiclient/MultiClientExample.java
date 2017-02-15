@@ -30,20 +30,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.client.SymphonyClientFactory;
-import org.symphonyoss.client.impl.CustomHttpClient;
-import org.symphonyoss.client.model.Chat;
-import org.symphonyoss.client.model.SymAuth;
-import org.symphonyoss.client.services.ChatListener;
-import org.symphonyoss.client.services.ChatServiceListener;
-import org.symphonyoss.exceptions.*;
-import org.symphonyoss.symphony.clients.AuthorizationClient;
+import org.symphonyoss.exceptions.MessagesException;
+import org.symphonyoss.exceptions.StreamsException;
 import org.symphonyoss.symphony.clients.model.SymMessage;
-import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.pod.model.Stream;
-
-import javax.ws.rs.client.Client;
-import java.util.HashSet;
-import java.util.Set;
 
 
 /**
@@ -78,73 +68,69 @@ public class MultiClientExample {
     private final Logger logger = LoggerFactory.getLogger(MultiClientExample.class);
 
 
+    public MultiClientExample() {
 
-    public MultiClientExample(){
 
-
-        SymphonyClient symClient1 = init(
-                System.getProperty("bot.user1") + "@" +  System.getProperty("bot.domain"),
+        SymphonyClient symClient1 = SymphonyClientFactory.getClient(SymphonyClientFactory.TYPE.BASIC,
+                System.getProperty("bot.user1") + "@" + System.getProperty("bot.domain"),
                 System.getProperty("certs.dir") + System.getProperty("bot.user1") + ".p12",
                 System.getProperty("keystore.password"),
                 System.getProperty("truststore.file"),
                 System.getProperty("truststore.password"));
 
-        SymphonyClient symClient2 = init(
-                System.getProperty("bot.user2") + "@" +  System.getProperty("bot.domain"),
+        SymphonyClient symClient2 = SymphonyClientFactory.getClient(SymphonyClientFactory.TYPE.BASIC,
+                System.getProperty("bot.user2") + "@" + System.getProperty("bot.domain"),
                 System.getProperty("certs.dir") + System.getProperty("bot.user2") + ".p12",
                 System.getProperty("keystore.password"),
                 System.getProperty("truststore.file"),
                 System.getProperty("truststore.password"));
 
 
+        try {
+            Stream stream1 = symClient1.getStreamsClient().getStreamFromEmail(System.getProperty("user.call.home"));
 
-            try {
-                Stream stream1 = symClient1.getStreamsClient().getStreamFromEmail(System.getProperty("user.call.home"));
-
-                Stream stream2= symClient2.getStreamsClient().getStreamFromEmail(System.getProperty("user.call.home"));
-
-
-                //A message to send when the BOT comes online.
-                SymMessage aMessage = new SymMessage();
-                aMessage.setFormat(SymMessage.Format.TEXT);
-
-                aMessage.setMessage("Hello master from bot1...");
-
-                symClient1.getMessagesClient().sendMessage(stream1,aMessage);
-
-                aMessage.setMessage("Hello master from bot2...");
-
-                symClient2.getMessagesClient().sendMessage(stream2,aMessage);
-
-                aMessage.setMessage("Hello master from bot1..again...");
-
-                symClient1.getMessagesClient().sendMessage(stream1,aMessage);
-
-                aMessage.setMessage("Hello master from bot2..again and again..");
-
-                symClient2.getMessagesClient().sendMessage(stream2,aMessage);
-                symClient2.getMessagesClient().sendMessage(stream2,aMessage);
-                symClient2.getMessagesClient().sendMessage(stream2,aMessage);
-                symClient2.getMessagesClient().sendMessage(stream2,aMessage);
+            Stream stream2 = symClient2.getStreamsClient().getStreamFromEmail(System.getProperty("user.call.home"));
 
 
-                aMessage.setMessage("Hello master from bot1..again and again...");
+            //A message to send when the BOT comes online.
+            SymMessage aMessage = new SymMessage();
+            aMessage.setFormat(SymMessage.Format.TEXT);
 
-                symClient1.getMessagesClient().sendMessage(stream1,aMessage);
-                symClient1.getMessagesClient().sendMessage(stream1,aMessage);
-                symClient1.getMessagesClient().sendMessage(stream1,aMessage);
-                symClient1.getMessagesClient().sendMessage(stream1,aMessage);
-                symClient1.getMessagesClient().sendMessage(stream1,aMessage);
+            aMessage.setMessage("Hello master from bot1...");
 
-                System.exit(1);
+            symClient1.getMessagesClient().sendMessage(stream1, aMessage);
 
-            } catch (StreamsException e) {
-                e.printStackTrace();
-            } catch (MessagesException e) {
-                e.printStackTrace();
-            }
+            aMessage.setMessage("Hello master from bot2...");
+
+            symClient2.getMessagesClient().sendMessage(stream2, aMessage);
+
+            aMessage.setMessage("Hello master from bot1..again...");
+
+            symClient1.getMessagesClient().sendMessage(stream1, aMessage);
+
+            aMessage.setMessage("Hello master from bot2..again and again..");
+
+            symClient2.getMessagesClient().sendMessage(stream2, aMessage);
+            symClient2.getMessagesClient().sendMessage(stream2, aMessage);
+            symClient2.getMessagesClient().sendMessage(stream2, aMessage);
+            symClient2.getMessagesClient().sendMessage(stream2, aMessage);
 
 
+            aMessage.setMessage("Hello master from bot1..again and again...");
+
+            symClient1.getMessagesClient().sendMessage(stream1, aMessage);
+            symClient1.getMessagesClient().sendMessage(stream1, aMessage);
+            symClient1.getMessagesClient().sendMessage(stream1, aMessage);
+            symClient1.getMessagesClient().sendMessage(stream1, aMessage);
+            symClient1.getMessagesClient().sendMessage(stream1, aMessage);
+
+            System.exit(1);
+
+        } catch (StreamsException e) {
+            e.printStackTrace();
+        } catch (MessagesException e) {
+            e.printStackTrace();
+        }
 
 
     }
@@ -154,68 +140,6 @@ public class MultiClientExample {
         new MultiClientExample();
 
     }
-
-    public SymphonyClient init(String email, String clientKeyStore, String clientKeyStorePass, String trustStore, String trustStorePass) {
-
-
-        try {
-
-            //Create a basic client instance.
-            SymphonyClient symClient = SymphonyClientFactory.getClient(SymphonyClientFactory.TYPE.BASIC);
-
-            logger.debug("{} {}", System.getProperty("sessionauth.url"),
-                    System.getProperty("keyauth.url"));
-
-
-            try {
-                Client httpClient = CustomHttpClient.getClient(clientKeyStore,clientKeyStorePass,trustStore,trustStorePass);
-                symClient.setDefaultHttpClient(httpClient);
-            } catch (Exception e) {
-                logger.error("Failed to create custom http client",e);
-                return null;
-            }
-
-
-
-            //Init the Symphony authorization client, which requires both the key and session URL's.  In most cases,
-            //the same fqdn but different URLs.
-            AuthorizationClient authClient = new AuthorizationClient(
-                    System.getProperty("sessionauth.url"),
-                    System.getProperty("keyauth.url"),
-                    symClient.getDefaultHttpClient());
-
-
-
-            //Create a SymAuth which holds both key and session tokens.  This will call the external service.
-            SymAuth symAuth = authClient.authenticate();
-
-
-            //With a valid SymAuth we can now init our client.
-            symClient.init(
-                    symClient.getDefaultHttpClient(),
-                    symAuth,
-                    email,
-                    System.getProperty("symphony.agent.agent.url"),
-                    System.getProperty("symphony.agent.pod.url")
-
-            );
-
-
-            return symClient;
-
-        } catch (AuthorizationException ae) {
-
-            logger.error(ae.getMessage(), ae);
-        } catch (InitException e) {
-            logger.error("error", e);
-        }
-
-        return null;
-    }
-
-
-
-
 
 
 }
