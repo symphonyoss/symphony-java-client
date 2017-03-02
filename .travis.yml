@@ -19,17 +19,21 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-# cache:
-#   directories:
-#   - $HOME/.m2
+
+before_script: "if [[ \"$TRAVIS_PULL_REQUEST\" = \"false\" ]]; then curl -s https://raw.githubusercontent.com/symphonyoss/contrib-toolbox/master/scripts/download-files.sh | bash ; fi"
 
 language: java
 install: true
 script:
-- " if [[ $TRAVIS_BRANCH =~ master ]]; then mvn clean deploy -Pintegration-testing,versioneye,sonar --settings settings.xml ; fi"
-- "if [[ $TRAVIS_BRANCH =~ dev ]]; then mvn clean deploy -Pintegration-testing,sonar --settings settings.xml ; fi"
 
+# Build for PRs
+- "if [[ \"$TRAVIS_PULL_REQUEST\" != \"false\" ]]; then mvn clean install && true ; fi"
 
+# Build for master branch
+- "if [[ $TRAVIS_BRANCH =~ master && \"$TRAVIS_PULL_REQUEST\" = \"false\" ]]; then mvn clean deploy -Pversioneye,sonar --settings settings.xml ; fi"
+
+# Build for dev branch
+- "if [[ $TRAVIS_BRANCH =~ dev && \"$TRAVIS_PULL_REQUEST\" = \"false\" ]]; then mvn clean deploy -Psonar --settings settings.xml ; fi"
 
 jdk:
   - oraclejdk8
