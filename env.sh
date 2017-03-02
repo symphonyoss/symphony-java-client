@@ -26,7 +26,7 @@ export TRUSTSTORE_PASSWORD=changeit
 # Used by all bots as Symphony Service Account
 export BOT_USER_EMAIL=java-client@symphony.foundation
 export BOT_USER_CERT_FILE=./certs/symphony-java-client.p12
-export BOT_USER_CERT_PASSWORD=changeit
+export BOT_USER_CERT_PASSWORD=...
 
 # Used by HelloWorldBot to identify Symphony user that receives the message
 export RECEIVER_USER_EMAIL=receiver@mycompany.com
@@ -34,7 +34,7 @@ export RECEIVER_USER_EMAIL=receiver@mycompany.com
 # Used by EchoBotIT (src/test/java/..)
 export SENDER_USER_EMAIL=testbot@symphony.foundation
 export SENDER_USER_CERT_FILE=./certs/testbot.p12
-export SENDER_USER_CERT_PASSWORD=changeit
+export SENDER_USER_CERT_PASSWORD=...
 
 
 export TEST_ROOM_STREAM=276YAAI9Kzvl3wRA+z2hln___qV6zxh9dA

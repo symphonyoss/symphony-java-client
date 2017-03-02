@@ -30,11 +30,12 @@ import org.symphonyoss.client.model.Chat;
 import org.symphonyoss.client.model.Room;
 import org.symphonyoss.client.services.*;
 import org.symphonyoss.exceptions.MessagesException;
-import org.symphonyoss.exceptions.StreamsException;
+import org.symphonyoss.exceptions.PresenceException;
 import org.symphonyoss.exceptions.SymException;
 import org.symphonyoss.symphony.agent.model.*;
 import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.clients.model.SymUserConnection;
+import org.symphonyoss.symphony.pod.model.Presence;
 import org.symphonyoss.symphony.pod.model.UserPresence;
 
 /**
@@ -54,8 +55,8 @@ public class SjcTestBot implements ChatListener, ChatServiceListener, RoomListen
     public SjcTestBot() throws SymException {
 
         symphonyClient = SymphonyClientFactory.getClient(SymphonyClientFactory.TYPE.BASIC,
-                System.getProperty("bot.user.email", "sjc.testbot") ,
-                System.getProperty("bot.user.cert.file") ,
+                System.getProperty("bot.user.email", "sjc.testbot"),
+                System.getProperty("bot.user.cert.file"),
                 System.getProperty("bot.user.cert.password"),
                 System.getProperty("truststore.file"),
                 System.getProperty("truststore.password"));
@@ -155,8 +156,25 @@ public class SjcTestBot implements ChatListener, ChatServiceListener, RoomListen
 
     @Override
     public void onChatMessage(SymMessage symMessage) {
-        logger.info("Test Bot: New chat message detected: {}", symMessage.getMessageText());
-        sendResponse(symMessage);
+
+        String text = symMessage.getMessageText();
+
+        String[] chunks = text.split(" ");
+
+        if (chunks == null)
+            return;
+
+        if (chunks[0].equals(SymphonyClientIT.CHAT_COMMAND_MESSAGE)) {
+            logger.info("Test Bot: New chat message detected: {}", symMessage.getMessageText());
+            sendResponse(symMessage);
+        }else if (chunks[0].equals(SymphonyClientIT.MULTI_PARTY_CHAT_COMMAND_MESSAGE)) {
+            logger.info("Test Bot: New chat message detected: {}", symMessage.getMessageText());
+            sendResponse(symMessage);
+        }else if (chunks[0].equals(SymphonyClientIT.PRESENCE_COMMAND_MESSAGE)) {
+
+            sendPresenceResponse();
+
+        }
 
 
     }
@@ -166,8 +184,30 @@ public class SjcTestBot implements ChatListener, ChatServiceListener, RoomListen
 
     }
 
+    /**
+     * Send the sjcClient presence back to sjcClient
+     */
+    private void sendPresenceResponse() {
 
-    private void sendResponse(SymMessage symMessage){
+        try {
+            Presence presence = symphonyClient.getPresenceService().getUserPresence(sjcClient);
+
+
+            SymMessage message = new SymMessage();
+            message.setMessage(SymphonyClientIT.PRESENCE_COMMAND_MESSAGE + " " + presence.getCategory().toString());
+
+            sendResponse(message);
+
+        } catch (PresenceException e) {
+            logger.error("Could not obtain presence for SymphonyClientIT user", e);
+        }
+    }
+
+    /**
+     * Send response message
+     * @param symMessage the response message to a command
+     */
+    private void sendResponse(SymMessage symMessage) {
 
         try {
 
@@ -179,8 +219,8 @@ public class SjcTestBot implements ChatListener, ChatServiceListener, RoomListen
 
     }
 
-    public void shutdown(){
-        if(symphonyClient != null)
+    public void shutdown() {
+        if (symphonyClient != null)
             symphonyClient.shutdown();
     }
 
