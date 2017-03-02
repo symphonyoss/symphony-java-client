@@ -21,7 +21,8 @@
   ~ under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.symphonyoss.symphony</groupId>
@@ -33,9 +34,9 @@
     <description>A Symphony Agent API client written in Java</description>
 
     <parent>
-      <groupId>org.symphonyoss</groupId>
-      <artifactId>symphonyoss</artifactId>
-      <version>2</version>
+        <groupId>org.symphonyoss</groupId>
+        <artifactId>symphonyoss</artifactId>
+        <version>2</version>
     </parent>
 
     <licenses>
@@ -46,38 +47,38 @@
     </licenses>
 
     <scm>
-      <connection>scm:git:git://github.com/symphonyoss/symphony-java-client.git</connection>
-      <developerConnection>scm:git:git@github.com:symphonyoss/symphony-java-client.git</developerConnection>
-      <url>https://github.com/symphonyoss/symphony-java-client</url>
-      <tag>HEAD</tag>
-  </scm>
+        <connection>scm:git:git://github.com/symphonyoss/symphony-java-client.git</connection>
+        <developerConnection>scm:git:git@github.com:symphonyoss/symphony-java-client.git</developerConnection>
+        <url>https://github.com/symphonyoss/symphony-java-client</url>
+        <tag>HEAD</tag>
+    </scm>
 
     <developers>
-      <developer>
-          <id>ftarsillo</id>
-          <name>Frank Tarsillo</name>
-          <email />
-          <url>http://github.com/ftarsillo</url>
-          <organization>Symphony Software Foundation</organization>
-          <organizationUrl>http://symphony.foundation</organizationUrl>
-          <timezone />
-          <roles>
-              <role>Architect</role>
-              <role>Developer</role>
-          </roles>
-      </developer>
-      <developer>
-          <id>maoo</id>
-          <name>Maurizio Pillitu</name>
-          <email>maoo@symphony.foundation</email>
-          <url>http://github.com/maoo</url>
-          <organization>Symphony Software Foundation</organization>
-          <organizationUrl>http://symphony.foundation</organizationUrl>
-          <timezone>+1</timezone>
-          <roles>
-              <role>Developer</role>
-          </roles>
-      </developer>
+        <developer>
+            <id>ftarsillo</id>
+            <name>Frank Tarsillo</name>
+            <email/>
+            <url>http://github.com/ftarsillo</url>
+            <organization>Symphony Software Foundation</organization>
+            <organizationUrl>http://symphony.foundation</organizationUrl>
+            <timezone/>
+            <roles>
+                <role>Architect</role>
+                <role>Developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>maoo</id>
+            <name>Maurizio Pillitu</name>
+            <email>maoo@symphony.foundation</email>
+            <url>http://github.com/maoo</url>
+            <organization>Symphony Software Foundation</organization>
+            <organizationUrl>http://symphony.foundation</organizationUrl>
+            <timezone>+1</timezone>
+            <roles>
+                <role>Developer</role>
+            </roles>
+        </developer>
     </developers>
 
     <modules>
@@ -128,14 +129,16 @@
     </dependencies>
 
     <build>
-      <plugins>
-        <plugin>
-  				<groupId>org.apache.maven.plugins</groupId>
-  				<artifactId>maven-javadoc-plugin</artifactId>
-  				<configuration>
-  					<failOnError>false</failOnError>
-  				</configuration>
-  			</plugin>
-      </plugins>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <failOnError>false</failOnError>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
+
+
 </project>

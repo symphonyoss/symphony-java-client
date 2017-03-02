@@ -22,6 +22,8 @@
 
 package org.symphonyoss.symphony.clients.model;
 
+import org.symphonyoss.client.util.MlMessageParser;
+import org.symphonyoss.exceptions.SymException;
 import org.symphonyoss.symphony.agent.model.Message;
 import org.symphonyoss.symphony.agent.model.V2BaseMessage;
 import org.symphonyoss.symphony.agent.model.V2Message;
@@ -128,7 +130,7 @@ public class SymMessage {
     public void setFromUserId(Long fromUserId) {
         this.fromUserId = fromUserId;
 
-        if(symUser ==null)
+        if (symUser == null)
             symUser = new SymUser();
 
 
@@ -212,6 +214,22 @@ public class SymMessage {
         v1Message.setFromUserId(symMessage.getFromUserId());
         v1Message.setTimestamp(symMessage.getTimestamp());
         return v1Message;
+    }
+
+
+    public String getMessageText() {
+        MlMessageParser mlMessageParser = new MlMessageParser();
+
+        if (message != null) {
+            try {
+                mlMessageParser.parseMessage(message);
+                return mlMessageParser.getText();
+            } catch (SymException e) {
+                System.out.println("Could not parse message...");
+            }
+
+        }
+        return null;
     }
 
 }
