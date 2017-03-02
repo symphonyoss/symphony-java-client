@@ -54,7 +54,7 @@ public class SymphonyClientIT implements ChatServiceListener, ChatListener, Room
 
     private static boolean responded;
 
-    private final String botEmail = System.getProperty("bot.user.email", "sjc.testbot") ;
+    private final String botEmail = System.getProperty("bot.user.email", "sjc.testbot");
 
     private static SjcTestBot sjcTestBot;
 
@@ -68,7 +68,7 @@ public class SymphonyClientIT implements ChatServiceListener, ChatListener, Room
 
 
             sjcTestClient = SymphonyClientFactory.getClient(
-                    SymphonyClientFactory.TYPE.BASIC, System.getProperty("sender.user.email", "sjc.testclient") ,
+                    SymphonyClientFactory.TYPE.BASIC, System.getProperty("sender.user.email", "sjc.testclient"),
                     System.getProperty("sender.user.cert.file"),
                     System.getProperty("sender.user.cert.password"),
                     System.getProperty("truststore.file"),
@@ -98,9 +98,10 @@ public class SymphonyClientIT implements ChatServiceListener, ChatListener, Room
         if (sjcTestClient != null)
             sjcTestClient.shutdown();
 
-        sjcTestBot.shutdown();
-
-        sjcTestBot = null;
+        if (sjcTestBot != null) {
+            sjcTestBot.shutdown();
+            sjcTestBot = null;
+        }
 
     }
 
@@ -117,7 +118,6 @@ public class SymphonyClientIT implements ChatServiceListener, ChatListener, Room
         room.setId(System.getProperty("test.room.stream"));
         room.addListener(this);
         sjcTestClient.getRoomService().joinRoom(room);
-
 
 
         SymMessage message = new SymMessage();
