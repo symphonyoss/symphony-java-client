@@ -57,7 +57,7 @@ public class SymphonyClientIT implements ChatServiceListener, ChatListener, Room
     public final static String CHAT_COMMAND_MESSAGE = "/onChatMessage";
     public final static String MULTI_PARTY_CHAT_COMMAND_MESSAGE = "/onMultiPartyChatMessage";
     public final static String PRESENCE_COMMAND_MESSAGE = "/onPresenceMessage";
-    public final static String MP_USER_EMAIL = "Frank.Tarsillo@mihsmarkit.com";
+    public final static String MP_USER_EMAIL = "Frank.Tarsillo@ihsmarkit.com";
 
     private static boolean responded;
 
