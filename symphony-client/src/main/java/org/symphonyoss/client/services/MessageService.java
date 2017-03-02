@@ -294,7 +294,7 @@ public class MessageService implements DataFeedListener {
             }
         } catch (StreamsException e) {
             //Exception will be common here, so we are not going to throw exceptions every time.
-            logger.debug("Failed to retrieve room detail, so this is a chat stream. {}",e);
+            logger.debug("Failed to retrieve room detail, so this is a chat stream.",e);
 
 
         }
