@@ -121,6 +121,9 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
         -Dtruststore.file=/dev/certs/server.truststore
         -Dbot.user=(user name)
 
+##Examples
+[see Examples Project](https://github.com/symphonyoss/symphony-java-sample-bots)
+
 
 ##API Docs
 [API Documentation](http://symphonyoss.github.io/symphony-java-client/index.html)
