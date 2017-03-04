@@ -1,7 +1,8 @@
 [![Dependencies](https://www.versioneye.com/user/projects/5770f47919424d000f2e0095/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/5770f47919424d000f2e0095)
 [![Build Status](https://travis-ci.org/symphonyoss/symphony-java-client.svg)](https://travis-ci.org/symphonyoss/symphony-java-client)
 [![Validation Status](https://scan.coverity.com/projects/9112/badge.svg?flat=1)](https://scan.coverity.com/projects/symphonyoss-symphony-java-client)
-<a href="https://sonarqube.com/overview?id=org.symphonyoss.symphony%3Asymphony-java-client"><img src="http://www.sonarqube.org/wp-content/themes/sonarsource.org/images/sonar.png" title="SonarQube" width="80"/></a>
+[![Symphony Software Foundation - Incubating](https://cdn.rawgit.com/symphonyoss/contrib-toolbox/master/images/ssf-badge-incubating.svg)](https://symphonyoss.atlassian.net/wiki/display/FM/Incubating)
+<a href="https://sonarqube.com/overview?id=org.symphonyoss.symphony%3Asymphony-java-client"><img src="https://www.sonarqube.org/assets/logo-31ad3115b1b4b120f3d1efd63e6b13ac9f1f89437f0cf6881cc4d8b5603a52b4.svg" title="SonarQube" width="80"/></a>
 
 Symphony Java Client
 ====================
@@ -58,6 +59,7 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 * Performance Updates
 * All incoming SymMessages from MessageService are now set to MessageML format
 * Command Framework (AI Package) supporting command parsing and actions
+* CI integration testing (mvn goal -Pintegration-testing)
 * Bug fixes, documentation, new examples
 
 ### V0.9.1 (Stable)

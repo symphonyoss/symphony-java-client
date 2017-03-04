@@ -34,7 +34,11 @@ import org.symphonyoss.client.services.ChatServiceListener;
 import org.symphonyoss.client.services.RoomListener;
 import org.symphonyoss.symphony.agent.model.*;
 import org.symphonyoss.symphony.clients.model.SymMessage;
+import org.symphonyoss.symphony.clients.model.SymUser;
+import org.symphonyoss.symphony.pod.model.Presence;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -49,12 +53,15 @@ public class SymphonyClientIT implements ChatServiceListener, ChatListener, Room
     private static SymphonyClient sjcTestClient;
     private static final Logger logger = LoggerFactory.getLogger(SymphonyClientIT.class);
 
-    private final String ROOM_COMMAND_MESSAGE = "/onRoomMessage";
-    private final String CHAT_COMMAND_MESSAGE = "/onChatMessage";
+    public final static String ROOM_COMMAND_MESSAGE = "/onRoomMessage";
+    public final static String CHAT_COMMAND_MESSAGE = "/onChatMessage";
+    public final static String MULTI_PARTY_CHAT_COMMAND_MESSAGE = "/onMultiPartyChatMessage";
+    public final static String PRESENCE_COMMAND_MESSAGE = "/onPresenceMessage";
+    public final static String MP_USER_EMAIL = "Frank.Tarsillo@ihsmarkit.com";
 
     private static boolean responded;
 
-    private final String botEmail = System.getProperty("bot.user.email", "sjc.testbot") ;
+    private final String botEmail = System.getProperty("bot.user.email", "sjc.testbot");
 
     private static SjcTestBot sjcTestBot;
 
@@ -68,7 +75,7 @@ public class SymphonyClientIT implements ChatServiceListener, ChatListener, Room
 
 
             sjcTestClient = SymphonyClientFactory.getClient(
-                    SymphonyClientFactory.TYPE.BASIC, System.getProperty("sender.user.email", "sjc.testclient") ,
+                    SymphonyClientFactory.TYPE.BASIC, System.getProperty("sender.user.email", "sjc.testclient"),
                     System.getProperty("sender.user.cert.file"),
                     System.getProperty("sender.user.cert.password"),
                     System.getProperty("truststore.file"),
@@ -98,9 +105,10 @@ public class SymphonyClientIT implements ChatServiceListener, ChatListener, Room
         if (sjcTestClient != null)
             sjcTestClient.shutdown();
 
-        sjcTestBot.shutdown();
-
-        sjcTestBot = null;
+        if (sjcTestBot != null) {
+            sjcTestBot.shutdown();
+            sjcTestBot = null;
+        }
 
     }
 
@@ -117,7 +125,6 @@ public class SymphonyClientIT implements ChatServiceListener, ChatListener, Room
         room.setId(System.getProperty("test.room.stream"));
         room.addListener(this);
         sjcTestClient.getRoomService().joinRoom(room);
-
 
 
         SymMessage message = new SymMessage();
@@ -145,24 +152,63 @@ public class SymphonyClientIT implements ChatServiceListener, ChatListener, Room
         sjcTestClient.getMessageService().sendMessage(botEmail, message);
 
 
-//        for (int i = 0; i < 10; ++i) {
-//
-//            logger.info("RESPONDED: {}", responded);
-//
-//            if (responded)
-//                break;
-//
-//            try {
-//                TimeUnit.SECONDS.sleep(1);
-//            } catch (InterruptedException e) {
-//                logger.error("Interrupted Exception, waiting for test response");
-//            }
-//
-//
-//        }
 
         if (!isResponded()) {
             Assert.fail("Timeout receiving confirmation of chat message");
+        }
+
+    }
+
+    @Test
+    public void sendMultiPartyChatMessage() throws Exception {
+
+        responded = false;
+
+        //Creates a Chat session with that will receive the online message.
+        Chat chat = new Chat();
+        chat.setLocalUser(sjcTestClient.getLocalUser());
+        Set<SymUser> remoteUsers = new HashSet<>();
+        remoteUsers.add(sjcTestClient.getUsersClient().getUserFromEmail(botEmail));
+        remoteUsers.add(sjcTestClient.getUsersClient().getUserFromEmail(MP_USER_EMAIL));
+        chat.setRemoteUsers(remoteUsers);
+        chat.addListener(this);
+
+
+        //Add the chat to the chat service, in case the "master" continues the conversation.
+        sjcTestClient.getChatService().addChat(chat);
+
+
+
+        SymMessage message = new SymMessage();
+        message.setMessage(MULTI_PARTY_CHAT_COMMAND_MESSAGE);
+
+
+        //Send a message to the master user.
+        sjcTestClient.getMessageService().sendMessage(chat, message);
+
+
+
+
+        if (!isResponded()) {
+            Assert.fail("Timeout receiving confirmation of chat message");
+        }
+
+    }
+
+    @Test
+    public void sendPresenceMessage() throws Exception {
+
+        responded = false;
+
+        sjcTestClient.getChatService().addListener(this);
+
+        SymMessage message = new SymMessage();
+        message.setMessage(PRESENCE_COMMAND_MESSAGE);
+        sjcTestClient.getMessageService().sendMessage(botEmail, message);
+
+
+        if (!isResponded()) {
+            Assert.fail("Timeout receiving confirmation of presence message");
         }
 
     }
@@ -173,14 +219,29 @@ public class SymphonyClientIT implements ChatServiceListener, ChatListener, Room
 
         logger.info("Client Test: New message detected {}", message.getMessageText());
 
-        String command = message.getMessageText().trim();
 
-        if (command.equals(ROOM_COMMAND_MESSAGE)) {
+        String text = message.getMessageText();
+
+        String[] chunks = text.split(" ");
+
+        if (chunks[0].equals(ROOM_COMMAND_MESSAGE)) {
             responded = true;
             logger.info("ETE Test:  Room Message: Success");
-        } else if (command.equals(CHAT_COMMAND_MESSAGE)) {
+        } else if (chunks[0].equals(CHAT_COMMAND_MESSAGE)) {
             responded = true;
             logger.info("ETE Test: Chat Message: Success");
+        } else if (chunks[0].equals(MULTI_PARTY_CHAT_COMMAND_MESSAGE)) {
+            responded = true;
+            logger.info("ETE Test: Multi-Party Chat Message: Success");
+        }else if (chunks[0].equals(PRESENCE_COMMAND_MESSAGE)) {
+
+            if(chunks[1] != null && chunks[1].equals(Presence.CategoryEnum.AVAILABLE.toString())) {
+
+                responded = true;
+                logger.info("ETE Test: Presence Message: Success:  {}", text);
+            }else{
+                logger.error("ETE Test: Presence Message: Failure: {}", text);
+            }
         }
 
 
@@ -239,12 +300,18 @@ public class SymphonyClientIT implements ChatServiceListener, ChatListener, Room
     }
 
 
+    /**
+     *
+     * Block until response is received from remote bot
+     *
+     * @return True if remote BOT has responded
+     */
     public boolean isResponded() {
 
 
-        for (int i = 0; i < 60; ++i) {
+        for (int i = 0; i < 10; ++i) {
 
-            logger.info("RESPONDED: {}", responded);
+            logger.info("RESPONDED: {}: Elapsed Time: {}", responded, i);
 
             if (responded)
                 return true;
