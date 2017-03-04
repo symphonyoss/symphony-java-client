@@ -47,7 +47,4 @@ symphony-client/target/
 .idea/
 logs/
 /symphony-java-client.iml
-symphony-client-examples/src/main/resources/
-symphony-client-examples/src/test/
 symphony-java-client.iml
-/symphony-client-examples/symphony-client-examples.iml

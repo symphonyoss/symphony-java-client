@@ -10,10 +10,10 @@ Symphony Java Client
 The Symphony java client provides a real-time wrapper around the Symphony REST API's to simplify the creation of chat sessions, room access, presence, messaging and more...  The client provides a set of logical services representing supported features of the Symphony platform.  Services support real-time events through feature based listeners and communication objects.  Access is not limited to the services as all underlying Symphony client implementations are exposed for advanced use or creation of your own service.
 
 ##Features
-* Basic client: 
+* Basic client:
     * Authentication management
     * Implements and exposes functional services and underlying clients.
-* Chat Service: 
+* Chat Service:
     * Support for chat session creation and eventing
     * Filters only on chat messages
     * Real-time listeners on chat events such as callbacks on new chat session
@@ -37,7 +37,6 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
     * Conversion from MessageML to Text
 * Exposure of underlying Symphony clients:
     * Authentication, Users, Presence, Streams, Datafeed, RoomMembership, Connections, Attachments
-* Examples on most key features
 
 **Administration features are currently not supported in the library. (future work)**
 
@@ -46,7 +45,7 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 ##Change log and notes
 ### V1.0.0 (SNAPSHOT)
 * Compatible with 1.40.1 API, V2 and Agent 1.39+
-* Presence service is now disabled by default 
+* Presence service is now disabled by default
 * ShareAPI supporting article (news) posts implemented
 * Support for custom HTTP Clients when initiating SymphonyClient.
 * Can support multiple SymphonyClient instances running in a single JVM representing different users.
@@ -73,16 +72,16 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 * New UserV2 lookups have been implemented that should alleviate the need for elevated privileges
 * New exceptions handling implemented with detailed message outputs
 * Lazy cache for room identification
-* Additional examples added for new features 
+* Additional examples added for new features
 * Examples updated to reflect core changes
 * Many..many..underlying code updates resolving sonar issues
 
 ### V0.9.0 (Stable)
 
 * Compatible with 1.38 API, V1 and Agent
-* Bot user requires elevated privileges to acquire 
-* Inititial release includes the basic client, chat service, presence service and basic room functions. 
-* Exposes clients for Symphoni API including Authorization, Streams, Presence, RoomMembership, User, Users, 
+* Bot user requires elevated privileges to acquire
+* Inititial release includes the basic client, chat service, presence service and basic room functions.
+* Exposes clients for Symphoni API including Authorization, Streams, Presence, RoomMembership, User, Users,
 * Utilizes generated API models from Symphony
 
 
