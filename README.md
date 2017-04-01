@@ -48,7 +48,7 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 * Moving symphony-apis to external project
 
 
-### V1.0.0 
+### V1.0.0 (Stable)
 * Compatible with 1.40.1 API, V2 and Agent 1.39+
 * Presence service is now disabled by default
 * ShareAPI supporting article (news) posts implemented
@@ -66,7 +66,7 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 * CI integration testing (mvn goal -Pintegration-testing)
 * Bug fixes, documentation, new examples
 
-### V0.9.1 (Stable)
+### V0.9.1 
 
 * Compatible with 1.40.1 API, V2 and Agent 1.39+
 * New Connections Service for managing connection requests.  This includes auto-accept.
@@ -81,7 +81,7 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 * Examples updated to reflect core changes
 * Many..many..underlying code updates resolving sonar issues
 
-### V0.9.0 (Stable)
+### V0.9.0 
 
 * Compatible with 1.38 API, V1 and Agent
 * Bot user requires elevated privileges to acquire

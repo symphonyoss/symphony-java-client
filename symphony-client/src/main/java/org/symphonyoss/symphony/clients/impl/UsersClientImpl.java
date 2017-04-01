@@ -121,7 +121,7 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
 
         if (user != null) {
 
-            logger.debug("Found User: {}:{}", user.getEmailAddress(), user.getId());
+            logger.debug("Found User: {}:{}:{}", user.getEmailAddress(),user.getUsername(), user.getId());
             return SymUser.toSymUser(user);
         }
 
@@ -152,7 +152,7 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
 
         if (user != null) {
 
-            logger.debug("Found User: {}:{}", user.getDisplayName(), user.getId());
+            logger.debug("Found User: {}:{}:{}", user.getDisplayName(), user.getUsername(), user.getId());
             return SymUser.toSymUser(user);
         }
 
@@ -174,7 +174,7 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
 
         UserV2 user;
         try {
-            user = usersApi.v2UserGet(symAuth.getSessionToken().getToken(), null, null, userName, false);
+            user = usersApi.v2UserGet(symAuth.getSessionToken().getToken(), null, null, userName, true);
         } catch (ApiException e) {
             throw new UsersClientException("API Error communicating with POD, while retrieving user details for " + userName, e);
         }

@@ -78,8 +78,10 @@ public class AuthRefreshTask extends TimerTask {
             //Create a SymAuth which holds both key and session tokens.  This will call the external service.
              symAuth = authClient.authenticate();
 
-            symClient.setSymAuth(symAuth);
-            logger.info("Successfully refreshed SymAuth keys...");
+            symClient.getSymAuth().setKeyToken(symAuth.getKeyToken());
+            symClient.getSymAuth().setSessionToken(symAuth.getSessionToken());
+
+            logger.info("Successfully refreshed SymAuth tokens...");
 
         }catch (AuthorizationException e){
             logger.error("Unable to refresh SymAuth keys...", e);

@@ -207,7 +207,7 @@ public class ChatService implements ChatListener {
             chat.setLastMessage(message);
 
             //Enrich all user data..
-            Set<SymUser> remoteUsers = symClient.getUsersClient().getUsersFromStream(message.getStreamId());
+            Set<SymUser> remoteUsers = SymUserCache.getUsersByStream(symClient,message.getStreamId());
 
             if (remoteUsers != null) {
 
@@ -317,7 +317,7 @@ public class ChatService implements ChatListener {
 
         //Resolve the UserID to pull chat set.
         try {
-            SymUser user = symClient.getUsersClient().getUserFromEmail(email);
+            SymUser user = SymUserCache.getUserByEmail(symClient,email);
 
             if (user != null)
                 return chatsByUser.get(user.getId());
@@ -372,11 +372,11 @@ public class ChatService implements ChatListener {
                 SymUser updatedSymUser = new SymUser();
 
                 if (symUser.getId() != null) {
-                    updatedSymUser = symClient.getUsersClient().getUserFromId(symUser.getId());
+                    updatedSymUser = SymUserCache.getUserById(symClient,symUser.getId());
                 } else if (symUser.getEmailAddress() != null) {
-                    updatedSymUser = symClient.getUsersClient().getUserFromEmail(symUser.getEmailAddress());
+                    updatedSymUser = SymUserCache.getUserByEmail(symClient,symUser.getEmailAddress());
                 } else if (symUser.getUsername() != null) {
-                    updatedSymUser = symClient.getUsersClient().getUserFromName(symUser.getUsername());
+                    updatedSymUser = SymUserCache.getUserByName(symClient,symUser.getUsername());
                 } else {
                     logger.error("Failed to retrieve user detail for chat session..(nothing to identify the user)..");
                 }

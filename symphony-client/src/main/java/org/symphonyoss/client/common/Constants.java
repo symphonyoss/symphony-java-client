@@ -36,10 +36,16 @@ package org.symphonyoss.client.common;
  */
 public class Constants {
 
-    public final static String CONNECTIONS_POLL_SLEEP = "connections.poll.sleep";
-    public final static String PRESENCE_POLL_SLEEP = "presence.poll.sleep";
-    public final static String SYMAUTH_REFRESH_TIME = "symauth.refresh.time";
-    public final static String DATAFEED_RECOVERY_WAIT_TIME = "datafeed.recovery.wait.time";
+    public static final String CONNECTIONS_POLL_SLEEP = "connections.poll.sleep";
+    public static final String PRESENCE_POLL_SLEEP = "presence.poll.sleep";
+    public static final String SYMAUTH_REFRESH_TIME = "symauth.refresh.time";
+    public static final String DATAFEED_RECOVERY_WAIT_TIME = "datafeed.recovery.wait.time";
     public static final String USERSCLIENT_GETALLUSERS_THREADPOOL ="usersclient.getallusers.threadpool";
     public static final String PRESENCE_POLL = "presence.poll";
+    public static final String SYMUSERS_BY_ID_CACHE = "symusers_by_id";
+    public static final String SYMUSERS_BY_EMAIL_CACHE = "symusers_by_email";
+    public static final String SYMUSERS_BY_NAME_CACHE = "symusers_by_name";
+    public static final String SYMUSERS_CACHE_ACCESSEDEXPIRY = "symusers.cache.accessedexpiry";
+    public static final String SYMUSERS_BY_STREAM_CACHE = "symusers_by_stream";
+    public static final String SYMUSERS_CACHE_ENABLED = "symusers.cache.enabled";
 }

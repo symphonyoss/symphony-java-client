@@ -128,7 +128,7 @@ public class MessageService implements DataFeedListener {
         SymUser remoteUser;
         try {
 
-            remoteUser = symClient.getUsersClient().getUserFromEmail(email);
+            remoteUser = SymUserCache.getUserByEmail(symClient,email);
 
             return symClient.getMessagesClient().sendMessage(symClient.getStreamsClient().getStream(remoteUser), symMessage);
 

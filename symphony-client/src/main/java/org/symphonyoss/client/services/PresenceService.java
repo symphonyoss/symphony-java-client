@@ -110,7 +110,7 @@ public class PresenceService implements PresenceListener {
 
         SymUser user;
         try {
-            user = symClient.getUsersClient().getUserFromEmail(email);
+            user = SymUserCache.getUserByEmail(symClient,email);
         } catch (UsersClientException e) {
             logger.error("Failed to obtain userID from email", e);
             throw new PresenceException("Failed to obtain user from email: " + email, e);
