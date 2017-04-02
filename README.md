@@ -44,6 +44,7 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 
 ##Change log and notes
 ### V1.0.1 (SNAPSHOT)
+* Added Users local cache (Lazy)
 * Focus on performance
 * Moving symphony-apis to external project
 
