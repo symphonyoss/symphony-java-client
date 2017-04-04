@@ -75,13 +75,29 @@ public class AuthorizationClient {
 
 
 
+
             symAuth = new SymAuth();
             org.symphonyoss.symphony.authenticator.invoker.ApiClient authenticatorClient = Configuration.getDefaultApiClient();
 
 
+            //Need this for refresh
+            symAuth.setKeyUrl(keyUrl);
+            symAuth.setSessionUrl(sessionUrl);
 
-            if(httpClient != null)
+
+            if(httpClient != null) {
                 authenticatorClient.setHttpClient(httpClient);
+                symAuth.setHttpClient(httpClient);
+
+            }else{
+
+                //Lets copy the pki info..
+                symAuth.setServerTruststore(System.getProperty("javax.net.ssl.trustStore"));
+                symAuth.setServerTruststorePassword(System.getProperty("javax.net.ssl.trustStorePassword"));
+                symAuth.setClientKeystore(System.getProperty("javax.net.ssl.keyStore"));
+                symAuth.setClientKeystorePassword(System.getProperty("javax.net.ssl.keyStorePassword"));
+
+            }
 
 
             // Configure the authenticator connection
@@ -132,6 +148,9 @@ public class AuthorizationClient {
         System.setProperty("javax.net.ssl.keyStore", clientKeystore);
         System.setProperty("javax.net.ssl.keyStorePassword", keystorePass);
         System.setProperty("javax.net.ssl.keyStoreType", "pkcs12");
+
+
+
 
 
     }
