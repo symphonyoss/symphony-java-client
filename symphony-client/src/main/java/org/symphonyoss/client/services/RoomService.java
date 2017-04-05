@@ -181,17 +181,13 @@ public class RoomService implements RoomServiceListener {
 
             }
 
-            //For specific rooms that are registered publish new message events
-            for (String stream : roomsByStream.keySet()) {
 
+            Room room = roomsByStream.get(symMessage.getStreamId());
 
-                Room room = roomsByStream.get(symMessage.getStreamId());
+            //Publish a message event to a room
+            if (room != null)
+                room.onRoomMessage(symMessage);
 
-                //Publish a message event to a room
-                if (room != null)
-                    room.onRoomMessage(symMessage);
-
-            }
 
         } catch (RoomException e) {
             logger.error("Unable to add new room from message: ", e);
