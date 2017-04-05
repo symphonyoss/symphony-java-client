@@ -30,6 +30,7 @@ import org.symphonyoss.exceptions.DataFeedException;
 import org.symphonyoss.symphony.agent.model.Datafeed;
 import org.symphonyoss.symphony.agent.model.V2BaseMessage;
 
+
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -94,7 +95,7 @@ class MessageFeedWorker implements Runnable {
                 datafeed = symClient.getDataFeedClient().createDatafeed();
 
                 break;
-            } catch (DataFeedException e) {
+            } catch( Exception e) {
 
                 logger.error("Failed to create datafeed with pod, please check connection..", e);
                 datafeed = null;
@@ -133,7 +134,7 @@ class MessageFeedWorker implements Runnable {
                 messageList.forEach(dataFeedListener::onMessage);
             }
 
-        } catch (DataFeedException e) {
+        } catch (Exception e) {
             logger.error("Failed to create read datafeed from pod, please check connection..resetting.", e);
             datafeed = null;
 

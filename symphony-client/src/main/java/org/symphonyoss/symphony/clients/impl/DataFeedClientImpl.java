@@ -34,6 +34,7 @@ import org.symphonyoss.symphony.agent.model.V2BaseMessage;
 import org.symphonyoss.symphony.clients.DataFeedClient;
 
 import javax.ws.rs.client.Client;
+import java.io.IOException;
 import java.util.List;
 
 
@@ -89,7 +90,7 @@ public class DataFeedClientImpl implements DataFeedClient {
 
         try {
             return datafeedApi.v1DatafeedCreatePost(symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken());
-        } catch (ApiException e) {
+        } catch (  ApiException e) {
             throw new DataFeedException("Could not start datafeed..", e);
         }
     }
