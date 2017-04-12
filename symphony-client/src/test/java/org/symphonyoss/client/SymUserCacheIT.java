@@ -27,6 +27,7 @@ package org.symphonyoss.client;
 import org.junit.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.symphonyoss.client.model.CacheType;
 import org.symphonyoss.client.services.SymUserCache;
 import org.symphonyoss.symphony.clients.model.SymUser;
 
@@ -95,41 +96,38 @@ public class SymUserCacheIT {
     public void verifyUserCache() throws Exception {
         //init it.
         try {
-            SymUserCache.getUserById(sjcTestClient, (long) 1000000);
+            ((SymUserCache) sjcTestClient.getCache(CacheType.USER)).getUserById( (long) 1000000);
         } catch (Exception e) {
         }
 
 
+        long start = System.currentTimeMillis();
+        SymUser symUser = ((SymUserCache) sjcTestClient.getCache(CacheType.USER)).getUserByEmail( MP_USER_EMAIL);
+        logger.info("Lookup {} took: {}", MP_USER_EMAIL, System.currentTimeMillis() - start);
 
-            long start = System.currentTimeMillis();
-            SymUser symUser = SymUserCache.getUserByEmail(sjcTestClient, MP_USER_EMAIL);
-            logger.info("Lookup {} took: {}", MP_USER_EMAIL, System.currentTimeMillis() - start);
-
-            start = System.currentTimeMillis();
-            SymUserCache.getUserByEmail(sjcTestClient, MP_USER_EMAIL);
-            logger.info("Lookup {} took: {}", MP_USER_EMAIL, System.currentTimeMillis() - start);
-
-
-            start = System.currentTimeMillis();
-            SymUserCache.getUserById(sjcTestClient, symUser.getId());
-            logger.info("Lookup {} took: {}", symUser.getId(), System.currentTimeMillis() - start);
-
-            start = System.currentTimeMillis();
-            SymUserCache.getUserByName(sjcTestClient, symUser.getUsername());
-            logger.info("Lookup {} took: {}", symUser.getDisplayName(), System.currentTimeMillis() - start);
+        start = System.currentTimeMillis();
+        ((SymUserCache) sjcTestClient.getCache(CacheType.USER)).getUserByEmail( MP_USER_EMAIL);
+        logger.info("Lookup {} took: {}", MP_USER_EMAIL, System.currentTimeMillis() - start);
 
 
+        start = System.currentTimeMillis();
+        ((SymUserCache) sjcTestClient.getCache(CacheType.USER)).getUserById( symUser.getId());
+        logger.info("Lookup {} took: {}", symUser.getId(), System.currentTimeMillis() - start);
+
+        start = System.currentTimeMillis();
+        ((SymUserCache) sjcTestClient.getCache(CacheType.USER)).getUserByName( symUser.getUsername());
+        logger.info("Lookup {} took: {}", symUser.getDisplayName(), System.currentTimeMillis() - start);
 
 
     }
 
 
-    public void pause(){
+    public void pause() {
 
         //Can use properties to override default time wait
         try {
 
-            TimeUnit.SECONDS.sleep(6 );
+            TimeUnit.SECONDS.sleep(6);
         } catch (InterruptedException e1) {
             logger.error("Interrupt.. ", e1);
             Thread.currentThread().interrupt();

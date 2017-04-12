@@ -1,6 +1,6 @@
 swagger: '2.0'
 info:
-  version: '1.40.0'
+  version: 'current'
   title: Agent API
   description: |
     This document refers to Symphony API calls to send and receive messages
@@ -444,6 +444,10 @@ paths:
           description: Message sent.
           schema:
             $ref: '#/definitions/Message'
+          headers:
+            X-Warning:
+              description: This method is deprecated
+              type: string
         '400':
           description: 'Client error, see response body for further details.'
           schema:
@@ -462,6 +466,7 @@ paths:
             $ref: '#/definitions/Error'
   '/v1/message/import':
     post:
+      deprecated: true
       summary: Import messages from other systems into Symphony.
       description: |
         Sends a message to be imported into the system.
@@ -497,6 +502,10 @@ paths:
           description: Message sent.
           schema:
             $ref: '#/definitions/ImportResponseList'
+          headers:
+            X-Warning:
+              description: This method is deprecated
+              type: string
         '400':
           description: 'Client error, see response body for further details.'
           schema:
@@ -513,6 +522,60 @@ paths:
           description: 'Server error, see response body for further details.'
           schema:
             $ref: '#/definitions/Error'
+  '/v2/message/import':
+      post:
+        summary: Import messages from other systems into Symphony.
+        description: |
+          Sends a message to be imported into the system.
+          Allows you to override the timestamp and author of the message with your desired values.
+          The requesting user must have the Content Management role.
+          Also, the requesting user must be a member of the conversation it is importing into.
+          The user that the message is intended to have come from must also be present in the conversation.
+          The intended message timestamp must be a valid time from the past. It cannot be a future timestamp.
+          Optionally the original message ID can be specified to identify the imported message for the purpose of repeat imports.
+        consumes:
+          - application/json
+        produces:
+          - application/json
+        parameters:
+          - name: sessionToken
+            description: Session authentication token.
+            in: header
+            required: true
+            type: string
+          - name: keyManagerToken
+            description: Key Manager authentication token.
+            in: header
+            required: true
+            type: string
+          - name: messageList
+            in: body
+            required: true
+            schema:
+              $ref: '#/definitions/V2MessageImportList'
+        tags:
+          - Messages
+        responses:
+          '200':
+            description: Message sent.
+            schema:
+              $ref: '#/definitions/V2ImportResponseList'
+          '400':
+            description: 'Client error, see response body for further details.'
+            schema:
+              $ref: '#/definitions/Error'
+          '401':
+            description: 'Unauthorized: Session tokens invalid.'
+            schema:
+              $ref: '#/definitions/Error'
+          '403':
+            description: 'Forbidden: Caller lacks necessary entitlement.'
+            schema:
+              $ref: '#/definitions/Error'
+          '500':
+            description: 'Server error, see response body for further details.'
+            schema:
+              $ref: '#/definitions/Error'
   '/v1/stream/{sid}/message':
     get:
       deprecated: true
@@ -881,7 +944,7 @@ definitions:
       Also, the importing user must be a member of the conversation it is importing into.
       The user that the message is intended to have come from must also be present in the conversation.
       The intended message timestamp must be a valid time from the past. It cannot be a future timestamp.
-      By design, imported messages do not stream to datafeed endpoints.
+      By design, imported messages do not stream to the datafeed endpoints.
     type: object
     properties:
       message:
@@ -916,6 +979,59 @@ definitions:
     - intendedMessageFromUserId
     - originatingSystemId
     - streamId
+  V2MessageImportList:
+      description: |
+        An ordered list of historic messages to be imported.
+        A list of import responsees will be returned in the same order.
+      type: array
+      items:
+        $ref: '#/definitions/V2ImportedMessage'
+  V2ImportedMessage:
+      description: |
+        A historic message to be imported into the system.
+        The importing user must have the Content Management role.
+        Also, the importing user must be a member of the conversation it is importing into.
+        The user that the message is intended to have come from must also be present in the conversation.
+        The intended message timestamp must be a valid time from the past. It cannot be a future timestamp.
+        By design, imported messages do not stream to the datafeed endpoints.
+      type: object
+      properties:
+        message:
+          type: string
+          format: MessageML
+          description: Message text in MessageML
+        format:
+          type: string
+          enum:
+            - TEXT
+            - MESSAGEML
+        intendedMessageTimestamp:
+          description: |
+            The timestamp representing the time when the message was sent in the original system
+            in milliseconds since Jan 1st 1970.
+          type: integer
+          format: int64
+        intendedMessageFromUserId:
+          description: |
+            The long integer userid of the Symphony user who you intend to show sent the message.
+          type: integer
+          format: int64
+        originatingSystemId:
+          description: |
+            The ID of the system through which the message was originally sent.
+          type: string
+        originalMessageId:
+          description: |
+            The ID of the message in the original system.
+          type: string
+        streamId:
+          type: string
+      required:
+      - message
+      - intendedMessageTimestamp
+      - intendedMessageFromUserId
+      - originatingSystemId
+      - streamId
   ImportResponseList:
     type: array
     items:
@@ -927,6 +1043,32 @@ definitions:
         description: |
           If the message was successfully imported then the message ID in the system
           of the newly created message.
+        type: string
+      diagnostic:
+        description: |
+          A diagnostic message containing an error message in the event that the
+          message import failed. May also be present in the case of a successful
+          call if there is useful narrative to return.
+        type: string
+  V2ImportResponseList:
+    type: array
+    items:
+      $ref: '#/definitions/V2ImportResponse'
+  V2ImportResponse:
+    type: object
+    properties:
+      messageId:
+        description: |
+          If the message was successfully imported then the message ID in the system
+          of the newly created message.
+        type: string
+      originatingSystemId:
+        description: |
+          The ID of the system through which the message was originally sent.
+        type: string
+      originalMessageId:
+        description: |
+          The ID of the message in the original system.
         type: string
       diagnostic:
         description: |
@@ -1194,7 +1336,7 @@ definitions:
     properties:
       articleId:
         type: string
-        description: An ID for this article that should be unique to the calling application.
+        description: An ID for this article that should be unique to the calling application. Either an articleId or an articleUrl is required.
       title:
         type: string
         description: The title of the article
@@ -1207,6 +1349,10 @@ definitions:
       publisher:
         type: string
         description: Publisher of the article
+      publishDate:
+        type: integer
+        format: int64
+        description: Article publish date in unix timestamp
       thumbnailUrl:
         type: string
         description: Url to the thumbnail image
@@ -1226,10 +1372,9 @@ definitions:
         type: string
         description: App name of the calling application
       appIconUrl:
-          type: string
-          description: App icon url of the calling application
+        type: string
+        description: App icon url of the calling application
     required:
-    - articleId
     - title
     - publisher
     - author
@@ -1247,11 +1392,16 @@ definitions:
     properties:
       podConnectivity:
         type: boolean
+        description: Indicates whether the Agent server can connect to the Pod
       podConnectivityError:
         type: string
+        description: Error details in case of no Pod connectivity
       keyManagerConnectivity:
         type: boolean
+        description: Indicates whether the Agent server can connect to the Key Manager
       keyManagerConnectivityError:
         type: string
+        description: Error details in case of no Key Manager connectivity
       version:
         type: string
+        description: The version number of the Agent server

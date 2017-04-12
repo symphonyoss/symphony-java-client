@@ -1,6 +1,6 @@
 swagger: '2.0'
 info:
-  version: '1.40.0'
+  version: 'current'
   title: Pod API
   description: |
     This document refers to Symphony API calls that do not need
@@ -52,6 +52,7 @@ paths:
             $ref: '#/definitions/Error'
   '/v1/user/{uid}/presence':
     get:
+      deprecated: true
       summary: Get presence information about a particular user.
       produces:
         - application/json
@@ -63,6 +64,105 @@ paths:
           required: true
           type: integer
           format: int64
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+      tags:
+        - Presence
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Presence'
+          headers:
+            X-Warning:
+              description: This method is deprecated
+              type: string
+        '400':
+          description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/user/presence/register':
+    post:
+      summary: Register interest in a user's presence status
+      produces:
+        - application/json
+      parameters:
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: uidList
+          description: List of (integer) User IDs of users whose presence to query
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserIdList'
+      tags:
+      - Presence
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/SuccessResponse'
+        '400':
+          description: 'Client error.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v2/user/{uid}/presence':
+    get:
+      summary: Get presence information about a particular user.
+      produces:
+        - application/json
+      parameters:
+        - name: uid
+          description: |
+            User ID as a decimal integer
+          in: path
+          required: true
+          type: integer
+          format: int64
+        - name: local
+          description: |
+              If true, a local query will be performed and the presence will be
+              set to OFFLINE for users who are not local to the calling user's
+              pod. If false or absent, then the presence of all local users and
+              the presence of all external users to whom the calling user is
+              connected will be queried.
+
+              For external users, a "presence interest" should be registered through
+              /v1/user/presence/register before querying for presence.
+          in: query
+          type: boolean
+          required: false
+          default: false
         - name: sessionToken
           description: Session authentication token.
           in: header
@@ -93,6 +193,7 @@ paths:
             $ref: '#/definitions/Error'
   '/v1/presence':
     get:
+      deprecated: true
       summary: Get presence information about all company (pod) users.
       description: |
             The returned data is taken from the in-memory cache for performance
@@ -115,6 +216,10 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/PresenceList'
+          headers:
+            X-Warning:
+              description: This method is deprecated
+              type: string
         '400':
           description: 'Client error.'
           schema:
@@ -268,6 +373,66 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/User'
+        '204':
+          description: 'No user found.'
+        '400':
+          description: 'Client error.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/user/search':
+    post:
+      summary: Search for users by name or email address
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: skip
+          description: number of records to skip
+          in: query
+          type: integer
+        - name: limit
+          description: Max number of records to return. If no value is provided, 50 is the default.
+          in: query
+          type: integer
+        - name: local
+          description: |
+             If true then a local DB search will be performed and only local pod users will be
+             returned. If absent or false then a directory search will be performed and users
+             from other pods who are visible to the calling user will also be returned.
+          in: query
+          required: false
+          type: boolean
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: searchRequest
+          description: search criteria
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UserSearchQuery'
+      tags:
+        - Users
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/UserSearchResults'
         '204':
           description: 'No user found.'
         '400':
@@ -819,7 +984,50 @@ paths:
             $ref: '#/definitions/Error'
   '/v1/room/{id}/membership/list':
     get:
+      deprecated: true
       summary: Lists the members of an existing room.
+      description: |
+        Lists the members of an existing room. If the requesting user is an administrator, lists current
+        and previous members. If the requesting user is a regular user, lists only current members.
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          description: Room streamId
+          in: path
+          required: true
+          type: string
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+      tags:
+        - Room Membership
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/MembershipList'
+        '400':
+          description: 'Client error.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v2/room/{id}/membership/list':
+    get:
+      summary: Lists current members of an existing room.
       produces:
         - application/json
       parameters:
@@ -2116,6 +2324,50 @@ paths:
           description: 'Server error, see response body for further details.'
           schema:
             $ref: '#/definitions/Error'
+  '/v1/admin/room/{id}/membership/list':
+    get:
+      summary: Lists current and previous members of an existing room.
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          description: Room streamId
+          in: path
+          required: true
+          type: string
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: includePastMembers
+          in: query
+          required: false
+          type: boolean
+          description: If true, the membership list will include past members of the stream. If false, the listing will only incude current members. Default false.
+      tags:
+        - Room Membership
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/MembershipList'
+        '400':
+          description: 'Client error.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
   '/v1/companycert/create':
       post:
         summary: Create a company trusted or untrusted certificate
@@ -2141,6 +2393,48 @@ paths:
             description: Success
             schema:
               $ref: '#/definitions/SuccessResponse'
+          '400':
+            description: 'Client error, see response body for further details.'
+            schema:
+              $ref: '#/definitions/Error'
+          '401':
+            description: 'Unauthorized: Session tokens invalid.'
+            schema:
+              $ref: '#/definitions/Error'
+          '403':
+            description: 'Forbidden: Caller lacks necessary entitlement.'
+            schema:
+              $ref: '#/definitions/Error'
+          '500':
+            description: 'Server error, see response body for further details.'
+            schema:
+              $ref: '#/definitions/Error'
+  '/v2/companycert/create':
+      post:
+        summary: Create a company trusted or untrusted certificate.
+          Different from V1 in that we reject expired certificates.
+        consumes:
+          - application/json
+        produces:
+          - application/json
+        parameters:
+          - name: sessionToken
+            description: Session authentication token.
+            in: header
+            required: true
+            type: string
+          - name: cert
+            in: body
+            required: true
+            schema:
+              $ref: '#/definitions/CompanyCert'
+        tags:
+          - Security
+        responses:
+          '200':
+            description: Success
+            schema:
+              $ref: '#/definitions/CompanyCertDetail'
           '400':
             description: 'Client error, see response body for further details.'
             schema:
@@ -2550,6 +2844,10 @@ paths:
           description: 'Forbidden: Caller lacks necessary entitlement.'
           schema:
             $ref: '#/definitions/Error'
+        '404':
+          description: 'Not Found: User cannot be found.'
+          schema:
+            $ref: '#/definitions/Error'
         '500':
           description: 'Server error, see response body for further details.'
           schema:
@@ -2587,6 +2885,10 @@ paths:
             $ref: '#/definitions/Error'
         '403':
           description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: 'Not Found: Connection cannot be found.'
           schema:
             $ref: '#/definitions/Error'
         '500':
@@ -2649,6 +2951,10 @@ paths:
           description: 'Forbidden: Caller lacks necessary entitlement.'
           schema:
             $ref: '#/definitions/Error'
+        '404':
+          description: 'Not Found: Connection cannot be found.'
+          schema:
+            $ref: '#/definitions/Error'
         '500':
           description: 'Server error, see response body for further details.'
           schema:
@@ -2688,6 +2994,10 @@ paths:
           description: 'Forbidden: Caller lacks necessary entitlement.'
           schema:
             $ref: '#/definitions/Error'
+        '404':
+          description: 'Not Found: Connection cannot be found.'
+          schema:
+            $ref: '#/definitions/Error'
         '500':
           description: 'Server error, see response body for further details.'
           schema:
@@ -2720,6 +3030,197 @@ paths:
             $ref: '#/definitions/UserConnection'
         '400':
           description: 'Client error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/streams/{sid}/info':
+    get:
+      summary: Get information about a partcular stream.
+      produces:
+        - application/json
+      parameters:
+        - name: sid
+          description: Stream Id
+          in: path
+          required: true
+          type: string
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+      tags:
+        - Streams
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/StreamAttributes'
+        '400':
+          description: 'Client error.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/streams/list':
+    post:
+      summary: |
+        Retrieve a list of all streams of which the requesting user is a member,
+        sorted by creation date (ascending).
+      produces:
+        - application/json
+      parameters:
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: skip
+          description: |
+            No. of results to skip.
+          in: query
+          type: integer
+        - name: limit
+          description: |
+            Max no. of results to return. If no value is provided, 50 is the default.
+          in: query
+          type: integer
+        - name: filter
+          description: Stream filtering criteria.
+          in: body
+          schema:
+            $ref: '#/definitions/StreamFilter'
+      tags:
+        - Streams
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/StreamList'
+        '204':
+            description: 'Stream not found.'
+        '400':
+          description: 'Client error.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/admin/streams/list':
+    post:
+      summary: |
+        Retrieve all the streams across the enterprise where the membership of the stream has been modified between a given time range
+      produces:
+        - application/json
+      parameters:
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: skip
+          description: |
+           Number of items to skip. Default is 0.
+          in: query
+          type: integer
+        - name: limit
+          description: |
+           Maximum number of items to return. Default is 50.  This value cannot exceed 100.
+          in: query
+          type: integer
+        - name: filter
+          description: Stream filtering criteria.
+          in: body
+          schema:
+            $ref: '#/definitions/AdminStreamFilter'
+      tags:
+        - Streams
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/AdminStreamList'
+        '400':
+          description: 'Client error.'
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: 'Unauthorized: Session tokens invalid.'
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: 'Forbidden: Caller lacks necessary entitlement.'
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: 'Server error, see response body for further details.'
+          schema:
+            $ref: '#/definitions/Error'
+  '/v1/admin/stream/{id}/membership/list':
+    get:
+      summary: List the current members of an existing stream.  The stream can be of type IM, MIM, or ROOM
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          description: stream Id
+          in: path
+          required: true
+          type: string
+        - name: sessionToken
+          description: Session authentication token.
+          in: header
+          required: true
+          type: string
+        - name: skip
+          description: Number of items to skip. Default is 0.
+          in: query
+          type: integer
+          required: false
+        - name: limit
+          description: Maximum number of items to return. Default is 100 and not to exceed 1000.
+          in: query
+          type: integer
+          required: false
+      tags:
+        - Streams
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/V2MembershipList'
+        '400':
+          description: 'Client error.'
           schema:
             $ref: '#/definitions/Error'
         '401':
@@ -2928,6 +3429,51 @@ definitions:
       avatars:
         description: avatar urls for both original size and small size
         $ref: '#/definitions/AvatarList'
+  UserSearchResults:
+    type: object
+    properties:
+      count:
+        description: The total number of users which matched the search criteria.
+        type: integer
+        format: int64
+      skip:
+        description: The number of skipped results.
+        type: integer
+        format: int64
+      limit:
+        description: The number of returned results.
+        type: integer
+        format: int64
+      searchQuery:
+        type: object
+        description: The search query that produced this result.
+        $ref: '#/definitions/UserSearchQuery'
+      users:
+        description: A list of users which matched by the search criteria.
+        type: array
+        items:
+          $ref: '#/definitions/UserV2'
+  UserSearchFilter:
+    type: object
+    properties:
+      title:
+        type: string
+        description: user's job title
+      company:
+        type: string
+        description: company name
+      location:
+        type: string
+        description: city of the user's job location
+  UserSearchQuery:
+    type: object
+    properties:
+      query:
+        type: string
+        description: search / query term.  This can be firstname, lastname, displayname or email
+      filters:
+        description: query filters
+        $ref: '#/definitions/UserSearchFilter'
   UserIdList:
     type: array
     items:
@@ -3014,6 +3560,14 @@ definitions:
       member:
         description: Restrict the search to rooms having the specified user ID as member.
         $ref: '#/definitions/UserId'
+      sortOrder:
+        description: |
+          Sort algorithm to be used. Supports two values: "BASIC" (legacy algorithm)
+          and "RELEVANCE" (enhanced algorithm).
+        type: string
+        enum:
+          - BASIC
+          - RELEVANCE
     required:
     - query
   RoomSearchResults:
@@ -3502,6 +4056,67 @@ definitions:
     type: array
     items:
       $ref: '#/definitions/MemberInfo'
+  V2MemberUserDetail:
+    description: User detail information for stream membership
+    type: object
+    properties:
+      userId:
+        type: integer
+        format: int64
+      email:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+      displayName:
+        type: string
+        description: Display name for the user
+      company:
+        type: string
+        description: Company name
+      companyId:
+        type: integer
+        description: Company ID
+      isExternal:
+        type: boolean
+        description: true indicate that this user belong to another company
+  V2MemberInfo:
+    description: Detailed membership record.
+    type: object
+    properties:
+      user:
+        description: User detail information include names, userId, email, etc
+        $ref: '#/definitions/V2MemberUserDetail'
+      isOwner:
+        type: boolean
+        description: true if this is an owner of the room
+      isCreator:
+        type: boolean
+        description: true if this is the creator of the room
+      joinDate:
+        description: unix timestamp for join date
+        type: integer
+        format: int64
+  V2MemberInfoList:
+    type: array
+    items:
+      $ref: '#/definitions/V2MemberInfo'
+  V2MembershipList:
+    description: List of members in the stream.
+    type: object
+    properties:
+      count:
+        type: integer
+        description: total members count
+      skip:
+        type: integer
+        description: number of items to skip from the request
+      limit:
+        type: integer
+        description: maximum number of items to return
+      members:
+        $ref: '#/definitions/V2MemberInfoList'
   SessionInfo:
     description: Information about the current user's session
     type: object
@@ -3576,3 +4191,199 @@ definitions:
     type: array
     items:
       $ref: '#/definitions/UserConnection'
+  StreamList:
+    description: A list of streams of which the requesting user is a member.
+    type: array
+    items:
+      $ref: '#/definitions/StreamAttributes'
+  StreamAttributes:
+    type: object
+    properties:
+      id:
+        type: string
+        description: The stream ID.
+      crossPod:
+        type: boolean
+        description: If true, this is a cross-pod stream.
+      active:
+        type: boolean
+        description: If true, this stream is active.
+      streamType:
+        description: The type of the stream (IM, multi-IM, chat room, user wall).
+        $ref: '#/definitions/StreamType'
+      streamAttributes:
+        description: Additional stream details applicable to IMs, MIMs and user walls.
+        $ref: '#/definitions/ConversationSpecificStreamAttributes'
+      roomAttributes:
+        description: Additional stream details applicable to chatrooms.
+        $ref: '#/definitions/RoomSpecificStreamAttributes'
+  StreamType:
+    type: object
+    properties:
+      type:
+        type: string
+        enum:
+          - IM
+          - MIM
+          - ROOM
+          - POST
+  ConversationSpecificStreamAttributes:
+    type: object
+    properties:
+      members:
+        description: User IDs of the participants of the stream.
+        $ref: '#/definitions/UserIdList'
+  RoomSpecificStreamAttributes:
+    type: object
+    properties:
+      name:
+        type: string
+        description: Room name.
+  StreamFilter:
+    description: Stream filtering parameters.
+    properties:
+      streamTypes:
+        description: Types of streams to search for.
+        type: array
+        items:
+          $ref: '#/definitions/StreamType'
+      includeInactiveStreams:
+        description: Whether to include inactive streams in the list of results.
+        type: boolean
+  AdminStreamFilter:
+    description: stream filter criteria
+    type: object
+    properties:
+      streamTypes:
+        description: type of streams to search for
+        type: array
+        items:
+          $ref: '#/definitions/AdminStreamTypeEnum'
+      scope:
+        description: scope of the room.  If not specified, it will include both Internal and External scope
+        type: string
+        enum:
+          - INTERNAL
+          - EXTERNAL
+      origin:
+        description: |
+          Origin of the room. It indicate whether the room was created by a user
+          within the company by another company.  If not specified, it will
+          include both Internal and External origin
+        type: string
+        enum:
+          - INTERNAL
+          - EXTERNAL
+      status:
+        description: Status of the room. If not specified, it will include both Active and Inactive status
+        type: string
+        enum:
+          - ACTIVE
+          - INACTIVE
+      privacy:
+        description: Privacy setting of the stream.  If not specified, it will include both public and private stream
+        type: string
+        enum:
+          - PUBLIC
+          - PRIVATE
+      startDate:
+        description: Start date in unix timestamp in millseconds
+        type: integer
+        format: int64
+      endDate:
+        description: End date in unix timestamp in millseconds.  If not specified, it assume to be current time.
+        type: integer
+        format: int64
+  AdminStreamTypeEnum:
+    type: object
+    properties:
+      type:
+        type: string
+        enum:
+          - IM
+          - MIM
+          - ROOM
+  AdminStreamInfo:
+    description: Stream information
+    type: object
+    properties:
+      id:
+        type: string
+        description: stream id
+      isExternal:
+        type: boolean
+        description: true indicate this stream has the scope of external and false indictate this stream has the scope of internal
+      isActive:
+        type: boolean
+        description: true indicate that this stream has the status of active and false indicate this stream has the scope of inactive
+      isPublic:
+        type: boolean
+        description: true indicate that this stream has a privacy setting of public.  This only apply a ROOM stream type.
+      type:
+        type: string
+        description: type of stream (IM, MIM, ROOM)
+      attributes:
+        description: additional optional properties of the stream
+        $ref: '#/definitions/AdminStreamAttributes'
+  AdminStreamAttributes:
+      description: additional optional properties for the stream
+      type: object
+      properties:
+        roomName:
+          type: string
+          description: room name (room only)
+        roomDescription:
+          type: string
+          description: description of the room (room only)
+        members:
+          type: array
+          description: list of userid who is member of the stream - im or mim only
+          items:
+            type: integer
+            format: int64
+        createdByUserId:
+          type: integer
+          format: int64
+          description: creator user id
+        createdDate:
+          type: integer
+          format: int64
+          description: created date
+        lastModifiedDate:
+          type: integer
+          format: int64
+          description: last modified date
+        originCompany:
+          type: string
+          description: company name of the creator
+        originCompanyId:
+          type: integer
+          description: company id of the creator
+        membersCount:
+          type: integer
+          description: total number of members in the stream
+  AdminStreamInfoList:
+    type: array
+    description: list of stream info
+    items:
+      $ref: '#/definitions/AdminStreamInfo'
+  AdminStreamList:
+    description: list of streams info
+    type: object
+    properties:
+      count:
+        type: integer
+        format: int64
+        description: total number of streams which match the filter criteria
+      skip:
+        type: integer
+        description: number of streams skipped
+      limit:
+        type: integer
+        description: maximum number of streams return
+      filter:
+        description: filter criteria used in the request
+        $ref: '#/definitions/AdminStreamFilter'
+      streams:
+        description: list of streams
+        $ref: '#/definitions/AdminStreamInfoList'

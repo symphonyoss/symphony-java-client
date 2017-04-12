@@ -27,12 +27,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.client.common.Constants;
+import org.symphonyoss.client.model.CacheType;
 import org.symphonyoss.client.model.SymAuth;
-import org.symphonyoss.client.services.ChatService;
-import org.symphonyoss.client.services.MessageService;
-import org.symphonyoss.client.services.PresenceService;
-import org.symphonyoss.client.services.RoomService;
+import org.symphonyoss.client.services.*;
 import org.symphonyoss.exceptions.InitException;
+import org.symphonyoss.exceptions.SymCacheException;
 import org.symphonyoss.exceptions.SymException;
 import org.symphonyoss.symphony.clients.*;
 import org.symphonyoss.symphony.clients.model.SymUser;
@@ -75,8 +74,11 @@ public class SymphonyBasicClient implements SymphonyClient {
     private ShareClient shareClient;
     private Client defaultHttpClient;
     private final long SYMAUTH_REFRESH_TIME = Long.parseLong(System.getProperty(Constants.SYMAUTH_REFRESH_TIME, "7200000"));
+    SymUserCache symUserCache;
 
     public SymphonyBasicClient() {
+
+
 
     }
 
@@ -139,6 +141,8 @@ public class SymphonyBasicClient implements SymphonyClient {
                     "ServiceUrl: " + serviceUrl);
         }
 
+
+        symUserCache = new DefaultUserCache(this);
 
         //Refresh token every so often..
         TimerTask authRefreshTask = new AuthRefreshTask(this);
@@ -296,6 +300,26 @@ public class SymphonyBasicClient implements SymphonyClient {
     @Override
     public void setDefaultHttpClient(Client defaultHttpClient) {
         this.defaultHttpClient = defaultHttpClient;
+    }
+
+    @Override
+    public void setCache(SymCache symCache) throws SymCacheException {
+
+        if(symCache.getCacheType() == null)
+            throw new SymCacheException("Cache type not set...");
+
+        if(symCache.getCacheType() == CacheType.USER)
+            symUserCache = (SymUserCache)symCache;
+
+    }
+
+    @Override
+    public SymCache getCache(CacheType cacheType) {
+
+        if (cacheType == CacheType.USER)
+            return symUserCache;
+
+        return null;
     }
 
 

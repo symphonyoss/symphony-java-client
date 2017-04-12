@@ -25,6 +25,7 @@ package org.symphonyoss.client.services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.client.model.CacheType;
 import org.symphonyoss.exceptions.UsersClientException;
 import org.symphonyoss.exceptions.PresenceException;
 import org.symphonyoss.symphony.clients.model.SymUser;
@@ -110,7 +111,7 @@ public class PresenceService implements PresenceListener {
 
         SymUser user;
         try {
-            user = SymUserCache.getUserByEmail(symClient,email);
+            user = ((SymUserCache)symClient.getCache(CacheType.USER)).getUserByEmail(email);
         } catch (UsersClientException e) {
             logger.error("Failed to obtain userID from email", e);
             throw new PresenceException("Failed to obtain user from email: " + email, e);

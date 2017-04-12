@@ -25,6 +25,7 @@ package org.symphonyoss.client.services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.client.model.CacheType;
 import org.symphonyoss.client.model.Chat;
 import org.symphonyoss.client.model.Room;
 import org.symphonyoss.exceptions.MessagesException;
@@ -128,7 +129,7 @@ public class MessageService implements DataFeedListener {
         SymUser remoteUser;
         try {
 
-            remoteUser = SymUserCache.getUserByEmail(symClient,email);
+            remoteUser = ((SymUserCache)symClient.getCache(CacheType.USER)).getUserByEmail(email);
 
             return symClient.getMessagesClient().sendMessage(symClient.getStreamsClient().getStream(remoteUser), symMessage);
 

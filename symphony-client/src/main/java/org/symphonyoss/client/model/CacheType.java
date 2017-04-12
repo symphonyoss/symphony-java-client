@@ -11,7 +11,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -20,28 +20,33 @@
  * specific language governing permissions and limitations
  * under the License.
  *
- *
  */
 
-package org.symphonyoss.client.common;
+package org.symphonyoss.client.model;
 
 /**
  *
- * Constants
+ * Provides an enum of supported ML tags
  *
- * All time units are in Seconds
- *
- *
- * @author Frank Tarsillo on 10/22/2016.
+ * @author Frank Tarsillo
  */
-public class Constants {
+public enum CacheType {
+    USER("user"),
+    ROOM("room");
 
-    public static final String CONNECTIONS_POLL_SLEEP = "connections.poll.sleep";
-    public static final String PRESENCE_POLL_SLEEP = "presence.poll.sleep";
-    public static final String SYMAUTH_REFRESH_TIME = "symauth.refresh.time";
-    public static final String DATAFEED_RECOVERY_WAIT_TIME = "datafeed.recovery.wait.time";
-    public static final String USERSCLIENT_GETALLUSERS_THREADPOOL ="usersclient.getallusers.threadpool";
-    public static final String PRESENCE_POLL = "presence.poll";
-    public static final String SYMUSERS_CACHE_ACCESSEDEXPIRY = "symusers.cache.accessedexpiry";
 
+    private final String name;
+
+    CacheType(String s) {
+        name = s;
+    }
+
+    @SuppressWarnings("unused")
+    public boolean equalsName(String otherName) {
+        return otherName != null && name.equals(otherName);
+    }
+
+    public String toString() {
+        return this.name;
+    }
 }

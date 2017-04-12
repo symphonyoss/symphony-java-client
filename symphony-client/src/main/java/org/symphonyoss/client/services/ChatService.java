@@ -25,6 +25,7 @@ package org.symphonyoss.client.services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.client.model.CacheType;
 import org.symphonyoss.client.model.Chat;
 import org.symphonyoss.exceptions.StreamsException;
 import org.symphonyoss.exceptions.UsersClientException;
@@ -207,7 +208,7 @@ public class ChatService implements ChatListener {
             chat.setLastMessage(message);
 
             //Enrich all user data..
-            Set<SymUser> remoteUsers = SymUserCache.getUsersByStream(symClient,message.getStreamId());
+            Set<SymUser> remoteUsers = ((SymUserCache)symClient.getCache(CacheType.USER)).getUsersByStream(message.getStreamId());
 
             if (remoteUsers != null) {
 
@@ -317,7 +318,7 @@ public class ChatService implements ChatListener {
 
         //Resolve the UserID to pull chat set.
         try {
-            SymUser user = SymUserCache.getUserByEmail(symClient,email);
+            SymUser user = ((SymUserCache)symClient.getCache(CacheType.USER)).getUserByEmail(email);
 
             if (user != null)
                 return chatsByUser.get(user.getId());
@@ -372,11 +373,11 @@ public class ChatService implements ChatListener {
                 SymUser updatedSymUser = new SymUser();
 
                 if (symUser.getId() != null) {
-                    updatedSymUser = SymUserCache.getUserById(symClient,symUser.getId());
+                    updatedSymUser = ((SymUserCache)symClient.getCache(CacheType.USER)).getUserById(symUser.getId());
                 } else if (symUser.getEmailAddress() != null) {
-                    updatedSymUser = SymUserCache.getUserByEmail(symClient,symUser.getEmailAddress());
+                    updatedSymUser = ((SymUserCache)symClient.getCache(CacheType.USER)).getUserByEmail(symUser.getEmailAddress());
                 } else if (symUser.getUsername() != null) {
-                    updatedSymUser = SymUserCache.getUserByName(symClient,symUser.getUsername());
+                    updatedSymUser = ((SymUserCache)symClient.getCache(CacheType.USER)).getUserByName(symUser.getUsername());
                 } else {
                     logger.error("Failed to retrieve user detail for chat session..(nothing to identify the user)..");
                 }

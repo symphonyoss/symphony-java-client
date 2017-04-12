@@ -22,12 +22,11 @@
 
 package org.symphonyoss.client;
 
+import org.symphonyoss.client.model.CacheType;
 import org.symphonyoss.client.model.SymAuth;
-import org.symphonyoss.client.services.ChatService;
-import org.symphonyoss.client.services.MessageService;
-import org.symphonyoss.client.services.PresenceService;
-import org.symphonyoss.client.services.RoomService;
+import org.symphonyoss.client.services.*;
 import org.symphonyoss.exceptions.InitException;
+import org.symphonyoss.exceptions.SymCacheException;
 import org.symphonyoss.symphony.clients.*;
 import org.symphonyoss.symphony.clients.model.SymUser;
 
@@ -206,6 +205,23 @@ public interface SymphonyClient {
      * @param defaultHttpClient Custom HTTP client
      */
     void setDefaultHttpClient(Client defaultHttpClient);
+
+
+    /**
+     * Set a cache for types : {@link CacheType}
+     * @param symCache A cache
+     * @throws SymCacheException  Exception if cache is unknown.
+     */
+    void setCache(SymCache symCache) throws SymCacheException;
+
+
+    /**
+     * Return a cache by type {@link CacheType}
+     * @param cacheType The type of cache to return
+     * @return Cache representing type
+     */
+    SymCache getCache(CacheType cacheType);
+
 
     /**
      * Terminates all underlying services and threads.
