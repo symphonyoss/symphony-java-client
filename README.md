@@ -43,7 +43,15 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 
 
 ##Change log and notes
-### V1.0.1 (SNAPSHOT)
+
+### V1.0.2 (SNAPSHOT)
+* Move away from internal generated symphony-apis module
+* Increase in unit test coverage
+* AI Framework refresh
+* Room cache (lazy)
+
+
+### V1.0.1 (Stable)
 * Added Users local cache (Lazy) for services
 * SymphonyClient now supports cache plugin setCache(CacheType). Extension sample provided.
 * Updated REST API Spec to 1.45
@@ -52,7 +60,7 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 * Deferred: Although progress was made on moving symphony-apis module, more testing required 
 
 
-### V1.0.0 (Stable)
+### V1.0.0 
 * Compatible with 1.45 API, V2 and Agent 1.39+
 * Presence service is now disabled by default
 * ShareAPI supporting article (news) posts implemented
