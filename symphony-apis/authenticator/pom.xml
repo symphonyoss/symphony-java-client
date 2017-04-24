@@ -29,7 +29,7 @@
 	<parent>
 		<groupId>org.symphonyoss.symphony</groupId>
 		<artifactId>symphony-apis</artifactId>
-		<version>1.0.1</version>
+		<version>1.0.2-SNAPSHOT</version>
 	</parent>
 
 	<licenses>
