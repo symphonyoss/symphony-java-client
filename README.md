@@ -35,9 +35,9 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 * MessageML utilities
     * Support for command line processing
     * Conversion from MessageML to Text
-* Exposure of underlying Symphony clients:
+* Exposure of underlying Symphony bindings:
     * Authentication, Users, Presence, Streams, Datafeed, RoomMembership, Connections, Attachments
-
+* Lazy cache for user data.  Can also be extended to custom cache solutions. 
 **Administration features are currently not supported in the library. (future work)**
 
 
@@ -45,9 +45,11 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 ##Change log and notes
 ### V1.0.1 (SNAPSHOT)
 * Added Users local cache (Lazy) for services
-* SymphonyClient now supports cache plugin setCache(CacheType)
+* SymphonyClient now supports cache plugin setCache(CacheType). Extension sample provided.
+* Updated REST API Spec to 1.45
+* Simplification of CustomHttpClient
 * Focus on performance
-* Moving symphony-apis to external project
+* Deferred: Although progress was made on moving symphony-apis module, more testing required 
 
 
 ### V1.0.0 (Stable)
