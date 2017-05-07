@@ -50,6 +50,8 @@ public interface StreamsClient {
 
     SymRoomSearchResults roomSearch(SymRoomSearchCriteria searchCriteria, Integer skip, Integer limit) throws StreamsException;
 
+    SymStreamAttributes getStreamAttributes(String streamId) throws StreamsException;
+
     /**
      * Deactivates a room for a given roomId
      * @param roomId 

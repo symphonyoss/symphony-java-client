@@ -131,17 +131,17 @@ public class StreamsClientImpl implements org.symphonyoss.symphony.clients.Strea
         }
 
         UserIdList userIdList = new UserIdList();
-        String usersPrint = "";
+        StringBuilder usersPrint = new StringBuilder();
 
         for (SymUser user : symUsers) {
             userIdList.add(user.getId());
-            usersPrint += " [" + user.getEmailAddress() + "] ";
+            usersPrint.append(" [").append(user.getEmailAddress()).append("] ");
         }
 
 
         Stream stream = getStream(userIdList);
 
-        logger.debug("Stream ID for chat: {}:{} ", usersPrint, stream.getId());
+        logger.debug("Stream ID for chat: {}:{} ", usersPrint.toString(), stream.getId());
 
         return stream;
 
@@ -281,6 +281,28 @@ public class StreamsClientImpl implements org.symphonyoss.symphony.clients.Strea
         } catch (ApiException e) {
             throw new StreamsException("Failed room search...", e);
         }
+    }
+
+
+    /**
+     * Retrieve stream attributes, which provide communication types like ROOM, IM
+     * @param streamId Stream Id
+     * @return Stream Attributes
+     * @throws StreamsException Thrown from underlying API calls
+     */
+    @Override
+    public SymStreamAttributes getStreamAttributes(String streamId) throws StreamsException{
+
+
+        StreamsApi streamsApi = new StreamsApi(apiClient);
+
+        try {
+            return SymStreamAttributes.toStreamAttributes(streamsApi.v1StreamsSidInfoGet(streamId, symAuth.getSessionToken().getToken()));
+        } catch (ApiException e) {
+            throw new StreamsException("Failed to obtain stream attributes while updating attributes on stream: {}" + streamId, e);
+        }
+
+
     }
 
     @Override

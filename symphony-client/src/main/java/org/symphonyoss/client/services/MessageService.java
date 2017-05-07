@@ -33,6 +33,8 @@ import org.symphonyoss.exceptions.StreamsException;
 import org.symphonyoss.exceptions.UsersClientException;
 import org.symphonyoss.symphony.agent.model.*;
 import org.symphonyoss.symphony.clients.model.SymMessage;
+import org.symphonyoss.symphony.clients.model.SymStreamAttributes;
+import org.symphonyoss.symphony.clients.model.SymStreamType;
 import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.pod.model.Stream;
 
@@ -284,26 +286,34 @@ public class MessageService implements DataFeedListener {
         if (chatStreamCache.contains(message.getStreamId()))
             return false;
 
-        // #LLC-IMPROVEMENT
-        //Unfortunately there is no easy way to identify stream types...so enter hacks.
 
         try {
-            if (symClient.getStreamsClient().getRoomDetail(message.getStreamId()) != null) {
+
+            SymStreamAttributes symStreamAttributes = symClient.getStreamsClient().getStreamAttributes(message.getStreamId());
+
+            if ( symStreamAttributes != null && symStreamAttributes.getSymStreamType().getType() == SymStreamType.Type.ROOM) {
+
                 roomStreamCache.add(message.getStreamId());
                 logger.debug("Found new room stream to cache: {}", message.getStreamId());
                 return true;
+
+            }else{
+
+                //By default its a Chat stream..
+                chatStreamCache.add(message.getStreamId());
+                logger.debug("Found new chat stream to cache: {}", message.getStreamId());
+                return false;
             }
+
+
         } catch (StreamsException e) {
             //Exception will be common here, so we are not going to throw exceptions every time.
-            logger.debug("Failed to retrieve room detail, so this is a chat stream.");
-
+            logger.debug("Failed to retrieve stream attributes detail");
 
         }
 
-        //By default its a Chat stream..
-        chatStreamCache.add(message.getStreamId());
-        logger.debug("Found new chat stream to cache: {}", message.getStreamId());
         return false;
+
 
 
     }

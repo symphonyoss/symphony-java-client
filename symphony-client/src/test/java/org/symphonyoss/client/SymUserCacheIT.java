@@ -44,7 +44,7 @@ public class SymUserCacheIT {
     private static final Logger logger = LoggerFactory.getLogger(SymUserCacheIT.class);
 
 
-    public final static String MP_USER_EMAIL = "frank.tarsillo@ihsmarkit.com";
+    private final static String MP_USER_EMAIL = System.getProperty("mp.user.email","Frank.Tarsillo@ihsmarkit.com");
 
     private static boolean responded;
 
@@ -98,6 +98,7 @@ public class SymUserCacheIT {
         try {
             ((SymUserCache) sjcTestClient.getCache(CacheType.USER)).getUserById( (long) 1000000);
         } catch (Exception e) {
+            logger.debug("Good thing...");
         }
 
 
