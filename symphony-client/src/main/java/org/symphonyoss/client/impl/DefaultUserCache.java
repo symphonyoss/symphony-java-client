@@ -248,7 +248,6 @@ public class DefaultUserCache implements SymUserCache {
 
         } catch (ExecutionException exc) {
 
-            logger.error("Exception loading user from cache by id", exc);
 
             throw new UsersClientException("Cannot load user from cache by id", exc);
 
@@ -295,7 +294,6 @@ public class DefaultUserCache implements SymUserCache {
 
         } catch (ExecutionException exc) {
 
-            logger.error("Exception loading users from cache by stream", exc);
 
             throw new UsersClientException("Cannot load users from cache by stream", exc);
 
@@ -318,7 +316,6 @@ public class DefaultUserCache implements SymUserCache {
 
         } catch (ExecutionException exc) {
 
-            logger.error("Exception loading user from cache by email", exc);
 
             throw new UsersClientException("Cannot load user from cache by email", exc);
 

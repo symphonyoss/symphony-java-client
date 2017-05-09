@@ -32,10 +32,7 @@ import org.symphonyoss.exceptions.MessagesException;
 import org.symphonyoss.exceptions.StreamsException;
 import org.symphonyoss.exceptions.UsersClientException;
 import org.symphonyoss.symphony.agent.model.*;
-import org.symphonyoss.symphony.clients.model.SymMessage;
-import org.symphonyoss.symphony.clients.model.SymStreamAttributes;
-import org.symphonyoss.symphony.clients.model.SymStreamType;
-import org.symphonyoss.symphony.clients.model.SymUser;
+import org.symphonyoss.symphony.clients.model.*;
 import org.symphonyoss.symphony.pod.model.Stream;
 
 import java.util.List;

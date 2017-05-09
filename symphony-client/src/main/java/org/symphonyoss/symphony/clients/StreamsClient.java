@@ -40,6 +40,8 @@ public interface StreamsClient {
 
     Stream getStream(UserIdList userIdList) throws StreamsException;
 
+    SymAdminStreamList getStreams(Integer skip, Integer limit, SymAdminStreamFilter symAdminStreamFilter) throws StreamsException;
+
     Stream getStreamFromEmail(String email) throws StreamsException;
 
     SymRoomDetail getRoomDetail(String id) throws StreamsException;
