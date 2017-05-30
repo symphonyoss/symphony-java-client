@@ -43,5 +43,6 @@ public class Constants {
     public static final String USERSCLIENT_GETALLUSERS_THREADPOOL ="usersclient.getallusers.threadpool";
     public static final String PRESENCE_POLL = "presence.poll";
     public static final String SYMUSERS_CACHE_ACCESSEDEXPIRY = "symusers.cache.accessedexpiry";
+    public static final String DATAFEED_MAX_MESSAGES = "datafeed.max.messages";
 
 }

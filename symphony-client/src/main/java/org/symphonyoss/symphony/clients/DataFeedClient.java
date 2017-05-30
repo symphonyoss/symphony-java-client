@@ -42,6 +42,8 @@ public interface DataFeedClient {
      */
     Datafeed createDatafeed() throws DataFeedException;
 
+    List<V2BaseMessage> getMessagesFromDatafeed(Datafeed datafeed, int maxMessages) throws DataFeedException;
+
     /**
      * This will return messages from datafeed object through underlying blocking calls.  This method should be called
      * repeatedly to pull message data.

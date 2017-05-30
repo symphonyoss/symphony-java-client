@@ -24,6 +24,7 @@ package org.symphonyoss.symphony.clients.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.symphonyoss.client.common.Constants;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.exceptions.DataFeedException;
 import org.symphonyoss.symphony.agent.api.DatafeedApi;
@@ -98,7 +99,7 @@ public class DataFeedClientImpl implements DataFeedClient {
 
 
     @Override
-    public List<V2BaseMessage> getMessagesFromDatafeed(Datafeed datafeed) throws DataFeedException {
+    public List<V2BaseMessage> getMessagesFromDatafeed(Datafeed datafeed, int maxMessages) throws DataFeedException {
 
         DatafeedApi datafeedApi = new DatafeedApi(apiClient);
 
@@ -108,7 +109,7 @@ public class DataFeedClientImpl implements DataFeedClient {
 
         //V2MessageList messageList = null;
         try {
-            return datafeedApi.v2DatafeedIdReadGet(datafeed.getId(),symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken(),100);
+            return datafeedApi.v2DatafeedIdReadGet(datafeed.getId(),symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken(),maxMessages);
         } catch (ApiException e) {
             throw new DataFeedException("Failed to retrieve messages from datafeed...", e);
         }
@@ -116,6 +117,12 @@ public class DataFeedClientImpl implements DataFeedClient {
 
     }
 
+
+    @Override
+    public List<V2BaseMessage> getMessagesFromDatafeed(Datafeed datafeed) throws DataFeedException {
+
+        return getMessagesFromDatafeed(datafeed, Integer.parseInt(System.getProperty(Constants.DATAFEED_MAX_MESSAGES,"100")));
+    }
 
 
 
