@@ -9,7 +9,7 @@ Symphony Java Client
 
 The Symphony java client provides a real-time wrapper around the Symphony REST API's to simplify the creation of chat sessions, room access, presence, messaging and more...  The client provides a set of logical services representing supported features of the Symphony platform.  Services support real-time events through feature based listeners and communication objects.  Access is not limited to the services as all underlying Symphony client implementations are exposed for advanced use or creation of your own service.
 
-##Features
+## Features
 * Basic client:
     * Authentication management
     * Implements and exposes functional services and underlying clients.
@@ -42,7 +42,7 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 
 
 
-##Change log and notes
+## Change log and notes
 
 ### V1.0.2 (SNAPSHOT)
 * Move away from internal generated symphony-apis module
@@ -104,16 +104,16 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 * Exposes clients for Symphoni API including Authorization, Streams, Presence, RoomMembership, User, Users,
 * Utilizes generated API models from Symphony
 
-##Branch Strategy
+## Branch Strategy
 
 **develop** - All active development on latest SNAPSHOT
 **master**  - Periodic merged and tested features from develop branch
 
 
 
-##Requirements
+## Requirements
 
-####POM:
+#### POM:
 
         <dependency>
             <groupId>org.symphonyoss.symphony</groupId>
@@ -121,7 +121,7 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
             <version>(Version)</version>
         </dependency>
 
-####Certificates:
+#### Certificates:
 
         Please contact your Symphony local administrator to obtain the necessary certificates
         for the user/service account being used to access the POD.
@@ -133,7 +133,7 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
         means you can bind different .p12 certs representing different BOT users.
 
 
-####Required System Properties:
+#### Required System Properties:
 
         -Dkeystore.password=(Pass)
         -Dtruststore.password=(Pass)
@@ -146,11 +146,11 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
         -Dtruststore.file=/dev/certs/server.truststore
         -Dbot.user=(user name)
 
-##Examples
+## Examples
 [see Examples Project](https://github.com/symphonyoss/symphony-java-sample-bots)
 
 
-##API Docs
+## API Docs
 [API Documentation](http://symphonyoss.github.io/symphony-java-client/index.html)
 
 ## Contribute
