@@ -49,7 +49,7 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 * Increase in unit test coverage
 * AI Framework refresh
 * Room cache (lazy)
-* Added ability to obtain stream attributes in StreamsClient.getStreams(...)
+* Added ability to obtain stream attributes in StreamsClient.getStreams(...).  Admin and user level.
 * Added the ability to list all streams known streams for a given user StreamClient
 * Updated MessageService to take advantage of new stream attributes functions
 
@@ -103,6 +103,11 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 * Inititial release includes the basic client, chat service, presence service and basic room functions.
 * Exposes clients for Symphoni API including Authorization, Streams, Presence, RoomMembership, User, Users,
 * Utilizes generated API models from Symphony
+
+##Branch Strategy
+
+**develop** - All active development on latest SNAPSHOT
+**master**  - Periodic merged and tested features from develop branch
 
 
 
