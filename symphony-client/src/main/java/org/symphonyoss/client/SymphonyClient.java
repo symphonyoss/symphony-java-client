@@ -22,11 +22,11 @@
 
 package org.symphonyoss.client;
 
+import org.symphonyoss.client.exceptions.InitException;
+import org.symphonyoss.client.exceptions.SymCacheException;
 import org.symphonyoss.client.model.CacheType;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.client.services.*;
-import org.symphonyoss.exceptions.InitException;
-import org.symphonyoss.exceptions.SymCacheException;
 import org.symphonyoss.symphony.clients.*;
 import org.symphonyoss.symphony.clients.model.SymUser;
 

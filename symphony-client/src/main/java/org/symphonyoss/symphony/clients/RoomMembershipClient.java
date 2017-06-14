@@ -1,6 +1,6 @@
 package org.symphonyoss.symphony.clients;
 
-import org.symphonyoss.exceptions.SymException;
+import org.symphonyoss.client.exceptions.SymException;
 import org.symphonyoss.symphony.pod.model.MembershipList;
 
 /**

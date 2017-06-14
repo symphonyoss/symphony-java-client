@@ -24,9 +24,9 @@ package org.symphonyoss.symphony.clients.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.symphonyoss.client.exceptions.StreamsException;
+import org.symphonyoss.client.exceptions.UsersClientException;
 import org.symphonyoss.client.model.SymAuth;
-import org.symphonyoss.exceptions.StreamsException;
-import org.symphonyoss.exceptions.UsersClientException;
 import org.symphonyoss.symphony.clients.UsersClient;
 import org.symphonyoss.symphony.clients.UsersFactory;
 import org.symphonyoss.symphony.clients.model.*;

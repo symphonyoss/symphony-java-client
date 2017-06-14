@@ -27,9 +27,9 @@ package org.symphonyoss.symphony.clients.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.symphonyoss.client.exceptions.ShareException;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.client.model.SymShareArticle;
-import org.symphonyoss.exceptions.ShareException;
 import org.symphonyoss.symphony.agent.api.ShareApi;
 import org.symphonyoss.symphony.agent.invoker.ApiException;
 import org.symphonyoss.symphony.agent.model.ShareContent;

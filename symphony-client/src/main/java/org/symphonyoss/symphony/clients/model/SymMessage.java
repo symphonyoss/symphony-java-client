@@ -22,8 +22,8 @@
 
 package org.symphonyoss.symphony.clients.model;
 
+import org.symphonyoss.client.exceptions.SymException;
 import org.symphonyoss.client.util.MlMessageParser;
-import org.symphonyoss.exceptions.SymException;
 import org.symphonyoss.symphony.agent.model.Message;
 import org.symphonyoss.symphony.agent.model.V2BaseMessage;
 import org.symphonyoss.symphony.agent.model.V2Message;

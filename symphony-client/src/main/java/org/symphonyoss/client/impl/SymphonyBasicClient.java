@@ -27,12 +27,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.client.common.Constants;
+import org.symphonyoss.client.exceptions.InitException;
+import org.symphonyoss.client.exceptions.SymCacheException;
+import org.symphonyoss.client.exceptions.SymException;
 import org.symphonyoss.client.model.CacheType;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.client.services.*;
-import org.symphonyoss.exceptions.InitException;
-import org.symphonyoss.exceptions.SymCacheException;
-import org.symphonyoss.exceptions.SymException;
 import org.symphonyoss.symphony.clients.*;
 import org.symphonyoss.symphony.clients.model.SymUser;
 

@@ -21,24 +21,24 @@
  * under the License.
  */
 
-package org.symphonyoss.exceptions;
+package org.symphonyoss.client.exceptions;
+
+
 
 /**
  * @author Frank Tarsillo
  */
 @SuppressWarnings("WeakerAccess")
-public class SymException extends Exception{
-
-    public SymException(String message) {
-        super (message);
+public class UsersClientException extends SymException {
+    public UsersClientException(String message) {
+        super(message);
     }
 
-    protected SymException(Throwable cause) {
-        super (cause);
+    public UsersClientException(Throwable cause) {
+        super(cause);
     }
 
-    public SymException(String message, Throwable cause) {
-        super (message, cause);
+    public UsersClientException(String message, Throwable cause) {
+        super(message, cause);
     }
-
 }

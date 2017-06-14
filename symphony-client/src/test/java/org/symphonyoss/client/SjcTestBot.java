@@ -26,12 +26,12 @@ package org.symphonyoss.client;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.symphonyoss.client.exceptions.MessagesException;
+import org.symphonyoss.client.exceptions.PresenceException;
+import org.symphonyoss.client.exceptions.SymException;
 import org.symphonyoss.client.model.Chat;
 import org.symphonyoss.client.model.Room;
 import org.symphonyoss.client.services.*;
-import org.symphonyoss.exceptions.MessagesException;
-import org.symphonyoss.exceptions.PresenceException;
-import org.symphonyoss.exceptions.SymException;
 import org.symphonyoss.symphony.agent.model.*;
 import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.clients.model.SymUserConnection;

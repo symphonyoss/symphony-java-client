@@ -24,11 +24,11 @@ package org.symphonyoss.client;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.symphonyoss.client.exceptions.AuthorizationException;
+import org.symphonyoss.client.exceptions.InitException;
 import org.symphonyoss.client.impl.CustomHttpClient;
 import org.symphonyoss.client.impl.SymphonyBasicClient;
 import org.symphonyoss.client.model.SymAuth;
-import org.symphonyoss.exceptions.AuthorizationException;
-import org.symphonyoss.exceptions.InitException;
 import org.symphonyoss.symphony.clients.AuthorizationClient;
 
 import javax.ws.rs.client.Client;

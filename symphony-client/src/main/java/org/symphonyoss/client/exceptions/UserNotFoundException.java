@@ -21,23 +21,35 @@
  * under the License.
  */
 
-package org.symphonyoss.exceptions;
+package org.symphonyoss.client.exceptions;
 
 /**
  * Created by Frank Tarsillo on 9/11/2016.
  */
-public class ConnectionsException extends SymException {
-    @SuppressWarnings("unused")
-    public ConnectionsException(String message) {
+public class UserNotFoundException extends UsersClientException {
+
+
+    public UserNotFoundException(String message) {
+
         super(message);
     }
 
     @SuppressWarnings("unused")
-    public ConnectionsException(Throwable cause) {
+    public UserNotFoundException(Throwable cause) {
         super(cause);
     }
 
-    public ConnectionsException(String message, Throwable cause) {
+    @SuppressWarnings("unused")
+    public UserNotFoundException(String message, Throwable cause) {
         super(message, cause);
     }
+
+    @SuppressWarnings("unused")
+    public UserNotFoundException(String userName, String message) {
+
+        super(message);
+    }
+
+
+
 }

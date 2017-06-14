@@ -22,7 +22,7 @@
 
 package org.symphonyoss.symphony.clients;
 
-import org.symphonyoss.exceptions.DataFeedException;
+import org.symphonyoss.client.exceptions.DataFeedException;
 import org.symphonyoss.symphony.agent.model.Datafeed;
 import org.symphonyoss.symphony.agent.model.V2BaseMessage;
 

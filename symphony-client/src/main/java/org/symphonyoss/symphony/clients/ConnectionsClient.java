@@ -22,7 +22,7 @@
 
 package org.symphonyoss.symphony.clients;
 
-import org.symphonyoss.exceptions.ConnectionsException;
+import org.symphonyoss.client.exceptions.ConnectionsException;
 import org.symphonyoss.symphony.clients.model.SymUserConnection;
 import org.symphonyoss.symphony.clients.model.SymUserConnectionRequest;
 

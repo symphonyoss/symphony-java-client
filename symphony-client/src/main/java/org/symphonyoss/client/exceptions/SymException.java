@@ -21,22 +21,24 @@
  * under the License.
  */
 
-package org.symphonyoss.exceptions;
+package org.symphonyoss.client.exceptions;
 
 /**
- * Created by Frank Tarsillo on 9/10/2016.
+ * @author Frank Tarsillo
  */
-public class InitException extends SymException {
-    public InitException (String message) {
+@SuppressWarnings("WeakerAccess")
+public class SymException extends Exception{
+
+    public SymException(String message) {
         super (message);
     }
 
-    @SuppressWarnings("unused")
-    public InitException (Throwable cause) {
+    protected SymException(Throwable cause) {
         super (cause);
     }
 
-    public InitException (String message, Throwable cause) {
+    public SymException(String message, Throwable cause) {
         super (message, cause);
     }
+
 }

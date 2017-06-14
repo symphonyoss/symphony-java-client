@@ -24,8 +24,8 @@ package org.symphonyoss.symphony.clients.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.symphonyoss.client.exceptions.MessagesException;
 import org.symphonyoss.client.model.SymAuth;
-import org.symphonyoss.exceptions.MessagesException;
 import org.symphonyoss.symphony.agent.api.MessagesApi;
 import org.symphonyoss.symphony.agent.invoker.ApiClient;
 import org.symphonyoss.symphony.agent.invoker.ApiException;

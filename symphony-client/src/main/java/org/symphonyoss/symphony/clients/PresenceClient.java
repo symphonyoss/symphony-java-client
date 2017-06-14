@@ -22,7 +22,7 @@
 
 package org.symphonyoss.symphony.clients;
 
-import org.symphonyoss.exceptions.PresenceException;
+import org.symphonyoss.client.exceptions.PresenceException;
 import org.symphonyoss.symphony.pod.model.Presence;
 import org.symphonyoss.symphony.pod.model.PresenceList;
 
