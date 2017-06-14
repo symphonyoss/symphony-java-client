@@ -51,7 +51,7 @@ env:
    - SESSIONAUTH_URL=$FOUNDATION_API_URL/sessionauth
    - KEYAUTH_URL=$FOUNDATION_API_URL/keyauth
    - POD_URL=$FOUNDATION_POD_URL/pod
-   - AGENT_URL=$FOUNDATION_API_URL/agent
+   - AGENT_URL=$FOUNDATION_POD_URL/agent
    - TEST_ROOM_STREAM=276YAAI9Kzvl3wRA+z2hln___qV6zxh9dA
    - MP_USER_EMAIL=frank.tarsillo@ihsmarkit.com
    # Need to "gem install travis" first
