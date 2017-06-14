@@ -26,6 +26,7 @@ import org.symphonyoss.client.exceptions.StreamsException;
 import org.symphonyoss.symphony.clients.model.*;
 import org.symphonyoss.symphony.pod.model.*;
 
+import java.util.List;
 import java.util.Set;
 
 
@@ -41,6 +42,8 @@ public interface StreamsClient {
     Stream getStream(UserIdList userIdList) throws StreamsException;
 
     SymAdminStreamList getStreams(Integer skip, Integer limit, SymAdminStreamFilter symAdminStreamFilter) throws StreamsException;
+
+    List<SymStreamAttributes> getStreams(Integer skip, Integer limit, SymStreamFilter symStreamFilter) throws StreamsException;
 
     Stream getStreamFromEmail(String email) throws StreamsException;
 

@@ -148,30 +148,4 @@ public class SymAdminStreamAttributes {
         return symAdminStreamAttributes;
     }
 
-//
-//
-//    public static SymAdminStreamAttributes toAdminStreamAttributes(AdminStreamAttributes attributes) {
-//
-//        SymAdminStreamAttributes symAdminStreamAttributes = new SymAdminStreamAttributes();
-//        symAdminStreamAttributes.setActive(attributes.getActive());
-//        symAdminStreamAttributes.setCrossPod(a.getCrossPod());
-//        symAdminStreamAttributes.setId(streamAttributes.getId());
-//
-//        SymRoomSpecificStreamAttributes symRoomSpecificStreamAttributes = new SymRoomSpecificStreamAttributes();
-//
-//        if (streamAttributes.getRoomAttributes() != null) {
-//            symRoomSpecificStreamAttributes.setName(streamAttributes.getRoomAttributes().getName());
-//            symAdminStreamAttributes.setSymRoomSpecificStreamAttributes(symRoomSpecificStreamAttributes);
-//        }
-//
-//        SymStreamType symStreamType = new SymStreamType();
-//        symStreamType.setType(SymStreamType.Type.fromValue(streamAttributes.getStreamType().getType().toString()));
-//        symAdminStreamAttributes.setSymStreamType(symStreamType);
-//
-//        if (streamAttributes.getStreamAttributes() != null)
-//            symAdminStreamAttributes.setSymChatSpecificStreamAttributes(SymChatSpecificStreamAttributes.toSymChatSpecificStreamAttributes(streamAttributes.getStreamAttributes()));
-//
-//
-//        return symAdminStreamAttributes;
-//    }
 }
