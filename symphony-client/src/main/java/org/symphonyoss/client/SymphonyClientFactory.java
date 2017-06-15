@@ -119,7 +119,7 @@ public class SymphonyClientFactory {
 
             return symClient;
 
-        } catch (NetworkException ae) {
+        } catch (AuthorizationException ae) {
 
             logger.error(ae.getMessage(), ae);
         } catch (InitException e) {
