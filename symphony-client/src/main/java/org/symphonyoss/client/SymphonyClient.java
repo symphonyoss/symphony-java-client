@@ -77,7 +77,7 @@ public interface SymphonyClient {
      * @throws NetworkException 
      * @throws AuthorizationException 
      */
-    void init(Client httpClient, SymphonyClientConfig config) throws InitException, AuthorizationException, NetworkException;
+    void init(Client httpClient, SymphonyClientConfig config) throws InitException, AuthorizationException;
     
     /**
      * Initialize client with required parameters.
@@ -87,7 +87,7 @@ public interface SymphonyClient {
      * @throws NetworkException 
      * @throws AuthorizationException 
      */
-    void init(SymphonyClientConfig config) throws InitException, AuthorizationException, NetworkException;
+    void init(SymphonyClientConfig config) throws InitException, AuthorizationException;
     
     /**
      * Retrieve authorization object.
