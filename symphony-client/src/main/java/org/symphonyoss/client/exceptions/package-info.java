@@ -33,7 +33,7 @@
  * 
  * Classes with names ending in Fault are sub-classes of
  * SymFault which itself extends java.lang.RuntimeException, they are
- * therefore checked exceptions, and represent unexpected faults which
+ * therefore unchecked exceptions, and represent unexpected faults which
  * the caller could not have reasonably avoided and which they
  * should not be required to handle.
  * 
@@ -55,8 +55,8 @@
  * which is extended by Exceptions related to network errors and
  * RestException extends NetworkException and adds an HTTP status code.
  * 
- *  There is some copying of data from chained exceptions which might 
- *  look unnecessary but in some cases it is the only way to surface
- *  diagnostics because of limitations in the Swagger generated code.
+ * Where an error occurs in a REST call a RestException is created
+ * containing the network endpoint (URL) and HTTP status code received
+ * and this is added to the exception chain.
  */
 package org.symphonyoss.client.exceptions;
