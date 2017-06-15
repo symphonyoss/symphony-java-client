@@ -92,7 +92,8 @@ public class DataFeedClientImpl implements DataFeedClient {
         try {
             return datafeedApi.v1DatafeedCreatePost(symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken());
         } catch (  ApiException e) {
-            throw new DataFeedException("Could not start datafeed..", e);
+            throw new DataFeedException("Could not start datafeed..",
+        	    datafeedApi.getApiClient().getBasePath(), e.getCode(), e);
         }
     }
 
@@ -111,7 +112,8 @@ public class DataFeedClientImpl implements DataFeedClient {
         try {
             return datafeedApi.v2DatafeedIdReadGet(datafeed.getId(),symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken(),maxMessages);
         } catch (ApiException e) {
-            throw new DataFeedException("Failed to retrieve messages from datafeed...", e);
+            throw new DataFeedException("Failed to retrieve messages from datafeed...", 
+        	    datafeedApi.getApiClient().getBasePath(), e.getCode(), e);
         }
 
 

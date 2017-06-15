@@ -30,7 +30,9 @@ package org.symphonyoss.client.exceptions;
  */
 @SuppressWarnings("WeakerAccess")
 public class UsersClientException extends SymException {
-    public UsersClientException(String message) {
+	private static final long serialVersionUID = 1L;
+
+	public UsersClientException(String message) {
         super(message);
     }
 

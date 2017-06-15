@@ -22,7 +22,9 @@
 
 package org.symphonyoss.client;
 
+import org.symphonyoss.client.exceptions.AuthorizationException;
 import org.symphonyoss.client.exceptions.InitException;
+import org.symphonyoss.client.exceptions.NetworkException;
 import org.symphonyoss.client.exceptions.SymCacheException;
 import org.symphonyoss.client.model.CacheType;
 import org.symphonyoss.client.model.SymAuth;
@@ -65,6 +67,28 @@ public interface SymphonyClient {
      */
     void init(Client httpClient, SymAuth symAuth, String email, String agentUrl, String serviceUrl) throws InitException;
 
+
+    /**
+     * Initialize client with required parameters and custom HTTP client.
+     *
+     * @param httpClient Custom http client to use when connecting to Symphony API's
+     * @param SymphonyClientConfig Configuration object
+     * @throws InitException Failure of a specific service most likely due to connectivity issues
+     * @throws NetworkException 
+     * @throws AuthorizationException 
+     */
+    void init(Client httpClient, SymphonyClientConfig config) throws InitException, AuthorizationException, NetworkException;
+    
+    /**
+     * Initialize client with required parameters.
+     *
+     * @param SymphonyClientConfig Configuration object
+     * @throws InitException Failure of a specific service most likely due to connectivity issues
+     * @throws NetworkException 
+     * @throws AuthorizationException 
+     */
+    void init(SymphonyClientConfig config) throws InitException, AuthorizationException, NetworkException;
+    
     /**
      * Retrieve authorization object.
      *

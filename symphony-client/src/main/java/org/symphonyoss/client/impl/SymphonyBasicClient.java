@@ -26,8 +26,12 @@ package org.symphonyoss.client.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.client.SymphonyClientConfig;
+import org.symphonyoss.client.SymphonyClientConfigID;
 import org.symphonyoss.client.common.Constants;
+import org.symphonyoss.client.exceptions.AuthorizationException;
 import org.symphonyoss.client.exceptions.InitException;
+import org.symphonyoss.client.exceptions.NetworkException;
 import org.symphonyoss.client.exceptions.SymCacheException;
 import org.symphonyoss.client.exceptions.SymException;
 import org.symphonyoss.client.model.CacheType;
@@ -81,6 +85,41 @@ public class SymphonyBasicClient implements SymphonyClient {
 
 
     }
+
+
+    
+    @Override
+    public void init(Client httpClient, SymphonyClientConfig initParams) throws InitException, AuthorizationException, NetworkException {
+	this.defaultHttpClient = httpClient;
+	
+	AuthorizationClient authClient = new AuthorizationClient(
+                initParams.get(SymphonyClientConfigID.SESSIONAUTH_URL),
+                initParams.get(SymphonyClientConfigID.KEYAUTH_URL));
+
+        authClient.setKeystores(
+                initParams.get(SymphonyClientConfigID.TRUSTSTORE_FILE),
+                initParams.get(SymphonyClientConfigID.TRUSTSTORE_PASSWORD),
+                initParams.get(SymphonyClientConfigID.USER_CERT_FILE),
+                initParams.get(SymphonyClientConfigID.USER_CERT_PASSWORD));
+
+        SymAuth symAuth = authClient.authenticate();
+
+        init(
+                symAuth,
+                initParams.get(SymphonyClientConfigID.USER_EMAIL),
+                initParams.get(SymphonyClientConfigID.AGENT_URL),
+                initParams.get(SymphonyClientConfigID.POD_URL)
+                );
+    }
+
+
+
+    @Override
+    public void init(SymphonyClientConfig config) throws InitException, AuthorizationException, NetworkException {
+	init(null, config);
+    }
+
+
 
     /**
      * Initialize client with required parameters.

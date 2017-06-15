@@ -26,18 +26,20 @@ package org.symphonyoss.client.exceptions;
 /**
  * Created by Frank Tarsillo on 9/11/2016.
  */
-public class AuthorizationException extends SymException {
-    @SuppressWarnings("unused")
-    public AuthorizationException(String message) {
-        super(message);
+public class AuthorizationException extends RestException {
+    private static final long serialVersionUID = 1L;
+
+    public AuthorizationException(String endpoint, int httpStatus, Throwable cause) {
+	super(endpoint, httpStatus, cause);
     }
 
-    @SuppressWarnings("unused")
-    public AuthorizationException(Throwable cause) {
-        super(cause);
+    public AuthorizationException(String message, String endpoint, int httpStatus, Throwable cause) {
+	super(message, endpoint, httpStatus, cause);
     }
 
-    public AuthorizationException(String message, Throwable cause) {
-        super(message, cause);
+    public AuthorizationException(String message, String endpoint, int httpStatus) {
+	super(message, endpoint, httpStatus);
     }
+
+   
 }

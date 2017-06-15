@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.exceptions.AuthorizationException;
 import org.symphonyoss.client.exceptions.InitException;
+import org.symphonyoss.client.exceptions.NetworkException;
 import org.symphonyoss.client.impl.CustomHttpClient;
 import org.symphonyoss.client.impl.SymphonyBasicClient;
 import org.symphonyoss.client.model.SymAuth;
@@ -118,7 +119,7 @@ public class SymphonyClientFactory {
 
             return symClient;
 
-        } catch (AuthorizationException ae) {
+        } catch (NetworkException ae) {
 
             logger.error(ae.getMessage(), ae);
         } catch (InitException e) {

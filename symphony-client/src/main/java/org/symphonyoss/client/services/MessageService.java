@@ -181,7 +181,9 @@ public class MessageService implements DataFeedListener {
                     symClient.getStreamsClient().getStream(user), since, offset, maxMessages);
         } catch (StreamsException e) {
             throw new MessagesException("Failed to retrieve messages. Unable to identity stream for userId: " + userId, e);
-        }
+
+            
+                    }
 
 
     }
