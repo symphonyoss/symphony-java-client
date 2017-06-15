@@ -43,10 +43,10 @@ import org.symphonyoss.symphony.authenticator.model.Token;
  *  I think we should re-name it to AuthenticationClient and make
  *  AuthorizationClient a sub-class which adds nothing but is
  *  @Deprecated. This means that existing code will still work 
- *  but callers will geta deprecation warning.
+ *  but callers will get a deprecation warning.
  *  
- *  As we are changing exceptions anyway I think we should just
- *  rename AuthorizationException to AuthenticationException.
+ *  AuthorizationException is also mis-named but should be re-factored
+ *  as part of a re-work of exception handling.
  *  
  *  -Bruce
  */
