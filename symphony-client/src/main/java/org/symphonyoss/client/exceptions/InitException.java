@@ -21,23 +21,22 @@
  * under the License.
  */
 
-package org.symphonyoss.exceptions;
+package org.symphonyoss.client.exceptions;
 
 /**
- * Created by Frank Tarsillo on 9/11/2016.
+ * Created by Frank Tarsillo on 9/10/2016.
  */
-public class AuthorizationException extends SymException {
-    @SuppressWarnings("unused")
-    public AuthorizationException(String message) {
-        super(message);
+public class InitException extends SymException {
+    public InitException (String message) {
+        super (message);
     }
 
     @SuppressWarnings("unused")
-    public AuthorizationException(Throwable cause) {
-        super(cause);
+    public InitException (Throwable cause) {
+        super (cause);
     }
 
-    public AuthorizationException(String message, Throwable cause) {
-        super(message, cause);
+    public InitException (String message, Throwable cause) {
+        super (message, cause);
     }
 }

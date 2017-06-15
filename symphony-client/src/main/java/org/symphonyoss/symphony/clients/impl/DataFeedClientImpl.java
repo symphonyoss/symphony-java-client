@@ -25,8 +25,8 @@ package org.symphonyoss.symphony.clients.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.common.Constants;
+import org.symphonyoss.client.exceptions.DataFeedException;
 import org.symphonyoss.client.model.SymAuth;
-import org.symphonyoss.exceptions.DataFeedException;
 import org.symphonyoss.symphony.agent.api.DatafeedApi;
 import org.symphonyoss.symphony.agent.invoker.ApiClient;
 import org.symphonyoss.symphony.agent.invoker.ApiException;
@@ -92,7 +92,8 @@ public class DataFeedClientImpl implements DataFeedClient {
         try {
             return datafeedApi.v1DatafeedCreatePost(symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken());
         } catch (  ApiException e) {
-            throw new DataFeedException("Could not start datafeed..", e);
+            throw new DataFeedException("Could not start datafeed..",
+        	    datafeedApi.getApiClient().getBasePath(), e.getCode(), e);
         }
     }
 
@@ -111,7 +112,8 @@ public class DataFeedClientImpl implements DataFeedClient {
         try {
             return datafeedApi.v2DatafeedIdReadGet(datafeed.getId(),symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken(),maxMessages);
         } catch (ApiException e) {
-            throw new DataFeedException("Failed to retrieve messages from datafeed...", e);
+            throw new DataFeedException("Failed to retrieve messages from datafeed...", 
+        	    datafeedApi.getApiClient().getBasePath(), e.getCode(), e);
         }
 
 

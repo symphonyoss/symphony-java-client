@@ -21,23 +21,23 @@
  * under the License.
  */
 
-package org.symphonyoss.exceptions;
+package org.symphonyoss.client.exceptions;
 
 /**
  * Created by Frank Tarsillo on 9/11/2016.
  */
-public class ConnectionsException extends SymException {
-    @SuppressWarnings("unused")
-    public ConnectionsException(String message) {
-        super(message);
+public class DataFeedException extends RestException {
+    private static final long serialVersionUID = 1L;
+
+    public DataFeedException(String endpoint, int httpStatus, Throwable cause) {
+	super(endpoint, httpStatus, cause);
     }
 
-    @SuppressWarnings("unused")
-    public ConnectionsException(Throwable cause) {
-        super(cause);
+    public DataFeedException(String message, String endpoint, int httpStatus, Throwable cause) {
+	super(message, endpoint, httpStatus, cause);
     }
 
-    public ConnectionsException(String message, Throwable cause) {
-        super(message, cause);
+    public DataFeedException(String message, String endpoint, int httpStatus) {
+	super(message, endpoint, httpStatus);
     }
 }

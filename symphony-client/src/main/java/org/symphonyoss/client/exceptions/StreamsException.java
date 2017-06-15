@@ -21,23 +21,23 @@
  * under the License.
  */
 
-package org.symphonyoss.exceptions;
+package org.symphonyoss.client.exceptions;
 
 /**
- * @author Frank Tarsillo
+ * Created by Frank Tarsillo on 9/11/2016.
  */
-@SuppressWarnings("SameParameterValue")
-public class AttachmentsException extends SymException{
-    public AttachmentsException(String message) {
+public class StreamsException extends SymException {
+    @SuppressWarnings("unused")
+    public StreamsException(String message) {
         super(message);
     }
 
     @SuppressWarnings("unused")
-    public AttachmentsException(Throwable cause) {
+    public StreamsException(Throwable cause) {
         super(cause);
     }
 
-    public AttachmentsException(String message, Throwable cause) {
+    public StreamsException(String message, Throwable cause) {
         super(message, cause);
     }
 }

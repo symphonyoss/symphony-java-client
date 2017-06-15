@@ -23,7 +23,7 @@
  *
  */
 
-package org.symphonyoss.exceptions;
+package org.symphonyoss.client.exceptions;
 
 /**
  * Created by Frank Tarsillo on 9/10/2016.

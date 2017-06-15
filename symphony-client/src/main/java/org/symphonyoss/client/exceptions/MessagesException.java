@@ -21,24 +21,23 @@
  * under the License.
  */
 
-package org.symphonyoss.exceptions;
-
-
+package org.symphonyoss.client.exceptions;
 
 /**
- * @author Frank Tarsillo
+ * Created by Frank Tarsillo on 9/11/2016.
  */
-@SuppressWarnings("WeakerAccess")
-public class UsersClientException extends SymException {
-    public UsersClientException(String message) {
+public class MessagesException extends SymException {
+    @SuppressWarnings("unused")
+    public MessagesException(String message) {
         super(message);
     }
 
-    public UsersClientException(Throwable cause) {
+    @SuppressWarnings("unused")
+    public MessagesException(Throwable cause) {
         super(cause);
     }
 
-    public UsersClientException(String message, Throwable cause) {
+    public MessagesException(String message, Throwable cause) {
         super(message, cause);
     }
 }

@@ -21,14 +21,15 @@
  * under the License.
  */
 
-package org.symphonyoss.exceptions;
+package org.symphonyoss.client.exceptions;
 
 /**
  * @author Frank Tarsillo
  */
 @SuppressWarnings("WeakerAccess")
 public class SymException extends Exception{
-
+    private static final long serialVersionUID = 1L;
+    
     public SymException(String message) {
         super (message);
     }

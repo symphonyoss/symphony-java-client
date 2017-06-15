@@ -1,5 +1,6 @@
 /*
  *
+ *
  * Copyright 2016 The Symphony Software Foundation
  *
  * Licensed to The Symphony Software Foundation (SSF) under one
@@ -18,24 +19,27 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
+ *
  */
 
-package org.symphonyoss.exceptions;
+package org.symphonyoss.client.exceptions;
+
+import org.symphonyoss.client.exceptions.SymException;
 
 /**
- * Created by frank.tarsillo on 9/12/2016.
+ * @author  Frank Tarsillo
  */
-public class RoomException extends SymException {
-    public RoomException(String message) {
+public class PresenceException extends SymException {
+    public PresenceException(String message) {
         super(message);
     }
 
     @SuppressWarnings("unused")
-    public RoomException(Throwable cause) {
+    public PresenceException(Throwable cause) {
         super(cause);
     }
 
-    public RoomException(String message, Throwable cause) {
+    public PresenceException(String message, Throwable cause) {
         super(message, cause);
     }
 }

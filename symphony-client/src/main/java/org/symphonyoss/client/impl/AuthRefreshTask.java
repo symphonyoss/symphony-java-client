@@ -28,8 +28,9 @@ package org.symphonyoss.client.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.client.exceptions.AuthorizationException;
+import org.symphonyoss.client.exceptions.NetworkException;
 import org.symphonyoss.client.model.SymAuth;
-import org.symphonyoss.exceptions.AuthorizationException;
 import org.symphonyoss.symphony.clients.AuthorizationClient;
 
 import java.util.TimerTask;
@@ -92,18 +93,14 @@ public class AuthRefreshTask extends TimerTask {
 
 
             //Create a SymAuth which holds both key and session tokens.  This will call the external service.
-            if (authClient == null)
-                throw new AuthorizationException("could not init authclient");
-
-
-            symAuth = authClient.authenticate();
+             symAuth = authClient.authenticate();
 
             symClient.getSymAuth().setKeyToken(symAuth.getKeyToken());
             symClient.getSymAuth().setSessionToken(symAuth.getSessionToken());
 
             logger.info("Successfully refreshed SymAuth tokens...");
 
-        } catch (AuthorizationException e) {
+        } catch (NetworkException e) {
             logger.error("Unable to refresh SymAuth keys...", e);
         }
 

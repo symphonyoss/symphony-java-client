@@ -23,22 +23,49 @@
 package org.symphonyoss.client.impl;
 
 
+import java.util.Timer;
+import java.util.TimerTask;
+
+import javax.ws.rs.client.Client;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.client.SymphonyClientConfig;
+import org.symphonyoss.client.SymphonyClientConfigID;
 import org.symphonyoss.client.common.Constants;
+import org.symphonyoss.client.exceptions.AuthorizationException;
+import org.symphonyoss.client.exceptions.InitException;
+import org.symphonyoss.client.exceptions.SymCacheException;
+import org.symphonyoss.client.exceptions.SymException;
 import org.symphonyoss.client.model.CacheType;
 import org.symphonyoss.client.model.SymAuth;
-import org.symphonyoss.client.services.*;
-import org.symphonyoss.exceptions.InitException;
-import org.symphonyoss.exceptions.SymCacheException;
-import org.symphonyoss.exceptions.SymException;
-import org.symphonyoss.symphony.clients.*;
+import org.symphonyoss.client.services.ChatService;
+import org.symphonyoss.client.services.MessageService;
+import org.symphonyoss.client.services.PresenceService;
+import org.symphonyoss.client.services.RoomService;
+import org.symphonyoss.client.services.SymCache;
+import org.symphonyoss.client.services.SymUserCache;
+import org.symphonyoss.symphony.clients.AttachmentsClient;
+import org.symphonyoss.symphony.clients.AttachmentsFactory;
+import org.symphonyoss.symphony.clients.AuthorizationClient;
+import org.symphonyoss.symphony.clients.ConnectionsClient;
+import org.symphonyoss.symphony.clients.ConnectionsFactory;
+import org.symphonyoss.symphony.clients.DataFeedClient;
+import org.symphonyoss.symphony.clients.DataFeedFactory;
+import org.symphonyoss.symphony.clients.MessagesClient;
+import org.symphonyoss.symphony.clients.MessagesFactory;
+import org.symphonyoss.symphony.clients.PresenceClient;
+import org.symphonyoss.symphony.clients.PresenceFactory;
+import org.symphonyoss.symphony.clients.RoomMembershipClient;
+import org.symphonyoss.symphony.clients.RoomMembershipFactory;
+import org.symphonyoss.symphony.clients.ShareClient;
+import org.symphonyoss.symphony.clients.ShareFactory;
+import org.symphonyoss.symphony.clients.StreamsClient;
+import org.symphonyoss.symphony.clients.StreamsFactory;
+import org.symphonyoss.symphony.clients.UsersClient;
+import org.symphonyoss.symphony.clients.UsersFactory;
 import org.symphonyoss.symphony.clients.model.SymUser;
-
-import javax.ws.rs.client.Client;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * Implements a full abstraction of underlying clients and exposes services to simplify
@@ -81,6 +108,41 @@ public class SymphonyBasicClient implements SymphonyClient {
 
 
     }
+
+
+    
+    @Override
+    public void init(Client httpClient, SymphonyClientConfig initParams) throws InitException, AuthorizationException {
+	this.defaultHttpClient = httpClient;
+	
+	AuthorizationClient authClient = new AuthorizationClient(
+                initParams.get(SymphonyClientConfigID.SESSIONAUTH_URL),
+                initParams.get(SymphonyClientConfigID.KEYAUTH_URL));
+
+        authClient.setKeystores(
+                initParams.get(SymphonyClientConfigID.TRUSTSTORE_FILE),
+                initParams.get(SymphonyClientConfigID.TRUSTSTORE_PASSWORD),
+                initParams.get(SymphonyClientConfigID.USER_CERT_FILE),
+                initParams.get(SymphonyClientConfigID.USER_CERT_PASSWORD));
+
+        SymAuth symAuth = authClient.authenticate();
+
+        init(
+                symAuth,
+                initParams.get(SymphonyClientConfigID.USER_EMAIL),
+                initParams.get(SymphonyClientConfigID.AGENT_URL),
+                initParams.get(SymphonyClientConfigID.POD_URL)
+                );
+    }
+
+
+
+    @Override
+    public void init(SymphonyClientConfig config) throws InitException, AuthorizationException {
+	init(null, config);
+    }
+
+
 
     /**
      * Initialize client with required parameters.

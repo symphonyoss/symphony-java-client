@@ -34,9 +34,10 @@ import javax.ws.rs.client.Client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.common.Constants;
+import org.symphonyoss.client.exceptions.RestException;
+import org.symphonyoss.client.exceptions.UserNotFoundException;
+import org.symphonyoss.client.exceptions.UsersClientException;
 import org.symphonyoss.client.model.SymAuth;
-import org.symphonyoss.exceptions.UserNotFoundException;
-import org.symphonyoss.exceptions.UsersClientException;
 import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.pod.api.RoomMembershipApi;
 import org.symphonyoss.symphony.pod.api.UserApi;
@@ -116,7 +117,8 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
         try {
             user = usersApi.v2UserGet(symAuth.getSessionToken().getToken(), null, email, null, false);
         } catch (ApiException e) {
-            throw new UsersClientException("API Error communicating with POD, while retrieving user details for " + email, e);
+            throw new UsersClientException("API Error communicating with POD, while retrieving user details for " + email,
+            		new RestException(usersApi.getApiClient().getBasePath(), e.getCode(),  e));
         }
 
         if (user != null) {
@@ -147,7 +149,8 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
         try {
             user = usersApi.v2UserGet(symAuth.getSessionToken().getToken(), userId, null, null, false);
         } catch (ApiException e) {
-            throw new UsersClientException("API Error communicating with POD, while retrieving user details for " + userId, e);
+            throw new UsersClientException("API Error communicating with POD, while retrieving user details for " + userId,
+            		new RestException(usersApi.getApiClient().getBasePath(), e.getCode(), e));
         }
 
         if (user != null) {
@@ -176,7 +179,8 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
         try {
             user = usersApi.v2UserGet(symAuth.getSessionToken().getToken(), null, null, userName, true);
         } catch (ApiException e) {
-            throw new UsersClientException("API Error communicating with POD, while retrieving user details for " + userName, e);
+            throw new UsersClientException("API Error communicating with POD, while retrieving user details for " + userName,
+            		new RestException(usersApi.getApiClient().getBasePath(), e.getCode(), e));
         }
 
         if (user != null) {
@@ -212,7 +216,8 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
             return users;
 
         } catch (ApiException e) {
-            throw new UsersClientException("Failed to retrieve room membership for room ID: " + streamId, e);
+            throw new UsersClientException("Failed to retrieve room membership for room ID: " + streamId,
+            		new RestException(roomMembershipApi.getApiClient().getBasePath(), e.getCode(), e));
         }
 
 
@@ -287,9 +292,10 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
 
 
         } catch (ApiException e) {
-            throw new UsersClientException("API Error communicating with POD, while retrieving all user details", e);
+            throw new UsersClientException("API Error communicating with POD, while retrieving all user details",
+            		new RestException(userApi.getApiClient().getBasePath(), e.getCode(), e));
         } catch (InterruptedException e) {
-            logger.error("Executor failed ot terminate after retrieving all users.", e);
+            logger.error("Executor failed to terminate after retrieving all users.", e);
             throw new UsersClientException("Interrupt waiting for search executor to finish", e);
         }
 
@@ -318,7 +324,8 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
         } catch (ApiException e) {
             String message = "API error communicating with POD, while settIng status " + userStatus.getStatus() + " for user id: " + userId;
             logger.error(message, e);
-            throw new UsersClientException(message, e);
+            throw new UsersClientException(message, 
+            		new RestException(usersApi.getApiClient().getBasePath(), e.getCode(), e));
         } catch (IllegalStateException e) {
             String message = "Failed to set status " + userStatus.getStatus() + " for user id: " + userId;
             logger.error(message, e);
@@ -345,7 +352,7 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
         } catch (ApiException e) {
             String message = "API error communicating with POD, while updating user";
             logger.error(message, e);
-            throw new UsersClientException(message, e);
+            throw new UsersClientException(message, new RestException(usersApi.getApiClient().getBasePath(), e.getCode(), e));
         } catch (IllegalStateException e) {
             String message = "Failed to update user";
             logger.error(message, e);
@@ -371,7 +378,8 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
         } catch (ApiException e) {
             String message = "API error communicating with POD, while creating user";
             logger.error(message, e);
-            throw new UsersClientException(message, e);
+            throw new UsersClientException(message,
+            		new RestException(usersApi.getApiClient().getBasePath(), e.getCode(), e));
         } catch (IllegalStateException e) {
             String message = "Failed to create user";
             logger.error(message, e);

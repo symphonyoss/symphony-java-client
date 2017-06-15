@@ -26,8 +26,8 @@ import javax.ws.rs.client.Client;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.symphonyoss.client.exceptions.SymException;
 import org.symphonyoss.client.model.SymAuth;
-import org.symphonyoss.exceptions.SymException;
 import org.symphonyoss.symphony.clients.RoomMembershipClient;
 import org.symphonyoss.symphony.pod.api.RoomMembershipApi;
 import org.symphonyoss.symphony.pod.invoker.ApiClient;

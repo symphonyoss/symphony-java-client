@@ -11,7 +11,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -19,24 +19,27 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
+ *
  */
 
-package org.symphonyoss.exceptions;
+package org.symphonyoss.client.exceptions;
+
+
 
 /**
- * Created by Frank Tarsillo on 9/10/2016.
+ * @author Frank Tarsillo
  */
-public class InitException extends SymException {
-    public InitException (String message) {
-        super (message);
+@SuppressWarnings("WeakerAccess")
+public class SymCacheException extends SymException {
+    public SymCacheException(String message) {
+        super(message);
     }
 
-    @SuppressWarnings("unused")
-    public InitException (Throwable cause) {
-        super (cause);
+    public SymCacheException(Throwable cause) {
+        super(cause);
     }
 
-    public InitException (String message, Throwable cause) {
-        super (message, cause);
+    public SymCacheException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

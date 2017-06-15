@@ -22,19 +22,33 @@
 
 package org.symphonyoss.symphony.clients;
 
+import javax.ws.rs.client.Client;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.symphonyoss.client.exceptions.AuthorizationException;
 import org.symphonyoss.client.model.SymAuth;
-import org.symphonyoss.exceptions.AuthorizationException;
 import org.symphonyoss.symphony.authenticator.api.AuthenticationApi;
 import org.symphonyoss.symphony.authenticator.invoker.ApiException;
 import org.symphonyoss.symphony.authenticator.invoker.Configuration;
 import org.symphonyoss.symphony.authenticator.model.Token;
 
-import javax.ws.rs.client.Client;
-
 /**
  * Created by Frank Tarsillo on 5/15/2016.
+ */
+/* TODO: This class is mis-named, this is about authentication not 
+ * authorisation, although I accept that HTTP 401 is mis-named in
+ * the same way.
+ * 
+ *  I think we should re-name it to AuthenticationClient and make
+ *  AuthorizationClient a sub-class which adds nothing but is
+ *  @Deprecated. This means that existing code will still work 
+ *  but callers will get a deprecation warning.
+ *  
+ *  AuthorizationException is also mis-named but should be re-factored
+ *  as part of a re-work of exception handling.
+ *  
+ *  -Bruce
  */
 public class AuthorizationClient {
 
@@ -66,8 +80,9 @@ public class AuthorizationClient {
     }
 
 
-    public SymAuth authenticate() throws AuthorizationException{
-
+    public SymAuth authenticate() throws AuthorizationException {
+	String currentUrl = "UNKNOWN";
+	
         try {
 
             if(sessionUrl == null || keyUrl == null)
@@ -101,9 +116,9 @@ public class AuthorizationClient {
 
 
             // Configure the authenticator connection
+            currentUrl = sessionUrl;
             authenticatorClient.setBasePath(sessionUrl);
-
-
+            
             // Get the authentication API
             AuthenticationApi authenticationApi = new AuthenticationApi(authenticatorClient);
 
@@ -113,23 +128,21 @@ public class AuthorizationClient {
 
 
             // Configure the keyManager path
+            currentUrl = keyUrl;
             authenticatorClient.setBasePath(keyUrl);
 
 
             symAuth.setKeyToken(authenticationApi.v1AuthenticatePost());
             logger.debug("KeyToken: {} : {}", symAuth.getKeyToken().getName(), symAuth.getKeyToken().getToken());
 
-
-
-
         } catch (ApiException e) {
 
-            logger.error("Symphony API error",e);
+//            logger.error("Symphony API error",e);
             throw new AuthorizationException("Please check certificates, tokens and paths: " +
-            "\nSession URL: " + sessionUrl +
-            "\nKeystore URL: " + keyUrl +
             "\nServer TrustStore File: " +  System.getProperty("javax.net.ssl.trustStore") +
-            "\nClient Keystore File: " + System.getProperty("javax.net.ssl.keyStore"), e);
+            "\nClient Keystore File: " + System.getProperty("javax.net.ssl.keyStore"),
+            currentUrl, e.getCode(),
+            e);
 
         }
 

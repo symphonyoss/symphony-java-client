@@ -22,16 +22,16 @@
 
 package org.symphonyoss.client;
 
+import javax.ws.rs.client.Client;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.symphonyoss.client.exceptions.InitException;
+import org.symphonyoss.client.exceptions.NetworkException;
 import org.symphonyoss.client.impl.CustomHttpClient;
 import org.symphonyoss.client.impl.SymphonyBasicClient;
 import org.symphonyoss.client.model.SymAuth;
-import org.symphonyoss.exceptions.AuthorizationException;
-import org.symphonyoss.exceptions.InitException;
 import org.symphonyoss.symphony.clients.AuthorizationClient;
-
-import javax.ws.rs.client.Client;
 
 /**
  * Supports the creation of SymphonyClient implementations.
@@ -118,7 +118,7 @@ public class SymphonyClientFactory {
 
             return symClient;
 
-        } catch (AuthorizationException ae) {
+        } catch (NetworkException ae) {
 
             logger.error(ae.getMessage(), ae);
         } catch (InitException e) {

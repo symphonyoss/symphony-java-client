@@ -21,23 +21,23 @@
  * under the License.
  */
 
-package org.symphonyoss.exceptions;
+package org.symphonyoss.client.exceptions;
 
 /**
  * Created by Frank Tarsillo on 9/11/2016.
  */
-public class MessagesException extends SymException {
+public class ConnectionsException extends SymException {
     @SuppressWarnings("unused")
-    public MessagesException(String message) {
+    public ConnectionsException(String message) {
         super(message);
     }
 
     @SuppressWarnings("unused")
-    public MessagesException(Throwable cause) {
+    public ConnectionsException(Throwable cause) {
         super(cause);
     }
 
-    public MessagesException(String message, Throwable cause) {
+    public ConnectionsException(String message, Throwable cause) {
         super(message, cause);
     }
 }

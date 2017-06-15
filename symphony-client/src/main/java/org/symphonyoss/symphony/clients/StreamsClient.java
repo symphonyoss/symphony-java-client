@@ -22,7 +22,7 @@
 
 package org.symphonyoss.symphony.clients;
 
-import org.symphonyoss.exceptions.StreamsException;
+import org.symphonyoss.client.exceptions.StreamsException;
 import org.symphonyoss.symphony.clients.model.*;
 import org.symphonyoss.symphony.pod.model.*;
 

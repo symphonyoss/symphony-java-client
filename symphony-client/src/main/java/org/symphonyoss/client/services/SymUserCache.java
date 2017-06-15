@@ -26,7 +26,7 @@ package org.symphonyoss.client.services;
 
 
 import org.symphonyoss.client.SymphonyClient;
-import org.symphonyoss.exceptions.UsersClientException;
+import org.symphonyoss.client.exceptions.UsersClientException;
 import org.symphonyoss.symphony.clients.model.SymUser;
 import java.util.Set;
 

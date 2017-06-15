@@ -26,7 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.client.common.Constants;
-import org.symphonyoss.exceptions.DataFeedException;
+import org.symphonyoss.client.exceptions.DataFeedException;
 import org.symphonyoss.symphony.agent.model.Datafeed;
 import org.symphonyoss.symphony.agent.model.V2BaseMessage;
 
@@ -95,8 +95,19 @@ class MessageFeedWorker implements Runnable {
                 datafeed = symClient.getDataFeedClient().createDatafeed();
 
                 break;
-            } catch( Exception e) {
+            } 
+            catch( DataFeedException e) {
 
+        	/*
+        	 * TODO:
+        	 * This seems wrong to me, if the result of this is 404
+        	 * or some other non-transient error then there is hardly
+        	 * any point re-trying and a fault should be propagated
+        	 * to the application code.
+        	 * 
+        	 * It's not clear how best to do this though.....
+        	 * -Bruce.
+        	 */
                 logger.error("Failed to create datafeed with pod, please check connection..", e);
                 datafeed = null;
 

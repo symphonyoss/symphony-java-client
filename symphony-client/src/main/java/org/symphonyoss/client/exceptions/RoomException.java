@@ -1,6 +1,5 @@
 /*
  *
- *
  * Copyright 2016 The Symphony Software Foundation
  *
  * Licensed to The Symphony Software Foundation (SSF) under one
@@ -11,7 +10,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -21,23 +20,22 @@
  * under the License.
  */
 
-package org.symphonyoss.exceptions;
+package org.symphonyoss.client.exceptions;
 
 /**
- * Created by Frank Tarsillo on 9/11/2016.
+ * Created by frank.tarsillo on 9/12/2016.
  */
-public class StreamsException extends SymException {
-    @SuppressWarnings("unused")
-    public StreamsException(String message) {
+public class RoomException extends SymException {
+    public RoomException(String message) {
         super(message);
     }
 
     @SuppressWarnings("unused")
-    public StreamsException(Throwable cause) {
+    public RoomException(Throwable cause) {
         super(cause);
     }
 
-    public StreamsException(String message, Throwable cause) {
+    public RoomException(String message, Throwable cause) {
         super(message, cause);
     }
 }

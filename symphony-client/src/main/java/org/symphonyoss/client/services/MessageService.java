@@ -25,12 +25,12 @@ package org.symphonyoss.client.services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.client.exceptions.MessagesException;
+import org.symphonyoss.client.exceptions.StreamsException;
+import org.symphonyoss.client.exceptions.UsersClientException;
 import org.symphonyoss.client.model.CacheType;
 import org.symphonyoss.client.model.Chat;
 import org.symphonyoss.client.model.Room;
-import org.symphonyoss.exceptions.MessagesException;
-import org.symphonyoss.exceptions.StreamsException;
-import org.symphonyoss.exceptions.UsersClientException;
 import org.symphonyoss.symphony.agent.model.*;
 import org.symphonyoss.symphony.clients.model.*;
 import org.symphonyoss.symphony.pod.model.Stream;
@@ -181,7 +181,9 @@ public class MessageService implements DataFeedListener {
                     symClient.getStreamsClient().getStream(user), since, offset, maxMessages);
         } catch (StreamsException e) {
             throw new MessagesException("Failed to retrieve messages. Unable to identity stream for userId: " + userId, e);
-        }
+
+            
+                    }
 
 
     }
