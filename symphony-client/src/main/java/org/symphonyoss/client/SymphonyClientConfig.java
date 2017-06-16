@@ -95,7 +95,7 @@ public class SymphonyClientConfig {
 		String value = config.getProperty(id);
 		
 		if(value == null)
-		    value = System.getProperty(id);
+		    value = System.getProperty(SymphonyClientConfigID.toPropName(id));
 		
 		if(value == null)
 		    value = System.getenv(SymphonyClientConfigID.toEnvName(id));

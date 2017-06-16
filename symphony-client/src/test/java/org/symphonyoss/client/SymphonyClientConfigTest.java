@@ -28,6 +28,7 @@ public class SymphonyClientConfigTest {
 	private static final String	JAVA_VERSION_PROPERTY	= "java.version";
 	private static final String SESSIONAUTH_NAME = "sessionauth.url";
 	private static final String SESSIONAUTH_URI = "https://corporate-api.symphony.com:8444/sessionauth";
+	private static final String OVERRIDE = "OVERRIDE";
 	
 	@Test
     public void configTest() {
@@ -67,6 +68,10 @@ public class SymphonyClientConfigTest {
 			if(SymphonyClientConfigID.toEnvName(name).equals(name)) {
 				assertEquals(map.get(name), config.get(name));
 				config.getRequired(name);
+				
+				System.setProperty(SymphonyClientConfigID.toPropName(name), OVERRIDE);
+				
+				assertEquals(OVERRIDE, config.get(name));
 			}
 		}
 		
@@ -93,5 +98,20 @@ public class SymphonyClientConfigTest {
 		{
 			// expected
 		}
+		
+		System.setProperty(SymphonyClientConfigID.SYMPHONY_CONFIG_FILE.getPropName(),
+				"src/test/resources/symphony.properties");
+		
+		config = new SymphonyClientConfig();
+		
+		try {
+			config.getRequired(SymphonyClientConfigID.SYMPHONY_CONFIG_FILE);
+		}
+		catch(ProgramFault e)
+		{
+			fail("Expected symphony.properties with SYMPHONY_CONFIG_FILE");
+		}
+		
+		assertEquals("https://YOURNAME-api.symphony.com:8444/sessionauth", config.get(SESSIONAUTH_NAME));
     }
 }
