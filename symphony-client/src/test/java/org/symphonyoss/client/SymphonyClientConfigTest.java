@@ -19,7 +19,9 @@ package org.symphonyoss.client;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.Test;
 import org.symphonyoss.client.exceptions.ProgramFault;
@@ -61,12 +63,27 @@ public class SymphonyClientConfigTest {
 		
 		assertEquals(javaVersion, config.get(JAVA_VERSION_PROPERTY));
 	
+		Set<String>	ignoreSet = new HashSet<>();
+		
+		for(SymphonyClientConfigID id : SymphonyClientConfigID.values()) {
+			ignoreSet.add(id.getAltName());
+			ignoreSet.add(id.getPropName());
+			ignoreSet.add(id.getEnvName());
+		}
+		
 		Map<String, String> map = System.getenv();
 
 		for(String name : map.keySet())
 		{
 			if(SymphonyClientConfigID.toEnvName(name).equals(name)) {
-				assertEquals(map.get(name), config.get(name));
+				System.err.println("name=" + name +
+						", env=" + map.get(name) +
+						", config=" + config.get(name));
+				
+				if(!name.toUpperCase().startsWith("JAVA") &&
+						!ignoreSet.contains(name))
+					assertEquals(System.getenv(name), config.get(name));
+				
 				config.getRequired(name);
 				
 				System.setProperty(SymphonyClientConfigID.toPropName(name), OVERRIDE);
