@@ -44,16 +44,16 @@ public class SymphonyClientConfig {
 	    }
 	}
 	
-	StringBuffer s = null;
+	StringBuilder s = null;
 	
 	for(SymphonyClientConfigID id : SymphonyClientConfigID.values()) {
 	    String v = get(id);
 	    if(v != null) {
-		log.info(id.getPropName() + "=" + v);
+	    	log.info("%s = %s", id.getPropName(), v);
 	    }
 	    else if(id.isCore()) {
 		if(s == null) {
-		    s = new StringBuffer();
+		    s = new StringBuilder();
 		} else {
 		    s.append(",\n");
 		}
@@ -95,7 +95,7 @@ public class SymphonyClientConfig {
 		String value = config.getProperty(id);
 		
 		if(value == null)
-		    value = System.getProperty(id);
+		    value = System.getProperty(SymphonyClientConfigID.toPropName(id));
 		
 		if(value == null)
 		    value = System.getenv(SymphonyClientConfigID.toEnvName(id));
