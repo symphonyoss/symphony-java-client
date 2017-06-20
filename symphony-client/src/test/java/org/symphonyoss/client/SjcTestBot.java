@@ -36,7 +36,7 @@ import org.symphonyoss.symphony.agent.model.*;
 import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.clients.model.SymUserConnection;
 import org.symphonyoss.symphony.pod.model.Presence;
-import org.symphonyoss.symphony.pod.model.UserPresence;
+
 
 /**
  * This is the test BOT that will receive messages from the sjcTestClient.  These messages will request certain
@@ -45,12 +45,13 @@ import org.symphonyoss.symphony.pod.model.UserPresence;
  *
  * @author Frank Tarsillo
  */
-public class SjcTestBot implements ChatListener, ChatServiceListener, RoomListener, RoomServiceListener, PresenceListener, ConnectionsListener {
+public class SjcTestBot implements ChatListener, ChatServiceListener, RoomListener, RoomServiceListener, ConnectionsListener {
 
     SymphonyClient symphonyClient;
     String sjcClient = System.getProperty("sender.user.email", "sjc.testclient");
     private final Logger logger = LoggerFactory.getLogger(SjcTestBot.class);
     private String testClientStreamId;
+    private Long testClientId;
 
     public SjcTestBot() throws SymException {
 
@@ -65,6 +66,7 @@ public class SjcTestBot implements ChatListener, ChatServiceListener, RoomListen
 
 
         testClientStreamId = symphonyClient.getStreamsClient().getStreamFromEmail(sjcClient).getId();
+        testClientId = symphonyClient.getUsersClient().getUserFromEmail(sjcClient).getId();
 
         Room room = new Room();
         room.setStreamId(System.getProperty("test.room.stream"));
@@ -137,10 +139,6 @@ public class SjcTestBot implements ChatListener, ChatServiceListener, RoomListen
 
     }
 
-    @Override
-    public void onUserPresence(UserPresence userPresence) {
-
-    }
 
     @Override
     public void onNewChat(Chat chat) {
@@ -190,7 +188,9 @@ public class SjcTestBot implements ChatListener, ChatServiceListener, RoomListen
     private void sendPresenceResponse() {
 
         try {
-            Presence presence = symphonyClient.getPresenceService().getUserPresence(sjcClient);
+
+
+            Presence presence = symphonyClient.getPresenceClient().getUserPresence(testClientId);
 
 
             SymMessage message = new SymMessage();

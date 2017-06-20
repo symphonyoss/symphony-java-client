@@ -42,7 +42,6 @@ import org.symphonyoss.client.model.CacheType;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.client.services.ChatService;
 import org.symphonyoss.client.services.MessageService;
-import org.symphonyoss.client.services.PresenceService;
 import org.symphonyoss.client.services.RoomService;
 import org.symphonyoss.client.services.SymCache;
 import org.symphonyoss.client.services.SymUserCache;
@@ -84,7 +83,6 @@ public class SymphonyBasicClient implements SymphonyClient {
     private final Logger logger = LoggerFactory.getLogger(SymphonyBasicClient.class);
     private SymAuth symAuth;
     private MessageService messageService;
-    private PresenceService presenceService;
     private ChatService chatService;
     private RoomService roomService;
     private SymUser localUser;
@@ -184,7 +182,6 @@ public class SymphonyBasicClient implements SymphonyClient {
 
         try {
             messageService = new MessageService(this);
-            presenceService = new PresenceService(this);
             chatService = new ChatService(this);
             roomService = new RoomService(this);
 
@@ -290,11 +287,6 @@ public class SymphonyBasicClient implements SymphonyClient {
     }
 
     @Override
-    public PresenceService getPresenceService() {
-        return presenceService;
-    }
-
-    @Override
     public RoomService getRoomService() {
         return roomService;
     }
@@ -388,7 +380,6 @@ public class SymphonyBasicClient implements SymphonyClient {
     @Override
     public void shutdown() {
         getMessageService().shutdown();
-        getPresenceService().shutdown();
     }
 
 }

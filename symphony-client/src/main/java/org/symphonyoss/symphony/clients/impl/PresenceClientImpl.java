@@ -31,7 +31,7 @@ import org.symphonyoss.symphony.pod.invoker.ApiClient;
 import org.symphonyoss.symphony.pod.invoker.ApiException;
 import org.symphonyoss.symphony.pod.invoker.Pair;
 import org.symphonyoss.symphony.pod.model.Presence;
-import org.symphonyoss.symphony.pod.model.PresenceList;
+
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.GenericType;
@@ -85,22 +85,6 @@ public class PresenceClientImpl implements org.symphonyoss.symphony.clients.Pres
 
     }
 
-
-    @Override
-    public PresenceList getAllUserPresence() throws PresenceException {
-
-
-        PresenceApi presenceApi = new PresenceApi(apiClient);
-
-
-        try {
-            return presenceApi.v1PresenceGet(symAuth.getSessionToken().getToken());
-        } catch (ApiException e) {
-            throw new PresenceException("Failed to retrieve all user presence...", e);
-        }
-
-
-    }
 
     @Override
     public Presence getUserPresence(Long userId) throws PresenceException {

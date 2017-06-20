@@ -110,12 +110,6 @@ public interface SymphonyClient {
      */
     MessageService getMessageService();
 
-    /**
-     * Provides active Presence Service.  **NOTE** Presence service is currently disabled for real-time updates
-     *
-     * @return {@link PresenceService}
-     */
-    PresenceService getPresenceService();
 
     /**
      * Provides active Chat Service

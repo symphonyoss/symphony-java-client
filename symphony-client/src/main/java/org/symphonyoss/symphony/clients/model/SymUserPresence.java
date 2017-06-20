@@ -11,7 +11,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -20,45 +20,24 @@
  * specific language governing permissions and limitations
  * under the License.
  *
- *
  */
 
-package org.symphonyoss.client.services;
+package org.symphonyoss.symphony.clients.model;
 
-import org.junit.Test;
+import org.symphonyoss.symphony.pod.model.Presence;
 
 /**
- * Created by Frank Tarsillo on 6/19/2016.
+ * @author Frank Tarsillo on 6/17/17.
  */
-public class PresenceServiceTest {
-    @Test
-    public void getAllUserPresence() throws Exception {
+public class SymUserPresence {
+
+
+    Presence presence = new Presence();
+
+    public SymUserPresence(){
+
+
+
 
     }
-
-    @Test
-    public void getUserPresence() throws Exception {
-
-    }
-
-    @Test
-    public void getUserPresence1() throws Exception {
-
-    }
-
-    @Test
-    public void registerPresenceListener() throws Exception {
-
-    }
-
-    @Test
-    public void removePresenceListener() throws Exception {
-
-    }
-
-    @Test
-    public void onUserPresence() throws Exception {
-
-    }
-
 }

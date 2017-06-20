@@ -25,10 +25,6 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
     * Real-time listeners on all room events
     * Enriches Room objects with associated system attributes
     * X-Pod Support
-* Presence Service (Disabled by default and NOT recommended for use)
-    * Maintains an active cache of endpoint presence associated with single POD.
-    * Real-time listeners on all presence changes
-    * Request user presence
 * Connections request handling including auto-accept.
 * Attachment Support
 * Publish formatted articles (news) using ShareApi
@@ -45,9 +41,12 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 ## Change log and notes
 
 ### V1.0.2 (SNAPSHOT)
-* Move away from internal generated symphony-apis module
+* Removed generated symphony-apis module and replaced with [symphony-java-api](https://github.com/symphonyoss/symphony-java-api) released modules
+* Upgraded all underlying services with new REST API v4 endpoints
+* Removed PresenceService as it is no longer supported
+* Better exception handling exposing underlying root causes from API calls.
+* Moved away from using system properties in favor of internal configuration properties.
 * Increase in unit test coverage
-* AI Framework refresh
 * Room cache (lazy)
 * Added ability to obtain stream attributes in StreamsClient.getStreams(...).  Admin and user level.
 * Added the ability to list all streams known streams for a given user StreamClient
@@ -107,6 +106,7 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 ## Branch Strategy
 
 **develop** - All active development on latest SNAPSHOT
+
 **master**  - Periodic merged and tested features from develop branch
 
 

@@ -175,7 +175,8 @@ public class DefaultUserCache implements SymUserCache {
                     symUserByEmail.put(user.getEmailAddress().toLowerCase(), user);
 
 
-                symUserById.put(user.getId(), user);
+                if(user.getId() != null)
+                    symUserById.put(user.getId(), user);
 
                 if(user.getUsername() != null)
                     symUserByName.put(user.getUsername(), user);
