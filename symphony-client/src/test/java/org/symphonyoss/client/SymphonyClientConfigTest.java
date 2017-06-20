@@ -53,7 +53,9 @@ public class SymphonyClientConfigTest {
 		System.setProperty("user.cert.password", "changeit");
 		System.setProperty("user.email", "bot.user5@symphony.com");
 		System.setProperty("receiver.user.email", "john.doe@symphony.com");
-		System.setProperty("sender.user.email", "bot.user5@symphony.com");
+
+		//Causing issues
+		//System.setProperty("sender.user.email", "bot.user5@symphony.com");
 	
 		SymphonyClientConfig	config = new SymphonyClientConfig();
 		
