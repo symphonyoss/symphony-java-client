@@ -47,7 +47,7 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 * Better exception handling exposing underlying root causes from API calls.
 * Moved away from using system properties in favor of internal configuration properties.
 * Increase in unit test coverage
-* Room cache (lazy)
+* Room cache (lazy), running late on this one
 * Added ability to obtain stream attributes in StreamsClient.getStreams(...).  Admin and user level.
 * Added the ability to list all streams known streams for a given user StreamClient
 * Updated MessageService to take advantage of new stream attributes functions
