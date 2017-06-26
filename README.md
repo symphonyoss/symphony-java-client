@@ -138,6 +138,9 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
         -Dtruststore.file=/dev/certs/server.truststore
         -Dbot.user=(user name)
 
+In addition to the above, Java 8 must be installed.
+
+
 ##Examples
 [see Examples Project](https://github.com/symphonyoss/symphony-java-sample-bots)
 
