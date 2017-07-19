@@ -64,6 +64,7 @@ import org.symphonyoss.symphony.clients.StreamsClient;
 import org.symphonyoss.symphony.clients.StreamsFactory;
 import org.symphonyoss.symphony.clients.UsersClient;
 import org.symphonyoss.symphony.clients.UsersFactory;
+import org.symphonyoss.symphony.clients.model.ApiVersion;
 import org.symphonyoss.symphony.clients.model.SymUser;
 
 /**
@@ -87,7 +88,7 @@ public class SymphonyBasicClient implements SymphonyClient {
     private RoomService roomService;
     private SymUser localUser;
     private String agentUrl;
-    private String serviceUrl;
+    private String podUrl;
     private MessagesClient messagesClient;
     private DataFeedClient dataFeedClient;
     private UsersClient usersClient;
@@ -100,13 +101,15 @@ public class SymphonyBasicClient implements SymphonyClient {
     private Client defaultHttpClient;
     private final long SYMAUTH_REFRESH_TIME = Long.parseLong(System.getProperty(Constants.SYMAUTH_REFRESH_TIME, "7200000"));
     SymUserCache symUserCache;
+    private ApiVersion apiVersion = ApiVersion.V2;
 
-    public SymphonyBasicClient() {
+    public SymphonyBasicClient() {}
 
 
+    public SymphonyBasicClient(ApiVersion apiVersion){
 
+        this.apiVersion = apiVersion;
     }
-
 
     
     @Override
@@ -148,11 +151,11 @@ public class SymphonyBasicClient implements SymphonyClient {
      * @param symAuth    Contains valid key and session tokens generated from AuthorizationClient.
      * @param email      Email address of the BOT
      * @param agentUrl   The Agent URL
-     * @param serviceUrl The Service URL (in most cases it's the POD URL)
+     * @param podUrl The Service URL (in most cases it's the POD URL)
      * @throws InitException Failure of a specific service most likely due to connectivity issues
      */
     @Override
-    public void init(SymAuth symAuth, String email, String agentUrl, String serviceUrl) throws InitException {
+    public void init(SymAuth symAuth, String email, String agentUrl, String podUrl) throws InitException {
 
         String NOT_LOGGED_IN_MESSAGE = "Currently not logged into Agent, please check certificates and tokens.";
         if (symAuth == null || symAuth.getSessionToken() == null || symAuth.getKeyToken() == null)
@@ -161,17 +164,17 @@ public class SymphonyBasicClient implements SymphonyClient {
         if (agentUrl == null)
             throw new InitException("Failed to provide agent URL", new Throwable("Failed to provide agent URL"));
 
-        if (serviceUrl == null)
+        if (podUrl == null)
             throw new InitException("Failed to provide service URL", new Throwable("Failed to provide service URL"));
 
         this.symAuth = symAuth;
         this.agentUrl = agentUrl;
-        this.serviceUrl = serviceUrl;
+        this.podUrl = podUrl;
 
 
         //Init all clients.
         dataFeedClient = (defaultHttpClient == null) ? DataFeedFactory.getClient(this, DataFeedFactory.TYPE.DEFAULT) : DataFeedFactory.getClient(this, DataFeedFactory.TYPE.HTTPCLIENT);
-        messagesClient = (defaultHttpClient == null) ? MessagesFactory.getClient(this, MessagesFactory.TYPE.DEFAULT) : MessagesFactory.getClient(this, MessagesFactory.TYPE.HTTPCLIENT);
+        messagesClient = (defaultHttpClient == null) ? MessagesFactory.getClient(this, MessagesFactory.TYPE.DEFAULT,apiVersion) : MessagesFactory.getClient(this, MessagesFactory.TYPE.HTTPCLIENT,apiVersion);
         presenceClient = (defaultHttpClient == null) ? PresenceFactory.getClient(this, PresenceFactory.TYPE.DEFAULT) : PresenceFactory.getClient(this, PresenceFactory.TYPE.HTTPCLIENT);
         streamsClient = (defaultHttpClient == null) ? StreamsFactory.getClient(this, StreamsFactory.TYPE.DEFAULT) : StreamsFactory.getClient(this, StreamsFactory.TYPE.HTTPCLIENT);
         usersClient = (defaultHttpClient == null) ? UsersFactory.getClient(this, UsersFactory.TYPE.DEFAULT) : UsersFactory.getClient(this, UsersFactory.TYPE.HTTPCLIENT);
@@ -181,9 +184,9 @@ public class SymphonyBasicClient implements SymphonyClient {
         connectionsClient = (defaultHttpClient == null) ? ConnectionsFactory.getClient(this, ConnectionsFactory.TYPE.DEFAULT) : ConnectionsFactory.getClient(this, ConnectionsFactory.TYPE.HTTPCLIENT);
 
         try {
-            messageService = new MessageService(this);
-            chatService = new ChatService(this);
-            roomService = new RoomService(this);
+            messageService = new MessageService(this,apiVersion);
+            chatService = new ChatService(this,apiVersion);
+            roomService = new RoomService(this,apiVersion);
 
             localUser = usersClient.getUserFromEmail(email);
         } catch (SymException e) {
@@ -197,7 +200,7 @@ public class SymphonyBasicClient implements SymphonyClient {
                     "KeyToken: " + symAuth.getKeyToken() + "\n" +
                     "Email: " + email + "\n" +
                     "AgentUrl: " + agentUrl + "\n" +
-                    "ServiceUrl: " + serviceUrl);
+                    "podUrl: " + podUrl);
         }
 
 
@@ -214,10 +217,10 @@ public class SymphonyBasicClient implements SymphonyClient {
 
 
     @Override
-    public void init(Client httpClient, SymAuth symAuth, String email, String agentUrl, String serviceUrl) throws InitException {
+    public void init(Client httpClient, SymAuth symAuth, String email, String agentUrl, String podUrl) throws InitException {
 
         this.defaultHttpClient = httpClient;
-        init(symAuth, email, agentUrl, serviceUrl);
+        init(symAuth, email, agentUrl, podUrl);
     }
 
     @Override
@@ -250,16 +253,16 @@ public class SymphonyBasicClient implements SymphonyClient {
      * @return Service URL which can be either the Agent URL or POD URL
      */
     @Override
-    public String getServiceUrl() {
-        return serviceUrl;
+    public String getpodUrl() {
+        return podUrl;
     }
 
     /**
-     * @param serviceUrl Service URL which can be either the Agent URL or POD URL
+     * @param podUrl Service URL which can be either the Agent URL or POD URL
      */
     @SuppressWarnings("unused")
-    public void setServiceUrl(String serviceUrl) {
-        this.serviceUrl = serviceUrl;
+    public void setpodUrl(String podUrl) {
+        this.podUrl = podUrl;
     }
 
     /**

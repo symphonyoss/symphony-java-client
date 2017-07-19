@@ -57,14 +57,14 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
     private final Logger logger = LoggerFactory.getLogger(UsersClientImpl.class);
 
 
-    public UsersClientImpl(SymAuth symAuth, String serviceUrl) {
+    public UsersClientImpl(SymAuth symAuth, String podUrl) {
 
         this.symAuth = symAuth;
 
 
         //Get Service client to query for userID.
         apiClient = org.symphonyoss.symphony.pod.invoker.Configuration.getDefaultApiClient();
-        apiClient.setBasePath(serviceUrl);
+        apiClient.setBasePath(podUrl);
 
         apiClient.addDefaultHeader(symAuth.getSessionToken().getName(), symAuth.getSessionToken().getToken());
         apiClient.addDefaultHeader(symAuth.getKeyToken().getName(), symAuth.getKeyToken().getToken());
@@ -75,17 +75,17 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
      * If you need to override HttpClient.  Important for handling individual client certs.
      *
      * @param symAuth    Authorization model containing session and key tokens
-     * @param serviceUrl Service URL used to access API
+     * @param podUrl Service URL used to access API
      * @param httpClient Custom HTTP client
      */
-    public UsersClientImpl(SymAuth symAuth, String serviceUrl, Client httpClient) {
+    public UsersClientImpl(SymAuth symAuth, String podUrl, Client httpClient) {
         this.symAuth = symAuth;
 
 
         //Get Service client to query for userID.
         apiClient = org.symphonyoss.symphony.pod.invoker.Configuration.getDefaultApiClient();
         apiClient.setHttpClient(httpClient);
-        apiClient.setBasePath(serviceUrl);
+        apiClient.setBasePath(podUrl);
 
         apiClient.addDefaultHeader(symAuth.getSessionToken().getName(), symAuth.getSessionToken().getToken());
         apiClient.addDefaultHeader(symAuth.getKeyToken().getName(), symAuth.getKeyToken().getToken());

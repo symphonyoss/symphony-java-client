@@ -29,7 +29,7 @@ import java.util.Objects;
 /**
  * @author Frank Tarsillo on 5/6/17.
  */
-public class SymStreamType {
+public class SymStreamTypes {
     /**
      * Gets or Sets type
      */
@@ -67,7 +67,7 @@ public class SymStreamType {
 
     private Type type = null;
 
-    public SymStreamType type(Type type) {
+    public SymStreamTypes type(Type type) {
         this.type = type;
         return this;
     }
@@ -95,7 +95,7 @@ public class SymStreamType {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        SymStreamType streamType = (SymStreamType) o;
+        SymStreamTypes streamType = (SymStreamTypes) o;
         return Objects.equals(this.type, streamType.type);
     }
 

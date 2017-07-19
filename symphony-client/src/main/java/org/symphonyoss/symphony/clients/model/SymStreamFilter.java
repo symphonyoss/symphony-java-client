@@ -40,16 +40,16 @@ import java.util.Objects;
  */
 public class SymStreamFilter {
 
-    private List<SymStreamType> streamTypes = new ArrayList<SymStreamType>();
+    private List<SymStreamTypes> streamTypes = new ArrayList<>();
 
 
     private Boolean includeInactiveStreams = null;
 
-    public List<SymStreamType> getStreamTypes() {
+    public List<SymStreamTypes> getStreamTypes() {
         return streamTypes;
     }
 
-    public void setStreamTypes(List<SymStreamType> streamTypes) {
+    public void setStreamTypes(List<SymStreamTypes> streamTypes) {
         this.streamTypes = streamTypes;
     }
 
@@ -93,10 +93,10 @@ public class SymStreamFilter {
 
             List<StreamType> streamTypes = new ArrayList<>();
 
-            for (SymStreamType symStreamType : symStreamFilter.getStreamTypes()) {
+            for (SymStreamTypes symStreamTypes : symStreamFilter.getStreamTypes()) {
 
                 StreamType streamType = new StreamType();
-                streamType.setType(StreamType.TypeEnum.fromValue(symStreamType.getType().toString()));
+                streamType.setType(StreamType.TypeEnum.fromValue(symStreamTypes.getType().toString()));
                 streamTypes.add(streamType);
 
 
@@ -120,12 +120,12 @@ public class SymStreamFilter {
 
         if (streamFilter.getStreamTypes() != null) {
 
-            List<SymStreamType> symStreamTypes = new ArrayList<>();
+            List<SymStreamTypes> symStreamTypes = new ArrayList<>();
 
             for (StreamType streamType : streamFilter.getStreamTypes()) {
 
-                SymStreamType symStreamType = new SymStreamType();
-                symStreamType.setType(SymStreamType.Type.fromValue(streamType.getType().toString()));
+                SymStreamTypes symStreamType = new SymStreamTypes();
+                symStreamType.setType(SymStreamTypes.Type.fromValue(streamType.getType().toString()));
                 symStreamTypes.add(symStreamType);
 
 

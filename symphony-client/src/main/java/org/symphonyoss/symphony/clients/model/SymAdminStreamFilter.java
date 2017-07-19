@@ -39,7 +39,7 @@ import java.util.Objects;
  */
 public class SymAdminStreamFilter {
 
-    private List<SymStreamType> streamTypes = new ArrayList<>();
+    private List<SymStreamTypes> streamTypes = new ArrayList<>();
 
 
 
@@ -177,22 +177,22 @@ public class SymAdminStreamFilter {
 
     private Long endDate = null;
 
-    public SymAdminStreamFilter streamTypes(List<SymStreamType> streamTypes) {
+    public SymAdminStreamFilter streamTypes(List<SymStreamTypes> streamTypes) {
         this.streamTypes = streamTypes;
         return this;
     }
 
-    public SymAdminStreamFilter addStreamTypesItem(SymStreamType streamTypesItem) {
+    public SymAdminStreamFilter addStreamTypesItem(SymStreamTypes streamTypesItem) {
         this.streamTypes.add(streamTypesItem);
         return this;
     }
 
 
-    public List<SymStreamType> getStreamTypes() {
+    public List<SymStreamTypes> getStreamTypes() {
         return streamTypes;
     }
 
-    public void setStreamTypes(List<SymStreamType> streamTypes) {
+    public void setStreamTypes(List<SymStreamTypes> streamTypes) {
         this.streamTypes = streamTypes;
     }
 
@@ -353,10 +353,10 @@ public class SymAdminStreamFilter {
 
             List<AdminStreamTypeEnum> adminStreamTypeEnums = new ArrayList<>();
 
-            for (SymStreamType symStreamType : symAdminStreamFilter.getStreamTypes()) {
+            for (SymStreamTypes symStreamTypes : symAdminStreamFilter.getStreamTypes()) {
 
                 AdminStreamTypeEnum adminStreamTypeEnum = new AdminStreamTypeEnum();
-                adminStreamTypeEnum.setType(AdminStreamTypeEnum.TypeEnum.fromValue(symStreamType.getType().toString()));
+                adminStreamTypeEnum.setType(AdminStreamTypeEnum.TypeEnum.fromValue(symStreamTypes.getType().toString()));
                 adminStreamTypeEnums.add(adminStreamTypeEnum);
 
 
@@ -390,12 +390,12 @@ public class SymAdminStreamFilter {
 
         if (filter.getStreamTypes() != null) {
 
-            List<SymStreamType> symStreamTypes = new ArrayList<>();
+            List<SymStreamTypes> symStreamTypes = new ArrayList<>();
 
             for (AdminStreamTypeEnum adminStreamTypeEnum : filter.getStreamTypes()) {
 
-                SymStreamType symStreamType = new SymStreamType();
-                symStreamType.setType(SymStreamType.Type.fromValue(adminStreamTypeEnum.getType().toString()));
+                SymStreamTypes symStreamType = new SymStreamTypes();
+                symStreamType.setType(SymStreamTypes.Type.fromValue(adminStreamTypeEnum.getType().toString()));
                 symStreamTypes.add(symStreamType);
 
 

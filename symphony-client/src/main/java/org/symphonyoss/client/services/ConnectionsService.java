@@ -25,6 +25,8 @@ package org.symphonyoss.client.services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.client.events.SymConnectionAccepted;
+import org.symphonyoss.client.events.SymConnectionRequested;
 import org.symphonyoss.client.exceptions.ConnectionsException;
 import org.symphonyoss.symphony.clients.model.SymUserConnection;
 
@@ -39,7 +41,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Frank Tarsillo on 5/16/2016.
  */
 @SuppressWarnings("WeakerAccess")
-public class ConnectionsService implements ConnectionsListener {
+public class ConnectionsService implements ConnectionsListener, ConnectionsEventListener {
     private final SymphonyClient symClient;
     private boolean autoAccept;
     private final Set<ConnectionsListener> connectionsListeners = ConcurrentHashMap.newKeySet();
@@ -50,6 +52,8 @@ public class ConnectionsService implements ConnectionsListener {
         this.symClient = symClient;
         connectionsWorker = new ConnectionsWorker(symClient, this);
         new Thread(connectionsWorker).start();
+
+        symClient.getMessageService().addConnectionsEventListener(this);
 
     }
 
@@ -126,6 +130,21 @@ public class ConnectionsService implements ConnectionsListener {
 
         connectionsWorker.shutdown();
         connectionsWorker = null;
+
+    }
+
+    @Override
+    public void onSymConnectionRequested(SymConnectionRequested symConnectionRequested) {
+
+        SymUserConnection symUserConnection = new SymUserConnection();
+        symUserConnection.setUserId(symConnectionRequested.getToUser().getId());
+
+        onConnectionNotification(symUserConnection);
+
+    }
+
+    @Override
+    public void onSymConnectionAccepted(SymConnectionAccepted symConnectionAccepted) {
 
     }
 }

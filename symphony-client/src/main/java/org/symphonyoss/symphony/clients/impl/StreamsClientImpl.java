@@ -49,22 +49,22 @@ import java.util.Set;
  */
 public class StreamsClientImpl implements org.symphonyoss.symphony.clients.StreamsClient {
     private final SymAuth symAuth;
-    private final String serviceUrl;
+    private final String podUrl;
     private final ApiClient apiClient;
     private Client httpClient = null;
 
     private final Logger logger = LoggerFactory.getLogger(StreamsClientImpl.class);
 
 
-    public StreamsClientImpl(SymAuth symAuth, String serviceUrl) {
+    public StreamsClientImpl(SymAuth symAuth, String podUrl) {
 
         this.symAuth = symAuth;
-        this.serviceUrl = serviceUrl;
+        this.podUrl = podUrl;
 
 
         //Get Service client to query for userID.
         apiClient = org.symphonyoss.symphony.pod.invoker.Configuration.getDefaultApiClient();
-        apiClient.setBasePath(serviceUrl);
+        apiClient.setBasePath(podUrl);
 
         apiClient.addDefaultHeader(symAuth.getSessionToken().getName(), symAuth.getSessionToken().getToken());
         apiClient.addDefaultHeader(symAuth.getKeyToken().getName(), symAuth.getKeyToken().getToken());
@@ -75,17 +75,17 @@ public class StreamsClientImpl implements org.symphonyoss.symphony.clients.Strea
      * If you need to override HttpClient.  Important for handling individual client certs.
      *
      * @param symAuth    Authorization model containing session and key tokens
-     * @param serviceUrl Service URL
+     * @param podUrl Service URL
      * @param httpClient Custom HTTP Client to use
      */
-    public StreamsClientImpl(SymAuth symAuth, String serviceUrl, Client httpClient) {
+    public StreamsClientImpl(SymAuth symAuth, String podUrl, Client httpClient) {
         this.symAuth = symAuth;
-        this.serviceUrl = serviceUrl;
+        this.podUrl = podUrl;
         this.httpClient = httpClient;
         //Get Service client to query for userID.
         apiClient = org.symphonyoss.symphony.pod.invoker.Configuration.getDefaultApiClient();
         apiClient.setHttpClient(httpClient);
-        apiClient.setBasePath(serviceUrl);
+        apiClient.setBasePath(podUrl);
 
         apiClient.addDefaultHeader(symAuth.getSessionToken().getName(), symAuth.getSessionToken().getToken());
         apiClient.addDefaultHeader(symAuth.getKeyToken().getName(), symAuth.getKeyToken().getToken());
@@ -263,10 +263,10 @@ public class StreamsClientImpl implements org.symphonyoss.symphony.clients.Strea
 
         UsersClient usersClient;
         if (httpClient == null) {
-            usersClient = UsersFactory.getClient(symAuth, serviceUrl, UsersFactory.TYPE.DEFAULT);
+            usersClient = UsersFactory.getClient(symAuth, podUrl, UsersFactory.TYPE.DEFAULT);
         } else {
             //not pretty..
-            usersClient = UsersFactory.getClient(symAuth, serviceUrl, httpClient);
+            usersClient = UsersFactory.getClient(symAuth, podUrl, httpClient);
         }
 
 

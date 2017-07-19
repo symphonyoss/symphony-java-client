@@ -23,6 +23,7 @@
 package org.symphonyoss.client.services;
 
 import org.symphonyoss.symphony.agent.model.V2BaseMessage;
+import org.symphonyoss.client.events.SymEvent;
 
 /**
  * Callback listener used by the {@link MessageService} to read in base level messages.
@@ -34,7 +35,17 @@ interface DataFeedListener {
 
     /**
      * Base messages from datafeed polling
+     * This is only enabled when V2 API is being used.
      * @param message Base message
      */
     void onMessage(V2BaseMessage message);
+
+
+    /**
+     * Listen to all events from datafeed polling
+     * This is only enabled when V4+ API is being used.
+     *
+     * @param symEvent Events received from datafeed polling
+     */
+    void onEvent(SymEvent symEvent);
 }

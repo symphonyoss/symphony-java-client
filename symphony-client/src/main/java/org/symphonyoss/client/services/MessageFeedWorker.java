@@ -1,5 +1,6 @@
 /*
  *
+ *
  * Copyright 2016 The Symphony Software Foundation
  *
  * Licensed to The Symphony Software Foundation (SSF) under one
@@ -18,6 +19,7 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
+ *
  */
 
 package org.symphonyoss.client.services;
@@ -28,8 +30,8 @@ import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.client.common.Constants;
 import org.symphonyoss.client.exceptions.DataFeedException;
 import org.symphonyoss.symphony.agent.model.Datafeed;
-import org.symphonyoss.symphony.agent.model.V2BaseMessage;
-
+import org.symphonyoss.client.events.SymEvent;
+import org.symphonyoss.symphony.clients.model.ApiVersion;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -92,7 +94,7 @@ class MessageFeedWorker implements Runnable {
             try {
                 logger.info("Creating datafeed with pod...");
 
-                datafeed = symClient.getDataFeedClient().createDatafeed();
+                datafeed = symClient.getDataFeedClient().createDatafeed(ApiVersion.V4);
 
                 break;
             } 
@@ -136,14 +138,26 @@ class MessageFeedWorker implements Runnable {
     private void readDatafeed() {
 
         try {
-            List<V2BaseMessage> messageList = symClient.getDataFeedClient().getMessagesFromDatafeed(datafeed);
 
-            if (messageList != null) {
 
-                logger.debug("Received {} messages..", messageList.size());
+            List<SymEvent> symEvents = symClient.getDataFeedClient().getEventsFromDatafeed(datafeed);
 
-                messageList.forEach(dataFeedListener::onMessage);
+            if(symEvents!=null){
+
+               symEvents.forEach(dataFeedListener::onEvent);
+
             }
+
+
+
+//            List<V2BaseMessage> messageList = symClient.getDataFeedClient().getMessagesFromDatafeed(datafeed);
+//
+//            if (messageList != null) {
+//
+//                logger.debug("Received {} messages..", messageList.size());
+//
+//                messageList.forEach(dataFeedListener::onMessage);
+//            }
 
         } catch (Exception e) {
             logger.error("Failed to create read datafeed from pod, please check connection..resetting.", e);

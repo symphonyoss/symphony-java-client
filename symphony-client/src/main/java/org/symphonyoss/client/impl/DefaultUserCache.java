@@ -36,6 +36,7 @@ import org.symphonyoss.client.exceptions.UsersClientException;
 import org.symphonyoss.client.model.CacheType;
 import org.symphonyoss.client.services.SymUserCache;
 import org.symphonyoss.symphony.clients.model.SymUser;
+
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -59,8 +60,9 @@ public class DefaultUserCache implements SymUserCache {
 
     /**
      * DefaultUserCache implements symuser caches by id, email, name and streams
-     *
+     * <p>
      * This cache can be replaced with a custom cache plugin.  Please set in SymphonyClient setCache(SymCache)
+     *
      * @param symClient SymphonyClient required to call underlying client implementations and retrieve data.
      */
     public DefaultUserCache(SymphonyClient symClient) {
@@ -103,12 +105,11 @@ public class DefaultUserCache implements SymUserCache {
                     symUserByEmail.put(user.getEmailAddress().toLowerCase(), user);
 
 
+                if (user.getId() != null)
                     symUserById.put(user.getId(), user);
 
-                if(user.getUsername() != null)
+                if (user.getUsername() != null)
                     symUserByName.put(user.getUsername(), user);
-
-
 
 
                 return user;
@@ -139,9 +140,10 @@ public class DefaultUserCache implements SymUserCache {
                     symUserByEmail.put(user.getEmailAddress().toLowerCase(), user);
 
 
-                symUserById.put(user.getId(), user);
+                if (user.getId() != null)
+                    symUserById.put(user.getId(), user);
 
-                if(user.getUsername() != null)
+                if (user.getUsername() != null)
                     symUserByName.put(user.getUsername(), user);
 
 
@@ -175,10 +177,10 @@ public class DefaultUserCache implements SymUserCache {
                     symUserByEmail.put(user.getEmailAddress().toLowerCase(), user);
 
 
-                if(user.getId() != null)
+                if (user.getId() != null)
                     symUserById.put(user.getId(), user);
 
-                if(user.getUsername() != null)
+                if (user.getUsername() != null)
                     symUserByName.put(user.getUsername(), user);
 
                 return user;
@@ -210,7 +212,7 @@ public class DefaultUserCache implements SymUserCache {
                 symUserByStream.put(key, symUsers);
                 return symUsers;
 
-            }else{
+            } else {
 
                 throw new RuntimeException("cannot find Symphony users by stream " + key);
             }
@@ -224,6 +226,7 @@ public class DefaultUserCache implements SymUserCache {
 
     /**
      * Set the SymphonyClient used for underlying calls.
+     *
      * @param symphonyClient SymphonyClient
      */
     public void setSymphonyClient(SymphonyClient symphonyClient) {
@@ -235,12 +238,13 @@ public class DefaultUserCache implements SymUserCache {
 
     /**
      * Retrieve user by UID
+     *
      * @param uid Id of user
      * @return Symuser
      * @throws UsersClientException Exceptions from underlying API's
      */
     @Override
-    public SymUser getUserById(Long uid) throws UsersClientException{
+    public SymUser getUserById(Long uid) throws UsersClientException {
 
         try {
 
@@ -259,7 +263,8 @@ public class DefaultUserCache implements SymUserCache {
 
     /**
      * Retrieve user by user name
-     * @param name      Name of user
+     *
+     * @param name Name of user
      * @return Symuser
      * @throws UsersClientException Exception from underlying API's
      */
@@ -281,7 +286,8 @@ public class DefaultUserCache implements SymUserCache {
 
     /**
      * Retrieve users by S
-     * @param streamId  StreamID that users are part of
+     *
+     * @param streamId StreamID that users are part of
      * @return Set of sym users representing the users that are part of the stream.
      * @throws UsersClientException Exceptions from underlying API calls.
      */
@@ -304,11 +310,12 @@ public class DefaultUserCache implements SymUserCache {
 
     /**
      * Retrieve user by user email
-     * @param email     email of user
+     *
+     * @param email email of user
      * @return Symuser
      * @throws UsersClientException Exception from underlying API's
      */
-    public SymUser getUserByEmail(String email) throws UsersClientException{
+    public SymUser getUserByEmail(String email) throws UsersClientException {
 
         try {
 
@@ -327,6 +334,7 @@ public class DefaultUserCache implements SymUserCache {
 
     /**
      * Return cache type. This should be CacheType.USER
+     *
      * @return SymUserCache
      */
     @Override
@@ -336,6 +344,7 @@ public class DefaultUserCache implements SymUserCache {
 
     /**
      * THIS IS IGNORED
+     *
      * @param cacheType type of cache eg. USER
      */
     @Override

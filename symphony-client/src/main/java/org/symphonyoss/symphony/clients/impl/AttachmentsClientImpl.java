@@ -59,6 +59,7 @@ public class AttachmentsClientImpl implements AttachmentsClient {
         //Get Service client to query for userID.
         apiClient = org.symphonyoss.symphony.agent.invoker.Configuration.getDefaultApiClient();
         apiClient.setBasePath(agentUrl);
+        //apiClient.getHttpClient().register(MultiPartFeature.class);
 
     }
 
@@ -75,6 +76,7 @@ public class AttachmentsClientImpl implements AttachmentsClient {
         apiClient = org.symphonyoss.symphony.agent.invoker.Configuration.getDefaultApiClient();
         apiClient.setHttpClient(httpClient);
         apiClient.setBasePath(agentUrl);
+        //apiClient.getHttpClient().register(MultiPartFeature.class);
 
     }
 
@@ -90,6 +92,8 @@ public class AttachmentsClientImpl implements AttachmentsClient {
 
 
         try {
+
+
             return  Base64.getDecoder().decode(attachmentsApi.v1StreamSidAttachmentGet(symMessage.getStreamId(),
                     symAttachmentInfo.getId(),
                     symMessage.getId(),

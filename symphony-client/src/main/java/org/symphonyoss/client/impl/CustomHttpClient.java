@@ -30,7 +30,6 @@ import org.glassfish.jersey.client.ClientConfig;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import java.io.InputStream;
-import java.security.Key;
 import java.security.KeyStore;
 
 /**

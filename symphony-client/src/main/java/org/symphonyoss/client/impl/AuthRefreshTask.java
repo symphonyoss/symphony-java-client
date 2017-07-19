@@ -28,7 +28,6 @@ package org.symphonyoss.client.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
-import org.symphonyoss.client.exceptions.AuthorizationException;
 import org.symphonyoss.client.exceptions.NetworkException;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.symphony.clients.AuthorizationClient;
@@ -65,7 +64,7 @@ public class AuthRefreshTask extends TimerTask {
         SymAuth symAuth = null;
         try {
 
-            AuthorizationClient authClient = null;
+            AuthorizationClient authClient;
 
             //Init the Symphony authorization client, which requires both the key and session URL's.  In most cases,
             //the same fqdn but different URLs.

@@ -40,7 +40,7 @@ public class SymAdminStreamAttributes {
 
     private String roomDescription = null;
 
-    private List<Long> members = new ArrayList<Long>();
+    private List<Long> members = new ArrayList<>();
 
     private Long createdByUserId = null;
 

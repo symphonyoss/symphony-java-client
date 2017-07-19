@@ -41,7 +41,7 @@ public class SymStreamAttributes {
     private Boolean active = null;
 
 
-    private SymStreamType symStreamType = null;
+    private SymStreamTypes symStreamTypes = null;
 
 
     private SymChatSpecificStreamAttributes symChatSpecificStreamAttributes = null;
@@ -74,12 +74,12 @@ public class SymStreamAttributes {
         this.active = active;
     }
 
-    public SymStreamType getSymStreamType() {
-        return symStreamType;
+    public SymStreamTypes getSymStreamTypes() {
+        return symStreamTypes;
     }
 
-    public void setSymStreamType(SymStreamType symStreamType) {
-        this.symStreamType = symStreamType;
+    public void setSymStreamTypes(SymStreamTypes symStreamTypes) {
+        this.symStreamTypes = symStreamTypes;
     }
 
     public SymChatSpecificStreamAttributes getSymChatSpecificStreamAttributes() {
@@ -112,9 +112,9 @@ public class SymStreamAttributes {
             symStreamAttributes.setSymRoomSpecificStreamAttributes(symRoomSpecificStreamAttributes);
         }
 
-        SymStreamType symStreamType = new SymStreamType();
-        symStreamType.setType(SymStreamType.Type.fromValue(streamAttributes.getStreamType().getType().toString()));
-        symStreamAttributes.setSymStreamType(symStreamType);
+        SymStreamTypes symStreamTypes = new SymStreamTypes();
+        symStreamTypes.setType(SymStreamTypes.Type.fromValue(streamAttributes.getStreamType().getType().toString()));
+        symStreamAttributes.setSymStreamTypes(symStreamTypes);
 
         if (streamAttributes.getStreamAttributes() != null)
             symStreamAttributes.setSymChatSpecificStreamAttributes(SymChatSpecificStreamAttributes.toSymChatSpecificStreamAttributes(streamAttributes.getStreamAttributes()));

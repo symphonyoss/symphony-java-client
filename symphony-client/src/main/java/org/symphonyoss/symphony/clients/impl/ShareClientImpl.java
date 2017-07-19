@@ -47,21 +47,21 @@ public class ShareClientImpl implements ShareClient{
 
     private final SymAuth symAuth;
     @SuppressWarnings("unused")
-    private final String serviceUrl;
+    private final String podUrl;
     private final ApiClient apiClient;
 
     @SuppressWarnings("unused")
     private final Logger logger = LoggerFactory.getLogger(StreamsClientImpl.class);
 
-    public ShareClientImpl(SymAuth symAuth, String serviceUrl) {
+    public ShareClientImpl(SymAuth symAuth, String podUrl) {
 
         this.symAuth = symAuth;
-        this.serviceUrl = serviceUrl;
+        this.podUrl = podUrl;
 
 
         //Get Service client to query for userID.
         apiClient = org.symphonyoss.symphony.agent.invoker.Configuration.getDefaultApiClient();
-        apiClient.setBasePath(serviceUrl);
+        apiClient.setBasePath(podUrl);
 
         apiClient.addDefaultHeader(symAuth.getSessionToken().getName(), symAuth.getSessionToken().getToken());
         apiClient.addDefaultHeader(symAuth.getKeyToken().getName(), symAuth.getKeyToken().getToken());
@@ -71,17 +71,17 @@ public class ShareClientImpl implements ShareClient{
     /**
      * If you need to override HttpClient.  Important for handling individual client certs.
      * @param symAuth Authorization model containing session and key tokens
-     * @param serviceUrl Service URL used to access API
+     * @param podUrl Service URL used to access API
      * @param httpClient Custom HTTP client
      */
-    public ShareClientImpl(SymAuth symAuth, String serviceUrl, Client httpClient) {
+    public ShareClientImpl(SymAuth symAuth, String podUrl, Client httpClient) {
         this.symAuth = symAuth;
-        this.serviceUrl = serviceUrl;
+        this.podUrl = podUrl;
 
         //Get Service client to query for userID.
         apiClient = org.symphonyoss.symphony.agent.invoker.Configuration.getDefaultApiClient();
         apiClient.setHttpClient(httpClient);
-        apiClient.setBasePath(serviceUrl);
+        apiClient.setBasePath(podUrl);
 
         apiClient.addDefaultHeader(symAuth.getSessionToken().getName(), symAuth.getSessionToken().getToken());
         apiClient.addDefaultHeader(symAuth.getKeyToken().getName(), symAuth.getKeyToken().getToken());

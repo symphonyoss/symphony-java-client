@@ -41,13 +41,17 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 ## Change log and notes
 
 ### V1.0.2 (SNAPSHOT)
+* Support for REST API 1.46.0+
 * Removed generated symphony-apis module and replaced with [symphony-java-api](https://github.com/symphonyoss/symphony-java-api) released modules
-* Upgraded all underlying services with new REST API v4 endpoints
-* Removed PresenceService as it is no longer supported
+* Services and clients have support for V4 endpoints.  Use SymphonyClientFactory.TYPE.V4 when instantiating SymphonyClient
+* Added new models and listeners to support V4 event based messaging.  This primarily impacts "Room" services if running V4 mode. 
+* SymMessage support for PresentationML inclusive of EntityData
+* Examples added back to project, but are not part of distribution
+* Example added for PresentationML (incl EntityData) and RoomExampleV4 showing event messaging
+* Removed PresenceService and associated listeners as it is no longer supported
 * Better exception handling exposing underlying root causes from API calls.
-* Moved away from using system properties in favor of internal configuration properties.
+* Moved away from using system properties in favor of internal configuration properties with native support for system configuration and environmental properties.
 * Increase in unit test coverage
-* Room cache (lazy), running late on this one
 * Added ability to obtain stream attributes in StreamsClient.getStreams(...).  Admin and user level.
 * Added the ability to list all streams known streams for a given user StreamClient
 * Updated MessageService to take advantage of new stream attributes functions
@@ -135,16 +139,17 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 
 #### Required System Properties:
 
-        -Dkeystore.password=(Pass)
-        -Dtruststore.password=(Pass)
-        -Dsessionauth.url=https://(pod-host).symphony.com:8444/sessionauth
-        //Note: you may have local HSM vs pod
-        -Dkeyauth.url=https://(pod-host).symphony.com:8444/keyauth
-        -Dsymphony.agent.pod.url=https://(symagent-host).mdevlab.com:8446/pod
-        -Dsymphony.agent.agent.url=https://(symagent-host).mdevlab.com:8446/agent
-        -Dcerts.dir=/dev/certs/
-        -Dtruststore.file=/dev/certs/server.truststore
-        -Dbot.user=(user name)
+        -Dtruststore.file=
+        -Dtruststore.password=password
+        -Dsessionauth.url=https://(hostname)/sessionauth
+        -Dkeyauth.url=https://(hostname)/keyauth
+        -Duser.call.home=frank.tarsillo@markit.com
+        -Duser.cert.password=password
+        -Duser.cert.file=bot.user2.p12
+        -Dpod.url=https://(pod host)/pod
+        -Dagent.url=https://(agent server host)/agent
+        -Duser.email=bot.user2@markit.com or bot user email
+       
 
 ## Examples
 [see Examples Project](https://github.com/symphonyoss/symphony-java-sample-bots)

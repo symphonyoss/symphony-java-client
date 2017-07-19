@@ -23,17 +23,17 @@
  */
 
 
-/**
- *
- * @author Frank Tarsillo
- */
+
 package org.symphonyoss.symphony.clients.model;
 
 
 import org.symphonyoss.symphony.pod.model.AdminStreamList;
 import java.util.List;
 
-
+/**
+ *
+ * @author Frank Tarsillo
+ */
 public class SymAdminStreamList {
 
     private Long count = null;

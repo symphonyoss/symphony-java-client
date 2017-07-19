@@ -51,14 +51,14 @@ public class RoomMembershipClientImpl implements RoomMembershipClient {
     @SuppressWarnings("unused")
     private Logger logger = LoggerFactory.getLogger(RoomMembershipClientImpl.class);
 
-    public RoomMembershipClientImpl(SymAuth symAuth, String serviceUrl) {
+    public RoomMembershipClientImpl(SymAuth symAuth, String podUrl) {
 
         this.symAuth = symAuth;
 
 
         //Get Service client to query for userID.
         apiClient = org.symphonyoss.symphony.pod.invoker.Configuration.getDefaultApiClient();
-        apiClient.setBasePath(serviceUrl);
+        apiClient.setBasePath(podUrl);
 
         apiClient.addDefaultHeader(symAuth.getSessionToken().getName(), symAuth.getSessionToken().getToken());
         apiClient.addDefaultHeader(symAuth.getKeyToken().getName(), symAuth.getKeyToken().getToken());
@@ -69,16 +69,16 @@ public class RoomMembershipClientImpl implements RoomMembershipClient {
      * If you need to override HttpClient.  Important for handling individual client certs.
      *
      * @param symAuth    Authorization object holding session and key tokens
-     * @param serviceUrl The Symphony service URL
+     * @param podUrl The Symphony service URL
      * @param httpClient The HttpClient to use when calling Symphony API
      */
-    public RoomMembershipClientImpl(SymAuth symAuth, String serviceUrl, Client httpClient) {
+    public RoomMembershipClientImpl(SymAuth symAuth, String podUrl, Client httpClient) {
         this.symAuth = symAuth;
 
         //Get Service client to query for userID.
         apiClient = org.symphonyoss.symphony.pod.invoker.Configuration.getDefaultApiClient();
         apiClient.setHttpClient(httpClient);
-        apiClient.setBasePath(serviceUrl);
+        apiClient.setBasePath(podUrl);
 
         apiClient.addDefaultHeader(symAuth.getSessionToken().getName(), symAuth.getSessionToken().getToken());
         apiClient.addDefaultHeader(symAuth.getKeyToken().getName(), symAuth.getKeyToken().getToken());
