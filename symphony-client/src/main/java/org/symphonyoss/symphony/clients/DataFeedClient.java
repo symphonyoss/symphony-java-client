@@ -62,6 +62,7 @@ public interface DataFeedClient {
      * This is only used for V2 messaging and is now deprecated. Please use event based methods going forward for V4.
      *
      * @param datafeed Datafeed object associated with BOT user
+     * @param maxMessages maximum number of messages returned.
      * @return List of base messages
      * @throws DataFeedException Caused by Symphony API calls
      */
@@ -87,6 +88,7 @@ public interface DataFeedClient {
      * This is only used for V4+ enabled clients.
      *
      * @param datafeed Datafeed object associated with BOT user
+     * @param maxMessages maximum number of messages returned.
      * @return List of base messages
      * @throws DataFeedException Caused by Symphony API calls
      */

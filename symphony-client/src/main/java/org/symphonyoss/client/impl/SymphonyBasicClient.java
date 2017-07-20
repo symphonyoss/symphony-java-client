@@ -253,7 +253,8 @@ public class SymphonyBasicClient implements SymphonyClient {
      * @return Service URL which can be either the Agent URL or POD URL
      */
     @Override
-    public String getpodUrl() {
+    @Deprecated
+    public String getServiceUrl() {
         return podUrl;
     }
 
@@ -261,9 +262,27 @@ public class SymphonyBasicClient implements SymphonyClient {
      * @param podUrl Service URL which can be either the Agent URL or POD URL
      */
     @SuppressWarnings("unused")
-    public void setpodUrl(String podUrl) {
+    @Deprecated
+    public void setServiceUrl(String podUrl) {
         this.podUrl = podUrl;
     }
+
+    /**
+     * @return Service URL which can be either the Agent URL or POD URL
+     */
+    @Override
+    public String getPodUrl() {
+        return podUrl;
+    }
+
+    /**
+     * @param podUrl Service URL which can be either the Agent URL or POD URL
+     */
+    @SuppressWarnings("unused")
+    public void setPodUrl(String podUrl) {
+        this.podUrl = podUrl;
+    }
+
 
     /**
      * @return DataFeedClient

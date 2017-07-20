@@ -74,8 +74,7 @@ public interface SymphonyClient {
      * @param httpClient Custom http client to use when connecting to Symphony API's
      * @param config Configuration object
      * @throws InitException Failure of a specific service most likely due to connectivity issues
-     * @throws NetworkException A network exception
-     * @throws AuthorizationException 
+     * @throws AuthorizationException A network exception
      */
     void init(Client httpClient, SymphonyClientConfig config) throws InitException, AuthorizationException;
     
@@ -153,6 +152,8 @@ public interface SymphonyClient {
      */
     MessagesClient getMessagesClient();
 
+    String getPodUrl();
+
     /**
      * Provides instance of the DataFeed client
      *
@@ -200,7 +201,7 @@ public interface SymphonyClient {
      *
      * @return The Service URL
      */
-    String getpodUrl();
+    String getServiceUrl();
 
     /**
      * Provides instance of the Shares client.  This client supports the distribution of entity objects.
