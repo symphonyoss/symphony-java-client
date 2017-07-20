@@ -35,9 +35,9 @@ public class RoomMembershipFactory {
     public static RoomMembershipClient getClient(SymphonyClient symClient, TYPE type){
 
         if(type.equals(TYPE.HTTPCLIENT)) {
-            return new RoomMembershipClientImpl(symClient.getSymAuth(), symClient.getpodUrl(), symClient.getDefaultHttpClient());
+            return new RoomMembershipClientImpl(symClient.getSymAuth(), symClient.getPodUrl(), symClient.getDefaultHttpClient());
         }else{
-            return new RoomMembershipClientImpl(symClient.getSymAuth(), symClient.getpodUrl());
+            return new RoomMembershipClientImpl(symClient.getSymAuth(), symClient.getPodUrl());
         }
     }
 

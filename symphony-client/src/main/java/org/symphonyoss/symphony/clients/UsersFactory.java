@@ -40,9 +40,9 @@ public class UsersFactory {
     public static UsersClient getClient(SymphonyClient symClient, TYPE type){
 
         if(type.equals(TYPE.HTTPCLIENT)) {
-            return new UsersClientImpl(symClient.getSymAuth(), symClient.getpodUrl(), symClient.getDefaultHttpClient());
+            return new UsersClientImpl(symClient.getSymAuth(), symClient.getPodUrl(), symClient.getDefaultHttpClient());
         }else{
-            return new UsersClientImpl(symClient.getSymAuth(), symClient.getpodUrl());
+            return new UsersClientImpl(symClient.getSymAuth(), symClient.getPodUrl());
         }
     }
     @SuppressWarnings("unused")

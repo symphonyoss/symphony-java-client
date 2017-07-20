@@ -35,9 +35,9 @@ public class PresenceFactory {
     public static PresenceClient getClient(SymphonyClient symClient, TYPE type) {
 
         if (type.equals(TYPE.HTTPCLIENT)) {
-            return new PresenceClientImpl(symClient.getSymAuth(), symClient.getpodUrl(), symClient.getDefaultHttpClient());
+            return new PresenceClientImpl(symClient.getSymAuth(), symClient.getPodUrl(), symClient.getDefaultHttpClient());
         } else {
-            return new PresenceClientImpl(symClient.getSymAuth(), symClient.getpodUrl());
+            return new PresenceClientImpl(symClient.getSymAuth(), symClient.getPodUrl());
         }
 
     }
