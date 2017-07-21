@@ -24,8 +24,8 @@ package org.symphonyoss.symphony.clients.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.symphonyoss.client.exceptions.ConnectionsException;
 import org.symphonyoss.client.model.SymAuth;
-import org.symphonyoss.exceptions.ConnectionsException;
 import org.symphonyoss.symphony.clients.ConnectionsClient;
 import org.symphonyoss.symphony.clients.model.SymUserConnection;
 import org.symphonyoss.symphony.clients.model.SymUserConnectionRequest;
@@ -52,14 +52,14 @@ public class ConnectionsClientImpl implements ConnectionsClient {
     private Logger logger = LoggerFactory.getLogger(ConnectionsClientImpl.class);
 
 
-    public ConnectionsClientImpl(SymAuth symAuth, String serviceUrl) {
+    public ConnectionsClientImpl(SymAuth symAuth, String podUrl) {
 
         this.symAuth = symAuth;
 
 
         //Get Service client to query for userID.
         apiClient = org.symphonyoss.symphony.pod.invoker.Configuration.getDefaultApiClient();
-        apiClient.setBasePath(serviceUrl);
+        apiClient.setBasePath(podUrl);
 
     }
 
@@ -67,16 +67,16 @@ public class ConnectionsClientImpl implements ConnectionsClient {
      * If you need to override HttpClient.  Important for handling individual client certs.
      *
      * @param symAuth    Authorization model containing session and key tokens
-     * @param serviceUrl Service URL
+     * @param podUrl Service URL
      * @param httpClient Custom HTTP Client to use
      */
-    public ConnectionsClientImpl(SymAuth symAuth, String serviceUrl, Client httpClient) {
+    public ConnectionsClientImpl(SymAuth symAuth, String podUrl, Client httpClient) {
         this.symAuth = symAuth;
 
         //Get Service client to query for userID.
         apiClient = org.symphonyoss.symphony.pod.invoker.Configuration.getDefaultApiClient();
         apiClient.setHttpClient(httpClient);
-        apiClient.setBasePath(serviceUrl);
+        apiClient.setBasePath(podUrl);
 
     }
 

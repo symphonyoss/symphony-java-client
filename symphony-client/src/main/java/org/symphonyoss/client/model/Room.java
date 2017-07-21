@@ -23,6 +23,7 @@
 
 package org.symphonyoss.client.model;
 
+import org.symphonyoss.client.services.RoomEventListener;
 import org.symphonyoss.client.services.RoomListener;
 import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.clients.model.SymRoomDetail;
@@ -47,6 +48,7 @@ public class Room {
     private SymRoomDetail roomDetail;
     private RoomListener roomListener;
     private final Set<RoomListener> roomListeners = ConcurrentHashMap.newKeySet();
+    private final Set<RoomEventListener> roomEventListeners = ConcurrentHashMap.newKeySet();
 
     public String getStreamId() {
         return streamId;
@@ -114,6 +116,17 @@ public class Room {
 
 
     /**
+     * Return all event listeners for this room
+     *
+     * @return A set of all room event listeners.
+     */
+    public Set<RoomEventListener> getRoomEventListeners() {
+
+        return roomEventListeners;
+    }
+
+
+    /**
      * Push message to all registered listeners.
      *
      * @param message New incoming message.
@@ -124,17 +137,34 @@ public class Room {
         for (RoomListener roomListener : roomListeners)
             roomListener.onRoomMessage(message);
 
+        for (RoomEventListener roomEventListener : roomEventListeners)
+            roomEventListener.onRoomMessage(message);
+
     }
 
+    @Deprecated
     public void addListener(RoomListener roomListener) {
         roomListeners.add(roomListener);
 
     }
 
-    @SuppressWarnings("unused")
+    @Deprecated
     public void removeListener(RoomListener roomListener) {
 
         roomListeners.remove(roomListener);
+
+
+    }
+
+    public void addEventListener(RoomEventListener roomEventListener) {
+        roomEventListeners.add(roomEventListener);
+
+    }
+
+
+    public void removeEventListener(RoomEventListener roomEventListener) {
+
+        roomEventListeners.remove(roomEventListener);
 
 
     }

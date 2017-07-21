@@ -24,14 +24,14 @@ package org.symphonyoss.symphony.clients.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.symphonyoss.client.exceptions.PresenceException;
 import org.symphonyoss.client.model.SymAuth;
-import org.symphonyoss.exceptions.PresenceException;
 import org.symphonyoss.symphony.pod.api.PresenceApi;
 import org.symphonyoss.symphony.pod.invoker.ApiClient;
 import org.symphonyoss.symphony.pod.invoker.ApiException;
 import org.symphonyoss.symphony.pod.invoker.Pair;
 import org.symphonyoss.symphony.pod.model.Presence;
-import org.symphonyoss.symphony.pod.model.PresenceList;
+
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.GenericType;
@@ -52,14 +52,14 @@ public class PresenceClientImpl implements org.symphonyoss.symphony.clients.Pres
     private Logger logger = LoggerFactory.getLogger(PresenceClientImpl.class);
 
 
-    public PresenceClientImpl(SymAuth symAuth, String serviceUrl) {
+    public PresenceClientImpl(SymAuth symAuth, String podUrl) {
 
         this.symAuth = symAuth;
 
 
         //Get Service client to query for userID.
         apiClient = org.symphonyoss.symphony.pod.invoker.Configuration.getDefaultApiClient();
-        apiClient.setBasePath(serviceUrl);
+        apiClient.setBasePath(podUrl);
 
         apiClient.addDefaultHeader(symAuth.getSessionToken().getName(), symAuth.getSessionToken().getToken());
         apiClient.addDefaultHeader(symAuth.getKeyToken().getName(), symAuth.getKeyToken().getToken());
@@ -69,38 +69,22 @@ public class PresenceClientImpl implements org.symphonyoss.symphony.clients.Pres
     /**
      * If you need to override HttpClient.  Important for handling individual client certs.
      * @param symAuth Authorization object holding session and key tokens
-     * @param serviceUrl The Symphony service URL
+     * @param podUrl The Symphony service URL
      * @param httpClient The HttpClient to use when calling Symphony API
      */
-    public PresenceClientImpl(SymAuth symAuth, String serviceUrl, Client httpClient) {
+    public PresenceClientImpl(SymAuth symAuth, String podUrl, Client httpClient) {
         this.symAuth = symAuth;
 
         //Get Service client to query for userID.
         apiClient = org.symphonyoss.symphony.pod.invoker.Configuration.getDefaultApiClient();
         apiClient.setHttpClient(httpClient);
-        apiClient.setBasePath(serviceUrl);
+        apiClient.setBasePath(podUrl);
 
         apiClient.addDefaultHeader(symAuth.getSessionToken().getName(), symAuth.getSessionToken().getToken());
         apiClient.addDefaultHeader(symAuth.getKeyToken().getName(), symAuth.getKeyToken().getToken());
 
     }
 
-
-    @Override
-    public PresenceList getAllUserPresence() throws PresenceException {
-
-
-        PresenceApi presenceApi = new PresenceApi(apiClient);
-
-
-        try {
-            return presenceApi.v1PresenceGet(symAuth.getSessionToken().getToken());
-        } catch (ApiException e) {
-            throw new PresenceException("Failed to retrieve all user presence...", e);
-        }
-
-
-    }
 
     @Override
     public Presence getUserPresence(Long userId) throws PresenceException {

@@ -21,7 +21,8 @@
   ~ under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>symphony-java-client</artifactId>
         <groupId>org.symphonyoss.symphony</groupId>
@@ -42,12 +43,25 @@
 
     <properties>
         <jsoup-version>1.9.2</jsoup-version>
-        <symphony-api-version>1.0.2-SNAPSHOT</symphony-api-version>
+        <symphony-api-version>1.46.0</symphony-api-version>
         <gson-version>2.7</gson-version>
-        <failsafe.jvm.args>-Dlog4j.configurationFile=src/test/resources/log4j.properties -Xmx1024m -Dsessionauth.url=${env.SESSIONAUTH_URL} -Dkeyauth.url=${env.KEYAUTH_URL} -Dsymphony.agent.pod.url=${env.POD_URL} -Dsymphony.agent.agent.url=${env.AGENT_URL} -Dtruststore.file=${env.TRUSTSTORE_FILE} -Dtruststore.password=${env.TRUSTSTORE_PASSWORD} -Dbot.user.cert.file=${env.BOT_USER_CERT_FILE} -Dbot.user.cert.password=${env.BOT_USER_CERT_PASSWORD} -Dbot.user.email=${env.BOT_USER_EMAIL} -Dsender.user.email=${env.SENDER_USER_EMAIL} -Dsender.user.cert.file=${env.SENDER_USER_CERT_FILE} -Dsender.user.cert.password=${env.SENDER_USER_CERT_PASSWORD} -Dtest.room.stream=${env.TEST_ROOM_STREAM} -Dsymusers.cache.enabled=true
+        <failsafe.jvm.args>-Dlog4j.configurationFile=src/test/resources/log4j.properties -Xmx1024m
+            -Dsessionauth.url=${env.SESSIONAUTH_URL} -Dkeyauth.url=${env.KEYAUTH_URL}
+            -Dsymphony.agent.pod.url=${env.POD_URL} -Dsymphony.agent.agent.url=${env.AGENT_URL}
+            -Dtruststore.file=${env.TRUSTSTORE_FILE} -Dtruststore.password=${env.TRUSTSTORE_PASSWORD}
+            -Dbot.user.cert.file=${env.BOT_USER_CERT_FILE} -Dbot.user.cert.password=${env.BOT_USER_CERT_PASSWORD}
+            -Dbot.user.email=${env.BOT_USER_EMAIL} -Dsender.user.email=${env.SENDER_USER_EMAIL}
+            -Dsender.user.cert.file=${env.SENDER_USER_CERT_FILE}
+            -Dsender.user.cert.password=${env.SENDER_USER_CERT_PASSWORD} -Dtest.room.stream=${env.TEST_ROOM_STREAM}
+            -Dmp.user.email=${env.MP_USER_EMAIL}
 
         </failsafe.jvm.args>
-        <jvm.args>-Xmx1024m -Dsessionauth.url=$SESSIONAUTH_URL -Dkeyauth.url=$KEYAUTH_URL -Dpod.url=$POD_URL -Dagent.url=$AGENT_URL -Dtruststore.file=$TRUSTSTORE_FILE -Dtruststore.password=$TRUSTSTORE_PASSWORD -Dbot.user.cert.file=$BOT_USER_CERT_FILE -Dbot.user.cert.password=$BOT_USER_CERT_PASSWORD -Dbot.user.email=$BOT_USER_EMAIL -Dsender.user.email=$SENDER_USER_EMAIL -Dreceiver.user.email=$RECEIVER_USER_EMAIL -Drss.url=$RSS_URL -Drss.limit=$RSS_LIMIT</jvm.args>
+        <jvm.args>-Xmx1024m -Dsessionauth.url=$SESSIONAUTH_URL -Dkeyauth.url=$KEYAUTH_URL -Dpod.url=$POD_URL
+            -Dagent.url=$AGENT_URL -Dtruststore.file=$TRUSTSTORE_FILE -Dtruststore.password=$TRUSTSTORE_PASSWORD
+            -Dbot.user.cert.file=$BOT_USER_CERT_FILE -Dbot.user.cert.password=$BOT_USER_CERT_PASSWORD
+            -Dbot.user.email=$BOT_USER_EMAIL -Dsender.user.email=$SENDER_USER_EMAIL
+            -Dreceiver.user.email=$RECEIVER_USER_EMAIL -Drss.url=$RSS_URL -Drss.limit=$RSS_LIMIT
+        </jvm.args>
 
     </properties>
 
@@ -79,6 +93,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
+                <version>3.0.2</version>
                 <configuration>
                     <archive>
                         <manifest>
@@ -133,6 +148,22 @@
                                 </goals>
                             </execution>
                         </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>2.10.4</version>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <failOnError>false</failOnError>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>

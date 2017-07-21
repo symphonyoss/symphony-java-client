@@ -22,11 +22,12 @@
 
 package org.symphonyoss.symphony.clients.model;
 
+import org.symphonyoss.client.exceptions.SymException;
 import org.symphonyoss.client.util.MlMessageParser;
-import org.symphonyoss.exceptions.SymException;
 import org.symphonyoss.symphony.agent.model.Message;
 import org.symphonyoss.symphony.agent.model.V2BaseMessage;
 import org.symphonyoss.symphony.agent.model.V2Message;
+import org.symphonyoss.symphony.agent.model.V4Message;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,6 +62,7 @@ public class SymMessage {
 
     private String timestamp = null;
 
+    @Deprecated  //Under SymStream now
     private String messageType = null;
 
     private String streamId = null;
@@ -71,7 +73,11 @@ public class SymMessage {
 
     private SymUser symUser = null;
 
+    private SymStream stream = null;
+
     private List<SymAttachmentInfo> attachments = new ArrayList<>();
+
+    private String entityData = null;
 
     public SymUser getSymUser() {
         return symUser;
@@ -147,12 +153,29 @@ public class SymMessage {
         this.attachments = attachments;
     }
 
+    public String getEntityData() {
+        return entityData;
+    }
+
+    public void setEntityData(String entityData) {
+        this.entityData = entityData;
+    }
+
     public Format getFormat() {
         return format;
     }
 
     public void setFormat(Format format) {
         this.format = format;
+    }
+
+
+    public SymStream getStream() {
+        return stream;
+    }
+
+    public void setStream(SymStream stream) {
+        this.stream = stream;
     }
 
     @Deprecated
@@ -186,6 +209,25 @@ public class SymMessage {
         return symMessage;
     }
 
+
+    public static SymMessage toSymMessage(V4Message v4Message) {
+
+
+        SymMessage symMessage = new SymMessage();
+        symMessage.setTimestamp(Long.toString(v4Message.getTimestamp()));
+        symMessage.setId(v4Message.getMessageId());
+        symMessage.setStreamId(v4Message.getStream().getStreamId());
+        symMessage.setMessageType(Format.MESSAGEML.toString());
+        symMessage.setFromUserId(v4Message.getUser().getUserId());
+        symMessage.setSymUser(SymUser.toSymUser(v4Message.getUser()));
+        symMessage.setMessage(v4Message.getMessage());
+        symMessage.setStream(SymStream.toSymStream(v4Message.getStream()));
+        symMessage.setAttachments(SymAttachmentInfo.toAttachmentsInfos(v4Message.getAttachments()));
+
+
+        return symMessage;
+    }
+
     @Deprecated
     public static Message toV1Message(V2BaseMessage v2BaseMessage) {
 
@@ -213,6 +255,25 @@ public class SymMessage {
         v1Message.setMessageType(symMessage.getMessageType());
         v1Message.setFromUserId(symMessage.getFromUserId());
         v1Message.setTimestamp(symMessage.getTimestamp());
+        return v1Message;
+    }
+
+
+
+    @Deprecated
+    public static Message toV2Message(V2BaseMessage v2BaseMessage) {
+
+
+        Message v1Message = new Message();
+        v1Message.setId(v2BaseMessage.getId());
+        v1Message.setStreamId(v2BaseMessage.getStreamId());
+        v1Message.setMessageType(v2BaseMessage.getV2messageType());
+        v1Message.setTimestamp(v2BaseMessage.getTimestamp());
+        if (v2BaseMessage instanceof V2Message) {
+            v1Message.setMessage(((V2Message) v2BaseMessage).getMessage());
+            v1Message.setFromUserId(((V2Message) v2BaseMessage).getFromUserId());
+        }
+
         return v1Message;
     }
 

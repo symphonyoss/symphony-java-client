@@ -22,15 +22,14 @@
 
 package org.symphonyoss.symphony.clients;
 
-import org.symphonyoss.exceptions.PresenceException;
+import org.symphonyoss.client.exceptions.PresenceException;
 import org.symphonyoss.symphony.pod.model.Presence;
-import org.symphonyoss.symphony.pod.model.PresenceList;
+
 
 /**
  * Created by frank.tarsillo on 6/6/2016.
  */
 public interface PresenceClient {
-    PresenceList getAllUserPresence() throws PresenceException;
 
     Presence getUserPresence(Long userId) throws PresenceException;
 

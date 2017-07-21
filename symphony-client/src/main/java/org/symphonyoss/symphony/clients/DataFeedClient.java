@@ -22,9 +22,11 @@
 
 package org.symphonyoss.symphony.clients;
 
-import org.symphonyoss.exceptions.DataFeedException;
+import org.symphonyoss.client.exceptions.DataFeedException;
 import org.symphonyoss.symphony.agent.model.Datafeed;
 import org.symphonyoss.symphony.agent.model.V2BaseMessage;
+import org.symphonyoss.client.events.SymEvent;
+import org.symphonyoss.symphony.clients.model.ApiVersion;
 
 
 import java.util.List;
@@ -35,20 +37,73 @@ import java.util.List;
  * Created by Frank Tarsillo on 5/15/2016.
  */
 public interface DataFeedClient {
+
     /**
-     * Create a datafeed to consume messages from
+     * Create a datafeed to consume messages/events from
+     *
      * @return Datafeed object to process messages from
      * @throws DataFeedException Caused by Symphony API calls
      */
     Datafeed createDatafeed() throws DataFeedException;
 
     /**
+     * Create a datafeed to consume messages/events from
+     *
+     * @param apiVersion {@link ApiVersion} to use (V2, V4..)
+     * @return Datafeed object to process messages from
+     * @throws DataFeedException Caused by Symphony API calls
+     */
+    Datafeed createDatafeed(ApiVersion apiVersion) throws DataFeedException;
+
+
+    /**
      * This will return messages from datafeed object through underlying blocking calls.  This method should be called
      * repeatedly to pull message data.
+     * This is only used for V2 messaging and is now deprecated. Please use event based methods going forward for V4.
+     *
+     * @param datafeed Datafeed object associated with BOT user
+     * @param maxMessages maximum number of messages returned.
+     * @return List of base messages
+     * @throws DataFeedException Caused by Symphony API calls
+     */
+    List<V2BaseMessage> getMessagesFromDatafeed(Datafeed datafeed, int maxMessages) throws DataFeedException;
+
+    /**
+     * This will return messages from datafeed object through underlying blocking calls.  This method should be called
+     * repeatedly to pull message data.
+     * This is only used for V2 messaging and is now deprecated. Please use event based methods going forward.
+     *
      * @param datafeed Datafeed object associated with BOT user
      * @return List of base messages
      * @throws DataFeedException Caused by Symphony API calls
      */
     List<V2BaseMessage> getMessagesFromDatafeed(Datafeed datafeed) throws DataFeedException;
 
-    }
+
+
+    /**
+     * This will return events from datafeed object through underlying blocking calls.  This method should be called
+     * repeatedly to pull event based data.
+     *
+     * This is only used for V4+ enabled clients.
+     *
+     * @param datafeed Datafeed object associated with BOT user
+     * @param maxMessages maximum number of messages returned.
+     * @return List of base messages
+     * @throws DataFeedException Caused by Symphony API calls
+     */
+    List<SymEvent> getEventsFromDatafeed(Datafeed datafeed, int maxMessages) throws DataFeedException;
+
+
+    /**
+     * This will return events from datafeed object through underlying blocking calls.  This method should be called
+     * repeatedly to pull event based data.
+     *
+     * This is only used for V4+ enabled clients.
+     *
+     * @param datafeed Datafeed object associated with BOT user
+     * @return List of base messages
+     * @throws DataFeedException Caused by Symphony API calls
+     */
+    List<SymEvent> getEventsFromDatafeed(Datafeed datafeed) throws DataFeedException;
+}

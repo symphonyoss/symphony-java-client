@@ -9,7 +9,7 @@ Symphony Java Client
 
 The Symphony java client provides a real-time wrapper around the Symphony REST API's to simplify the creation of chat sessions, room access, presence, messaging and more...  The client provides a set of logical services representing supported features of the Symphony platform.  Services support real-time events through feature based listeners and communication objects.  Access is not limited to the services as all underlying Symphony client implementations are exposed for advanced use or creation of your own service.
 
-##Features
+## Features
 * Basic client:
     * Authentication management
     * Implements and exposes functional services and underlying clients.
@@ -25,10 +25,6 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
     * Real-time listeners on all room events
     * Enriches Room objects with associated system attributes
     * X-Pod Support
-* Presence Service (Disabled by default and NOT recommended for use)
-    * Maintains an active cache of endpoint presence associated with single POD.
-    * Real-time listeners on all presence changes
-    * Request user presence
 * Connections request handling including auto-accept.
 * Attachment Support
 * Publish formatted articles (news) using ShareApi
@@ -42,13 +38,23 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 
 
 
-##Change log and notes
+## Change log and notes
 
 ### V1.0.2 (SNAPSHOT)
-* Move away from internal generated symphony-apis module
+* Support for REST API 1.46.0+
+* Removed generated symphony-apis module and replaced with [symphony-java-api](https://github.com/symphonyoss/symphony-java-api) released modules
+* Services and clients have support for V4 endpoints.  Use SymphonyClientFactory.TYPE.V4 when instantiating SymphonyClient
+* Added new models and listeners to support V4 event based messaging.  This primarily impacts "Room" services if running V4 mode. 
+* SymMessage support for PresentationML inclusive of EntityData
+* Examples added back to project, but are not part of distribution
+* Example added for PresentationML (incl EntityData) and RoomExampleV4 showing event messaging
+* Removed PresenceService and associated listeners as it is no longer supported
+* Better exception handling exposing underlying root causes from API calls.
+* Moved away from using system properties in favor of internal configuration properties with native support for system configuration and environmental properties.
 * Increase in unit test coverage
-* AI Framework refresh
-* Room cache (lazy)
+* Added ability to obtain stream attributes in StreamsClient.getStreams(...).  Admin and user level.
+* Added the ability to list all streams known streams for a given user StreamClient
+* Updated MessageService to take advantage of new stream attributes functions
 
 
 ### V1.0.1 (Stable)
@@ -101,11 +107,17 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 * Exposes clients for Symphoni API including Authorization, Streams, Presence, RoomMembership, User, Users,
 * Utilizes generated API models from Symphony
 
+## Branch Strategy
+
+**develop** - All active development on latest SNAPSHOT
+
+**master**  - Periodic merged and tested features from develop branch
 
 
-##Requirements
 
-####POM:
+## Requirements
+
+#### POM:
 
         <dependency>
             <groupId>org.symphonyoss.symphony</groupId>
@@ -113,7 +125,7 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
             <version>(Version)</version>
         </dependency>
 
-####Certificates:
+#### Certificates:
 
         Please contact your Symphony local administrator to obtain the necessary certificates
         for the user/service account being used to access the POD.
@@ -125,27 +137,32 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
         means you can bind different .p12 certs representing different BOT users.
 
 
-####Required System Properties:
+#### Required System Properties:
 
-        -Dkeystore.password=(Pass)
-        -Dtruststore.password=(Pass)
-        -Dsessionauth.url=https://(pod-host).symphony.com:8444/sessionauth
-        //Note: you may have local HSM vs pod
-        -Dkeyauth.url=https://(pod-host).symphony.com:8444/keyauth
-        -Dsymphony.agent.pod.url=https://(symagent-host).mdevlab.com:8446/pod
-        -Dsymphony.agent.agent.url=https://(symagent-host).mdevlab.com:8446/agent
-        -Dcerts.dir=/dev/certs/
-        -Dtruststore.file=/dev/certs/server.truststore
-        -Dbot.user=(user name)
-
-In addition to the above, Java 8 must be installed.
-
-
-##Examples
-[see Examples Project](https://github.com/symphonyoss/symphony-java-sample-bots)
+        -Dtruststore.file=
+        -Dtruststore.password=password
+        -Dsessionauth.url=https://(hostname)/sessionauth
+        -Dkeyauth.url=https://(hostname)/keyauth
+        -Duser.call.home=frank.tarsillo@markit.com
+        -Duser.cert.password=password
+        -Duser.cert.file=bot.user2.p12
+        -Dpod.url=https://(pod host)/pod
+        -Dagent.url=https://(agent server host)/agent
+        -Duser.email=bot.user2@markit.com or bot user email
+       
 
 
-##API Docs
+In addition to the above, *Java 8* must be installed.
+
+
+## Examples
+
+The latest *examples* are part of the SJC project and are continually updated with new versions released. 
+
+In addition, there is an external project providing samples of use: [see Examples Project](https://github.com/symphonyoss/symphony-java-sample-bots)
+
+
+## API Docs
 [API Documentation](http://symphonyoss.github.io/symphony-java-client/index.html)
 
 ## Contribute

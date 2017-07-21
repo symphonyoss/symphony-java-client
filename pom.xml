@@ -35,7 +35,7 @@
     <parent>
         <groupId>org.symphonyoss</groupId>
         <artifactId>symphonyoss</artifactId>
-        <version>2</version>
+        <version>5</version>
     </parent>
 
     <licenses>
@@ -81,7 +81,6 @@
     </developers>
 
     <modules>
-        <module>symphony-apis</module>
         <module>symphony-client</module>
     </modules>
 
@@ -91,6 +90,7 @@
         <junit-version>4.12</junit-version>
         <mokito-version>1.10.19</mokito-version>
         <jsoup-version>1.9.2</jsoup-version>
+        <jackson.version>2.8.8</jackson.version>
     </properties>
 
     <dependencies>
@@ -123,6 +123,11 @@
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
             <version>${jsoup-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>${jackson.version}</version>
         </dependency>
     </dependencies>
 

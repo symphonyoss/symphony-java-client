@@ -57,7 +57,7 @@ public class SymphonyClientIT implements ChatServiceListener, ChatListener, Room
     public final static String CHAT_COMMAND_MESSAGE = "/onChatMessage";
     public final static String MULTI_PARTY_CHAT_COMMAND_MESSAGE = "/onMultiPartyChatMessage";
     public final static String PRESENCE_COMMAND_MESSAGE = "/onPresenceMessage";
-    public final static String MP_USER_EMAIL = "Frank.Tarsillo@ihsmarkit.com";
+    private final static String MP_USER_EMAIL = System.getProperty("mp.user.email","Frank.Tarsillo@ihsmarkit.com");
 
     private static boolean responded;
 
@@ -224,24 +224,29 @@ public class SymphonyClientIT implements ChatServiceListener, ChatListener, Room
 
         String[] chunks = text.split(" ");
 
-        if (chunks[0].equals(ROOM_COMMAND_MESSAGE)) {
-            responded = true;
-            logger.info("ETE Test:  Room Message: Success");
-        } else if (chunks[0].equals(CHAT_COMMAND_MESSAGE)) {
-            responded = true;
-            logger.info("ETE Test: Chat Message: Success");
-        } else if (chunks[0].equals(MULTI_PARTY_CHAT_COMMAND_MESSAGE)) {
-            responded = true;
-            logger.info("ETE Test: Multi-Party Chat Message: Success");
-        }else if (chunks[0].equals(PRESENCE_COMMAND_MESSAGE)) {
-
-            if(chunks[1] != null && chunks[1].equals(Presence.CategoryEnum.AVAILABLE.toString())) {
-
+        switch (chunks[0]) {
+            case ROOM_COMMAND_MESSAGE:
                 responded = true;
-                logger.info("ETE Test: Presence Message: Success:  {}", text);
-            }else{
-                logger.error("ETE Test: Presence Message: Failure: {}", text);
-            }
+                logger.info("ETE Test:  Room Message: Success");
+                break;
+            case CHAT_COMMAND_MESSAGE:
+                responded = true;
+                logger.info("ETE Test: Chat Message: Success");
+                break;
+            case MULTI_PARTY_CHAT_COMMAND_MESSAGE:
+                responded = true;
+                logger.info("ETE Test: Multi-Party Chat Message: Success");
+                break;
+            case PRESENCE_COMMAND_MESSAGE:
+
+                if (chunks[1] != null && chunks[1].equals(Presence.CategoryEnum.AVAILABLE.toString())) {
+
+                    responded = true;
+                    logger.info("ETE Test: Presence Message: Success:  {}", text);
+                } else {
+                    logger.error("ETE Test: Presence Message: Failure: {}", text);
+                }
+                break;
         }
 
 

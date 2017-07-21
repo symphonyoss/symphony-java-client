@@ -25,15 +25,15 @@ package org.symphonyoss.client.services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.client.events.*;
+import org.symphonyoss.client.exceptions.MessagesException;
+import org.symphonyoss.client.exceptions.StreamsException;
+import org.symphonyoss.client.exceptions.UsersClientException;
 import org.symphonyoss.client.model.CacheType;
 import org.symphonyoss.client.model.Chat;
 import org.symphonyoss.client.model.Room;
-import org.symphonyoss.exceptions.MessagesException;
-import org.symphonyoss.exceptions.StreamsException;
-import org.symphonyoss.exceptions.UsersClientException;
 import org.symphonyoss.symphony.agent.model.*;
-import org.symphonyoss.symphony.clients.model.SymMessage;
-import org.symphonyoss.symphony.clients.model.SymUser;
+import org.symphonyoss.symphony.clients.model.*;
 import org.symphonyoss.symphony.pod.model.Stream;
 
 import java.util.List;
@@ -68,8 +68,11 @@ public class MessageService implements DataFeedListener {
     private final Set<MessageListener> messageListeners = ConcurrentHashMap.newKeySet();
     private final Set<ChatListener> chatListeners = ConcurrentHashMap.newKeySet();
     private final Set<RoomServiceListener> roomServiceListeners = ConcurrentHashMap.newKeySet();
+    private final Set<RoomServiceEventListener> roomServiceEventListeners = ConcurrentHashMap.newKeySet();
+    private final Set<ConnectionsEventListener> connectionsEventListeners = ConcurrentHashMap.newKeySet();
     private final Set<String> roomStreamCache = ConcurrentHashMap.newKeySet();
     private final Set<String> chatStreamCache = ConcurrentHashMap.newKeySet();
+    MessageFeedWorkerV2 messageFeedWorkerV2;
     MessageFeedWorker messageFeedWorker;
 
 
@@ -80,11 +83,39 @@ public class MessageService implements DataFeedListener {
      */
     public MessageService(SymphonyClient symClient) {
 
+        this(symClient, ApiVersion.V2);
+
+    }
+
+
+    /**
+     * Specify a version of MessageService to use.  Version is aligning with LLC REST API endpoint versions.
+     *
+     * @param symClient  Symphony client required to access all underlying clients functions.
+     * @param apiVersion The version of the ChatServer to use which is aligned with LLC REST API endpoint versions.
+     */
+    public MessageService(SymphonyClient symClient, ApiVersion apiVersion) {
+
+
         this.symClient = symClient;
 
-        //Lets startup the worker thread to listen for raw datafeed messages.
-        messageFeedWorker = new MessageFeedWorker(symClient, this);
-        new Thread(messageFeedWorker).start();
+        //Lets startup the worker thread to listen for raw datafeed messages if V2
+        if (apiVersion.equals(ApiVersion.V2)) {
+            messageFeedWorkerV2 = new MessageFeedWorkerV2(symClient, this);
+
+            new Thread(messageFeedWorkerV2).start();
+
+        }
+
+
+        //Lets startup the worker thread to listen for raw datafeed messages if V2
+        if (apiVersion.equals(ApiVersion.V4)) {
+            messageFeedWorker = new MessageFeedWorker(symClient, this);
+
+            new Thread(messageFeedWorker).start();
+
+        }
+
 
     }
 
@@ -112,7 +143,7 @@ public class MessageService implements DataFeedListener {
      */
     public SymMessage sendMessage(Chat chat, SymMessage symMessage) throws MessagesException {
 
-       return symClient.getMessagesClient().sendMessage(chat.getStream(), symMessage);
+        return symClient.getMessagesClient().sendMessage(chat.getStream(), symMessage);
 
     }
 
@@ -129,7 +160,7 @@ public class MessageService implements DataFeedListener {
         SymUser remoteUser;
         try {
 
-            remoteUser = ((SymUserCache)symClient.getCache(CacheType.USER)).getUserByEmail(email);
+            remoteUser = ((SymUserCache) symClient.getCache(CacheType.USER)).getUserByEmail(email);
 
             return symClient.getMessagesClient().sendMessage(symClient.getStreamsClient().getStream(remoteUser), symMessage);
 
@@ -182,6 +213,8 @@ public class MessageService implements DataFeedListener {
                     symClient.getStreamsClient().getStream(user), since, offset, maxMessages);
         } catch (StreamsException e) {
             throw new MessagesException("Failed to retrieve messages. Unable to identity stream for userId: " + userId, e);
+
+
         }
 
 
@@ -190,7 +223,7 @@ public class MessageService implements DataFeedListener {
     /**
      * Process new Datafeed messages from worker
      *
-     * @param message Incoming message from {@link DataFeedListener} registered to the {@link MessageFeedWorker}
+     * @param message Incoming message from {@link DataFeedListener} registered to the {@link MessageFeedWorkerV2}
      */
     @Override
     public void onMessage(V2BaseMessage message) {
@@ -269,6 +302,206 @@ public class MessageService implements DataFeedListener {
 
     }
 
+    @Override
+    public void onEvent(SymEvent symEvent) {
+
+
+        logger.debug("{} event type received...", symEvent.getType());
+
+
+        if (symEvent.getId() == null && symEvent.getType() != null)
+            return;
+
+
+        SymEventTypes.Type type = SymEventTypes.Type.fromValue(symEvent.getType());
+
+
+        if (type == null)
+            return;
+
+
+        switch (type) {
+            case MESSAGESENT:
+
+                SymMessage symMessage = symEvent.getPayload().getMessageSent();
+
+                if (symMessage != null && !symClient.getLocalUser().getId().equals(symMessage.getFromUserId())) {
+
+                    symMessage.setFormat(SymMessage.Format.MESSAGEML);
+
+
+                    //Verify if this message is part of room conversation
+                    if (symMessage.getStream().getStreamType().equals(SymStreamTypes.Type.ROOM)) {
+
+                        //Publish room messages to associated listeners
+                        for (RoomServiceEventListener roomServiceEventListener : roomServiceEventListeners)
+                            roomServiceEventListener.onMessage(symMessage);
+
+
+                    } else if (symMessage.getStream().getStreamType().equals(SymStreamTypes.Type.POST)) {
+
+                        logger.warn("POST services not implemented..");
+
+                    } else {
+
+                        //Then it has to be a chat conversation (1:1 or Multi-Party)
+                        for (ChatListener chatListener : chatListeners)
+                            chatListener.onChatMessage(symMessage);
+                    }
+
+
+                    //Publish all messages to registered Message Listeners...
+                    for (MessageListener messageListener : messageListeners) {
+                        messageListener.onMessage(symMessage);
+                    }
+
+                    logger.debug("TS: {}\nFrom ID: {}\nSymMessage: {}\nType: {}",
+                            symMessage.getTimestamp(),
+                            symMessage.getFromUserId(),
+                            symMessage.getMessage(),
+                            symMessage.getStream().getStreamType().toString());
+
+
+                }
+
+
+                break;
+
+            case INSTANTMESSAGECREATED:
+
+                SymIMCreated symIMCreated = symEvent.getPayload().getInstantMessageCreated();
+
+                if (symIMCreated != null) {
+                    logger.debug("Instant message create event not implemented");
+
+                }
+
+
+                break;
+
+            case ROOMCREATED:
+
+                SymRoomCreated symRoomCreated = symEvent.getPayload().getRoomCreated();
+
+                if(symRoomCreated != null){
+
+                    for (RoomServiceEventListener  roomServiceEventListener : roomServiceEventListeners)
+                        roomServiceEventListener.onSymRoomCreated(symRoomCreated);
+                }
+
+                break;
+            case ROOMUPDATED:
+                SymRoomUpdated symRoomUpdated = symEvent.getPayload().getRoomUpdated();
+
+                if (symRoomUpdated != null) {
+
+                    for (RoomServiceEventListener roomServiceEventListener : roomServiceEventListeners)
+                        roomServiceEventListener.onSymRoomUpdated(symRoomUpdated);
+                }
+
+                break;
+            case ROOMDEACTIVATED:
+                SymRoomDeactivated symRoomDeactivated = symEvent.getPayload().getRoomDeactivated();
+
+                if (symRoomDeactivated != null) {
+
+                    for (RoomServiceEventListener roomServiceEventListener : roomServiceEventListeners)
+                        roomServiceEventListener.onSymRoomDeactivated(symRoomDeactivated);
+
+
+                }
+                break;
+
+            case ROOMREACTIVATED:
+                SymRoomReactivated symRoomReactivated = symEvent.getPayload().getRoomReactivated();
+
+                if (symRoomReactivated != null) {
+
+                    for (RoomServiceEventListener roomServiceEventListener : roomServiceEventListeners)
+                        roomServiceEventListener.onSymRoomReactivated(symRoomReactivated);
+
+
+                }
+                break;
+
+            case USERJOINEDROOM:
+
+                SymUserJoinedRoom symUserJoinedRoom = symEvent.getPayload().getUserJoinedRoom();
+
+                if (symUserJoinedRoom != null) {
+                    for (RoomServiceEventListener roomServiceEventListener : roomServiceEventListeners)
+                        roomServiceEventListener.onSymUserJoinedRoom(symUserJoinedRoom);
+
+
+                }
+
+                break;
+            case USERLEFTROOM:
+                SymUserLeftRoom symUserLeftRoom = symEvent.getPayload().getUserLeftRoom();
+
+                if (symUserLeftRoom != null) {
+                    for (RoomServiceEventListener roomServiceEventListener : roomServiceEventListeners)
+                        roomServiceEventListener.onSymUserLeftRoom(symUserLeftRoom);
+
+
+                }
+
+                break;
+
+            case ROOMMEMBERPROMOTEDTOOWNER:
+                SymRoomMemberPromotedToOwner symRoomMemberPromotedToOwner = symEvent.getPayload().getRoomMemberPromotedToOwner();
+
+                if (symRoomMemberPromotedToOwner != null) {
+                    for (RoomServiceEventListener roomServiceEventListener : roomServiceEventListeners)
+                        roomServiceEventListener.onSymRoomMemberPromotedToOwner(symRoomMemberPromotedToOwner);
+
+
+                }
+
+                break;
+            case ROOMMEMBERDEMOTEDFROMOWNER:
+                SymRoomMemberDemotedFromOwner symRoomMemberDemotedFromOwner = symEvent.getPayload().getRoomMemberDemotedFromOwner();
+
+                if (symRoomMemberDemotedFromOwner != null) {
+                    for (RoomServiceEventListener roomServiceEventListener : roomServiceEventListeners)
+                        roomServiceEventListener.onSymRoomMemberDemotedFromOwner(symRoomMemberDemotedFromOwner);
+
+
+                }
+
+                break;
+
+
+            case CONNECTIONACCEPTED:
+                SymConnectionAccepted symConnectionAccepted = symEvent.getPayload().getConnectionAccepted();
+
+                if (symConnectionAccepted != null) {
+                    for (ConnectionsEventListener connectionsEventListener : connectionsEventListeners)
+                        connectionsEventListener.onSymConnectionAccepted(symConnectionAccepted);
+
+
+                }
+                break;
+
+            case CONNECTIONREQUESTED:
+                SymConnectionRequested symConnectionRequested = symEvent.getPayload().getConnectionRequested();
+
+                if (symConnectionRequested != null) {
+                    for (ConnectionsEventListener connectionsEventListener : connectionsEventListeners)
+                        connectionsEventListener.onSymConnectionRequested(symConnectionRequested);
+
+                }
+                break;
+
+
+            // You can have any number of case statements.
+            default: // Optional
+                // Statements
+        }
+
+//
+    }
+
     /**
      * Identify if the message is associated with a room or chat conversation
      *
@@ -284,25 +517,32 @@ public class MessageService implements DataFeedListener {
         if (chatStreamCache.contains(message.getStreamId()))
             return false;
 
-        // #LLC-IMPROVEMENT
-        //Unfortunately there is no easy way to identify stream types...so enter hacks.
 
         try {
-            if (symClient.getStreamsClient().getRoomDetail(message.getStreamId()) != null) {
+
+            SymStreamAttributes symStreamAttributes = symClient.getStreamsClient().getStreamAttributes(message.getStreamId());
+
+            if (symStreamAttributes != null && symStreamAttributes.getSymStreamTypes().getType() == SymStreamTypes.Type.ROOM) {
+
                 roomStreamCache.add(message.getStreamId());
                 logger.debug("Found new room stream to cache: {}", message.getStreamId());
                 return true;
+
+            } else {
+
+                //By default its a Chat stream..
+                chatStreamCache.add(message.getStreamId());
+                logger.debug("Found new chat stream to cache: {}", message.getStreamId());
+                return false;
             }
+
+
         } catch (StreamsException e) {
             //Exception will be common here, so we are not going to throw exceptions every time.
-            logger.debug("Failed to retrieve room detail, so this is a chat stream.");
-
+            logger.debug("Failed to retrieve stream attributes detail");
 
         }
 
-        //By default its a Chat stream..
-        chatStreamCache.add(message.getStreamId());
-        logger.debug("Found new chat stream to cache: {}", message.getStreamId());
         return false;
 
 
@@ -360,6 +600,17 @@ public class MessageService implements DataFeedListener {
     }
 
     /**
+     * Add {@link RoomServiceEventListener} to service to receive new Room events
+     *
+     * @param roomServiceEventListener listener to register
+     */
+    public void addRoomServiceEventListener(RoomServiceEventListener roomServiceEventListener) {
+
+        roomServiceEventListeners.add(roomServiceEventListener);
+
+    }
+
+    /**
      * Please use {@link #addRoomListener(RoomServiceListener)}
      *
      * @param roomServiceListener Listener to register
@@ -382,6 +633,46 @@ public class MessageService implements DataFeedListener {
     public boolean removeRoomListener(RoomServiceListener roomServiceListener) {
 
         return roomServiceListeners.remove(roomServiceListener);
+
+    }
+
+
+    /**
+     * Remove room event listener from service
+     *
+     * @param roomServiceEventListener listener to remove
+     * @return True if listener is removed
+     */
+    @SuppressWarnings("unused")
+    public boolean removeRoomServiceEventListener(RoomServiceEventListener roomServiceEventListener) {
+
+        return roomServiceEventListeners.remove(roomServiceEventListener);
+
+    }
+
+
+    /**
+     * Add {@link ConnectionsEventListener} to service to receive new Connection events
+     *
+     * @param connectionsEventListener listener to register
+     */
+    public void addConnectionsEventListener(ConnectionsEventListener connectionsEventListener) {
+
+        connectionsEventListeners.add(connectionsEventListener);
+
+    }
+
+
+    /**
+     * Remove connections event listener from service
+     *
+     * @param connectionsEventListener listener to remove
+     * @return True if listener is removed
+     */
+    @SuppressWarnings("unused")
+    public boolean removeConnectionsEventListener(ConnectionsEventListener connectionsEventListener) {
+
+        return connectionsEventListeners.remove(connectionsEventListener);
 
     }
 
@@ -427,9 +718,16 @@ public class MessageService implements DataFeedListener {
      * Shutdown the underlying threads and workers.
      */
     public void shutdown() {
-        messageFeedWorker.shutdown();
-        messageFeedWorker = null;
 
+        if (messageFeedWorker != null) {
+            messageFeedWorker.shutdown();
+            messageFeedWorker = null;
+        }
+
+        if (messageFeedWorkerV2 != null) {
+            messageFeedWorkerV2.shutdown();
+            messageFeedWorkerV2 = null;
+        }
     }
 
 }

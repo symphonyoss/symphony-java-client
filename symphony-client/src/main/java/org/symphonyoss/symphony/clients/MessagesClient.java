@@ -22,8 +22,9 @@
 
 package org.symphonyoss.symphony.clients;
 
-import org.symphonyoss.exceptions.MessagesException;
+import org.symphonyoss.client.exceptions.MessagesException;
 import org.symphonyoss.symphony.clients.model.SymMessage;
+import org.symphonyoss.symphony.clients.model.SymStream;
 import org.symphonyoss.symphony.pod.model.Stream;
 
 import java.util.List;
@@ -44,6 +45,28 @@ public interface MessagesClient {
     SymMessage sendMessage(Stream stream, SymMessage message) throws MessagesException;
 
     /**
+     * Send message to Symstream
+     * @param stream Stream to send message to
+     * @param message Message to send
+     * @return Message sent
+     * @throws MessagesException Exception caused by Symphony API calls
+     */
+    SymMessage sendMessage(SymStream stream, SymMessage message) throws MessagesException;
+
+
+    /**
+     * Retrieve historical messages from a given stream.  This is NOT a blocking call.
+     *
+     * @param symStream Stream to retrieve messages from
+     * @param since Date (long) from point in time
+     * @param offset Offset
+     * @param maxMessages Maximum number of messages to retrieve from the specified time (since)
+     * @return List of messages
+     * @throws MessagesException Exception caused by Symphony API calls
+     */
+    List<SymMessage> getMessagesFromStream(SymStream symStream, Long since, Integer offset, Integer maxMessages) throws MessagesException;
+
+    /**
      * Retrieve historical messages from a given stream.  This is NOT a blocking call.
      *
      * @param stream Stream to retrieve messages from
@@ -54,4 +77,5 @@ public interface MessagesClient {
      * @throws MessagesException Exception caused by Symphony API calls
      */
     List<SymMessage> getMessagesFromStream(Stream stream, Long since, Integer offset, Integer maxMessages) throws MessagesException;
+
 }

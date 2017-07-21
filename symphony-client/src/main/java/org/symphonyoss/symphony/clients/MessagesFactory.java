@@ -24,6 +24,7 @@ package org.symphonyoss.symphony.clients;
 
 import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.symphony.clients.impl.MessagesClientImpl;
+import org.symphonyoss.symphony.clients.model.ApiVersion;
 
 /**
  * Created by frank.tarsillo on 6/6/2016.
@@ -34,11 +35,18 @@ public class MessagesFactory {
 
     public static MessagesClient getClient(SymphonyClient symClient, TYPE type) {
 
+       return MessagesFactory.getClient(symClient,type, ApiVersion.V2);
+    }
+
+    public static MessagesClient getClient(SymphonyClient symClient, TYPE type, ApiVersion apiVersion) {
+
+
         if (type.equals(TYPE.HTTPCLIENT)) {
-            return new MessagesClientImpl(symClient.getSymAuth(), symClient.getAgentUrl(), symClient.getDefaultHttpClient());
+            return new MessagesClientImpl(symClient.getSymAuth(), symClient.getAgentUrl(), symClient.getDefaultHttpClient(), apiVersion);
         } else {
-            return new MessagesClientImpl(symClient.getSymAuth(), symClient.getAgentUrl());
+            return new MessagesClientImpl(symClient.getSymAuth(), symClient.getAgentUrl(), apiVersion);
         }
+
     }
 
 }
