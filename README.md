@@ -40,7 +40,13 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 
 ## Change log and notes
 
-### V1.0.2 (SNAPSHOT)
+### V1.0.3 (SNAPSHOT)
+* Unit and integration test coverage
+* Attempt Room Cache again..
+* AI framework enhancements & interfaces
+
+
+### V1.0.2
 * Support for REST API 1.46.0+
 * Removed generated symphony-apis module and replaced with [symphony-java-api](https://github.com/symphonyoss/symphony-java-api) released modules
 * Services and clients have support for V4 endpoints.  Use SymphonyClientFactory.TYPE.V4 when instantiating SymphonyClient
@@ -155,12 +161,12 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
        
 
 
-In addition to the above, *Java 8* must be installed.
+In addition to the above, **Java 8** must be installed.
 
 
 ## Examples
 
-The latest *examples* are part of the SJC project and are continually updated with new versions released. 
+The latest **examples** are part of the SJC project and are continually updated with new versions released. 
 
 In addition, there is an external project providing samples of use: [see Examples Project](https://github.com/symphonyoss/symphony-java-sample-bots)
 
