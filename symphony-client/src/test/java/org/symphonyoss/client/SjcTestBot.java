@@ -26,6 +26,7 @@ package org.symphonyoss.client;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.symphonyoss.client.exceptions.AttachmentsException;
 import org.symphonyoss.client.exceptions.MessagesException;
 import org.symphonyoss.client.exceptions.PresenceException;
 import org.symphonyoss.client.exceptions.SymException;
@@ -33,9 +34,16 @@ import org.symphonyoss.client.model.Chat;
 import org.symphonyoss.client.model.Room;
 import org.symphonyoss.client.services.*;
 import org.symphonyoss.symphony.agent.model.*;
+import org.symphonyoss.symphony.clients.model.SymAttachmentInfo;
 import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.clients.model.SymUserConnection;
 import org.symphonyoss.symphony.pod.model.Presence;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.List;
 
 
 /**
@@ -157,6 +165,8 @@ public class SjcTestBot implements ChatListener, ChatServiceListener, RoomListen
 
         String text = symMessage.getMessageText();
 
+        logger.info("Received: {}", text);
+
         String[] chunks = text.split(" ");
 
         if (chunks == null)
@@ -165,16 +175,63 @@ public class SjcTestBot implements ChatListener, ChatServiceListener, RoomListen
         if (chunks[0].equals(SymphonyClientIT.CHAT_COMMAND_MESSAGE)) {
             logger.info("Test Bot: New chat message detected: {}", symMessage.getMessageText());
             sendResponse(symMessage);
-        }else if (chunks[0].equals(SymphonyClientIT.MULTI_PARTY_CHAT_COMMAND_MESSAGE)) {
+        } else if (chunks[0].equals(SymphonyClientIT.MULTI_PARTY_CHAT_COMMAND_MESSAGE)) {
             logger.info("Test Bot: New chat message detected: {}", symMessage.getMessageText());
             sendResponse(symMessage);
-        }else if (chunks[0].equals(SymphonyClientIT.PRESENCE_COMMAND_MESSAGE)) {
+        } else if (chunks[0].equals(SymphonyClientIT.PRESENCE_COMMAND_MESSAGE)) {
 
             sendPresenceResponse();
+
+        } else if (chunks[0].equals(SymphonyClientIT.ATTACHMENT_COMMAND_MESSAGE)) {
+
+            logger.info("Attachment message received");
+            sendAttachmentResponse(symMessage);
 
         }
 
 
+    }
+
+    private void sendAttachmentResponse(SymMessage symMessage) {
+
+        logger.info("Attachment message received");
+
+        //Do we have any attachments in the incoming message
+        if (symMessage.getAttachments() != null) {
+
+            List<SymAttachmentInfo> attachmentInfos = symMessage.getAttachments();
+
+            //Check for multiple files
+            for (SymAttachmentInfo symAttachmentInfo : attachmentInfos) {
+
+                try {
+
+                    File outFile = new File(symAttachmentInfo.getName() + ".received");
+
+                    //blind delete
+                    outFile.delete();
+
+                    OutputStream out = new FileOutputStream(outFile);
+                    out.write(symphonyClient.getAttachmentsClient().getAttachmentData(symAttachmentInfo, symMessage));
+
+                    logger.info("Received file {} with ID: {}", symAttachmentInfo.getName(), symAttachmentInfo.getId());
+
+                    out.close();
+
+                } catch (IOException e) {
+
+                    logger.error("Failed to process file..", e);
+                } catch (AttachmentsException e) {
+                    logger.error("Failed to send attachment..", e);
+                }
+
+            }
+
+            sendResponse(symMessage);
+
+        } else {
+            logger.error("FAILED TO DETECT ATTACHMENTS");
+        }
     }
 
     @Override
@@ -185,6 +242,7 @@ public class SjcTestBot implements ChatListener, ChatServiceListener, RoomListen
     /**
      * Send the sjcClient presence back to sjcClient
      */
+
     private void sendPresenceResponse() {
 
         try {
@@ -205,6 +263,7 @@ public class SjcTestBot implements ChatListener, ChatServiceListener, RoomListen
 
     /**
      * Send response message
+     *
      * @param symMessage the response message to a command
      */
     private void sendResponse(SymMessage symMessage) {

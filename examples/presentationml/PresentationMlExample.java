@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.client.SymphonyClientConfig;
+import org.symphonyoss.client.SymphonyClientConfigID;
 import org.symphonyoss.client.SymphonyClientFactory;
 import org.symphonyoss.client.exceptions.MessagesException;
 import org.symphonyoss.client.exceptions.UsersClientException;
@@ -59,7 +60,8 @@ import java.util.Set;
  * -Duser.cert.file=bot.user2.p12
  * -Dpod.url=https://(pod host)/pod
  * -Dagent.url=https://(agent server host)/agent
- * -Duser.email=bot.user2@markit.com or bot user email
+ * -Dreceiver.email=bot.user2@markit.com or bot user email
+ *
  *
  * @author Frank Tarsillo
  */
@@ -90,9 +92,11 @@ public class PresentationMlExample implements ChatListener, ChatServiceListener 
 
         try {
 
+            SymphonyClientConfig symphonyClientConfig = new SymphonyClientConfig();
+
             //Create an initialized client
             symClient = SymphonyClientFactory.getClient(
-                    SymphonyClientFactory.TYPE.V4,new SymphonyClientConfig());
+                    SymphonyClientFactory.TYPE.V4,symphonyClientConfig);
 
 
             //Will notify the bot of new Chat conversations.
@@ -143,7 +147,7 @@ public class PresentationMlExample implements ChatListener, ChatServiceListener 
             Chat chat = new Chat();
             chat.setLocalUser(symClient.getLocalUser());
             Set<SymUser> remoteUsers = new HashSet<>();
-            remoteUsers.add(symClient.getUsersClient().getUserFromEmail(System.getProperty("user.call.home")));
+            remoteUsers.add(symClient.getUsersClient().getUserFromEmail(symphonyClientConfig.get(SymphonyClientConfigID.RECEIVER_EMAIL)));
             chat.setRemoteUsers(remoteUsers);
             chat.addListener(this);
 
@@ -154,6 +158,7 @@ public class PresentationMlExample implements ChatListener, ChatServiceListener 
 
             //Send a message to the master user.
             symClient.getMessageService().sendMessage(chat, aMessage);
+
 
             symClient.shutdown();
 

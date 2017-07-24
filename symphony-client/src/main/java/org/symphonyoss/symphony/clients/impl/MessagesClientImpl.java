@@ -310,7 +310,7 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
         V4Message v4Message;
         try {
 
-            return SymMessage.toSymMessage(messagesApi.v4StreamSidMessageCreatePost(stream.getStreamId(), symAuth.getSessionToken().getToken(), message.getMessage(), symAuth.getKeyToken().getToken(), message.getEntityData(), ApiVersion.V4.toString(), null));
+            return SymMessage.toSymMessage(messagesApi.v4StreamSidMessageCreatePost(stream.getStreamId(), symAuth.getSessionToken().getToken(), message.getMessage(), symAuth.getKeyToken().getToken(), message.getEntityData(), ApiVersion.V4.toString(), message.getAttachment()));
 
         } catch (ApiException e) {
             throw new MessagesException("Failed to send message to stream: " + stream.getStreamId(),

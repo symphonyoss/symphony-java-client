@@ -28,6 +28,7 @@ package shareexample;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.client.SymphonyClientConfig;
 import org.symphonyoss.client.SymphonyClientFactory;
 import org.symphonyoss.client.exceptions.AuthorizationException;
 import org.symphonyoss.client.exceptions.InitException;
@@ -84,18 +85,11 @@ public class ShareExample {
 
         try {
 
-            logger.debug("{} {}", System.getProperty("sessionauth.url"),
-                    System.getProperty("keyauth.url"));
-
+            SymphonyClientConfig symphonyClientConfig = new SymphonyClientConfig();
 
             //Create an initialized client
             symClient = SymphonyClientFactory.getClient(
-                    SymphonyClientFactory.TYPE.BASIC,
-                    System.getProperty("bot.user") + System.getProperty("bot.domain"), //bot email
-                    System.getProperty("certs.dir") + System.getProperty("bot.user") + ".p12", //bot cert
-                    System.getProperty("keystore.password"), //bot cert/keystore pass
-                    System.getProperty("truststore.file"), //truststore file
-                    System.getProperty("truststore.password"));  //truststore password
+                    SymphonyClientFactory.TYPE.V4, symphonyClientConfig);
 
 
             SymShareArticle shareArticle = new SymShareArticle();

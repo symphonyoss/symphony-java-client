@@ -28,6 +28,7 @@ package roomsession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.client.SymphonyClientConfig;
 import org.symphonyoss.client.SymphonyClientFactory;
 import org.symphonyoss.client.events.*;
 import org.symphonyoss.client.exceptions.MessagesException;
@@ -94,18 +95,11 @@ public class RoomServiceExampleV4 implements RoomServiceEventListener, RoomEvent
         try {
 
 
-            logger.debug("{} {}", System.getProperty("sessionauth.url"),
-                    System.getProperty("keyauth.url"));
-
+            SymphonyClientConfig symphonyClientConfig = new SymphonyClientConfig();
 
             //Create an initialized client
             SymphonyClient symClient = SymphonyClientFactory.getClient(
-                    SymphonyClientFactory.TYPE.V4,
-                    System.getProperty("bot.user") + System.getProperty("bot.domain"), //bot email
-                    System.getProperty("certs.dir") + System.getProperty("bot.user") + ".p12", //bot cert
-                    System.getProperty("keystore.password"), //bot cert/keystore pass
-                    System.getProperty("truststore.file"), //truststore file
-                    System.getProperty("truststore.password"));  //truststore password
+                    SymphonyClientFactory.TYPE.V4, symphonyClientConfig);
 
 
             //A message to send when the BOT comes online.

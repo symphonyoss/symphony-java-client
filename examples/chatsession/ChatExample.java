@@ -33,6 +33,7 @@ import org.symphonyoss.client.exceptions.*;
 import org.symphonyoss.client.model.Chat;
 import org.symphonyoss.client.services.ChatListener;
 import org.symphonyoss.client.services.ChatServiceListener;
+import org.symphonyoss.symphony.clients.model.ApiVersion;
 import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.clients.model.SymUser;
 
@@ -58,7 +59,7 @@ import java.util.Set;
  * -Duser.cert.file=bot.user2.p12
  * -Dpod.url=https://(pod host)/pod
  * -Dagent.url=https://(agent server host)/agent
- * -Duser.email=bot.user2@markit.com or bot user email
+ * -Dreceiver.email=bot.user2@markit.com or bot user email
  *
  * @author  Frank Tarsillo
  */
@@ -93,7 +94,7 @@ public class ChatExample implements ChatListener, ChatServiceListener {
 
             //Create an initialized client
             symClient = SymphonyClientFactory.getClient(
-                    SymphonyClientFactory.TYPE.BASIC,symphonyClientConfig);
+                    SymphonyClientFactory.TYPE.V4,symphonyClientConfig);
 
 
             //Will notify the bot of new Chat conversations.
@@ -101,8 +102,10 @@ public class ChatExample implements ChatListener, ChatServiceListener {
 
             //A message to send when the BOT comes online.
             SymMessage aMessage = new SymMessage();
-            aMessage.setFormat(SymMessage.Format.TEXT);
-            aMessage.setMessage("Hello master, I'm alive again....");
+            aMessage.setFormat(SymMessage.Format.MESSAGEML);
+
+            //V4 will wrap the text in a PresentationMl div.
+            aMessage.setMessageText(ApiVersion.V4,"Hello master, I'm alive again....");
 
 
             //Creates a Chat session with that will receive the online message.
@@ -120,6 +123,7 @@ public class ChatExample implements ChatListener, ChatServiceListener {
 
             //Send a message to the master user.
             symClient.getMessageService().sendMessage(chat, aMessage);
+
 
             symClient.shutdown();
 

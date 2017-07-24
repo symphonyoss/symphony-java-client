@@ -84,6 +84,9 @@ public class MlMessageParser extends DefaultHandler {
 
         elementMessageML = doc.select("messageML").first();
 
+        if(elementMessageML==null)
+            elementMessageML = doc.select("div").first();
+
 
         if (elementMessageML != null) {
             if (elementMessageML.outerHtml() != null)

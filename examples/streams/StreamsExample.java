@@ -27,6 +27,7 @@ package streams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.client.SymphonyClientConfig;
 import org.symphonyoss.client.SymphonyClientFactory;
 import org.symphonyoss.client.exceptions.StreamsException;
 import org.symphonyoss.client.model.CacheType;
@@ -41,6 +42,22 @@ import java.util.Date;
 
 /**
  * Streams example showing how you can search for bot user associated streams by criteria filer.
+ *
+ *
+ * REQUIRED VM Arguments or System Properties:
+ * <p>
+ * -Dtruststore.file=
+ * -Dtruststore.password=password
+ * -Dsessionauth.url=https://(hostname)/sessionauth
+ * -Dkeyauth.url=https://(hostname)/keyauth
+ * -Duser.call.home=frank.tarsillo@markit.com
+ * -Duser.cert.password=password
+ * -Duser.cert.file=bot.user2.p12
+ * -Dpod.url=https://(pod host)/pod
+ * -Dagent.url=https://(agent server host)/agent
+ * -Dreceiver.email=bot.user2@markit.com or bot user email
+ *
+ *
  *
  * @author Frank Tarsillo on 5/9/17.
  */
@@ -72,18 +89,9 @@ public class StreamsExample {
         try {
 
 
-            logger.debug("{} {}", System.getProperty("sessionauth.url"),
-                    System.getProperty("keyauth.url"));
-
-
             //Create an initialized client
             symClient = SymphonyClientFactory.getClient(
-                    SymphonyClientFactory.TYPE.BASIC,
-                    System.getProperty("bot.user") + System.getProperty("bot.domain"), //bot email
-                    System.getProperty("certs.dir") + System.getProperty("bot.user") + ".p12", //bot cert
-                    System.getProperty("keystore.password"), //bot cert/keystore pass
-                    System.getProperty("truststore.file"), //truststore file
-                    System.getProperty("truststore.password"));  //truststore password
+                    SymphonyClientFactory.TYPE.V4,new SymphonyClientConfig());  //truststore password
 
             SymAdminStreamFilter symAdminStreamFilter = new SymAdminStreamFilter();
 

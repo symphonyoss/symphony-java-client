@@ -46,6 +46,7 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 * Services and clients have support for V4 endpoints.  Use SymphonyClientFactory.TYPE.V4 when instantiating SymphonyClient
 * Added new models and listeners to support V4 event based messaging.  This primarily impacts "Room" services if running V4 mode. 
 * SymMessage support for PresentationML inclusive of EntityData
+* SymMessage V4 support for attaching files directly to messages vs prior two step process.
 * Examples added back to project, but are not part of distribution
 * Example added for PresentationML (incl EntityData) and RoomExampleV4 showing event messaging
 * Removed PresenceService and associated listeners as it is no longer supported
@@ -55,6 +56,8 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 * Added ability to obtain stream attributes in StreamsClient.getStreams(...).  Admin and user level.
 * Added the ability to list all streams known streams for a given user StreamClient
 * Updated MessageService to take advantage of new stream attributes functions
+* Added additional integration testing
+
 
 
 ### V1.0.1 (Stable)

@@ -27,17 +27,25 @@ package org.symphonyoss.client;
 import org.junit.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.symphonyoss.client.events.*;
 import org.symphonyoss.client.model.Chat;
 import org.symphonyoss.client.model.Room;
 import org.symphonyoss.client.services.ChatListener;
 import org.symphonyoss.client.services.ChatServiceListener;
-import org.symphonyoss.client.services.RoomListener;
-import org.symphonyoss.symphony.agent.model.*;
+import org.symphonyoss.client.services.RoomEventListener;
+import org.symphonyoss.symphony.clients.model.ApiVersion;
+import org.symphonyoss.symphony.clients.model.SymAttachmentInfo;
 import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.pod.model.Presence;
 
+import java.io.BufferedOutputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -48,7 +56,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Frank Tarsillo
  */
-public class SymphonyClientIT implements ChatServiceListener, ChatListener, RoomListener {
+public class SymphonyClientIT implements ChatServiceListener, ChatListener, RoomEventListener {
 
     private static SymphonyClient sjcTestClient;
     private static final Logger logger = LoggerFactory.getLogger(SymphonyClientIT.class);
@@ -57,7 +65,10 @@ public class SymphonyClientIT implements ChatServiceListener, ChatListener, Room
     public final static String CHAT_COMMAND_MESSAGE = "/onChatMessage";
     public final static String MULTI_PARTY_CHAT_COMMAND_MESSAGE = "/onMultiPartyChatMessage";
     public final static String PRESENCE_COMMAND_MESSAGE = "/onPresenceMessage";
-    private final static String MP_USER_EMAIL = System.getProperty("mp.user.email","Frank.Tarsillo@ihsmarkit.com");
+    public final static String ATTACHMENT_COMMAND_MESSAGE = "/onAttachmentMessage";
+    public final static String TMP_FILE = "temp.doc";
+
+    private final static String MP_USER_EMAIL = System.getProperty("mp.user.email", "Frank.Tarsillo@ihsmarkit.com");
 
     private static boolean responded;
 
@@ -75,7 +86,7 @@ public class SymphonyClientIT implements ChatServiceListener, ChatListener, Room
 
 
             sjcTestClient = SymphonyClientFactory.getClient(
-                    SymphonyClientFactory.TYPE.BASIC, System.getProperty("sender.user.email", "sjc.testclient"),
+                    SymphonyClientFactory.TYPE.V4, System.getProperty("sender.user.email", "sjc.testclient"),
                     System.getProperty("sender.user.cert.file"),
                     System.getProperty("sender.user.cert.password"),
                     System.getProperty("truststore.file"),
@@ -123,12 +134,12 @@ public class SymphonyClientIT implements ChatServiceListener, ChatListener, Room
         Room room = new Room();
         room.setStreamId(System.getProperty("test.room.stream"));
         room.setId(System.getProperty("test.room.stream"));
-        room.addListener(this);
+        room.addEventListener(this);
         sjcTestClient.getRoomService().joinRoom(room);
 
 
         SymMessage message = new SymMessage();
-        message.setMessage(ROOM_COMMAND_MESSAGE);
+        message.setMessageText(ApiVersion.V4, ROOM_COMMAND_MESSAGE);
 
         sjcTestClient.getMessageService().sendMessage(room, message);
 
@@ -148,9 +159,8 @@ public class SymphonyClientIT implements ChatServiceListener, ChatListener, Room
 
 
         SymMessage message = new SymMessage();
-        message.setMessage(CHAT_COMMAND_MESSAGE);
+        message.setMessageText(ApiVersion.V4, CHAT_COMMAND_MESSAGE);
         sjcTestClient.getMessageService().sendMessage(botEmail, message);
-
 
 
         if (!isResponded()) {
@@ -178,15 +188,12 @@ public class SymphonyClientIT implements ChatServiceListener, ChatListener, Room
         sjcTestClient.getChatService().addChat(chat);
 
 
-
         SymMessage message = new SymMessage();
-        message.setMessage(MULTI_PARTY_CHAT_COMMAND_MESSAGE);
+        message.setMessageText(ApiVersion.V4, MULTI_PARTY_CHAT_COMMAND_MESSAGE);
 
 
         //Send a message to the master user.
         sjcTestClient.getMessageService().sendMessage(chat, message);
-
-
 
 
         if (!isResponded()) {
@@ -203,7 +210,7 @@ public class SymphonyClientIT implements ChatServiceListener, ChatListener, Room
         sjcTestClient.getChatService().addListener(this);
 
         SymMessage message = new SymMessage();
-        message.setMessage(PRESENCE_COMMAND_MESSAGE);
+        message.setMessageText(ApiVersion.V4, PRESENCE_COMMAND_MESSAGE);
         sjcTestClient.getMessageService().sendMessage(botEmail, message);
 
 
@@ -213,6 +220,72 @@ public class SymphonyClientIT implements ChatServiceListener, ChatListener, Room
 
     }
 
+
+    @Test
+    public void sendAttachment() throws Exception {
+
+        responded = false;
+
+        sjcTestClient.getChatService().addListener(this);
+
+
+        //Lets construct a message.
+        SymMessage symMessage = new SymMessage();
+        symMessage.setMessageText(ApiVersion.V4, ATTACHMENT_COMMAND_MESSAGE);
+
+        symMessage.setStreamId(sjcTestClient.getStreamsClient().getStreamFromEmail(botEmail).getId());
+
+        new File(TMP_FILE).delete();
+
+        DataOutputStream dos = new DataOutputStream(
+                new BufferedOutputStream(
+                        new FileOutputStream(new File(TMP_FILE))));
+
+        for (int i = 0; i < 10240; i++)
+            dos.writeInt(i);
+
+        dos.close();
+
+
+        symMessage.setAttachment(new File(TMP_FILE));
+
+        sjcTestClient.getMessageService().sendMessage(botEmail, symMessage);
+
+
+//
+//
+//        for (SymAttachmentInfo attachmentInfo : attachmentInfos) {
+//
+//            try {
+//                replyAttachmentInfos.add(
+//                        symClient.getAttachmentsClient().postAttachment(symMessage.getStreamId(), new File(attachmentInfo.getName()))
+//                );
+//            } catch (AttachmentsException e) {
+//
+//                logger.error("Could not post file to stream", e);
+//            }
+//
+//        }
+//        //Update all the attachment info details in the reply message.
+//        symMessage.setAttachments(replyAttachmentInfos);
+//
+//        //Send the message back..
+//        Chat chat = symClient.getChatService().getChatByStream(message.getStreamId());
+//
+//        try {
+//            if (chat != null)
+//                symClient.getMessageService().sendMessage(chat, symMessage);
+//        }catch (MessagesException e){
+//            logger.error("Could not send echo reply to user",e);
+//        }
+//
+
+
+        if (!isResponded()) {
+            Assert.fail("Timeout receiving confirmation of attachment message");
+        }
+
+    }
 
     @Override
     public void onChatMessage(SymMessage message) {
@@ -247,50 +320,16 @@ public class SymphonyClientIT implements ChatServiceListener, ChatListener, Room
                     logger.error("ETE Test: Presence Message: Failure: {}", text);
                 }
                 break;
+
+            case ATTACHMENT_COMMAND_MESSAGE:
+                responded = true;
+                logger.info("ETE Test: Attachment Message: Success");
+                break;
         }
 
 
     }
 
-    @Override
-    public void onRoomMessage(SymMessage symMessage) {
-
-    }
-
-    @Override
-    public void onRoomDeactivatedMessage(RoomDeactivatedMessage roomDeactivatedMessage) {
-
-    }
-
-    @Override
-    public void onRoomMemberDemotedFromOwnerMessage(RoomMemberDemotedFromOwnerMessage roomMemberDemotedFromOwnerMessage) {
-
-    }
-
-    @Override
-    public void onRoomMemberPromotedToOwnerMessage(RoomMemberPromotedToOwnerMessage roomMemberPromotedToOwnerMessage) {
-
-    }
-
-    @Override
-    public void onRoomReactivatedMessage(RoomReactivatedMessage roomReactivatedMessage) {
-
-    }
-
-    @Override
-    public void onRoomUpdatedMessage(RoomUpdatedMessage roomUpdatedMessage) {
-
-    }
-
-    @Override
-    public void onUserJoinedRoomMessage(UserJoinedRoomMessage userJoinedRoomMessage) {
-
-    }
-
-    @Override
-    public void onUserLeftRoomMessage(UserLeftRoomMessage userLeftRoomMessage) {
-
-    }
 
     @Override
     public void onNewChat(Chat chat) {
@@ -306,7 +345,6 @@ public class SymphonyClientIT implements ChatServiceListener, ChatListener, Room
 
 
     /**
-     *
      * Block until response is received from remote bot
      *
      * @return True if remote BOT has responded
@@ -332,5 +370,45 @@ public class SymphonyClientIT implements ChatServiceListener, ChatListener, Room
 
 
         return false;
+    }
+
+    @Override
+    public void onRoomMessage(SymMessage symMessage) {
+
+    }
+
+    @Override
+    public void onSymRoomDeactivated(SymRoomDeactivated symRoomDeactivated) {
+
+    }
+
+    @Override
+    public void onSymRoomMemberDemotedFromOwner(SymRoomMemberDemotedFromOwner symRoomMemberDemotedFromOwner) {
+
+    }
+
+    @Override
+    public void onSymRoomMemberPromotedToOwner(SymRoomMemberPromotedToOwner symRoomMemberPromotedToOwner) {
+
+    }
+
+    @Override
+    public void onSymRoomReactivated(SymRoomReactivated symRoomReactivated) {
+
+    }
+
+    @Override
+    public void onSymRoomUpdated(SymRoomUpdated symRoomUpdated) {
+
+    }
+
+    @Override
+    public void onSymUserJoinedRoom(SymUserJoinedRoom symUserJoinedRoom) {
+
+    }
+
+    @Override
+    public void onSymUserLeftRoom(SymUserLeftRoom symUserLeftRoom) {
+
     }
 }
