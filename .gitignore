@@ -53,3 +53,4 @@ symphony-java-client.iml
 **/.settings/
 **/.project
 **/.classpath
+/examples/symphony-client-examples.iml
