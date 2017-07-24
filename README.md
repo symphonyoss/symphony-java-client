@@ -154,8 +154,15 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
         -Duser.email=bot.user2@markit.com or bot user email
        
 
+
+In addition to the above, *Java 8* must be installed.
+
+
 ## Examples
-[see Examples Project](https://github.com/symphonyoss/symphony-java-sample-bots)
+
+The latest *examples* are part of the SJC project and are continually updated with new versions released. 
+
+In addition, there is an external project providing samples of use: [see Examples Project](https://github.com/symphonyoss/symphony-java-sample-bots)
 
 
 ## API Docs
