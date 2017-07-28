@@ -1,3 +1,4 @@
+[![Maven Central](https://img.shields.io/maven-central/v/org.symphonyoss.symphony/symphony-client.svg)](http://search.maven.org/#search%7Cga%7C1%7Cg%3Aorg.symphonyoss.symphony%20a%3Asymphony-client)
 [![Dependencies](https://www.versioneye.com/user/projects/5770f47919424d000f2e0095/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/5770f47919424d000f2e0095)
 [![Build Status](https://travis-ci.org/symphonyoss/symphony-java-client.svg)](https://travis-ci.org/symphonyoss/symphony-java-client)
 [![Validation Status](https://scan.coverity.com/projects/9112/badge.svg?flat=1)](https://scan.coverity.com/projects/symphonyoss-symphony-java-client)
