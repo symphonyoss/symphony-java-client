@@ -28,15 +28,15 @@ package org.symphonyoss.client.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.client.exceptions.NetworkException;
 import org.symphonyoss.client.model.SymAuth;
-import org.symphonyoss.exceptions.AuthorizationException;
 import org.symphonyoss.symphony.clients.AuthorizationClient;
 
 import java.util.TimerTask;
 
 /**
  * Created by frank.tarsillo on 9/19/2016.
- *
+ * <p>
  * Task will refresh session tokens when called.
  */
 @SuppressWarnings("WeakerAccess")
@@ -45,9 +45,10 @@ public class AuthRefreshTask extends TimerTask {
     private final Logger logger = LoggerFactory.getLogger(AuthRefreshTask.class);
     private final SymphonyClient symClient;
 
-    public AuthRefreshTask(SymphonyClient symClient){
+    public AuthRefreshTask(SymphonyClient symClient) {
         this.symClient = symClient;
     }
+
 
     @Override
     public void run() {
@@ -56,32 +57,49 @@ public class AuthRefreshTask extends TimerTask {
 
     }
 
+
     @SuppressWarnings("UnusedReturnValue")
-    public SymAuth runTask(){
+    public SymAuth runTask() {
 
         SymAuth symAuth = null;
         try {
+
+            AuthorizationClient authClient;
+
             //Init the Symphony authorization client, which requires both the key and session URL's.  In most cases,
             //the same fqdn but different URLs.
-            AuthorizationClient authClient = new AuthorizationClient(
-                    System.getProperty("sessionauth.url"),
-                    System.getProperty("keyauth.url"));
+            if (symClient.getSymAuth() != null && symClient.getSymAuth().getHttpClient() != null) {
+
+                //Take the stored http client configuration with the pre-loaded keystores.
+                authClient = new AuthorizationClient(symClient.getSymAuth().getSessionUrl(), symClient.getSymAuth().getKeyUrl(), symClient.getSymAuth().getHttpClient());
+
+            } else {
+
+                authClient = new AuthorizationClient(
+                        symClient.getSymAuth().getSessionUrl(),
+                        symClient.getSymAuth().getKeyUrl());
 
 
-            //Set the local keystores that hold the server CA and client certificates
-            authClient.setKeystores(
-                    System.getProperty("truststore.file"),
-                    System.getProperty("truststore.password"),
-                    System.getProperty("certs.dir") + System.getProperty("bot.user") + ".p12",
-                    System.getProperty("keystore.password"));
+                //Set the local keystores that hold the server CA and client certificates
+                authClient.setKeystores(
+                        symClient.getSymAuth().getServerTruststore(),
+                        symClient.getSymAuth().getServerTruststorePassword(),
+                        symClient.getSymAuth().getClientKeystore(),
+                        symClient.getSymAuth().getClientKeystorePassword());
+
+
+            }
+
 
             //Create a SymAuth which holds both key and session tokens.  This will call the external service.
              symAuth = authClient.authenticate();
 
-            symClient.setSymAuth(symAuth);
-            logger.info("Successfully refreshed SymAuth keys...");
+            symClient.getSymAuth().setKeyToken(symAuth.getKeyToken());
+            symClient.getSymAuth().setSessionToken(symAuth.getSessionToken());
 
-        }catch (AuthorizationException e){
+            logger.info("Successfully refreshed SymAuth tokens...");
+
+        } catch (NetworkException e) {
             logger.error("Unable to refresh SymAuth keys...", e);
         }
 

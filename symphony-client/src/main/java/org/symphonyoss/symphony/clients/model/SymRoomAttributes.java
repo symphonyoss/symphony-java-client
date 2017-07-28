@@ -23,7 +23,7 @@
 package org.symphonyoss.symphony.clients.model;
 
 
-
+import org.symphonyoss.symphony.agent.model.V4RoomProperties;
 import org.symphonyoss.symphony.pod.model.V2RoomAttributes;
 
 import java.util.ArrayList;
@@ -52,6 +52,17 @@ public class SymRoomAttributes {
     private Boolean readOnly = null;
 
     private Boolean copyProtected = null;
+
+    private SymUser creatorUser = null;
+
+
+    public SymUser getCreatorUser() {
+        return creatorUser;
+    }
+
+    public void setCreatorUser(SymUser creatorUser) {
+        this.creatorUser = creatorUser;
+    }
 
 
     public String getName() {
@@ -119,8 +130,7 @@ public class SymRoomAttributes {
     }
 
 
-
-    public static SymRoomAttributes toSymRoomAttributes(V2RoomAttributes roomAttributes){
+    public static SymRoomAttributes toSymRoomAttributes(V2RoomAttributes roomAttributes) {
 
         SymRoomAttributes symRoomAttributes = new SymRoomAttributes();
         symRoomAttributes.setPublic(roomAttributes.getPublic());
@@ -135,9 +145,9 @@ public class SymRoomAttributes {
         return symRoomAttributes;
     }
 
-    public static V2RoomAttributes toV2RoomAttributes(SymRoomAttributes roomAttributes){
+    public static V2RoomAttributes toV2RoomAttributes(SymRoomAttributes roomAttributes) {
 
-      V2RoomAttributes v2RoomAttributes = new V2RoomAttributes();
+        V2RoomAttributes v2RoomAttributes = new V2RoomAttributes();
         v2RoomAttributes.setPublic(roomAttributes.getPublic());
         v2RoomAttributes.setCopyProtected(roomAttributes.getCopyProtected());
         v2RoomAttributes.setDescription(roomAttributes.getDescription());
@@ -151,5 +161,23 @@ public class SymRoomAttributes {
     }
 
 
+    public static SymRoomAttributes toSymRoomAttributes(V4RoomProperties roomProperties) {
 
+
+        SymRoomAttributes symRoomAttributes = new SymRoomAttributes();
+        symRoomAttributes.setPublic(roomProperties.getPublic());
+        symRoomAttributes.setCopyProtected(roomProperties.getCopyProtected());
+        symRoomAttributes.setDescription(roomProperties.getDescription());
+        symRoomAttributes.setDiscoverable(roomProperties.getDiscoverable());
+        //Seems like keywords is missing
+        //symRoomAttributes.setKeywords(SymRoomTag.toSymRoomTags(roomProperties.getKeywords()));
+        symRoomAttributes.setMembersCanInvite(roomProperties.getMembersCanInvite());
+        symRoomAttributes.setName(roomProperties.getName());
+        symRoomAttributes.setReadOnly(roomProperties.getReadOnly());
+        symRoomAttributes.setCreatorUser(SymUser.toSymUser(roomProperties.getCreatorUser()));
+
+
+        return symRoomAttributes;
+
+    }
 }

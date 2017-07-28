@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.symphonyoss.symphony.agent.model.V4User;
 import org.symphonyoss.symphony.pod.model.Avatar;
 import org.symphonyoss.symphony.pod.model.AvatarList;
 import org.symphonyoss.symphony.pod.model.UserAttributes;
@@ -143,6 +144,10 @@ public class SymUser {
 
     @SuppressWarnings("unused")
     public static UserV2 toUserV2(SymUser symUser) {
+
+        if(symUser==null)
+            return null;
+
         UserV2 userV2 = new UserV2();
 
 
@@ -170,7 +175,8 @@ public class SymUser {
 
 
     public static SymUser toSymUser(UserV2 user) {
-
+        if(user==null)
+            return null;
 
         SymUser symUser = new SymUser();
 
@@ -194,6 +200,26 @@ public class SymUser {
         }
         symUser.setAvatars(avatars);
 
+
+        return symUser;
+
+    }
+
+
+    public static SymUser toSymUser(V4User user) {
+
+        if(user==null)
+            return null;
+
+        SymUser symUser = new SymUser();
+
+
+        symUser.setDisplayName(user.getDisplayName());
+        symUser.setEmailAddress(user.getEmail());
+        symUser.setFirstName(user.getFirstName());
+        symUser.setLastName(user.getLastName());
+        symUser.setId(user.getUserId());
+        symUser.setUsername(user.getUsername());
 
         return symUser;
 
@@ -253,6 +279,13 @@ public class SymUser {
         return userAttributes;
     }
 
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, emailAddress);
+    }
+
+
     @Override
     public boolean equals(Object o) {
 
@@ -264,9 +297,5 @@ public class SymUser {
         return id.equals(symUser.id);
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, emailAddress);
-    }
 
 }

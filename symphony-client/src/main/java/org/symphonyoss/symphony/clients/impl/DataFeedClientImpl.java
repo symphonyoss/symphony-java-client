@@ -24,23 +24,28 @@ package org.symphonyoss.symphony.clients.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.symphonyoss.client.common.Constants;
+import org.symphonyoss.client.exceptions.DataFeedException;
 import org.symphonyoss.client.model.SymAuth;
-import org.symphonyoss.exceptions.DataFeedException;
 import org.symphonyoss.symphony.agent.api.DatafeedApi;
 import org.symphonyoss.symphony.agent.invoker.ApiClient;
 import org.symphonyoss.symphony.agent.invoker.ApiException;
 import org.symphonyoss.symphony.agent.model.Datafeed;
 import org.symphonyoss.symphony.agent.model.V2BaseMessage;
+import org.symphonyoss.symphony.agent.model.V4Event;
 import org.symphonyoss.symphony.clients.DataFeedClient;
+import org.symphonyoss.client.events.SymEvent;
+import org.symphonyoss.symphony.clients.model.ApiVersion;
 
 import javax.ws.rs.client.Client;
+import java.util.ArrayList;
 import java.util.List;
 
 
 /**
  * Provides access to datafeed in order to stream all message events (messages) through blocking calls.
  *
- * @author  Frank Tarsillo
+ * @author Frank Tarsillo
  */
 public class DataFeedClientImpl implements DataFeedClient {
 
@@ -48,8 +53,6 @@ public class DataFeedClientImpl implements DataFeedClient {
     private final SymAuth symAuth;
     @SuppressWarnings("unused")
     private Logger logger = LoggerFactory.getLogger(DataFeedClientImpl.class);
-
-
 
 
     public DataFeedClientImpl(SymAuth symAuth, String agentUrl) {
@@ -65,23 +68,24 @@ public class DataFeedClientImpl implements DataFeedClient {
 
     /**
      * If you need to override HttpClient.  Important for handling individual client certs.
-     * @param symAuth Authorization model containing session and key tokens
-     * @param serviceUrl Service URL used to access API
+     *
+     * @param symAuth    Authorization model containing session and key tokens
+     * @param podUrl Service URL used to access API
      * @param httpClient Custom HTTP client
      */
-    public DataFeedClientImpl(SymAuth symAuth, String serviceUrl, Client httpClient) {
+    public DataFeedClientImpl(SymAuth symAuth, String podUrl, Client httpClient) {
         this.symAuth = symAuth;
 
         //Get Service client to query for userID.
         apiClient = org.symphonyoss.symphony.agent.invoker.Configuration.getDefaultApiClient();
         apiClient.setHttpClient(httpClient);
-        apiClient.setBasePath(serviceUrl);
+        apiClient.setBasePath(podUrl);
 
     }
 
 
-
     @Override
+    @Deprecated
     public Datafeed createDatafeed() throws DataFeedException {
 
         DatafeedApi datafeedApi = new DatafeedApi(apiClient);
@@ -90,14 +94,45 @@ public class DataFeedClientImpl implements DataFeedClient {
         try {
             return datafeedApi.v1DatafeedCreatePost(symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken());
         } catch (ApiException e) {
-            throw new DataFeedException("Could not start datafeed..", e);
+            throw new DataFeedException("Could not start datafeed..",
+                    datafeedApi.getApiClient().getBasePath(), e.getCode(), e);
+        }
+    }
+
+    @Override
+    public Datafeed createDatafeed(ApiVersion apiVersion) throws DataFeedException {
+
+
+        DatafeedApi datafeedApi = new DatafeedApi(apiClient);
+
+
+        try {
+
+
+            if(apiVersion.equals(ApiVersion.V1)) {
+                return datafeedApi.v1DatafeedCreatePost(symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken());
+            }else if(apiVersion.equals(ApiVersion.V4)){
+                return datafeedApi.v4DatafeedCreatePost(symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken());
+            }else{
+                return datafeedApi.v1DatafeedCreatePost(symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken());
+            }
+
+
+
+
+        } catch (ApiException e) {
+            throw new DataFeedException("Could not start datafeed..",
+                    datafeedApi.getApiClient().getBasePath(), e.getCode(), e);
         }
     }
 
 
 
+
+
     @Override
-    public List<V2BaseMessage> getMessagesFromDatafeed(Datafeed datafeed) throws DataFeedException {
+    @Deprecated
+    public List<V2BaseMessage> getMessagesFromDatafeed(Datafeed datafeed, int maxMessages) throws DataFeedException {
 
         DatafeedApi datafeedApi = new DatafeedApi(apiClient);
 
@@ -107,15 +142,54 @@ public class DataFeedClientImpl implements DataFeedClient {
 
         //V2MessageList messageList = null;
         try {
-            return datafeedApi.v2DatafeedIdReadGet(datafeed.getId(),symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken(),100);
+            return datafeedApi.v2DatafeedIdReadGet(datafeed.getId(), symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken(), maxMessages);
         } catch (ApiException e) {
-            throw new DataFeedException("Failed to retrieve messages from datafeed...", e);
+            throw new DataFeedException("Failed to retrieve messages from datafeed...",
+                    datafeedApi.getApiClient().getBasePath(), e.getCode(), e);
         }
 
 
     }
 
 
+    @Override
+    @Deprecated
+    public List<V2BaseMessage> getMessagesFromDatafeed(Datafeed datafeed) throws DataFeedException {
+
+        return getMessagesFromDatafeed(datafeed, Integer.parseInt(System.getProperty(Constants.DATAFEED_MAX_MESSAGES, "100")));
+    }
+
+
+    @Override
+    public List<SymEvent> getEventsFromDatafeed(Datafeed datafeed, int maxMessages) throws DataFeedException {
+
+        DatafeedApi datafeedApi = new DatafeedApi(apiClient);
+
+        if (datafeed == null) {
+            throw new NullPointerException("Datafeed was not provided and null..");
+        }
+
+
+        try {
+            List<V4Event> v4Events;
+
+            v4Events = datafeedApi.v4DatafeedIdReadGet(datafeed.getId(), symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken(), maxMessages);
+
+            return SymEvent.toSymEvent(v4Events);
+        } catch (ApiException e) {
+            throw new DataFeedException("Failed to retrieve messages from datafeed...",
+                    datafeedApi.getApiClient().getBasePath(), e.getCode(), e);
+        }
+
+
+    }
+
+
+    @Override
+    public List<SymEvent> getEventsFromDatafeed(Datafeed datafeed) throws DataFeedException {
+
+        return getEventsFromDatafeed(datafeed, Integer.parseInt(System.getProperty(Constants.DATAFEED_MAX_MESSAGES, "100")));
+    }
 
 
 }

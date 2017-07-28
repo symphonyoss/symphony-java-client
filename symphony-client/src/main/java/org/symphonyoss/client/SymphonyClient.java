@@ -22,12 +22,13 @@
 
 package org.symphonyoss.client;
 
+import org.symphonyoss.client.exceptions.AuthorizationException;
+import org.symphonyoss.client.exceptions.InitException;
+import org.symphonyoss.client.exceptions.NetworkException;
+import org.symphonyoss.client.exceptions.SymCacheException;
+import org.symphonyoss.client.model.CacheType;
 import org.symphonyoss.client.model.SymAuth;
-import org.symphonyoss.client.services.ChatService;
-import org.symphonyoss.client.services.MessageService;
-import org.symphonyoss.client.services.PresenceService;
-import org.symphonyoss.client.services.RoomService;
-import org.symphonyoss.exceptions.InitException;
+import org.symphonyoss.client.services.*;
 import org.symphonyoss.symphony.clients.*;
 import org.symphonyoss.symphony.clients.model.SymUser;
 
@@ -49,10 +50,10 @@ public interface SymphonyClient {
      * @param symAuth    Contains valid key and session tokens generated from AuthorizationClient.
      * @param email      Email address of the BOT
      * @param agentUrl   The Agent URL
-     * @param serviceUrl The Service URL (in most cases it's the POD URL)
+     * @param podUrl The Service URL (in most cases it's the POD URL)
      * @throws InitException Failure of a specific service most likely due to connectivity issues
      */
-    void init(SymAuth symAuth, String email, String agentUrl, String serviceUrl) throws InitException;
+    void init(SymAuth symAuth, String email, String agentUrl, String podUrl) throws InitException;
 
     /**
      * Initialize client with required parameters and custom HTTP client.
@@ -61,11 +62,31 @@ public interface SymphonyClient {
      * @param symAuth    Contains valid key and session tokens generated from AuthorizationClient.
      * @param email      Email address of the BOT
      * @param agentUrl   The Agent URL
-     * @param serviceUrl The Service URL (in most cases it's the POD URL)
+     * @param podUrl The Service URL (in most cases it's the POD URL)
      * @throws InitException Failure of a specific service most likely due to connectivity issues
      */
-    void init(Client httpClient, SymAuth symAuth, String email, String agentUrl, String serviceUrl) throws InitException;
+    void init(Client httpClient, SymAuth symAuth, String email, String agentUrl, String podUrl) throws InitException;
 
+
+    /**
+     * Initialize client with required parameters and custom HTTP client.
+     *
+     * @param httpClient Custom http client to use when connecting to Symphony API's
+     * @param config Configuration object
+     * @throws InitException Failure of a specific service most likely due to connectivity issues
+     * @throws AuthorizationException A network exception
+     */
+    void init(Client httpClient, SymphonyClientConfig config) throws InitException, AuthorizationException;
+    
+    /**
+     * Initialize client with required parameters.
+     *
+     * @param config Configuration object
+     * @throws InitException Failure of a specific service most likely due to connectivity issues
+     * @throws AuthorizationException Exception thrown from authorization issue.
+     */
+    void init(SymphonyClientConfig config) throws InitException, AuthorizationException;
+    
     /**
      * Retrieve authorization object.
      *
@@ -87,12 +108,6 @@ public interface SymphonyClient {
      */
     MessageService getMessageService();
 
-    /**
-     * Provides active Presence Service.  **NOTE** Presence service is currently disabled for real-time updates
-     *
-     * @return {@link PresenceService}
-     */
-    PresenceService getPresenceService();
 
     /**
      * Provides active Chat Service
@@ -136,6 +151,8 @@ public interface SymphonyClient {
      * @return {@link MessagesClient}
      */
     MessagesClient getMessagesClient();
+
+    String getPodUrl();
 
     /**
      * Provides instance of the DataFeed client
@@ -206,6 +223,23 @@ public interface SymphonyClient {
      * @param defaultHttpClient Custom HTTP client
      */
     void setDefaultHttpClient(Client defaultHttpClient);
+
+
+    /**
+     * Set a cache for types : {@link CacheType}
+     * @param symCache A cache
+     * @throws SymCacheException  Exception if cache is unknown.
+     */
+    void setCache(SymCache symCache) throws SymCacheException;
+
+
+    /**
+     * Return a cache by type {@link CacheType}
+     * @param cacheType The type of cache to return
+     * @return Cache representing type
+     */
+    SymCache getCache(CacheType cacheType);
+
 
     /**
      * Terminates all underlying services and threads.

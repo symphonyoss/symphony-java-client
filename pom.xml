@@ -21,13 +21,12 @@
   ~ under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.symphonyoss.symphony</groupId>
     <artifactId>symphony-java-client</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.2-SNAPSHOT</version>
     <name>Symphony Java Client</name>
     <packaging>pom</packaging>
     <url>https://github.com/symphonyoss/symphony-java-client</url>
@@ -36,7 +35,7 @@
     <parent>
         <groupId>org.symphonyoss</groupId>
         <artifactId>symphonyoss</artifactId>
-        <version>2</version>
+        <version>5</version>
     </parent>
 
     <licenses>
@@ -57,11 +56,11 @@
         <developer>
             <id>ftarsillo</id>
             <name>Frank Tarsillo</name>
-            <email/>
+            <email />
             <url>http://github.com/ftarsillo</url>
             <organization>Symphony Software Foundation</organization>
             <organizationUrl>http://symphony.foundation</organizationUrl>
-            <timezone/>
+            <timezone />
             <roles>
                 <role>Architect</role>
                 <role>Developer</role>
@@ -82,7 +81,6 @@
     </developers>
 
     <modules>
-        <module>symphony-apis</module>
         <module>symphony-client</module>
     </modules>
 
@@ -92,6 +90,7 @@
         <junit-version>4.12</junit-version>
         <mokito-version>1.10.19</mokito-version>
         <jsoup-version>1.9.2</jsoup-version>
+        <jackson.version>2.8.8</jackson.version>
     </properties>
 
     <dependencies>
@@ -124,6 +123,11 @@
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
             <version>${jsoup-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>${jackson.version}</version>
         </dependency>
     </dependencies>
 

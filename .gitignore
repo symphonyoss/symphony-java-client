@@ -48,3 +48,8 @@ symphony-client/target/
 logs/
 /symphony-java-client.iml
 symphony-java-client.iml
+
+# Eclipse files
+**/.settings/
+**/.project
+**/.classpath

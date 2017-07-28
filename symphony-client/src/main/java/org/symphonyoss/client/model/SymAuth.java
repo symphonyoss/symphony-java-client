@@ -24,6 +24,8 @@ package org.symphonyoss.client.model;
 
 import org.symphonyoss.symphony.authenticator.model.Token;
 
+import javax.ws.rs.client.Client;
+
 /**
  * Simple abstraction object to hold session and key tokens retrieved from authorization process.
  *
@@ -32,9 +34,56 @@ import org.symphonyoss.symphony.authenticator.model.Token;
 public class SymAuth {
     private Token sessionToken;
     private Token keyToken;
-    private String serverTruststore;
-    private String clientTruststore;
     private String email;
+    private String sessionUrl;
+    private String keyUrl;
+    private String serverTruststore;
+    private String clientKeystore;
+    private String serverTruststorePassword;
+    private String clientKeystorePassword;
+    private Client httpClient;
+
+
+    public String getServerTruststore() {
+        return serverTruststore;
+    }
+
+    public void setServerTruststore(String serverTruststore) {
+        this.serverTruststore = serverTruststore;
+    }
+
+    public String getClientKeystore() {
+        return clientKeystore;
+    }
+
+    public void setClientKeystore(String clientKeystore) {
+        this.clientKeystore = clientKeystore;
+    }
+
+    public String getServerTruststorePassword() {
+        return serverTruststorePassword;
+    }
+
+    public void setServerTruststorePassword(String serverTruststorePassword) {
+        this.serverTruststorePassword = serverTruststorePassword;
+    }
+
+    public String getClientKeystorePassword() {
+        return clientKeystorePassword;
+    }
+
+    public void setClientKeystorePassword(String clientKeystorePassword) {
+        this.clientKeystorePassword = clientKeystorePassword;
+    }
+
+    public Client getHttpClient() {
+        return httpClient;
+    }
+
+    public void setHttpClient(Client httpClient) {
+        this.httpClient = httpClient;
+    }
+
 
     public Token getSessionToken() {
         return sessionToken;
@@ -52,25 +101,6 @@ public class SymAuth {
         this.keyToken = keyToken;
     }
 
-    @SuppressWarnings("unused")
-    public String getServerTruststore() {
-        return serverTruststore;
-    }
-
-    @SuppressWarnings("unused")
-    public void setServerTruststore(String serverTruststore) {
-        this.serverTruststore = serverTruststore;
-    }
-
-    @SuppressWarnings("unused")
-    public String getClientTruststore() {
-        return clientTruststore;
-    }
-
-    @SuppressWarnings("unused")
-    public void setClientTruststore(String clientTruststore) {
-        this.clientTruststore = clientTruststore;
-    }
 
     @SuppressWarnings("unused")
     public String getEmail() {
@@ -80,5 +110,21 @@ public class SymAuth {
     @SuppressWarnings("unused")
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getSessionUrl() {
+        return sessionUrl;
+    }
+
+    public void setSessionUrl(String sessionUrl) {
+        this.sessionUrl = sessionUrl;
+    }
+
+    public String getKeyUrl() {
+        return keyUrl;
+    }
+
+    public void setKeyUrl(String keyUrl) {
+        this.keyUrl = keyUrl;
     }
 }

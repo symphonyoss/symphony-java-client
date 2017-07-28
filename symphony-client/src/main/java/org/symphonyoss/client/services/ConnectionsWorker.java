@@ -26,7 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.client.common.Constants;
-import org.symphonyoss.exceptions.ConnectionsException;
+import org.symphonyoss.client.exceptions.ConnectionsException;
 import org.symphonyoss.symphony.clients.model.SymUserConnection;
 
 import javax.ws.rs.ProcessingException;
@@ -111,6 +111,16 @@ class ConnectionsWorker implements Runnable {
                             }
                             pendingConnections.remove(symUserConnection.getUserId());
                             connectionsListener.onConnectionNotification(symUserConnection);
+
+
+
+
+
+
+
+
+
+
 
                         }
 

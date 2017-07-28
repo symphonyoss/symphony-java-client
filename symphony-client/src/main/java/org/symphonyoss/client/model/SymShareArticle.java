@@ -61,6 +61,10 @@ public class SymShareArticle {
 
     private String appIconUrl = null;
 
+    private Long publishDate = null;
+
+
+
 
     public String getArticleId() {
         return articleId;
@@ -158,6 +162,13 @@ public class SymShareArticle {
         this.appIconUrl = appIconUrl;
     }
 
+    public Long getPublishDate() {
+        return publishDate;
+    }
+
+    public void setPublishDate(Long publishDate) {
+        this.publishDate = publishDate;
+    }
 
     public static ShareArticle toShareArticle(SymShareArticle symShareArticle){
 
@@ -175,6 +186,7 @@ public class SymShareArticle {
         shareArticle.setSummary(symShareArticle.getSummary());
         shareArticle.setThumbnailUrl(symShareArticle.getThumbnailUrl());
         shareArticle.setTitle(symShareArticle.getTitle());
+        shareArticle.setPublishDate(symShareArticle.getPublishDate());
 
         return shareArticle;
 

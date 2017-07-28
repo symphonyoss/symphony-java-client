@@ -26,8 +26,8 @@
 package org.symphonyoss.symphony.clients;
 
 
+import org.symphonyoss.client.exceptions.ShareException;
 import org.symphonyoss.client.model.SymShareArticle;
-import org.symphonyoss.exceptions.ShareException;
 
 /**
  * Created by frank.tarsillo on 9/9/2016.

@@ -35,9 +35,9 @@ public class ConnectionsFactory {
     public static ConnectionsClient getClient(SymphonyClient symClient, TYPE type){
 
         if(type.equals(TYPE.HTTPCLIENT)) {
-            return new ConnectionsClientImpl(symClient.getSymAuth(), symClient.getServiceUrl(),symClient.getDefaultHttpClient());
+            return new ConnectionsClientImpl(symClient.getSymAuth(), symClient.getPodUrl(),symClient.getDefaultHttpClient());
         }else{
-            return new ConnectionsClientImpl(symClient.getSymAuth(), symClient.getServiceUrl());
+            return new ConnectionsClientImpl(symClient.getSymAuth(), symClient.getPodUrl());
         }
     }
 

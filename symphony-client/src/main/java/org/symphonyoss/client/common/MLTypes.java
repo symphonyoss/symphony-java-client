@@ -36,7 +36,9 @@ public enum MLTypes {
     END_ML("</messageML>"),
     START_BOLD("<b>"),
     END_BOLD("</b>"),
-    BREAK("<br/>");
+    BREAK("<br/>"),
+    START_PML("<div data-format=\"PresentationML\" data-version=\"2.0\">"),
+    END_PML("</div>");
 
 
     private final String text;

@@ -22,10 +22,11 @@
 
 package org.symphonyoss.symphony.clients;
 
-import org.symphonyoss.exceptions.StreamsException;
+import org.symphonyoss.client.exceptions.StreamsException;
 import org.symphonyoss.symphony.clients.model.*;
 import org.symphonyoss.symphony.pod.model.*;
 
+import java.util.List;
 import java.util.Set;
 
 
@@ -40,6 +41,10 @@ public interface StreamsClient {
 
     Stream getStream(UserIdList userIdList) throws StreamsException;
 
+    SymAdminStreamList getStreams(Integer skip, Integer limit, SymAdminStreamFilter symAdminStreamFilter) throws StreamsException;
+
+    List<SymStreamAttributes> getStreams(Integer skip, Integer limit, SymStreamFilter symStreamFilter) throws StreamsException;
+
     Stream getStreamFromEmail(String email) throws StreamsException;
 
     SymRoomDetail getRoomDetail(String id) throws StreamsException;
@@ -49,6 +54,8 @@ public interface StreamsClient {
     SymRoomDetail updateChatRoom(String streamId, SymRoomAttributes roomAttributes) throws StreamsException;
 
     SymRoomSearchResults roomSearch(SymRoomSearchCriteria searchCriteria, Integer skip, Integer limit) throws StreamsException;
+
+    SymStreamAttributes getStreamAttributes(String streamId) throws StreamsException;
 
     /**
      * Deactivates a room for a given roomId

@@ -29,6 +29,7 @@ import org.glassfish.jersey.client.ClientConfig;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import java.io.InputStream;
 import java.security.KeyStore;
 
 /**
@@ -92,11 +93,60 @@ public class CustomHttpClient {
         loadKeyStore(tks, trustStore, trustStorePass);
 
 
-        return ClientBuilder.newBuilder().keyStore(cks, clientKeyStorePass.toCharArray()).trustStore(tks).withConfig(clientConfig).build();
+        return  getClient(cks, clientKeyStorePass, tks, trustStorePass, clientConfig);
 
 
     }
 
+
+
+
+    /**
+     * Create custom client with specific keystores.
+     *
+     * @param clientKeyStore     Client (BOT) keystore InputStream (usually represents a file)
+     * @param clientKeyStorePass Client (BOT) keystore password
+     * @param trustStore         Truststore IntputStream (usually represents a file)
+     * @param trustStorePass     Truststore password
+     * @param clientConfig       - HttpClient configuration to use when constructing the client
+     * @return Custom HttpClient
+     * @throws Exception Generally IOExceptions thrown from instantiation.
+     */
+    public static Client getClient(InputStream clientKeyStore, String clientKeyStorePass, InputStream trustStore, String trustStorePass, ClientConfig clientConfig) throws Exception {
+
+
+        KeyStore cks = KeyStore.getInstance("PKCS12");
+        KeyStore tks = KeyStore.getInstance("JKS");
+
+        loadKeyStore(cks, clientKeyStore, clientKeyStorePass);
+        loadKeyStore(tks, trustStore, trustStorePass);
+
+
+        return getClient(cks, clientKeyStorePass, tks, trustStorePass, clientConfig);
+
+
+    }
+
+
+
+    /**
+     * Create custom client with specific keystores.
+     *
+     * @param clientKeyStore     Client (BOT) keystore
+     * @param clientKeyStorePass Client (BOT) keystore password
+     * @param trustStore         Truststore
+     * @param trustStorePass     Truststore password
+     * @param clientConfig       - HttpClient configuration to use when constructing the client
+     * @return Custom HttpClient
+     * @throws Exception Generally IOExceptions thrown from instantiation.
+     */
+    public static Client getClient(KeyStore clientKeyStore, String clientKeyStorePass, KeyStore trustStore, String trustStorePass, ClientConfig clientConfig) throws Exception {
+
+
+        return ClientBuilder.newBuilder().keyStore(clientKeyStore, clientKeyStorePass.toCharArray()).trustStore(trustStore).withConfig(clientConfig).build();
+
+
+    }
 
     /**
      * Internal keystore loader
@@ -112,7 +162,7 @@ public class CustomHttpClient {
         java.io.FileInputStream fis = null;
         try {
             fis = new java.io.FileInputStream(ksFile);
-            ks.load(fis, ksPass.toCharArray());
+            loadKeyStore(ks,fis, ksPass);
         } finally {
             if (fis != null) {
                 fis.close();
@@ -120,5 +170,23 @@ public class CustomHttpClient {
         }
 
     }
+
+
+    /**
+     * Internal keystore loader
+     *
+     * @param ks     Keystore object which defines the expected type (PKCS12, JKS)
+     * @param ksInputStream Keystore InputStream  to process
+     * @param ksPass Keystore password for InputStream to process
+     * @throws Exception Generally IOExceptions generated from file read
+     */
+    //NOSONAR
+    private static void loadKeyStore(KeyStore ks, InputStream ksInputStream, String ksPass) throws Exception {
+
+            ks.load(ksInputStream, ksPass.toCharArray());
+
+    }
+
+
 
 }

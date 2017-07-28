@@ -32,8 +32,8 @@ import org.jsoup.nodes.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
-import org.symphonyoss.exceptions.SymException;
-import org.symphonyoss.exceptions.UsersClientException;
+import org.symphonyoss.client.exceptions.SymException;
+import org.symphonyoss.client.exceptions.UsersClientException;
 import org.symphonyoss.symphony.clients.model.SymUser;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -83,6 +83,9 @@ public class MlMessageParser extends DefaultHandler {
         doc.select("errors").remove();
 
         elementMessageML = doc.select("messageML").first();
+
+        if(elementMessageML==null)
+            elementMessageML = doc.select("div").first();
 
 
         if (elementMessageML != null) {

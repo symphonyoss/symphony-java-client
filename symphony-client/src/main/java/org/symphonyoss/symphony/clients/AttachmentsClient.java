@@ -22,7 +22,7 @@
 
 package org.symphonyoss.symphony.clients;
 
-import org.symphonyoss.exceptions.AttachmentsException;
+import org.symphonyoss.client.exceptions.AttachmentsException;
 import org.symphonyoss.symphony.clients.model.SymAttachmentInfo;
 import org.symphonyoss.symphony.clients.model.SymMessage;
 

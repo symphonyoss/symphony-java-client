@@ -38,7 +38,7 @@ export SENDER_USER_CERT_PASSWORD=...
 
 
 export TEST_ROOM_STREAM=276YAAI9Kzvl3wRA+z2hln___qV6zxh9dA
-
+export MP_USER_EMAIL=frank.tarsillo@ihsmarkit.com
 
 #####
 # Sensible data

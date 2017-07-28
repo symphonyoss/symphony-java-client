@@ -25,11 +25,13 @@ package org.symphonyoss.client.services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.client.events.*;
+import org.symphonyoss.client.exceptions.RoomException;
+import org.symphonyoss.client.exceptions.StreamsException;
+import org.symphonyoss.client.exceptions.SymException;
 import org.symphonyoss.client.model.Room;
-import org.symphonyoss.exceptions.RoomException;
-import org.symphonyoss.exceptions.StreamsException;
-import org.symphonyoss.exceptions.SymException;
 import org.symphonyoss.symphony.agent.model.*;
+import org.symphonyoss.symphony.clients.model.ApiVersion;
 import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.clients.model.SymRoomAttributes;
 import org.symphonyoss.symphony.clients.model.SymRoomDetail;
@@ -51,25 +53,45 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author Frank Tarsillo
  */
-public class RoomService implements RoomServiceListener {
+public class RoomService implements RoomServiceListener, RoomServiceEventListener {
 
 
     private final ConcurrentHashMap<String, Room> roomsByStream = new ConcurrentHashMap<>();
     private final SymphonyClient symClient;
     private final Logger logger = LoggerFactory.getLogger(RoomService.class);
     private final Set<RoomServiceListener> roomServiceListeners = ConcurrentHashMap.newKeySet();
+    private final Set<RoomServiceEventListener> roomServiceEventListeners = ConcurrentHashMap.newKeySet();
+    private ApiVersion apiVersion;
 
     /**
      * @param symClient SymphonyClient provides access to client implementations and dependant services such as the
      *                  {@link MessageService}
      */
     public RoomService(SymphonyClient symClient) {
-        this.symClient = symClient;
-
-        symClient.getMessageService().addRoomListener(this);
-
+        this(symClient, ApiVersion.V2);
     }
 
+
+    /**
+     * Specify a version of RoomService to use.  Version is aligning with LLC REST API endpoint versions.
+     *
+     * @param symClient  Symphony client required to access all underlying clients functions.
+     * @param apiVersion The version of the ChatServer to use which is aligned with LLC REST API endpoint versions.
+     */
+    public RoomService(SymphonyClient symClient, ApiVersion apiVersion) {
+
+        this.apiVersion = apiVersion;
+        this.symClient = symClient;
+
+
+        if(apiVersion.equals(ApiVersion.V4)){
+            symClient.getMessageService().addRoomServiceEventListener(this);
+        }else{
+            symClient.getMessageService().addRoomListener(this);
+        }
+
+
+    }
 
     /**
      * Create a new room object from {@link SymRoomAttributes} provided.  The room object will be enriched with all
@@ -181,22 +203,123 @@ public class RoomService implements RoomServiceListener {
 
             }
 
-            //For specific rooms that are registered publish new message events
-            for (String stream : roomsByStream.keySet()) {
 
+            //Publish messages to any generic RoomService Listeners
+            for (RoomServiceEventListener roomServiceEventListener : roomServiceEventListeners) {
 
-                Room room = roomsByStream.get(symMessage.getStreamId());
-
-                //Publish a message event to a room
-                if (room != null)
-                    room.onRoomMessage(symMessage);
+                roomServiceEventListener.onMessage(symMessage);
 
             }
+
+            Room room = roomsByStream.get(symMessage.getStreamId());
+
+            //Publish a message event to a room
+            if (room != null)
+                room.onRoomMessage(symMessage);
+
 
         } catch (RoomException e) {
             logger.error("Unable to add new room from message: ", e);
         }
     }
+
+    @Override
+    public void onSymRoomDeactivated(SymRoomDeactivated symRoomDeactivated) {
+
+        for (Map.Entry<String, Room> entry : roomsByStream.entrySet()) {
+
+            for (RoomEventListener roomEventListener : entry.getValue().getRoomEventListeners())
+                roomEventListener.onSymRoomDeactivated(symRoomDeactivated);
+
+        }
+
+    }
+
+    @Override
+    public void onSymRoomMemberDemotedFromOwner(SymRoomMemberDemotedFromOwner symRoomMemberDemotedFromOwner) {
+
+        for (Map.Entry<String, Room> entry : roomsByStream.entrySet()) {
+
+            for (RoomEventListener roomEventListener : entry.getValue().getRoomEventListeners())
+                roomEventListener.onSymRoomMemberDemotedFromOwner(symRoomMemberDemotedFromOwner);
+
+
+        }
+
+    }
+
+    @Override
+    public void onSymRoomMemberPromotedToOwner(SymRoomMemberPromotedToOwner symRoomMemberPromotedToOwner) {
+        for (Map.Entry<String, Room> entry : roomsByStream.entrySet()) {
+
+            for (RoomEventListener roomEventListener : entry.getValue().getRoomEventListeners())
+                roomEventListener.onSymRoomMemberPromotedToOwner(symRoomMemberPromotedToOwner);
+
+
+        }
+    }
+
+    @Override
+    public void onSymRoomReactivated(SymRoomReactivated symRoomReactivated) {
+
+        for (Map.Entry<String, Room> entry : roomsByStream.entrySet()) {
+
+            for (RoomEventListener roomEventListener : entry.getValue().getRoomEventListeners())
+                roomEventListener.onSymRoomReactivated(symRoomReactivated);
+
+
+        }
+
+    }
+
+    @Override
+    public void onSymRoomUpdated(SymRoomUpdated symRoomUpdated) {
+
+        for (Map.Entry<String, Room> entry : roomsByStream.entrySet()) {
+
+            for (RoomEventListener roomEventListener : entry.getValue().getRoomEventListeners())
+                roomEventListener.onSymRoomUpdated(symRoomUpdated);
+
+
+        }
+
+    }
+
+    @Override
+    public void onSymUserJoinedRoom(SymUserJoinedRoom symUserJoinedRoom) {
+
+        for (Map.Entry<String, Room> entry : roomsByStream.entrySet()) {
+            for (RoomEventListener roomEventListener : entry.getValue().getRoomEventListeners())
+                roomEventListener.onSymUserJoinedRoom(symUserJoinedRoom);
+
+
+        }
+
+    }
+
+    @Override
+    public void onSymUserLeftRoom(SymUserLeftRoom symUserLeftRoom) {
+
+        for (Map.Entry<String, Room> entry : roomsByStream.entrySet()) {
+
+            for (RoomEventListener roomEventListener : entry.getValue().getRoomEventListeners())
+                roomEventListener.onSymUserLeftRoom(symUserLeftRoom);
+
+
+        }
+
+    }
+
+    @Override
+    public void onSymRoomCreated(SymRoomCreated symRoomCreated) {
+
+        for (RoomServiceEventListener roomServiceEventListener : roomServiceEventListeners) {
+            roomServiceEventListener.onSymRoomCreated(symRoomCreated);
+
+        }
+
+    }
+
 
     /**
      * Add a room to the service
@@ -229,6 +352,10 @@ public class RoomService implements RoomServiceListener {
 
         for (RoomServiceListener roomServiceListener : roomServiceListeners)
             roomServiceListener.onNewRoom(room);
+
+
+        for (RoomServiceEventListener roomServiceEventListener : roomServiceEventListeners)
+            roomServiceEventListener.onNewRoom(room);
     }
 
     /**
@@ -366,13 +493,23 @@ public class RoomService implements RoomServiceListener {
     }
 
 
+    @Deprecated
     public void addRoomServiceListener(RoomServiceListener roomServiceListener) {
         roomServiceListeners.add(roomServiceListener);
     }
 
-    @SuppressWarnings("unused")
+    @Deprecated
     public void removeRoomServiceListener(RoomServiceListener roomServiceListener) {
         roomServiceListeners.remove(roomServiceListener);
     }
 
+
+    public void addRoomServiceEventListener(RoomServiceEventListener roomServiceEventListener) {
+        roomServiceEventListeners.add(roomServiceEventListener);
+    }
+
+
+    public void removeRoomServiceEventListener(RoomServiceEventListener roomServiceEventListener) {
+        roomServiceEventListeners.remove(roomServiceEventListener);
+    }
 }

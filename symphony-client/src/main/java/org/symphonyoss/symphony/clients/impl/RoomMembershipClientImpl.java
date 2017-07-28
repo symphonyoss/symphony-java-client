@@ -26,8 +26,8 @@ import javax.ws.rs.client.Client;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.symphonyoss.client.exceptions.SymException;
 import org.symphonyoss.client.model.SymAuth;
-import org.symphonyoss.exceptions.SymException;
 import org.symphonyoss.symphony.clients.RoomMembershipClient;
 import org.symphonyoss.symphony.pod.api.RoomMembershipApi;
 import org.symphonyoss.symphony.pod.invoker.ApiClient;
@@ -51,14 +51,14 @@ public class RoomMembershipClientImpl implements RoomMembershipClient {
     @SuppressWarnings("unused")
     private Logger logger = LoggerFactory.getLogger(RoomMembershipClientImpl.class);
 
-    public RoomMembershipClientImpl(SymAuth symAuth, String serviceUrl) {
+    public RoomMembershipClientImpl(SymAuth symAuth, String podUrl) {
 
         this.symAuth = symAuth;
 
 
         //Get Service client to query for userID.
         apiClient = org.symphonyoss.symphony.pod.invoker.Configuration.getDefaultApiClient();
-        apiClient.setBasePath(serviceUrl);
+        apiClient.setBasePath(podUrl);
 
         apiClient.addDefaultHeader(symAuth.getSessionToken().getName(), symAuth.getSessionToken().getToken());
         apiClient.addDefaultHeader(symAuth.getKeyToken().getName(), symAuth.getKeyToken().getToken());
@@ -69,16 +69,16 @@ public class RoomMembershipClientImpl implements RoomMembershipClient {
      * If you need to override HttpClient.  Important for handling individual client certs.
      *
      * @param symAuth    Authorization object holding session and key tokens
-     * @param serviceUrl The Symphony service URL
+     * @param podUrl The Symphony service URL
      * @param httpClient The HttpClient to use when calling Symphony API
      */
-    public RoomMembershipClientImpl(SymAuth symAuth, String serviceUrl, Client httpClient) {
+    public RoomMembershipClientImpl(SymAuth symAuth, String podUrl, Client httpClient) {
         this.symAuth = symAuth;
 
         //Get Service client to query for userID.
         apiClient = org.symphonyoss.symphony.pod.invoker.Configuration.getDefaultApiClient();
         apiClient.setHttpClient(httpClient);
-        apiClient.setBasePath(serviceUrl);
+        apiClient.setBasePath(podUrl);
 
         apiClient.addDefaultHeader(symAuth.getSessionToken().getName(), symAuth.getSessionToken().getToken());
         apiClient.addDefaultHeader(symAuth.getKeyToken().getName(), symAuth.getKeyToken().getToken());

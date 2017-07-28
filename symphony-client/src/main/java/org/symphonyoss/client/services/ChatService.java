@@ -25,9 +25,11 @@ package org.symphonyoss.client.services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.client.exceptions.StreamsException;
+import org.symphonyoss.client.exceptions.UsersClientException;
+import org.symphonyoss.client.model.CacheType;
 import org.symphonyoss.client.model.Chat;
-import org.symphonyoss.exceptions.StreamsException;
-import org.symphonyoss.exceptions.UsersClientException;
+import org.symphonyoss.symphony.clients.model.ApiVersion;
 import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.pod.model.Stream;
@@ -58,12 +60,27 @@ public class ChatService implements ChatListener {
 
     private final SymphonyClient symClient;
     private final Logger logger = LoggerFactory.getLogger(ChatService.class);
+    private ApiVersion apiVersion;
 
 
     /**
      * @param symClient Symphony Client required to access all underlying clients functions.
      */
     public ChatService(SymphonyClient symClient) {
+
+        this(symClient, ApiVersion.V2);
+
+
+    }
+
+    /**
+     * Specify a version of ChatServer to use.  Version is aligning with LLC REST API endpoint versions.
+     * @param symClient Symphony client required to access all underlying clients functions.
+     * @param apiVersion The version of the ChatServer to use which is aligned with LLC REST API endpoint versions.
+     */
+    public ChatService(SymphonyClient symClient, ApiVersion apiVersion) {
+
+        this.apiVersion = apiVersion;
         this.symClient = symClient;
 
         //Register this service against the message service which is backed by datafeed.
@@ -207,7 +224,7 @@ public class ChatService implements ChatListener {
             chat.setLastMessage(message);
 
             //Enrich all user data..
-            Set<SymUser> remoteUsers = symClient.getUsersClient().getUsersFromStream(message.getStreamId());
+            Set<SymUser> remoteUsers = ((SymUserCache) symClient.getCache(CacheType.USER)).getUsersByStream(message.getStreamId());
 
             if (remoteUsers != null) {
 
@@ -317,7 +334,7 @@ public class ChatService implements ChatListener {
 
         //Resolve the UserID to pull chat set.
         try {
-            SymUser user = symClient.getUsersClient().getUserFromEmail(email);
+            SymUser user = ((SymUserCache) symClient.getCache(CacheType.USER)).getUserByEmail(email);
 
             if (user != null)
                 return chatsByUser.get(user.getId());
@@ -372,11 +389,11 @@ public class ChatService implements ChatListener {
                 SymUser updatedSymUser = new SymUser();
 
                 if (symUser.getId() != null) {
-                    updatedSymUser = symClient.getUsersClient().getUserFromId(symUser.getId());
+                    updatedSymUser = ((SymUserCache) symClient.getCache(CacheType.USER)).getUserById(symUser.getId());
                 } else if (symUser.getEmailAddress() != null) {
-                    updatedSymUser = symClient.getUsersClient().getUserFromEmail(symUser.getEmailAddress());
+                    updatedSymUser = ((SymUserCache) symClient.getCache(CacheType.USER)).getUserByEmail(symUser.getEmailAddress());
                 } else if (symUser.getUsername() != null) {
-                    updatedSymUser = symClient.getUsersClient().getUserFromName(symUser.getUsername());
+                    updatedSymUser = ((SymUserCache) symClient.getCache(CacheType.USER)).getUserByName(symUser.getUsername());
                 } else {
                     logger.error("Failed to retrieve user detail for chat session..(nothing to identify the user)..");
                 }

@@ -1,7 +1,7 @@
 [![Dependencies](https://www.versioneye.com/user/projects/5770f47919424d000f2e0095/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/5770f47919424d000f2e0095)
 [![Build Status](https://travis-ci.org/symphonyoss/symphony-java-client.svg)](https://travis-ci.org/symphonyoss/symphony-java-client)
 [![Validation Status](https://scan.coverity.com/projects/9112/badge.svg?flat=1)](https://scan.coverity.com/projects/symphonyoss-symphony-java-client)
-[![Symphony Software Foundation - Incubating](https://cdn.rawgit.com/symphonyoss/contrib-toolbox/master/images/ssf-badge-incubating.svg)](https://symphonyoss.atlassian.net/wiki/display/FM/Incubating)
+[![Symphony Software Foundation - Active](https://cdn.rawgit.com/symphonyoss/contrib-toolbox/master/images/ssf-badge-active.svg)](https://symphonyoss.atlassian.net/wiki/display/FM/Active)
 <a href="https://sonarqube.com/overview?id=org.symphonyoss.symphony%3Asymphony-java-client"><img src="https://www.sonarqube.org/assets/logo-31ad3115b1b4b120f3d1efd63e6b13ac9f1f89437f0cf6881cc4d8b5603a52b4.svg" title="SonarQube" width="80"/></a>
 
 Symphony Java Client
@@ -9,7 +9,7 @@ Symphony Java Client
 
 The Symphony java client provides a real-time wrapper around the Symphony REST API's to simplify the creation of chat sessions, room access, presence, messaging and more...  The client provides a set of logical services representing supported features of the Symphony platform.  Services support real-time events through feature based listeners and communication objects.  Access is not limited to the services as all underlying Symphony client implementations are exposed for advanced use or creation of your own service.
 
-##Features
+## Features
 * Basic client:
     * Authentication management
     * Implements and exposes functional services and underlying clients.
@@ -25,26 +25,52 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
     * Real-time listeners on all room events
     * Enriches Room objects with associated system attributes
     * X-Pod Support
-* Presence Service (Disabled by default and NOT recommended for use)
-    * Maintains an active cache of endpoint presence associated with single POD.
-    * Real-time listeners on all presence changes
-    * Request user presence
 * Connections request handling including auto-accept.
 * Attachment Support
 * Publish formatted articles (news) using ShareApi
 * MessageML utilities
     * Support for command line processing
     * Conversion from MessageML to Text
-* Exposure of underlying Symphony clients:
+* Exposure of underlying Symphony bindings:
     * Authentication, Users, Presence, Streams, Datafeed, RoomMembership, Connections, Attachments
-
+* Lazy cache for user data.  Can also be extended to custom cache solutions. 
 **Administration features are currently not supported in the library. (future work)**
 
 
 
-##Change log and notes
-### V1.0.0 (SNAPSHOT)
-* Compatible with 1.40.1 API, V2 and Agent 1.39+
+## Change log and notes
+
+### V1.0.2 (SNAPSHOT)
+* Support for REST API 1.46.0+
+* Removed generated symphony-apis module and replaced with [symphony-java-api](https://github.com/symphonyoss/symphony-java-api) released modules
+* Services and clients have support for V4 endpoints.  Use SymphonyClientFactory.TYPE.V4 when instantiating SymphonyClient
+* Added new models and listeners to support V4 event based messaging.  This primarily impacts "Room" services if running V4 mode. 
+* SymMessage support for PresentationML inclusive of EntityData
+* SymMessage V4 support for attaching files directly to messages vs prior two step process.
+* Examples added back to project, but are not part of distribution
+* Example added for PresentationML (incl EntityData) and RoomExampleV4 showing event messaging
+* Removed PresenceService and associated listeners as it is no longer supported
+* Better exception handling exposing underlying root causes from API calls.
+* Moved away from using system properties in favor of internal configuration properties with native support for system configuration and environmental properties.
+* Increase in unit test coverage
+* Added ability to obtain stream attributes in StreamsClient.getStreams(...).  Admin and user level.
+* Added the ability to list all streams known streams for a given user StreamClient
+* Updated MessageService to take advantage of new stream attributes functions
+* Added additional integration testing
+
+
+
+### V1.0.1 (Stable)
+* Added Users local cache (Lazy) for services
+* SymphonyClient now supports cache plugin setCache(CacheType). Extension sample provided.
+* Updated REST API Spec to 1.45
+* Simplification of CustomHttpClient
+* Focus on performance
+* Deferred: Although progress was made on moving symphony-apis module, more testing required 
+
+
+### V1.0.0 
+* Compatible with 1.45 API, V2 and Agent 1.39+
 * Presence service is now disabled by default
 * ShareAPI supporting article (news) posts implemented
 * Support for custom HTTP Clients when initiating SymphonyClient.
@@ -61,7 +87,7 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 * CI integration testing (mvn goal -Pintegration-testing)
 * Bug fixes, documentation, new examples
 
-### V0.9.1 (Stable)
+### V0.9.1 
 
 * Compatible with 1.40.1 API, V2 and Agent 1.39+
 * New Connections Service for managing connection requests.  This includes auto-accept.
@@ -76,7 +102,7 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 * Examples updated to reflect core changes
 * Many..many..underlying code updates resolving sonar issues
 
-### V0.9.0 (Stable)
+### V0.9.0 
 
 * Compatible with 1.38 API, V1 and Agent
 * Bot user requires elevated privileges to acquire
@@ -84,11 +110,17 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 * Exposes clients for Symphoni API including Authorization, Streams, Presence, RoomMembership, User, Users,
 * Utilizes generated API models from Symphony
 
+## Branch Strategy
+
+**develop** - All active development on latest SNAPSHOT
+
+**master**  - Periodic merged and tested features from develop branch
 
 
-##Requirements
 
-####POM:
+## Requirements
+
+#### POM:
 
         <dependency>
             <groupId>org.symphonyoss.symphony</groupId>
@@ -96,7 +128,7 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
             <version>(Version)</version>
         </dependency>
 
-####Certificates:
+#### Certificates:
 
         Please contact your Symphony local administrator to obtain the necessary certificates
         for the user/service account being used to access the POD.
@@ -108,21 +140,25 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
         means you can bind different .p12 certs representing different BOT users.
 
 
-####Required System Properties:
+#### Required System Properties:
 
-        -Dkeystore.password=(Pass)
-        -Dtruststore.password=(Pass)
-        -Dsessionauth.url=https://(pod-host).symphony.com:8444/sessionauth
-        //Note: you may have local HSM vs pod
-        -Dkeyauth.url=https://(pod-host).symphony.com:8444/keyauth
-        -Dsymphony.agent.pod.url=https://(symagent-host).mdevlab.com:8446/pod
-        -Dsymphony.agent.agent.url=https://(symagent-host).mdevlab.com:8446/agent
-        -Dcerts.dir=/dev/certs/
-        -Dtruststore.file=/dev/certs/server.truststore
-        -Dbot.user=(user name)
+        -Dtruststore.file=
+        -Dtruststore.password=password
+        -Dsessionauth.url=https://(hostname)/sessionauth
+        -Dkeyauth.url=https://(hostname)/keyauth
+        -Duser.call.home=frank.tarsillo@markit.com
+        -Duser.cert.password=password
+        -Duser.cert.file=bot.user2.p12
+        -Dpod.url=https://(pod host)/pod
+        -Dagent.url=https://(agent server host)/agent
+        -Duser.email=bot.user2@markit.com or bot user email
+       
+
+## Examples
+[see Examples Project](https://github.com/symphonyoss/symphony-java-sample-bots)
 
 
-##API Docs
+## API Docs
 [API Documentation](http://symphonyoss.github.io/symphony-java-client/index.html)
 
 ## Contribute
