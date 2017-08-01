@@ -30,11 +30,11 @@ import org.symphonyoss.client.exceptions.UserManagementClientException;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.symphony.authenticator.model.Token;
 import org.symphonyoss.symphony.clients.UserManagementClient;
+import org.symphonyoss.symphony.clients.model.SymFeatureList;
 import org.symphonyoss.symphony.pod.api.UserApi;
 import org.symphonyoss.symphony.pod.invoker.ApiClient;
 import org.symphonyoss.symphony.pod.invoker.ApiException;
 import org.symphonyoss.symphony.pod.invoker.Configuration;
-import org.symphonyoss.symphony.pod.model.FeatureList;
 
 /**
  * Implementation of {@link UserManagementClient}.
@@ -60,35 +60,35 @@ public class UserManagementClientImpl implements UserManagementClient {
     @Override
     public void updateExternalAccess(long userId, boolean allowExternalAccess) throws UserManagementClientException {
         UserApi userApi = new UserApi(apiClient);
-        FeatureList featureList;
+        SymFeatureList symFeatureList;
 
         try {
-            featureList = userApi.v1AdminUserUidFeaturesGet(getSessionToken(), userId);
+            symFeatureList = SymFeatureList.toSymFeatureList(userApi.v1AdminUserUidFeaturesGet(getSessionToken(), userId));
         } catch (ApiException e) {
             String errorMessage = "API Error communicating with POD while retrieving user features for user id " + userId;
             LOG.error(errorMessage, e);
             throw new UserManagementClientException(errorMessage, e.getCause());
         }
 
-        FeatureList changedFeatureList = new FeatureList();
+        SymFeatureList changedSymFeatureList = new SymFeatureList();
 
-        featureList.forEach(feature -> {
-            boolean hasChanged = allowExternalAccess != feature.getEnabled();
-            boolean updateExternalRoom = IS_EXTERNAL_ROOM_ENABLED.equals(feature.getEntitlment()) && hasChanged;
-            boolean updateExternalIM = IS_EXTERNAL_IM_ENABLED.equals(feature.getEntitlment()) && hasChanged;
+        symFeatureList.forEach(symFeature -> {
+            boolean hasChanged = allowExternalAccess != symFeature.getEnabled();
+            boolean updateExternalRoom = IS_EXTERNAL_ROOM_ENABLED.equals(symFeature.getEntitlement()) && hasChanged;
+            boolean updateExternalIM = IS_EXTERNAL_IM_ENABLED.equals(symFeature.getEntitlement()) && hasChanged;
             boolean updateExternalAccess = updateExternalRoom || updateExternalIM;
 
             if (updateExternalAccess) {
-                feature.setEnabled(allowExternalAccess);
-                changedFeatureList.add(feature);
+                symFeature.setEnabled(allowExternalAccess);
+                changedSymFeatureList.add(symFeature);
                 String externalAccessTypeMessage = (updateExternalRoom) ? "Room Chat access" : "Chat access";
                 LOG.info("Setting External " + externalAccessTypeMessage + " to " + allowExternalAccess + " for user id " + userId);
             }
         });
 
-        if (!changedFeatureList.isEmpty()) {
+        if (!changedSymFeatureList.isEmpty()) {
             try {
-                userApi.v1AdminUserUidFeaturesUpdatePost(getSessionToken(), userId, changedFeatureList);
+                userApi.v1AdminUserUidFeaturesUpdatePost(getSessionToken(), userId, SymFeatureList.toFeatureList(changedSymFeatureList));
             } catch (ApiException e) {
                 String errorMessage = "API Error communicating with POD while updating user features for user id " + userId;
                 LOG.error(errorMessage, e);
