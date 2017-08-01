@@ -67,7 +67,7 @@ public class StreamsClientImpl implements org.symphonyoss.symphony.clients.Strea
         apiClient.setBasePath(podUrl);
 
         apiClient.addDefaultHeader(symAuth.getSessionToken().getName(), symAuth.getSessionToken().getToken());
-        apiClient.addDefaultHeader(symAuth.getKeyToken().getName(), symAuth.getKeyToken().getToken());
+       // apiClient.addDefaultHeader(symAuth.getKeyToken().getName(), symAuth.getKeyToken().getToken());
 
     }
 

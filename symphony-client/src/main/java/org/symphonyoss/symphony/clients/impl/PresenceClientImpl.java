@@ -62,7 +62,7 @@ public class PresenceClientImpl implements org.symphonyoss.symphony.clients.Pres
         apiClient.setBasePath(podUrl);
 
         apiClient.addDefaultHeader(symAuth.getSessionToken().getName(), symAuth.getSessionToken().getToken());
-        apiClient.addDefaultHeader(symAuth.getKeyToken().getName(), symAuth.getKeyToken().getToken());
+       // apiClient.addDefaultHeader(symAuth.getKeyToken().getName(), symAuth.getKeyToken().getToken());
 
     }
 
