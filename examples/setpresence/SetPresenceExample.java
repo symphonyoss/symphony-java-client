@@ -127,7 +127,7 @@ public class SetPresenceExample {
             for(Presence p: presences) {
                 symClient.getPresenceClient().setUserPresence(symClient.getLocalUser().getId(), p);
 
-                logger.debug("SET PRESENCE TO: {} ", p.getCategory().toString());
+                logger.info("SET PRESENCE TO: {} ", p.getCategory().toString());
                 try {
                     TimeUnit.SECONDS.sleep(10);
                 } catch (InterruptedException e) {
@@ -135,6 +135,8 @@ public class SetPresenceExample {
                 }
 
             }
+
+            symClient.shutdown();
 
         } catch (Exception e) {
             e.printStackTrace();
