@@ -65,7 +65,7 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
      * Constructor supports custom HTTP clients
      *
      * @param symAuth    Authorization model containing session and key tokens
-     * @param agentUrl Agent URL
+     * @param agentUrl   Agent URL
      * @param httpClient Custom HTTP Client
      */
     public MessagesClientImpl(SymAuth symAuth, String agentUrl, Client httpClient) {
@@ -76,14 +76,13 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
 
 
     /**
-     *
      * @param symAuth    Authorization model containing session and key tokens
-     * @param agentUrl Agent URL
+     * @param agentUrl   Agent URL
      * @param apiVersion Version of API to use
      */
     public MessagesClientImpl(SymAuth symAuth, String agentUrl, ApiVersion apiVersion) {
 
-        this(symAuth,agentUrl,null,apiVersion);
+        this(symAuth, agentUrl, null, apiVersion);
     }
 
 
@@ -91,7 +90,7 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
      * Constructor supports custom HTTP clients
      *
      * @param symAuth    Authorization model containing session and key tokens
-     * @param agentUrl Agent URL
+     * @param agentUrl   Agent URL
      * @param httpClient Custom HTTP Client
      * @param apiVersion Version of API to use
      */
@@ -112,7 +111,6 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
         apiClient.setBasePath(agentUrl);
 
     }
-
 
 
     /**
@@ -310,7 +308,18 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
         V4Message v4Message;
         try {
 
-            return SymMessage.toSymMessage(messagesApi.v4StreamSidMessageCreatePost(stream.getStreamId(), symAuth.getSessionToken().getToken(), message.getMessage(), symAuth.getKeyToken().getToken(), message.getEntityData(), ApiVersion.V4.toString(), message.getAttachment()));
+            return SymMessage.toSymMessage(messagesApi.v4StreamSidMessageCreatePost(
+                    stream.getStreamId(),
+                    symAuth.getSessionToken().getToken(),
+                    message.getMessage(),
+                    symAuth.getKeyToken().getToken(),
+                    message.getEntityData(),
+                    ApiVersion.V4.toString(),
+                    message.getAttachment(),
+                    message.getAttachementThumbnail()
+                    )
+
+            );
 
         } catch (ApiException e) {
             throw new MessagesException("Failed to send message to stream: " + stream.getStreamId(),

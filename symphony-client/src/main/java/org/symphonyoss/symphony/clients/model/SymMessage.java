@@ -84,6 +84,8 @@ public class SymMessage {
 
     private File attachment = null;
 
+    private File attachementThumbnail = null;
+
     public SymUser getSymUser() {
         return symUser;
     }
@@ -192,6 +194,14 @@ public class SymMessage {
 
     public void setAttachment(File attachment) {
         this.attachment = attachment;
+    }
+
+    public File getAttachementThumbnail() {
+        return attachementThumbnail;
+    }
+
+    public void setAttachementThumbnail(File attachementThumbnail) {
+        this.attachementThumbnail = attachementThumbnail;
     }
 
     @Deprecated

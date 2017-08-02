@@ -9,7 +9,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="symphony-client" />
+    <orderEntry type="library" name="Maven: org.symphonyoss.symphony:symphony-client:1.0.2-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.symphonyoss.symphony:symphony-authenticator-java-jersey2-client:1.46.0" level="project" />
     <orderEntry type="library" name="Maven: org.glassfish.jersey.media:jersey-media-multipart:2.23.1" level="project" />
     <orderEntry type="library" name="Maven: org.glassfish.jersey.core:jersey-common:2.23.1" level="project" />

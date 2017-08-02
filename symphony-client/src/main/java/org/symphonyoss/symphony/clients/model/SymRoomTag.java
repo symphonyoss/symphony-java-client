@@ -22,6 +22,7 @@
 
 package org.symphonyoss.symphony.clients.model;
 
+import org.symphonyoss.symphony.agent.model.V4KeyValuePair;
 import org.symphonyoss.symphony.pod.model.RoomTag;
 
 import java.util.List;
@@ -72,7 +73,18 @@ public class SymRoomTag {
         return roomTag;
     }
 
-    public static List<SymRoomTag> toSymRoomTags(List<RoomTag> roomTags){
+    public static SymRoomTag toSymRoomTag(V4KeyValuePair keyValuePair){
+
+
+        SymRoomTag symRoomTag = new SymRoomTag();
+        symRoomTag.setKey(keyValuePair.getKey());
+        symRoomTag.setValue(keyValuePair.getValue());
+
+        return symRoomTag;
+
+    }
+
+    public static List<SymRoomTag> toSymRoomTagsV2(List<RoomTag> roomTags){
         return roomTags.stream().map(SymRoomTag::toSymRoomTag).collect(Collectors.toList());
 
     }
@@ -82,6 +94,14 @@ public class SymRoomTag {
 
     }
 
+
+    public static List<SymRoomTag> toSymRoomTags(List<V4KeyValuePair> v4KeyValuePairs){
+
+
+        return v4KeyValuePairs.stream().map(SymRoomTag::toSymRoomTag).collect(Collectors.toList());
+
+
+    }
 
 
 

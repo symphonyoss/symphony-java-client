@@ -42,6 +42,9 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 ## Change log and notes
 
 ### V1.0.3 (SNAPSHOT)
+* Updated for 1.47.0 REST API
+* New support for attachment thumbnails
+* Fixed issue with V4 Room keywords
 * Unit and integration test coverage
 * Attempt Room Cache again..
 * AI framework enhancements & interfaces
