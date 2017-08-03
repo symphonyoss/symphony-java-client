@@ -311,8 +311,8 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
             return SymMessage.toSymMessage(messagesApi.v4StreamSidMessageCreatePost(
                     stream.getStreamId(),
                     symAuth.getSessionToken().getToken(),
-                    message.getMessage(),
                     symAuth.getKeyToken().getToken(),
+                    message.getMessage(),
                     message.getEntityData(),
                     ApiVersion.V4.toString(),
                     message.getAttachment(),
