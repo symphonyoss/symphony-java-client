@@ -28,7 +28,7 @@ import javax.ws.rs.client.Client;
 
 /**
  * Simple abstraction object to hold session and key tokens retrieved from authorization process.
- *
+ * <p>
  * Created by Frank Tarsillo on 5/15/2016.
  */
 public class SymAuth {

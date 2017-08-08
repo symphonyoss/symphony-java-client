@@ -11,7 +11,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -19,27 +19,24 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
+ *
  */
 
 package org.symphonyoss.client.exceptions;
 
 /**
- * Created by Frank Tarsillo on 9/11/2016.
+ * @author Frank Tarsillo on 8/8/17.
  */
-public class AuthorizationException extends RestException {
-    private static final long serialVersionUID = 1L;
-
+public class AuthorizationException extends AuthenticationException {
     public AuthorizationException(String endpoint, int httpStatus, Throwable cause) {
-	super(endpoint, httpStatus, cause);
+        super(endpoint, httpStatus, cause);
     }
 
     public AuthorizationException(String message, String endpoint, int httpStatus, Throwable cause) {
-	super(message, endpoint, httpStatus, cause);
+        super(message, endpoint, httpStatus, cause);
     }
 
     public AuthorizationException(String message, String endpoint, int httpStatus) {
-	super(message, endpoint, httpStatus);
+        super(message, endpoint, httpStatus);
     }
-
-   
 }

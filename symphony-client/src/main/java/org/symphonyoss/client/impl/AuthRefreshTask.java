@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.client.exceptions.NetworkException;
 import org.symphonyoss.client.model.SymAuth;
-import org.symphonyoss.symphony.clients.AuthorizationClient;
+import org.symphonyoss.symphony.clients.AuthenticationClient;
 
 import java.util.TimerTask;
 
@@ -64,18 +64,18 @@ public class AuthRefreshTask extends TimerTask {
         SymAuth symAuth = null;
         try {
 
-            AuthorizationClient authClient;
+            AuthenticationClient authClient;
 
             //Init the Symphony authorization client, which requires both the key and session URL's.  In most cases,
             //the same fqdn but different URLs.
             if (symClient.getSymAuth() != null && symClient.getSymAuth().getHttpClient() != null) {
 
                 //Take the stored http client configuration with the pre-loaded keystores.
-                authClient = new AuthorizationClient(symClient.getSymAuth().getSessionUrl(), symClient.getSymAuth().getKeyUrl(), symClient.getSymAuth().getHttpClient());
+                authClient = new AuthenticationClient(symClient.getSymAuth().getSessionUrl(), symClient.getSymAuth().getKeyUrl(), symClient.getSymAuth().getHttpClient());
 
             } else {
 
-                authClient = new AuthorizationClient(
+                authClient = new AuthenticationClient(
                         symClient.getSymAuth().getSessionUrl(),
                         symClient.getSymAuth().getKeyUrl());
 

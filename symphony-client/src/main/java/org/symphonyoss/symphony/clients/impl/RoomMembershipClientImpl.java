@@ -60,9 +60,6 @@ public class RoomMembershipClientImpl implements RoomMembershipClient {
         apiClient = org.symphonyoss.symphony.pod.invoker.Configuration.getDefaultApiClient();
         apiClient.setBasePath(podUrl);
 
-        apiClient.addDefaultHeader(symAuth.getSessionToken().getName(), symAuth.getSessionToken().getToken());
-        //apiClient.addDefaultHeader(symAuth.getKeyToken().getName(), symAuth.getKeyToken().getToken());
-
     }
 
     /**

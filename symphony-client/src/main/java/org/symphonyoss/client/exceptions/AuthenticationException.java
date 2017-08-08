@@ -11,7 +11,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -19,23 +19,27 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
- *
  */
 
-package org.symphonyoss.symphony.clients;
-
-import javax.ws.rs.client.Client;
+package org.symphonyoss.client.exceptions;
 
 /**
- * @author Frank Tarsillo on 8/8/17.
+ * Created by Frank Tarsillo on 9/11/2016.
  */
-@Deprecated
-public class AuthorizationClient extends AuthenticationClient{
-    public AuthorizationClient(String sessionUrl, String keyUrl) {
-        super(sessionUrl, keyUrl);
+public class AuthenticationException extends RestException {
+    private static final long serialVersionUID = 1L;
+
+    public AuthenticationException(String endpoint, int httpStatus, Throwable cause) {
+	super(endpoint, httpStatus, cause);
     }
 
-    public AuthorizationClient(String sessionUrl, String keyUrl, Client httpClient) {
-        super(sessionUrl, keyUrl, httpClient);
+    public AuthenticationException(String message, String endpoint, int httpStatus, Throwable cause) {
+	super(message, endpoint, httpStatus, cause);
     }
+
+    public AuthenticationException(String message, String endpoint, int httpStatus) {
+	super(message, endpoint, httpStatus);
+    }
+
+   
 }

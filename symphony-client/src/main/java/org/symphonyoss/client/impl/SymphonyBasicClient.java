@@ -34,7 +34,7 @@ import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.client.SymphonyClientConfig;
 import org.symphonyoss.client.SymphonyClientConfigID;
 import org.symphonyoss.client.common.Constants;
-import org.symphonyoss.client.exceptions.AuthorizationException;
+import org.symphonyoss.client.exceptions.AuthenticationException;
 import org.symphonyoss.client.exceptions.InitException;
 import org.symphonyoss.client.exceptions.SymCacheException;
 import org.symphonyoss.client.exceptions.SymException;
@@ -47,7 +47,7 @@ import org.symphonyoss.client.services.SymCache;
 import org.symphonyoss.client.services.SymUserCache;
 import org.symphonyoss.symphony.clients.AttachmentsClient;
 import org.symphonyoss.symphony.clients.AttachmentsFactory;
-import org.symphonyoss.symphony.clients.AuthorizationClient;
+import org.symphonyoss.symphony.clients.AuthenticationClient;
 import org.symphonyoss.symphony.clients.ConnectionsClient;
 import org.symphonyoss.symphony.clients.ConnectionsFactory;
 import org.symphonyoss.symphony.clients.DataFeedClient;
@@ -113,10 +113,10 @@ public class SymphonyBasicClient implements SymphonyClient {
 
     
     @Override
-    public void init(Client httpClient, SymphonyClientConfig initParams) throws InitException, AuthorizationException {
+    public void init(Client httpClient, SymphonyClientConfig initParams) throws InitException, AuthenticationException {
 	this.defaultHttpClient = httpClient;
 	
-	AuthorizationClient authClient = new AuthorizationClient(
+	AuthenticationClient authClient = new AuthenticationClient(
                 initParams.get(SymphonyClientConfigID.SESSIONAUTH_URL),
                 initParams.get(SymphonyClientConfigID.KEYAUTH_URL));
 
@@ -139,7 +139,7 @@ public class SymphonyBasicClient implements SymphonyClient {
 
 
     @Override
-    public void init(SymphonyClientConfig config) throws InitException, AuthorizationException {
+    public void init(SymphonyClientConfig config) throws InitException, AuthenticationException {
 	init(null, config);
     }
 
@@ -148,7 +148,7 @@ public class SymphonyBasicClient implements SymphonyClient {
     /**
      * Initialize client with required parameters.
      *
-     * @param symAuth    Contains valid key and session tokens generated from AuthorizationClient.
+     * @param symAuth    Contains valid key and session tokens generated from AuthenticationClient.
      * @param email      Email address of the BOT
      * @param agentUrl   The Agent URL
      * @param podUrl The Service URL (in most cases it's the POD URL)
@@ -229,7 +229,7 @@ public class SymphonyBasicClient implements SymphonyClient {
     }
 
     /**
-     * @param symAuth Contains valid key and session tokens generated from AuthorizationClient.
+     * @param symAuth Contains valid key and session tokens generated from AuthenticationClient.
      */
     @Override
     public void setSymAuth(SymAuth symAuth) {

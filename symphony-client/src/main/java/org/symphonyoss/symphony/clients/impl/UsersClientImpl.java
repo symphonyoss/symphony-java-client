@@ -66,8 +66,6 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
         apiClient = org.symphonyoss.symphony.pod.invoker.Configuration.getDefaultApiClient();
         apiClient.setBasePath(podUrl);
 
-        apiClient.addDefaultHeader(symAuth.getSessionToken().getName(), symAuth.getSessionToken().getToken());
-        apiClient.addDefaultHeader(symAuth.getKeyToken().getName(), symAuth.getKeyToken().getToken());
 
     }
 
@@ -87,8 +85,6 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
         apiClient.setHttpClient(httpClient);
         apiClient.setBasePath(podUrl);
 
-        apiClient.addDefaultHeader(symAuth.getSessionToken().getName(), symAuth.getSessionToken().getToken());
-       // apiClient.addDefaultHeader(symAuth.getKeyToken().getName(), symAuth.getKeyToken().getToken());
 
 
     }
