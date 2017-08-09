@@ -50,6 +50,8 @@ public class SymUser {
 
     private String lastName;
 
+    private String department;
+
     private String displayName;
 
     private String title;
@@ -100,6 +102,14 @@ public class SymUser {
 
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
     }
 
     public String getTitle() {
@@ -160,6 +170,7 @@ public class SymUser {
         userV2.setLocation(symUser.getLocation());
         userV2.setTitle(symUser.getTitle());
         userV2.setUsername(symUser.getUsername());
+        userV2.setDepartment(symUser.getDepartment());
 
         AvatarList avatars = new AvatarList();
         for (SymAvatar symAvatar : symUser.getAvatars()) {
@@ -190,6 +201,7 @@ public class SymUser {
         symUser.setLocation(user.getLocation());
         symUser.setTitle(user.getTitle());
         symUser.setUsername(user.getUsername());
+        symUser.setDepartment(user.getDepartment());
 
         List<SymAvatar> avatars = new ArrayList<>();
         for (Avatar avatar : user.getAvatars()) {
@@ -220,6 +232,7 @@ public class SymUser {
         symUser.setLastName(user.getLastName());
         symUser.setId(user.getUserId());
         symUser.setUsername(user.getUsername());
+        symUser.setDepartment(null);
 
         return symUser;
 
@@ -248,6 +261,7 @@ public class SymUser {
         symUser.setLocation(userDetail.getUserAttributes().getLocation());
         symUser.setTitle(userDetail.getUserAttributes().getTitle());
         symUser.setUsername(userDetail.getUserAttributes().getUserName());
+        symUser.setDepartment(userDetail.getUserAttributes().getDepartment());
 
         return symUser;
     }
@@ -274,7 +288,7 @@ public class SymUser {
         userAttributes.setLocation(symUser.getLocation());
         userAttributes.setTitle(symUser.getTitle());
         userAttributes.setUserName(symUser.getUsername());
-        userAttributes.setDepartment(null);
+        userAttributes.setDepartment(symUser.getDepartment());
 
         return userAttributes;
     }
@@ -296,6 +310,5 @@ public class SymUser {
         SymUser symUser = (SymUser) o;
         return id.equals(symUser.id);
     }
-
 
 }

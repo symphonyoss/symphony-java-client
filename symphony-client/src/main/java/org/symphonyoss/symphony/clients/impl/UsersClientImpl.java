@@ -31,6 +31,7 @@ import org.symphonyoss.client.exceptions.UserNotFoundException;
 import org.symphonyoss.client.exceptions.UsersClientException;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.symphony.clients.model.SymUser;
+import org.symphonyoss.symphony.clients.model.SymUserWithDetails;
 import org.symphonyoss.symphony.pod.api.RoomMembershipApi;
 import org.symphonyoss.symphony.pod.api.UserApi;
 import org.symphonyoss.symphony.pod.api.UsersApi;
@@ -142,7 +143,12 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
 
         UserV2 user;
         try {
-            user = usersApi.v2UserGet(symAuth.getSessionToken().getToken(), userId, null, null, false);
+            user = usersApi.v2UserGet(symAuth.getSessionToken().getToken(), userId, null, null, true);
+
+            if (user == null) {
+                user = usersApi.v2UserGet(symAuth.getSessionToken().getToken(), userId, null, null, false);
+            }
+
         } catch (ApiException e) {
             throw new UsersClientException("API Error communicating with POD, while retrieving user details for " + userId,
                     new RestException(usersApi.getApiClient().getBasePath(), e.getCode(), e));
@@ -259,7 +265,11 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
 
                     UserV2 user1;
                     try {
-                        user1 = usersApi2.v2UserGet(symAuth.getSessionToken().getToken(), userId, null, null, false);
+                        user1 = usersApi2.v2UserGet(symAuth.getSessionToken().getToken(), userId, null, null, true);
+
+                        if(user1 == null) {
+                            user1 = usersApi2.v2UserGet(symAuth.getSessionToken().getToken(), userId, null, null, false);
+                        }
                     } catch (ApiException e) {
                         logger.error("API Error while communicating with POD while retrieving user details", e);
                         return;
@@ -298,6 +308,40 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
         return symUsers;
 
 
+    }
+
+    @Override
+    public Set<SymUserWithDetails> getAllUsersWithDetails() throws UsersClientException {
+        UserApi usersApi = new UserApi(apiClient);
+        Set<SymUserWithDetails> setOfSymUsersWithDetails = new HashSet<>();
+        UserIdList userIdList;
+        String sessionToken = getSessionToken();
+
+        try {
+            userIdList = usersApi.v1AdminUserListGet(sessionToken);
+        } catch (ApiException e) {
+            String message = "API error communicating with POD, while getting Symphony users";
+            logger.error(message, e);
+            throw new UsersClientException(message, e);
+        }
+
+        for (Long uid : userIdList) {
+            try {
+                UserDetail userDetail = usersApi.v1AdminUserUidGet(sessionToken, uid);
+                FeatureList featureList = usersApi.v1AdminUserUidFeaturesGet(sessionToken, uid);
+                SymUserWithDetails symUserWithDetails = SymUserWithDetails.toSymUserWithDetails(userDetail);
+                symUserWithDetails.setFeatures(featureList);
+                setOfSymUsersWithDetails.add(symUserWithDetails);
+            } catch (ApiException e) {
+                String message = "API error communicating with POD, while getting user details for Symphony user id: " + uid;
+                logger.error(message, e);
+            } catch (Exception e) {
+                String message = "Error while converting UserDetail to SymUserWithDetails for Symphony user id: " + uid;
+                logger.error(message, e);
+            }
+        }
+
+        return setOfSymUsersWithDetails;
     }
 
     @Override
