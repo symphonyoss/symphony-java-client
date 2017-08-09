@@ -58,6 +58,7 @@ public class AuthorizationClient {
     private boolean loginStatus = false;
     private final Logger logger = LoggerFactory.getLogger(AuthorizationClient.class);
     private Client httpClient= null;
+    private Client keyManagerHttpClient;
 
 
     public AuthorizationClient(String sessionUrl, String keyUrl){
@@ -79,6 +80,9 @@ public class AuthorizationClient {
 
     }
 
+    public void setKeyManagerHttpClient(Client client) {
+        keyManagerHttpClient = client;
+    }
 
     public SymAuth authenticate() throws AuthorizationException {
 	String currentUrl = "UNKNOWN";
@@ -130,6 +134,9 @@ public class AuthorizationClient {
             // Configure the keyManager path
             currentUrl = keyUrl;
             authenticatorClient.setBasePath(keyUrl);
+            if (keyManagerHttpClient != null) {
+                authenticatorClient.setHttpClient(keyManagerHttpClient);
+            }
 
 
             symAuth.setKeyToken(authenticationApi.v1AuthenticatePost());
@@ -150,8 +157,7 @@ public class AuthorizationClient {
         return symAuth;
 
     }
-
-
+    
 
     public void setKeystores(String serverTruststore, String truststorePass, String clientKeystore, String keystorePass) {
 
