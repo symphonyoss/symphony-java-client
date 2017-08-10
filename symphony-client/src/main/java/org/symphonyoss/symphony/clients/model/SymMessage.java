@@ -249,6 +249,7 @@ public class SymMessage {
         symMessage.setMessage(v4Message.getMessage());
         symMessage.setStream(SymStream.toSymStream(v4Message.getStream()));
         symMessage.setAttachments(SymAttachmentInfo.toAttachmentsInfos(v4Message.getAttachments()));
+        symMessage.setEntityData(v4Message.getData());
 
 
         return symMessage;
