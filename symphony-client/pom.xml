@@ -42,7 +42,7 @@
 
     <properties>
         <jsoup-version>1.9.2</jsoup-version>
-        <symphony-api-version>1.46.0</symphony-api-version>
+        <symphony-api-version>1.47.0-SNAPSHOT</symphony-api-version>
         <gson-version>2.7</gson-version>
         <failsafe.jvm.args>-Dlog4j.configurationFile=src/test/resources/log4j.properties -Xmx1024m
             -Dsessionauth.url=${env.SESSIONAUTH_URL} -Dkeyauth.url=${env.KEYAUTH_URL}

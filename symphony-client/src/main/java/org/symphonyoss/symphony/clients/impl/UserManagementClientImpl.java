@@ -53,8 +53,7 @@ public class UserManagementClientImpl implements UserManagementClient {
 
         apiClient = Configuration.getDefaultApiClient();
         apiClient.setBasePath(serviceUrl);
-        apiClient.addDefaultHeader(symAuth.getSessionToken().getName(), symAuth.getSessionToken().getToken());
-       // apiClient.addDefaultHeader(symAuth.getKeyToken().getName(), symAuth.getKeyToken().getToken());
+
     }
 
     @Override

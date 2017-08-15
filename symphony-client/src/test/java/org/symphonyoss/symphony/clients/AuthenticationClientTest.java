@@ -36,20 +36,20 @@ import static org.mockito.Mockito.when;
 /**
  * Created by Frank Tarsillo on 6/19/2016.
  */
-public class AuthorizationClientTest {
+public class AuthenticationClientTest {
 
-    private AuthorizationClient authorizationClient;
+    private AuthenticationClient authenticationClient;
 
     @Before
     public void beforeTest(){
 
 
-        authorizationClient = mock(AuthorizationClient.class);
+        authenticationClient = mock(AuthenticationClient.class);
 
     try {
-        when(authorizationClient.authenticate()).thenReturn(TestFactory.getSymAuth());
-        when(authorizationClient.getKeyToken()).thenReturn(TestFactory.getSymAuth().getKeyToken());
-        when(authorizationClient.getSessionToken()).thenReturn(TestFactory.getSymAuth().getSessionToken());
+        when(authenticationClient.authenticate()).thenReturn(TestFactory.getSymAuth());
+        when(authenticationClient.getKeyToken()).thenReturn(TestFactory.getSymAuth().getKeyToken());
+        when(authenticationClient.getSessionToken()).thenReturn(TestFactory.getSymAuth().getSessionToken());
 
     }catch(Exception e){
         fail("Could not setup authenticate");
@@ -60,11 +60,11 @@ public class AuthorizationClientTest {
     @Test
     public void authenticate() throws Exception {
 
-        //AuthorizationClient authorizationClientReal = new AuthorizationClient("AUTHURL","KEYURL");
+        //AuthenticationClient authorizationClientReal = new AuthenticationClient("AUTHURL","KEYURL");
 
-        authorizationClient.setKeystores("/dir/file.trustore","trustpass","/dir/client.keystore","keystorepass");
+        authenticationClient.setKeystores("/dir/file.trustore","trustpass","/dir/client.keystore","keystorepass");
 
-        assertTrue("Verify authenticate..", authorizationClient.authenticate() != null);
+        assertTrue("Verify authenticate..", authenticationClient.authenticate() != null);
 
 
     }
@@ -73,32 +73,32 @@ public class AuthorizationClientTest {
     @Test
     public void isLoggedIn() throws Exception {
 
-        assertEquals(false,authorizationClient.isLoggedIn());
+        assertEquals(false, authenticationClient.isLoggedIn());
 
     }
 
     @Test
     public void getKeyToken() throws Exception {
-        assertEquals("TOKEN_VALUE", authorizationClient.authenticate().getKeyToken().getToken());
+        assertEquals("TOKEN_VALUE", authenticationClient.authenticate().getKeyToken().getToken());
 
     }
 
     @Test
     public void setKeyToken() throws Exception {
 
-        authorizationClient.setKeyToken(TestFactory.getSymAuth().getKeyToken());
-        assertEquals("TOKEN_VALUE", authorizationClient.authenticate().getKeyToken().getToken());
+        authenticationClient.setKeyToken(TestFactory.getSymAuth().getKeyToken());
+        assertEquals("TOKEN_VALUE", authenticationClient.authenticate().getKeyToken().getToken());
     }
 
     @Test
     public void getSessionToken() throws Exception {
-        assertEquals("TOKEN_VALUE", authorizationClient.authenticate().getSessionToken().getToken());
+        assertEquals("TOKEN_VALUE", authenticationClient.authenticate().getSessionToken().getToken());
     }
 
     @Test
     public void setSessionToken() throws Exception {
-        authorizationClient.setKeyToken(TestFactory.getSymAuth().getSessionToken());
-        assertEquals("TOKEN_VALUE", authorizationClient.authenticate().getSessionToken().getToken());
+        authenticationClient.setKeyToken(TestFactory.getSymAuth().getSessionToken());
+        assertEquals("TOKEN_VALUE", authenticationClient.authenticate().getSessionToken().getToken());
     }
 
 }

@@ -66,8 +66,6 @@ public class StreamsClientImpl implements org.symphonyoss.symphony.clients.Strea
         apiClient = org.symphonyoss.symphony.pod.invoker.Configuration.getDefaultApiClient();
         apiClient.setBasePath(podUrl);
 
-        apiClient.addDefaultHeader(symAuth.getSessionToken().getName(), symAuth.getSessionToken().getToken());
-       // apiClient.addDefaultHeader(symAuth.getKeyToken().getName(), symAuth.getKeyToken().getToken());
 
     }
 
@@ -82,13 +80,12 @@ public class StreamsClientImpl implements org.symphonyoss.symphony.clients.Strea
         this.symAuth = symAuth;
         this.podUrl = podUrl;
         this.httpClient = httpClient;
+
         //Get Service client to query for userID.
         apiClient = org.symphonyoss.symphony.pod.invoker.Configuration.getDefaultApiClient();
         apiClient.setHttpClient(httpClient);
         apiClient.setBasePath(podUrl);
 
-        apiClient.addDefaultHeader(symAuth.getSessionToken().getName(), symAuth.getSessionToken().getToken());
-        apiClient.addDefaultHeader(symAuth.getKeyToken().getName(), symAuth.getKeyToken().getToken());
 
 
     }

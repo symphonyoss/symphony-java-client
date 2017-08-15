@@ -22,21 +22,49 @@
  *
  */
 
-package org.symphonyoss.client.exceptions;
+package org.symphonyoss.symphony.clients.model;
+
+import org.symphonyoss.symphony.agent.model.V4ThumbnailInfo;
 
 /**
- * @author Frank Tarsillo on 8/8/17.
+ * @author Frank Tarsillo on 8/2/17.
  */
-public class AuthorizationException extends AuthenticationException {
-    public AuthorizationException(String endpoint, int httpStatus, Throwable cause) {
-        super(endpoint, httpStatus, cause);
+public class SymThumbnailInfo {
+
+
+    private String id = null;
+
+
+    private String dimension = null;
+
+
+    public String getId() {
+        return id;
     }
 
-    public AuthorizationException(String message, String endpoint, int httpStatus, Throwable cause) {
-        super(message, endpoint, httpStatus, cause);
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public AuthorizationException(String message, String endpoint, int httpStatus) {
-        super(message, endpoint, httpStatus);
+    public String getDimension() {
+        return dimension;
+    }
+
+    public void setDimension(String dimension) {
+        this.dimension = dimension;
+    }
+
+
+    public static SymThumbnailInfo toSymThumbnailInfo(V4ThumbnailInfo v4ThumbnailInfo){
+
+        if(v4ThumbnailInfo == null)
+            return null;
+
+        SymThumbnailInfo symThumbnailInfo = new SymThumbnailInfo();
+
+        symThumbnailInfo.setDimension(v4ThumbnailInfo.getDimension());
+        symThumbnailInfo.setId(v4ThumbnailInfo.getId());
+        return symThumbnailInfo;
+
     }
 }

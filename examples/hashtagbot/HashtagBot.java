@@ -38,7 +38,7 @@
 //import org.symphonyoss.client.services.ChatServiceListener;
 //import org.symphonyoss.client.services.PresenceListener;
 //import org.symphonyoss.client.util.MlMessageParser;
-//import org.symphonyoss.symphony.clients.AuthorizationClient;
+//import org.symphonyoss.symphony.clients.AuthenticationClient;
 //import org.symphonyoss.symphony.clients.model.SymMessage;
 //import org.symphonyoss.symphony.clients.model.SymUser;
 //import org.symphonyoss.symphony.pod.model.Stream;
@@ -120,7 +120,7 @@
 //
 //            //Init the Symphony authorization client, which requires both the key and session URL's.  In most cases,
 //            //the same fqdn but different URLs.
-//            AuthorizationClient authClient = new AuthorizationClient(
+//            AuthenticationClient authClient = new AuthenticationClient(
 //                    System.getProperty("sessionauth.url"),
 //                    System.getProperty("keyauth.url"));
 //

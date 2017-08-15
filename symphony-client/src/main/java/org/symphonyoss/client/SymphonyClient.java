@@ -22,9 +22,8 @@
 
 package org.symphonyoss.client;
 
-import org.symphonyoss.client.exceptions.AuthorizationException;
+import org.symphonyoss.client.exceptions.AuthenticationException;
 import org.symphonyoss.client.exceptions.InitException;
-import org.symphonyoss.client.exceptions.NetworkException;
 import org.symphonyoss.client.exceptions.SymCacheException;
 import org.symphonyoss.client.model.CacheType;
 import org.symphonyoss.client.model.SymAuth;
@@ -47,7 +46,7 @@ public interface SymphonyClient {
     /**
      * Initialize client with required parameters.
      *
-     * @param symAuth    Contains valid key and session tokens generated from AuthorizationClient.
+     * @param symAuth    Contains valid key and session tokens generated from AuthenticationClient.
      * @param email      Email address of the BOT
      * @param agentUrl   The Agent URL
      * @param podUrl The Service URL (in most cases it's the POD URL)
@@ -59,7 +58,7 @@ public interface SymphonyClient {
      * Initialize client with required parameters and custom HTTP client.
      *
      * @param httpClient Custom http client to use when connecting to Symphony API's
-     * @param symAuth    Contains valid key and session tokens generated from AuthorizationClient.
+     * @param symAuth    Contains valid key and session tokens generated from AuthenticationClient.
      * @param email      Email address of the BOT
      * @param agentUrl   The Agent URL
      * @param podUrl The Service URL (in most cases it's the POD URL)
@@ -74,18 +73,18 @@ public interface SymphonyClient {
      * @param httpClient Custom http client to use when connecting to Symphony API's
      * @param config Configuration object
      * @throws InitException Failure of a specific service most likely due to connectivity issues
-     * @throws AuthorizationException A network exception
+     * @throws AuthenticationException A network exception
      */
-    void init(Client httpClient, SymphonyClientConfig config) throws InitException, AuthorizationException;
+    void init(Client httpClient, SymphonyClientConfig config) throws InitException, AuthenticationException;
     
     /**
      * Initialize client with required parameters.
      *
      * @param config Configuration object
      * @throws InitException Failure of a specific service most likely due to connectivity issues
-     * @throws AuthorizationException Exception thrown from authorization issue.
+     * @throws AuthenticationException Exception thrown from authorization issue.
      */
-    void init(SymphonyClientConfig config) throws InitException, AuthorizationException;
+    void init(SymphonyClientConfig config) throws InitException, AuthenticationException;
     
     /**
      * Retrieve authorization object.

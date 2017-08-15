@@ -84,6 +84,8 @@ public class SymMessage {
 
     private File attachment = null;
 
+    private File attachementThumbnail = null;
+
     public SymUser getSymUser() {
         return symUser;
     }
@@ -194,6 +196,14 @@ public class SymMessage {
         this.attachment = attachment;
     }
 
+    public File getAttachementThumbnail() {
+        return attachementThumbnail;
+    }
+
+    public void setAttachementThumbnail(File attachementThumbnail) {
+        this.attachementThumbnail = attachementThumbnail;
+    }
+
     @Deprecated
     public static SymMessage toSymMessage(Message message) {
         SymMessage symMessage = new SymMessage();
@@ -239,6 +249,7 @@ public class SymMessage {
         symMessage.setMessage(v4Message.getMessage());
         symMessage.setStream(SymStream.toSymStream(v4Message.getStream()));
         symMessage.setAttachments(SymAttachmentInfo.toAttachmentsInfos(v4Message.getAttachments()));
+        symMessage.setEntityData(v4Message.getData());
 
 
         return symMessage;
