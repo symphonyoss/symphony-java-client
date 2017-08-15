@@ -142,7 +142,12 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
 
         UserV2 user;
         try {
-            user = usersApi.v2UserGet(symAuth.getSessionToken().getToken(), userId, null, null, false);
+            user = usersApi.v2UserGet(symAuth.getSessionToken().getToken(), userId, null, null, true);
+
+            if (user == null) {
+                user = usersApi.v2UserGet(symAuth.getSessionToken().getToken(), userId, null, null, false);
+            }
+
         } catch (ApiException e) {
             throw new UsersClientException("API Error communicating with POD, while retrieving user details for " + userId,
                     new RestException(usersApi.getApiClient().getBasePath(), e.getCode(), e));
@@ -220,10 +225,10 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
 
 
     /**
-     * Retrieve all users
+     * Retrieve all users without any details
      * This method could require elevated privileges
      *
-     * @return All users as part of a set
+     * @return All users as part of a set (returns a simple user without any details)
      * @throws UsersClientException Exceptions thrown from Symphony API's
      */
     @SuppressWarnings("unused")
@@ -259,7 +264,13 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
 
                     UserV2 user1;
                     try {
-                        user1 = usersApi2.v2UserGet(symAuth.getSessionToken().getToken(), userId, null, null, false);
+                        user1 = usersApi2.v2UserGet(symAuth.getSessionToken().getToken(), userId, null, null, true);
+
+                        if(user1 == null) {
+                            user1 = usersApi2.v2UserGet(symAuth.getSessionToken().getToken(), userId, null, null, false);
+                        }
+
+
                     } catch (ApiException e) {
                         logger.error("API Error while communicating with POD while retrieving user details", e);
                         return;
@@ -297,7 +308,33 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
 
         return symUsers;
 
+    }
 
+    /**
+     * Retrieve all symphony users with details of features and roles
+     * @return All users including details of features and roles as part of a set
+     * @throws UsersClientException Exceptions thrown from Symphony API's
+     */
+    @Override
+    public Set<SymUser> getAllUsersWithDetails() throws UsersClientException {
+        Set<SymUser> symUsers = getAllUsers();
+        String sessionToken = symAuth.getSessionToken().getToken();
+        UserApi userApi = new UserApi(apiClient);
+        FeatureList featureList;
+        UserDetail userDetail;
+        try {
+            for (SymUser symUser : symUsers) {
+                Long uid = symUser.getId();
+                featureList = userApi.v1AdminUserUidFeaturesGet(sessionToken, uid);
+                symUser.setFeatures(featureList);
+                userDetail = userApi.v1AdminUserUidGet(sessionToken, uid);
+                symUser.setRoles(new HashSet<>(userDetail.getRoles()));
+            }
+        } catch (ApiException e) {
+            throw new UsersClientException("API Error communicating with POD, while retrieving all user details",
+                    new RestException(userApi.getApiClient().getBasePath(), e.getCode(), e));
+        }
+        return symUsers;
     }
 
     @Override

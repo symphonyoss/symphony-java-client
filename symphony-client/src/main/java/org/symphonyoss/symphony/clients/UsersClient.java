@@ -44,10 +44,13 @@ public interface UsersClient {
     Set<SymUser> getUsersFromStream(String streamId) throws UsersClientException;
 
     Set<SymUser> getAllUsers() throws UsersClientException;
-    
+
     void setUserStatus(long userId, UserStatus userStatus) throws UsersClientException;
 
     SymUser updateUser(long userId, SymUser symUser) throws UsersClientException;
 
     SymUser createUser(UserCreate userCreate) throws UsersClientException;
+
+    Set<SymUser> getAllUsersWithDetails() throws UsersClientException;
+
 }

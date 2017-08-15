@@ -79,7 +79,6 @@ public class AuthorizationClient {
 
     }
 
-
     public SymAuth authenticate() throws AuthorizationException {
 	String currentUrl = "UNKNOWN";
 	
@@ -103,7 +102,6 @@ public class AuthorizationClient {
             if(httpClient != null) {
                 authenticatorClient.setHttpClient(httpClient);
                 symAuth.setHttpClient(httpClient);
-
             }else{
 
                 //Lets copy the pki info..
@@ -150,8 +148,7 @@ public class AuthorizationClient {
         return symAuth;
 
     }
-
-
+    
 
     public void setKeystores(String serverTruststore, String truststorePass, String clientKeystore, String keystorePass) {
 
