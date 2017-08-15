@@ -38,6 +38,7 @@ public class SymAttachmentInfo {
     private String id = null;
     private String name = null;
     private Long size = null;
+    private List<SymThumbnailInfo> symThumbnailInfos = null;
 
     public String getId() {
         return id;
@@ -63,6 +64,13 @@ public class SymAttachmentInfo {
         this.size = size;
     }
 
+    public List<SymThumbnailInfo> getSymThumbnailInfos() {
+        return symThumbnailInfos;
+    }
+
+    public void setSymThumbnailInfos(List<SymThumbnailInfo> symThumbnailInfos) {
+        this.symThumbnailInfos = symThumbnailInfos;
+    }
 
     public static List<AttachmentInfo> toV2AttachmentsInfo(List<SymAttachmentInfo> symAttachmentsInfo) {
 
@@ -97,6 +105,7 @@ public class SymAttachmentInfo {
         symAttachmentInfo.setId(attachmentInfo.getId());
         symAttachmentInfo.setName(attachmentInfo.getName());
         symAttachmentInfo.setSize(attachmentInfo.getSize());
+        symAttachmentInfo.setSymThumbnailInfos(attachmentInfo.getImages().stream().map(SymThumbnailInfo::toSymThumbnailInfo).collect(Collectors.toList()));
 
         return symAttachmentInfo;
     }

@@ -63,8 +63,6 @@ public class ShareClientImpl implements ShareClient{
         apiClient = org.symphonyoss.symphony.agent.invoker.Configuration.getDefaultApiClient();
         apiClient.setBasePath(podUrl);
 
-        apiClient.addDefaultHeader(symAuth.getSessionToken().getName(), symAuth.getSessionToken().getToken());
-       // apiClient.addDefaultHeader(symAuth.getKeyToken().getName(), symAuth.getKeyToken().getToken());
 
     }
 
@@ -83,8 +81,6 @@ public class ShareClientImpl implements ShareClient{
         apiClient.setHttpClient(httpClient);
         apiClient.setBasePath(podUrl);
 
-        apiClient.addDefaultHeader(symAuth.getSessionToken().getName(), symAuth.getSessionToken().getToken());
-        apiClient.addDefaultHeader(symAuth.getKeyToken().getName(), symAuth.getKeyToken().getToken());
 
 
     }

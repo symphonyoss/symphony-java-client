@@ -29,7 +29,7 @@ import org.symphonyoss.client.exceptions.NetworkException;
 import org.symphonyoss.client.impl.CustomHttpClient;
 import org.symphonyoss.client.impl.SymphonyBasicClient;
 import org.symphonyoss.client.model.SymAuth;
-import org.symphonyoss.symphony.clients.AuthorizationClient;
+import org.symphonyoss.symphony.clients.AuthenticationClient;
 import org.symphonyoss.symphony.clients.model.ApiVersion;
 
 import javax.ws.rs.client.Client;
@@ -97,7 +97,7 @@ public class SymphonyClientFactory {
 
             //Init the Symphony authorization client, which requires both the key and session URL's.  In most cases,
             //the same fqdn but different URLs.
-            AuthorizationClient authClient = new AuthorizationClient(
+            AuthenticationClient authClient = new AuthenticationClient(
                     System.getProperty("sessionauth.url"),
                     System.getProperty("keyauth.url"),
                     symClient.getDefaultHttpClient());
@@ -167,7 +167,7 @@ public class SymphonyClientFactory {
 
             //Init the Symphony authorization client, which requires both the key and session URL's.  In most cases,
             //the same fqdn but different URLs.
-            AuthorizationClient authClient = new AuthorizationClient(
+            AuthenticationClient authClient = new AuthenticationClient(
                     initParams.get(SymphonyClientConfigID.SESSIONAUTH_URL),
                     initParams.get(SymphonyClientConfigID.KEYAUTH_URL),
                     symClient.getDefaultHttpClient());

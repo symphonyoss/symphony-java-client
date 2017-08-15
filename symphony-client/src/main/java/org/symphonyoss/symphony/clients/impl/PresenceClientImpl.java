@@ -61,9 +61,6 @@ public class PresenceClientImpl implements org.symphonyoss.symphony.clients.Pres
         apiClient = org.symphonyoss.symphony.pod.invoker.Configuration.getDefaultApiClient();
         apiClient.setBasePath(podUrl);
 
-        apiClient.addDefaultHeader(symAuth.getSessionToken().getName(), symAuth.getSessionToken().getToken());
-       // apiClient.addDefaultHeader(symAuth.getKeyToken().getName(), symAuth.getKeyToken().getToken());
-
     }
 
     /**
@@ -79,9 +76,6 @@ public class PresenceClientImpl implements org.symphonyoss.symphony.clients.Pres
         apiClient = org.symphonyoss.symphony.pod.invoker.Configuration.getDefaultApiClient();
         apiClient.setHttpClient(httpClient);
         apiClient.setBasePath(podUrl);
-
-        apiClient.addDefaultHeader(symAuth.getSessionToken().getName(), symAuth.getSessionToken().getToken());
-        apiClient.addDefaultHeader(symAuth.getKeyToken().getName(), symAuth.getKeyToken().getToken());
 
     }
 

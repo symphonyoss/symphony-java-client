@@ -137,7 +137,7 @@ public class SymRoomAttributes {
         symRoomAttributes.setCopyProtected(roomAttributes.getCopyProtected());
         symRoomAttributes.setDescription(roomAttributes.getDescription());
         symRoomAttributes.setDiscoverable(roomAttributes.getDiscoverable());
-        symRoomAttributes.setKeywords(SymRoomTag.toSymRoomTags(roomAttributes.getKeywords()));
+        symRoomAttributes.setKeywords(SymRoomTag.toSymRoomTagsV2(roomAttributes.getKeywords()));
         symRoomAttributes.setMembersCanInvite(roomAttributes.getMembersCanInvite());
         symRoomAttributes.setName(roomAttributes.getName());
         symRoomAttributes.setReadOnly(roomAttributes.getReadOnly());
@@ -170,7 +170,7 @@ public class SymRoomAttributes {
         symRoomAttributes.setDescription(roomProperties.getDescription());
         symRoomAttributes.setDiscoverable(roomProperties.getDiscoverable());
         //Seems like keywords is missing
-        //symRoomAttributes.setKeywords(SymRoomTag.toSymRoomTags(roomProperties.getKeywords()));
+        symRoomAttributes.setKeywords(SymRoomTag.toSymRoomTags(roomProperties.getKeywords()));
         symRoomAttributes.setMembersCanInvite(roomProperties.getMembersCanInvite());
         symRoomAttributes.setName(roomProperties.getName());
         symRoomAttributes.setReadOnly(roomProperties.getReadOnly());
