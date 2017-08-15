@@ -100,8 +100,8 @@ public class AuthorizationClient {
 
 
             if(httpClient != null) {
+		authenticatorClient.setHttpClient(httpClient);
                 symAuth.setHttpClient(httpClient);
-
             }else{
 
                 //Lets copy the pki info..
