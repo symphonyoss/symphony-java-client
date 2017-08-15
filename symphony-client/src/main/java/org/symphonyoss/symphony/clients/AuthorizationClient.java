@@ -100,7 +100,7 @@ public class AuthorizationClient {
 
 
             if(httpClient != null) {
-		authenticatorClient.setHttpClient(httpClient);
+                authenticatorClient.setHttpClient(httpClient);
                 symAuth.setHttpClient(httpClient);
             }else{
 
