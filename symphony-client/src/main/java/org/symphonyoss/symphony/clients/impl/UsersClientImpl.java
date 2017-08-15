@@ -31,7 +31,6 @@ import org.symphonyoss.client.exceptions.UserNotFoundException;
 import org.symphonyoss.client.exceptions.UsersClientException;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.symphony.clients.model.SymUser;
-import org.symphonyoss.symphony.clients.model.SymUserWithDetails;
 import org.symphonyoss.symphony.pod.api.RoomMembershipApi;
 import org.symphonyoss.symphony.pod.api.UserApi;
 import org.symphonyoss.symphony.pod.api.UsersApi;
@@ -226,10 +225,10 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
 
 
     /**
-     * Retrieve all users
+     * Retrieve all users without any details
      * This method could require elevated privileges
      *
-     * @return All users as part of a set
+     * @return All users as part of a set (returns a simple user without any details)
      * @throws UsersClientException Exceptions thrown from Symphony API's
      */
     @SuppressWarnings("unused")
@@ -270,6 +269,8 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
                         if(user1 == null) {
                             user1 = usersApi2.v2UserGet(symAuth.getSessionToken().getToken(), userId, null, null, false);
                         }
+
+
                     } catch (ApiException e) {
                         logger.error("API Error while communicating with POD while retrieving user details", e);
                         return;
@@ -307,41 +308,33 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
 
         return symUsers;
 
-
     }
 
+    /**
+     * Retrieve all symphony users with details of features and roles
+     * @return All users including details of features and roles as part of a set
+     * @throws UsersClientException Exceptions thrown from Symphony API's
+     */
     @Override
-    public Set<SymUserWithDetails> getAllUsersWithDetails() throws UsersClientException {
-        UserApi usersApi = new UserApi(apiClient);
-        Set<SymUserWithDetails> setOfSymUsersWithDetails = new HashSet<>();
-        UserIdList userIdList;
-        String sessionToken = getSessionToken();
-
+    public Set<SymUser> getAllUsersWithDetails() throws UsersClientException {
+        Set<SymUser> symUsers = getAllUsers();
+        String sessionToken = symAuth.getSessionToken().getToken();
+        UserApi userApi = new UserApi(apiClient);
+        FeatureList featureList;
+        UserDetail userDetail;
         try {
-            userIdList = usersApi.v1AdminUserListGet(sessionToken);
-        } catch (ApiException e) {
-            String message = "API error communicating with POD, while getting Symphony users";
-            logger.error(message, e);
-            throw new UsersClientException(message, e);
-        }
-
-        for (Long uid : userIdList) {
-            try {
-                UserDetail userDetail = usersApi.v1AdminUserUidGet(sessionToken, uid);
-                FeatureList featureList = usersApi.v1AdminUserUidFeaturesGet(sessionToken, uid);
-                SymUserWithDetails symUserWithDetails = SymUserWithDetails.toSymUserWithDetails(userDetail);
-                symUserWithDetails.setFeatures(featureList);
-                setOfSymUsersWithDetails.add(symUserWithDetails);
-            } catch (ApiException e) {
-                String message = "API error communicating with POD, while getting user details for Symphony user id: " + uid;
-                logger.error(message, e);
-            } catch (Exception e) {
-                String message = "Error while converting UserDetail to SymUserWithDetails for Symphony user id: " + uid;
-                logger.error(message, e);
+            for (SymUser symUser : symUsers) {
+                Long uid = symUser.getId();
+                featureList = userApi.v1AdminUserUidFeaturesGet(sessionToken, uid);
+                symUser.setFeatures(featureList);
+                userDetail = userApi.v1AdminUserUidGet(sessionToken, uid);
+                symUser.setRoles(new HashSet<>(userDetail.getRoles()));
             }
+        } catch (ApiException e) {
+            throw new UsersClientException("API Error communicating with POD, while retrieving all user details",
+                    new RestException(userApi.getApiClient().getBasePath(), e.getCode(), e));
         }
-
-        return setOfSymUsersWithDetails;
+        return symUsers;
     }
 
     @Override

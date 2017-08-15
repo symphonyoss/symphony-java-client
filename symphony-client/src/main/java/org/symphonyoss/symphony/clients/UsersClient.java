@@ -26,7 +26,6 @@ import java.util.Set;
 
 import org.symphonyoss.client.exceptions.UsersClientException;
 import org.symphonyoss.symphony.clients.model.SymUser;
-import org.symphonyoss.symphony.clients.model.SymUserWithDetails;
 import org.symphonyoss.symphony.pod.model.UserCreate;
 import org.symphonyoss.symphony.pod.model.UserStatus;
 
@@ -52,5 +51,6 @@ public interface UsersClient {
 
     SymUser createUser(UserCreate userCreate) throws UsersClientException;
 
-    Set<SymUserWithDetails> getAllUsersWithDetails() throws UsersClientException;
+    Set<SymUser> getAllUsersWithDetails() throws UsersClientException;
+
 }

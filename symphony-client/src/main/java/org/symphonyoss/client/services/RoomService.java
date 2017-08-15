@@ -83,11 +83,14 @@ public class RoomService implements RoomServiceListener, RoomServiceEventListene
         this.apiVersion = apiVersion;
         this.symClient = symClient;
 
+        MessageService messageService = symClient.getMessageService();
 
-        if(apiVersion.equals(ApiVersion.V4)){
-            symClient.getMessageService().addRoomServiceEventListener(this);
-        }else{
-            symClient.getMessageService().addRoomListener(this);
+        if(messageService != null) {
+            if(apiVersion.equals(ApiVersion.V4)){
+                messageService.addRoomServiceEventListener(this);
+            }else{
+                messageService.addRoomListener(this);
+            }
         }
 
 

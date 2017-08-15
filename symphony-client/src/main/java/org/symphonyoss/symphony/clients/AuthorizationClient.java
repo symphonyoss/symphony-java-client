@@ -58,7 +58,6 @@ public class AuthorizationClient {
     private boolean loginStatus = false;
     private final Logger logger = LoggerFactory.getLogger(AuthorizationClient.class);
     private Client httpClient= null;
-    private Client keyManagerHttpClient;
 
 
     public AuthorizationClient(String sessionUrl, String keyUrl){
@@ -78,10 +77,6 @@ public class AuthorizationClient {
         this.httpClient = httpClient;
 
 
-    }
-
-    public void setKeyManagerHttpClient(Client client) {
-        keyManagerHttpClient = client;
     }
 
     public SymAuth authenticate() throws AuthorizationException {
@@ -105,7 +100,6 @@ public class AuthorizationClient {
 
 
             if(httpClient != null) {
-                authenticatorClient.setHttpClient(httpClient);
                 symAuth.setHttpClient(httpClient);
 
             }else{
@@ -134,9 +128,6 @@ public class AuthorizationClient {
             // Configure the keyManager path
             currentUrl = keyUrl;
             authenticatorClient.setBasePath(keyUrl);
-            if (keyManagerHttpClient != null) {
-                authenticatorClient.setHttpClient(keyManagerHttpClient);
-            }
 
 
             symAuth.setKeyToken(authenticationApi.v1AuthenticatePost());
