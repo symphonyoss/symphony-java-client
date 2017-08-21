@@ -50,7 +50,8 @@ public class AuthenticationClient {
     private boolean loginStatus = false;
     private final Logger logger = LoggerFactory.getLogger(AuthenticationClient.class);
     private Client httpClient = null;
-
+    private Client httpClientForSessionToken;
+    private Client httpClientForKeyToken;
 
     /**
      * Construct client implementation with session and key endpoints
@@ -66,7 +67,7 @@ public class AuthenticationClient {
     }
 
     /**
-     * Construct client implementation with session and key endpoints
+     * Construct client implementation with session and key endpoints with overridden HTTP client
      *
      * @param sessionUrl Session Service URL base endpoint
      * @param keyUrl     Key Service URL base endpoint
@@ -79,6 +80,21 @@ public class AuthenticationClient {
 
     }
 
+    /**
+     * Construct client implementation with session and key endpoints with two different
+     * overridden HTTP clients for session-token and key-token
+     *
+     * @param sessionUrl Session Service URL base endpoint
+     * @param keyUrl     Key Service URL base endpoint
+     * @param httpClientForSessionToken Http Client to use when communicating to the session-token endpoint
+     * @param httpClientForKeyToken Http Client to use when communicating to the key-token endpoint
+     */
+    public AuthenticationClient(String sessionUrl, String keyUrl, Client httpClientForSessionToken, Client httpClientForKeyToken) {
+        this.sessionUrl = sessionUrl;
+        this.keyUrl = keyUrl;
+        this.httpClientForSessionToken = httpClientForSessionToken;
+        this.httpClientForKeyToken = httpClientForKeyToken;
+    }
 
     /**
      * Authenticate and return session and key tokens encapsulated in SymAuth object.
@@ -95,7 +111,10 @@ public class AuthenticationClient {
 
             // Configure the authenticator connection
             authenticationApi.getApiClient().setBasePath(sessionUrl);
-
+            
+            if (httpClientForSessionToken != null) {
+                Configuration.getDefaultApiClient().setHttpClient(httpClientForSessionToken);
+            }
 
             symAuth.setSessionToken(authenticationApi.v1AuthenticatePost());
             logger.debug("SessionToken: {} : {}", symAuth.getSessionToken().getName(), symAuth.getSessionToken().getToken());
@@ -104,6 +123,9 @@ public class AuthenticationClient {
             // Configure the keyManager path
             authenticationApi.getApiClient().setBasePath(keyUrl);
 
+            if (httpClientForKeyToken != null) {
+                Configuration.getDefaultApiClient().setHttpClient(httpClientForKeyToken);
+            }
 
             symAuth.setKeyToken(authenticationApi.v1AuthenticatePost());
             logger.debug("KeyToken: {} : {}", symAuth.getKeyToken().getName(), symAuth.getKeyToken().getToken());
