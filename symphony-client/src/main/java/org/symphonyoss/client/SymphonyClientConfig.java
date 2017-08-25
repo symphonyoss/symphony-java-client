@@ -56,7 +56,7 @@ public class SymphonyClientConfig {
         for (SymphonyClientConfigID id : SymphonyClientConfigID.values()) {
             String v = get(id);
             if (v != null) {
-                log.debug("%s = %s", id.getPropName(), v);
+                log.debug("{} = {}", id.getPropName(), v);
             } else if (id.isCore()) {
                 if (s == null) {
                     s = new StringBuilder();

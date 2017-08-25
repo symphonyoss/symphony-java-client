@@ -35,19 +35,30 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 * Exposure of underlying Symphony bindings:
     * Authentication, Users, Presence, Streams, Datafeed, RoomMembership, Connections, Attachments
 * Lazy cache for user data.  Can also be extended to custom cache solutions. 
-**Administration features are currently not supported in the library. (future work)**
+**Certain administration features are currently not supported in the library. (future work)**
 
 
 
 ## Change log and notes
 
-### V1.0.3 (SNAPSHOT)
+### V1.1.0 (SNAPSHOT)
+* Removing all deprecated code
+* Focus on implementing all REST API capabilities
+* Interfaces defined for external frameworks and example implementations
+* Spring support verification
+* Implement health-check
+* Move to logback
+
+
+
+### V1.0.3
 * Updated for 1.47.0 REST API
+* Updated SymUser to support FeatureList, roles..etc
 * New support for attachment thumbnails
 * Fixed issue with V4 Room keywords
 * Unit and integration test coverage
-* Attempt Room Cache again..
-* AI framework enhancements & interfaces
+* Added AuthenticationClient to replace AuthorizationClient (deprecated)
+* Added ability to set custom http clients to both session and keystore during authentication
 
 
 ### V1.0.2
@@ -150,7 +161,7 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
         means you can bind different .p12 certs representing different BOT users.
 
 
-#### Required System Properties:
+#### Required System Properties or define through SymphonyClientConfig:
 
         -Dtruststore.file=
         -Dtruststore.password=password
@@ -164,8 +175,11 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
         -Duser.email=bot.user2@markit.com or bot user email
        
 
+#### Other key requirements: 
 
-In addition to the above, **Java 8** must be installed.
+* In addition to the above, **Java 8** must be installed.
+
+* **V4** implementations require AgentServer 1.47+
 
 
 ## Examples
