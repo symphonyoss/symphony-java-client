@@ -184,7 +184,7 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 
 ## Examples
 
-The latest **examples** are part of the SJC project and are continually updated with new versions released. 
+The latest [examples](examples/) are part of this SJC project and are continually updated with new versions released. 
 
 In addition, there is an external project providing samples of use: [see Examples Project](https://github.com/symphonyoss/symphony-java-sample-bots)
 
