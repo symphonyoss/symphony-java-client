@@ -118,4 +118,10 @@ public class SymphonyClientConfig {
         return value;
     }
 
+    public void set(SymphonyClientConfigID id, String value) {
+
+         config.setProperty(id.getPropName(),value);
+
+    }
+
 }

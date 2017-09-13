@@ -111,7 +111,7 @@ public class AuthenticationClient {
 
             // Configure the authenticator connection
             authenticationApi.getApiClient().setBasePath(sessionUrl);
-            
+
             if (httpClientForSessionToken != null) {
                 Configuration.getDefaultApiClient().setHttpClient(httpClientForSessionToken);
             }
@@ -195,6 +195,8 @@ public class AuthenticationClient {
 
 
         System.setProperty("javax.net.ssl.trustStore", serverTruststore);
+
+        if(truststorePass!=null)
         System.setProperty("javax.net.ssl.trustStorePassword", truststorePass);
         System.setProperty("javax.net.ssl.keyStore", clientKeystore);
         System.setProperty("javax.net.ssl.keyStorePassword", keystorePass);

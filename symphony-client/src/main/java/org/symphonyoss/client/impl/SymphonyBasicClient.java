@@ -23,11 +23,6 @@
 package org.symphonyoss.client.impl;
 
 
-import java.util.Timer;
-import java.util.TimerTask;
-
-import javax.ws.rs.client.Client;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
@@ -40,32 +35,14 @@ import org.symphonyoss.client.exceptions.SymCacheException;
 import org.symphonyoss.client.exceptions.SymException;
 import org.symphonyoss.client.model.CacheType;
 import org.symphonyoss.client.model.SymAuth;
-import org.symphonyoss.client.services.ChatService;
-import org.symphonyoss.client.services.MessageService;
-import org.symphonyoss.client.services.RoomService;
-import org.symphonyoss.client.services.SymCache;
-import org.symphonyoss.client.services.SymUserCache;
-import org.symphonyoss.symphony.clients.AttachmentsClient;
-import org.symphonyoss.symphony.clients.AttachmentsFactory;
-import org.symphonyoss.symphony.clients.AuthenticationClient;
-import org.symphonyoss.symphony.clients.ConnectionsClient;
-import org.symphonyoss.symphony.clients.ConnectionsFactory;
-import org.symphonyoss.symphony.clients.DataFeedClient;
-import org.symphonyoss.symphony.clients.DataFeedFactory;
-import org.symphonyoss.symphony.clients.MessagesClient;
-import org.symphonyoss.symphony.clients.MessagesFactory;
-import org.symphonyoss.symphony.clients.PresenceClient;
-import org.symphonyoss.symphony.clients.PresenceFactory;
-import org.symphonyoss.symphony.clients.RoomMembershipClient;
-import org.symphonyoss.symphony.clients.RoomMembershipFactory;
-import org.symphonyoss.symphony.clients.ShareClient;
-import org.symphonyoss.symphony.clients.ShareFactory;
-import org.symphonyoss.symphony.clients.StreamsClient;
-import org.symphonyoss.symphony.clients.StreamsFactory;
-import org.symphonyoss.symphony.clients.UsersClient;
-import org.symphonyoss.symphony.clients.UsersFactory;
+import org.symphonyoss.client.services.*;
+import org.symphonyoss.symphony.clients.*;
 import org.symphonyoss.symphony.clients.model.ApiVersion;
 import org.symphonyoss.symphony.clients.model.SymUser;
+
+import javax.ws.rs.client.Client;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Implements a full abstraction of underlying clients and exposes services to simplify
@@ -101,22 +78,28 @@ public class SymphonyBasicClient implements SymphonyClient {
     private Client defaultHttpClient;
     private final long SYMAUTH_REFRESH_TIME = Long.parseLong(System.getProperty(Constants.SYMAUTH_REFRESH_TIME, "7200000"));
     SymUserCache symUserCache;
-    private ApiVersion apiVersion = ApiVersion.V2;
+    private ApiVersion apiVersion = ApiVersion.V4;
+    private SymphonyClientConfig config;
 
-    public SymphonyBasicClient() {}
-
-
-    public SymphonyBasicClient(ApiVersion apiVersion){
-
-        this.apiVersion = apiVersion;
+    public SymphonyBasicClient() {
+       this(ApiVersion.V4);
     }
 
-    
+
+    public SymphonyBasicClient(ApiVersion apiVersion) {
+
+        this.apiVersion = apiVersion;
+        config = new SymphonyClientConfig();
+
+    }
+
+
     @Override
     public void init(Client httpClient, SymphonyClientConfig initParams) throws InitException, AuthenticationException {
-	this.defaultHttpClient = httpClient;
-	
-	AuthenticationClient authClient = new AuthenticationClient(
+        this.defaultHttpClient = httpClient;
+        this.config = initParams;
+
+        AuthenticationClient authClient = new AuthenticationClient(
                 initParams.get(SymphonyClientConfigID.SESSIONAUTH_URL),
                 initParams.get(SymphonyClientConfigID.KEYAUTH_URL));
 
@@ -133,25 +116,23 @@ public class SymphonyBasicClient implements SymphonyClient {
                 initParams.get(SymphonyClientConfigID.USER_EMAIL),
                 initParams.get(SymphonyClientConfigID.AGENT_URL),
                 initParams.get(SymphonyClientConfigID.POD_URL)
-                );
+        );
     }
-
 
 
     @Override
     public void init(SymphonyClientConfig config) throws InitException, AuthenticationException {
-	init(null, config);
+        init(null, config);
     }
-
 
 
     /**
      * Initialize client with required parameters.
      *
-     * @param symAuth    Contains valid key and session tokens generated from AuthenticationClient.
-     * @param email      Email address of the BOT
-     * @param agentUrl   The Agent URL
-     * @param podUrl The Service URL (in most cases it's the POD URL)
+     * @param symAuth  Contains valid key and session tokens generated from AuthenticationClient.
+     * @param email    Email address of the BOT
+     * @param agentUrl The Agent URL
+     * @param podUrl   The Service URL (in most cases it's the POD URL)
      * @throws InitException Failure of a specific service most likely due to connectivity issues
      */
     @Override
@@ -174,7 +155,7 @@ public class SymphonyBasicClient implements SymphonyClient {
 
         //Init all clients.
         dataFeedClient = (defaultHttpClient == null) ? DataFeedFactory.getClient(this, DataFeedFactory.TYPE.DEFAULT) : DataFeedFactory.getClient(this, DataFeedFactory.TYPE.HTTPCLIENT);
-        messagesClient = (defaultHttpClient == null) ? MessagesFactory.getClient(this, MessagesFactory.TYPE.DEFAULT,apiVersion) : MessagesFactory.getClient(this, MessagesFactory.TYPE.HTTPCLIENT,apiVersion);
+        messagesClient = (defaultHttpClient == null) ? MessagesFactory.getClient(this, MessagesFactory.TYPE.DEFAULT, apiVersion) : MessagesFactory.getClient(this, MessagesFactory.TYPE.HTTPCLIENT, apiVersion);
         presenceClient = (defaultHttpClient == null) ? PresenceFactory.getClient(this, PresenceFactory.TYPE.DEFAULT) : PresenceFactory.getClient(this, PresenceFactory.TYPE.HTTPCLIENT);
         streamsClient = (defaultHttpClient == null) ? StreamsFactory.getClient(this, StreamsFactory.TYPE.DEFAULT) : StreamsFactory.getClient(this, StreamsFactory.TYPE.HTTPCLIENT);
         usersClient = (defaultHttpClient == null) ? UsersFactory.getClient(this, UsersFactory.TYPE.DEFAULT) : UsersFactory.getClient(this, UsersFactory.TYPE.HTTPCLIENT);
@@ -184,9 +165,13 @@ public class SymphonyBasicClient implements SymphonyClient {
         connectionsClient = (defaultHttpClient == null) ? ConnectionsFactory.getClient(this, ConnectionsFactory.TYPE.DEFAULT) : ConnectionsFactory.getClient(this, ConnectionsFactory.TYPE.HTTPCLIENT);
 
         try {
-            messageService = new MessageService(this,apiVersion);
-            chatService = new ChatService(this,apiVersion);
-            roomService = new RoomService(this,apiVersion);
+
+
+            if (config != null && !Boolean.valueOf(config.get(SymphonyClientConfigID.DISABLE_SERVICES))) {
+                messageService = new MessageService(this, apiVersion);
+                chatService = new ChatService(this, apiVersion);
+                roomService = new RoomService(this, apiVersion);
+            }
 
             localUser = usersClient.getUserFromEmail(email);
         } catch (SymException e) {
@@ -381,11 +366,11 @@ public class SymphonyBasicClient implements SymphonyClient {
     @Override
     public void setCache(SymCache symCache) throws SymCacheException {
 
-        if(symCache.getCacheType() == null)
+        if (symCache.getCacheType() == null)
             throw new SymCacheException("Cache type not set...");
 
-        if(symCache.getCacheType() == CacheType.USER)
-            symUserCache = (SymUserCache)symCache;
+        if (symCache.getCacheType() == CacheType.USER)
+            symUserCache = (SymUserCache) symCache;
 
     }
 
@@ -401,7 +386,8 @@ public class SymphonyBasicClient implements SymphonyClient {
 
     @Override
     public void shutdown() {
-        getMessageService().shutdown();
+        if (getMessageService() != null)
+            getMessageService().shutdown();
     }
 
 }

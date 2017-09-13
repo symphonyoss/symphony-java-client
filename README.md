@@ -42,6 +42,8 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 ## Change log and notes
 
 ### V1.1.0 (SNAPSHOT)
+* SymphonyClient instances default to V4 API
+* New SymphonyConfigID for disabling services (DISABLE_SERVICES). SendMessage example added.
 * Removing all deprecated code
 * Focus on implementing all REST API capabilities
 * Interfaces defined for external frameworks and example implementations

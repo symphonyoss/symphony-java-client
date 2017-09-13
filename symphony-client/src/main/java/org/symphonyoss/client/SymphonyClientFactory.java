@@ -131,12 +131,11 @@ public class SymphonyClientFactory {
     }
 
 
-
     /**
      * Generate a new SymphonyClient and init it based on type
      *
-     * @param type           The type of SymphonyClient.  Currently only BASIC is available.
-     * @param initParams     SymphonyClientConfig to init
+     * @param type       The type of SymphonyClient.  Currently only BASIC is available.
+     * @param initParams SymphonyClientConfig to init
      * @return A SymphonyClient instance based on type which is already instantiated.
      */
     public static SymphonyClient getClient(TYPE type, SymphonyClientConfig initParams) {
@@ -178,14 +177,7 @@ public class SymphonyClientFactory {
 
 
             //With a valid SymAuth we can now init our client.
-            symClient.init(
-                    symClient.getDefaultHttpClient(),
-                    symAuth,
-                    initParams.get(SymphonyClientConfigID.USER_EMAIL),
-                    initParams.get(SymphonyClientConfigID.AGENT_URL),
-                    initParams.get(SymphonyClientConfigID.POD_URL)
-
-            );
+            symClient.init(symClient.getDefaultHttpClient(), initParams);
 
 
             return symClient;
@@ -199,7 +191,6 @@ public class SymphonyClientFactory {
 
         return null;
     }
-
 
 
 }
