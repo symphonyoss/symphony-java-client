@@ -309,11 +309,8 @@ public class SymMessage {
 
     public void setMessageText(ApiVersion apiVersion, String text) {
 
-        if (apiVersion != null && !apiVersion.equals(ApiVersion.V2)) {
-            setMessage(MLTypes.START_PML + text + MLTypes.END_PML);
-        } else {
-            setMessage(text);
-        }
+        //Currently at V4 latest, so not checking version.
+        setMessage(MLTypes.START_PML + text + MLTypes.END_PML);
 
     }
 

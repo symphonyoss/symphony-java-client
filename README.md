@@ -43,6 +43,7 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 
 ### V1.1.0 (SNAPSHOT)
 * SymphonyClient instances default to V4 API
+* SymMessage will default setting text message to PresentationML
 * New SymphonyConfigID for disabling services (DISABLE_SERVICES). SendMessage example added.
 * Removing all deprecated code
 * Focus on implementing all REST API capabilities
