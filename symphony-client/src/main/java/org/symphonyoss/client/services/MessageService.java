@@ -32,8 +32,10 @@ import org.symphonyoss.client.exceptions.UsersClientException;
 import org.symphonyoss.client.model.CacheType;
 import org.symphonyoss.client.model.Chat;
 import org.symphonyoss.client.model.Room;
-import org.symphonyoss.symphony.agent.model.*;
-import org.symphonyoss.symphony.clients.model.*;
+import org.symphonyoss.symphony.clients.model.ApiVersion;
+import org.symphonyoss.symphony.clients.model.SymMessage;
+import org.symphonyoss.symphony.clients.model.SymStreamTypes;
+import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.pod.model.Stream;
 
 import java.util.List;
@@ -67,12 +69,10 @@ public class MessageService implements DataFeedListener {
     private final Logger logger = LoggerFactory.getLogger(MessageService.class);
     private final Set<MessageListener> messageListeners = ConcurrentHashMap.newKeySet();
     private final Set<ChatListener> chatListeners = ConcurrentHashMap.newKeySet();
-    private final Set<RoomServiceListener> roomServiceListeners = ConcurrentHashMap.newKeySet();
     private final Set<RoomServiceEventListener> roomServiceEventListeners = ConcurrentHashMap.newKeySet();
     private final Set<ConnectionsEventListener> connectionsEventListeners = ConcurrentHashMap.newKeySet();
     private final Set<String> roomStreamCache = ConcurrentHashMap.newKeySet();
     private final Set<String> chatStreamCache = ConcurrentHashMap.newKeySet();
-    MessageFeedWorkerV2 messageFeedWorkerV2;
     MessageFeedWorker messageFeedWorker;
 
 
@@ -83,7 +83,7 @@ public class MessageService implements DataFeedListener {
      */
     public MessageService(SymphonyClient symClient) {
 
-        this(symClient, ApiVersion.V2);
+        this(symClient, ApiVersion.getDefault());
 
     }
 
@@ -99,22 +99,11 @@ public class MessageService implements DataFeedListener {
 
         this.symClient = symClient;
 
-        //Lets startup the worker thread to listen for raw datafeed messages if V2
-        if (apiVersion.equals(ApiVersion.V2)) {
-            messageFeedWorkerV2 = new MessageFeedWorkerV2(symClient, this);
 
-            new Thread(messageFeedWorkerV2).start();
+        //Lets startup the worker thread to listen for raw datafeed messages
+        messageFeedWorker = new MessageFeedWorker(symClient, this);
 
-        }
-
-
-        //Lets startup the worker thread to listen for raw datafeed messages if V2
-        if (apiVersion.equals(ApiVersion.V4)) {
-            messageFeedWorker = new MessageFeedWorker(symClient, this);
-
-            new Thread(messageFeedWorker).start();
-
-        }
+        new Thread(messageFeedWorker).start();
 
 
     }
@@ -220,87 +209,6 @@ public class MessageService implements DataFeedListener {
 
     }
 
-    /**
-     * Process new Datafeed messages from worker
-     *
-     * @param message Incoming message from {@link DataFeedListener} registered to the {@link MessageFeedWorkerV2}
-     */
-    @Override
-    public void onMessage(V2BaseMessage message) {
-
-        logger.debug("MessageID: {} StreamID: {}", message.getId(), message.getStreamId());
-
-
-        if (message.getStreamId() == null)
-            return;
-
-
-        //Check for a basic message event as part of a chat or room
-        if (message instanceof V2Message) {
-
-            //Convert to SymMessage
-            SymMessage symMessage = SymMessage.toSymMessage(message);
-
-            //All incoming messages from POD are MESSAGEML based.
-            symMessage.setFormat(SymMessage.Format.MESSAGEML);
-
-            //Ignore messages the BOT is sending out.
-            if (symClient.getLocalUser().getId().equals(symMessage.getFromUserId()))
-                return;
-
-
-            //Verify if this message is part of room conversation
-            if (isRoomMessage(message)) {
-
-                //Publish room messages to associated listeners
-                for (RoomServiceListener roomServiceListener : roomServiceListeners)
-                    roomServiceListener.onMessage(symMessage);
-            } else {
-
-                //Then it has to be a chat conversation (1:1 or Multi-Party)
-                for (ChatListener chatListener : chatListeners)
-                    chatListener.onChatMessage(symMessage);
-            }
-
-
-            //Publish all messages to registered Message Listeners...
-            for (MessageListener messageListener : messageListeners) {
-                messageListener.onMessage(symMessage);
-            }
-
-            logger.debug("TS: {}\nFrom ID: {}\nSymMessage: {}\nType: {}",
-                    symMessage.getTimestamp(),
-                    symMessage.getFromUserId(),
-                    symMessage.getMessage(),
-                    symMessage.getMessageType());
-
-
-            //Publish associated room event messages
-        } else if (message instanceof UserJoinedRoomMessage) {
-            for (RoomServiceListener roomServiceListener : roomServiceListeners)
-                roomServiceListener.onUserJoinedRoomMessage((UserJoinedRoomMessage) message);
-        } else if (message instanceof UserLeftRoomMessage) {
-            for (RoomServiceListener roomServiceListener : roomServiceListeners)
-                roomServiceListener.onUserLeftRoomMessage((UserLeftRoomMessage) message);
-        } else if (message instanceof RoomCreatedMessage) {
-            for (RoomServiceListener roomServiceListener : roomServiceListeners)
-                roomServiceListener.onRoomCreatedMessage((RoomCreatedMessage) message);
-        } else if (message instanceof RoomDeactivatedMessage) {
-            for (RoomServiceListener roomServiceListener : roomServiceListeners)
-                roomServiceListener.onRoomDeactivatedMessage((RoomDeactivatedMessage) message);
-        } else if (message instanceof RoomMemberDemotedFromOwnerMessage) {
-            for (RoomServiceListener roomServiceListener : roomServiceListeners)
-                roomServiceListener.onRoomMemberDemotedFromOwnerMessage((RoomMemberDemotedFromOwnerMessage) message);
-        } else if (message instanceof RoomMemberPromotedToOwnerMessage) {
-            for (RoomServiceListener roomServiceListener : roomServiceListeners)
-                roomServiceListener.onRoomMemberPromotedToOwnerMessage((RoomMemberPromotedToOwnerMessage) message);
-        } else if (message instanceof RoomUpdatedMessage) {
-            for (RoomServiceListener roomServiceListener : roomServiceListeners)
-                roomServiceListener.onRoomUpdatedMessage((RoomUpdatedMessage) message);
-        }
-
-
-    }
 
     @Override
     public void onEvent(SymEvent symEvent) {
@@ -327,7 +235,7 @@ public class MessageService implements DataFeedListener {
 
                 if (symMessage != null && !symClient.getLocalUser().getId().equals(symMessage.getFromUserId())) {
 
-                    symMessage.setFormat(SymMessage.Format.MESSAGEML);
+
 
 
                     //Verify if this message is part of room conversation
@@ -383,9 +291,9 @@ public class MessageService implements DataFeedListener {
 
                 SymRoomCreated symRoomCreated = symEvent.getPayload().getRoomCreated();
 
-                if(symRoomCreated != null){
+                if (symRoomCreated != null) {
 
-                    for (RoomServiceEventListener  roomServiceEventListener : roomServiceEventListeners)
+                    for (RoomServiceEventListener roomServiceEventListener : roomServiceEventListeners)
                         roomServiceEventListener.onSymRoomCreated(symRoomCreated);
                 }
 
@@ -494,73 +402,15 @@ public class MessageService implements DataFeedListener {
                 break;
 
 
-            // You can have any number of case statements.
-            default: // Optional
-                // Statements
-        }
-
-//
-    }
-
-    /**
-     * Identify if the message is associated with a room or chat conversation
-     *
-     * @param message base message being verified
-     * @return True if room message type
-     */
-    private boolean isRoomMessage(V2BaseMessage message) {
-
-        //We keep an internal cache to expedite future checks
-        if (roomStreamCache.contains(message.getStreamId()))
-            return true;
-
-        if (chatStreamCache.contains(message.getStreamId()))
-            return false;
-
-
-        try {
-
-            SymStreamAttributes symStreamAttributes = symClient.getStreamsClient().getStreamAttributes(message.getStreamId());
-
-            if (symStreamAttributes != null && symStreamAttributes.getSymStreamTypes().getType() == SymStreamTypes.Type.ROOM) {
-
-                roomStreamCache.add(message.getStreamId());
-                logger.debug("Found new room stream to cache: {}", message.getStreamId());
-                return true;
-
-            } else {
-
-                //By default its a Chat stream..
-                chatStreamCache.add(message.getStreamId());
-                logger.debug("Found new chat stream to cache: {}", message.getStreamId());
-                return false;
-            }
-
-
-        } catch (StreamsException e) {
-            //Exception will be common here, so we are not going to throw exceptions every time.
-            logger.debug("Failed to retrieve stream attributes detail");
+            default:
 
         }
 
-        return false;
-
 
     }
 
 
-    /**
-     * Please use {@link #addMessageListener(MessageListener)}
-     *
-     * @param messageListener Listener to register
-     * @return True if listener is registered successfully
-     */
-    @Deprecated
-    public boolean registerMessageListener(MessageListener messageListener) {
 
-        return messageListeners.add(messageListener);
-
-    }
 
 
     /**
@@ -588,16 +438,6 @@ public class MessageService implements DataFeedListener {
 
     }
 
-    /**
-     * Add {@link RoomListener} to service to receive new Room events
-     *
-     * @param roomServiceListener listener to register
-     */
-    public void addRoomListener(RoomServiceListener roomServiceListener) {
-
-        roomServiceListeners.add(roomServiceListener);
-
-    }
 
     /**
      * Add {@link RoomServiceEventListener} to service to receive new Room events
@@ -607,32 +447,6 @@ public class MessageService implements DataFeedListener {
     public void addRoomServiceEventListener(RoomServiceEventListener roomServiceEventListener) {
 
         roomServiceEventListeners.add(roomServiceEventListener);
-
-    }
-
-    /**
-     * Please use {@link #addRoomListener(RoomServiceListener)}
-     *
-     * @param roomServiceListener Listener to register
-     * @return True if registered without issue
-     */
-    @Deprecated
-    public boolean registerRoomListener(RoomServiceListener roomServiceListener) {
-
-        return roomServiceListeners.add(roomServiceListener);
-
-    }
-
-    /**
-     * Remove room listener from service
-     *
-     * @param roomServiceListener listener to remove
-     * @return True if listener is removed
-     */
-    @SuppressWarnings("unused")
-    public boolean removeRoomListener(RoomServiceListener roomServiceListener) {
-
-        return roomServiceListeners.remove(roomServiceListener);
 
     }
 
@@ -688,18 +502,6 @@ public class MessageService implements DataFeedListener {
 
     }
 
-    /**
-     * Please use {@link #addChatListener(ChatListener)}
-     *
-     * @param chatListener Listener to register
-     * @return True if registered
-     */
-    @Deprecated
-    public boolean registerChatListener(ChatListener chatListener) {
-
-        return chatListeners.add(chatListener);
-
-    }
 
     /**
      * Remove a registered chat listener
@@ -724,10 +526,7 @@ public class MessageService implements DataFeedListener {
             messageFeedWorker = null;
         }
 
-        if (messageFeedWorkerV2 != null) {
-            messageFeedWorkerV2.shutdown();
-            messageFeedWorkerV2 = null;
-        }
+
     }
 
 }

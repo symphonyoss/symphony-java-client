@@ -33,13 +33,6 @@ import org.symphonyoss.client.events.SymEvent;
  */
 interface DataFeedListener {
 
-    /**
-     * Base messages from datafeed polling
-     * This is only enabled when V2 API is being used.
-     * @param message Base message
-     */
-    void onMessage(V2BaseMessage message);
-
 
     /**
      * Listen to all events from datafeed polling

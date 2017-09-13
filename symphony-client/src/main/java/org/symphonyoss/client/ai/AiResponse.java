@@ -37,11 +37,9 @@ import java.util.List;
  */
 public class AiResponse {
     private String message;
-    private SymMessage.Format type;
     private List<SymUser> symUsers = new ArrayList<>();
 
-    public AiResponse(String message, SymMessage.Format type, List<SymUser> userIdList) {
-        this.type = type;
+    public AiResponse(String message, List<SymUser> userIdList) {
         this.message = message;
         this.symUsers = userIdList;
     }
@@ -64,23 +62,6 @@ public class AiResponse {
         this.message = message;
     }
 
-    /**
-     * @return the format of the message
-     */
-    public SymMessage.Format getType() {
-        return type;
-    }
-
-
-    /**
-     * Set the type of the message
-     *
-     * @param type Text of MLMESSAGE
-     */
-    @SuppressWarnings("unused")
-    public void setType(SymMessage.Format type) {
-        this.type = type;
-    }
 
 
     public List<SymUser> getSymUsers() {

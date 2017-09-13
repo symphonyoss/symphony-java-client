@@ -37,12 +37,15 @@ import org.symphonyoss.client.exceptions.SymException;
 import org.symphonyoss.client.model.Chat;
 import org.symphonyoss.client.services.ChatListener;
 import org.symphonyoss.client.services.ChatServiceListener;
+import org.symphonyoss.symphony.clients.model.ApiVersion;
 import org.symphonyoss.symphony.clients.model.SymAttachmentInfo;
 import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.clients.model.SymUser;
 
-import java.io.*;
-import java.util.ArrayList;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -104,7 +107,7 @@ public class AttachmentExample implements ChatListener, ChatServiceListener {
 
             //Create an initialized client
             symClient = SymphonyClientFactory.getClient(
-                    SymphonyClientFactory.TYPE.BASIC,symphonyClientConfig);  //truststore password
+                    SymphonyClientFactory.TYPE.V4,symphonyClientConfig);  //truststore password
 
 
             //Will notify the bot of new Chat conversations.
@@ -112,8 +115,7 @@ public class AttachmentExample implements ChatListener, ChatServiceListener {
 
             //A message to send when the BOT comes online.
             SymMessage aMessage = new SymMessage();
-            aMessage.setFormat(SymMessage.Format.TEXT);
-            aMessage.setMessage("Hello master, I'm alive again....");
+            aMessage.setMessageText("Hello master, I'm alive again....");
 
 
             //Creates a Chat session with that will receive the online message.
@@ -159,13 +161,15 @@ public class AttachmentExample implements ChatListener, ChatServiceListener {
         if (message.getAttachments() != null) {
 
             List<SymAttachmentInfo> attachmentInfos = message.getAttachments();
-
+            File outFile = null;
             //Check for multiple files
             for (SymAttachmentInfo symAttachmentInfo : attachmentInfos) {
 
+
+
                 try {
 
-                    File outFile = new File(symAttachmentInfo.getName());
+                    outFile = new File(symAttachmentInfo.getName());
                     OutputStream out = new FileOutputStream(outFile);
                     out.write(symClient.getAttachmentsClient().getAttachmentData(symAttachmentInfo, message));
 
@@ -185,26 +189,10 @@ public class AttachmentExample implements ChatListener, ChatServiceListener {
 
             //Lets construct the reply.
             SymMessage symMessage = new SymMessage();
-            symMessage.setMessage("Echo the files you sent....");
+            symMessage.setMessageText(ApiVersion.V4,"Echo the files you sent....");
             symMessage.setStreamId(message.getStreamId());
-            symMessage.setFormat(SymMessage.Format.TEXT);
+            symMessage.setAttachment(outFile);
 
-            //Post all the incoming files back to the stream.
-            List<SymAttachmentInfo> replyAttachmentInfos = new ArrayList<>();
-            for (SymAttachmentInfo attachmentInfo : attachmentInfos) {
-
-                try {
-                    replyAttachmentInfos.add(
-                            symClient.getAttachmentsClient().postAttachment(symMessage.getStreamId(), new File(attachmentInfo.getName()))
-                    );
-                } catch (AttachmentsException e) {
-
-                    logger.error("Could not post file to stream", e);
-                }
-
-            }
-            //Update all the attachment info details in the reply message.
-            symMessage.setAttachments(replyAttachmentInfos);
 
             //Send the message back..
             Chat chat = symClient.getChatService().getChatByStream(message.getStreamId());

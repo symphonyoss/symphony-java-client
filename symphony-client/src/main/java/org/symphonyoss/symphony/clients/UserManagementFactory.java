@@ -34,7 +34,7 @@ public class UserManagementFactory {
     public enum TYPE {DEFAULT}
 
     public static UserManagementClient getClient(SymphonyClient symphonyClient, UsersFactory.TYPE type) {
-        return new UserManagementClientImpl(symphonyClient.getSymAuth(), symphonyClient.getServiceUrl());
+        return new UserManagementClientImpl(symphonyClient.getSymAuth(), symphonyClient.getAgentUrl());
     }
 
     public static UserManagementClient getClient(SymAuth symAuth, String serviceUrl, UsersFactory.TYPE type) {

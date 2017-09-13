@@ -196,13 +196,6 @@ public interface SymphonyClient {
     String getAgentUrl();
 
     /**
-     * Returns the Service URL used during initialization
-     *
-     * @return The Service URL
-     */
-    String getServiceUrl();
-
-    /**
      * Provides instance of the Shares client.  This client supports the distribution of entity objects.
      *
      * @return {@link ShareClient}

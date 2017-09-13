@@ -51,7 +51,6 @@ public class DataFeedClientImpl implements DataFeedClient {
 
     private final ApiClient apiClient;
     private final SymAuth symAuth;
-    @SuppressWarnings("unused")
     private Logger logger = LoggerFactory.getLogger(DataFeedClientImpl.class);
 
 
@@ -84,20 +83,6 @@ public class DataFeedClientImpl implements DataFeedClient {
     }
 
 
-    @Override
-    @Deprecated
-    public Datafeed createDatafeed() throws DataFeedException {
-
-        DatafeedApi datafeedApi = new DatafeedApi(apiClient);
-
-
-        try {
-            return datafeedApi.v1DatafeedCreatePost(symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken());
-        } catch (ApiException e) {
-            throw new DataFeedException("Could not start datafeed..",
-                    datafeedApi.getApiClient().getBasePath(), e.getCode(), e);
-        }
-    }
 
     @Override
     public Datafeed createDatafeed(ApiVersion apiVersion) throws DataFeedException {
@@ -109,15 +94,7 @@ public class DataFeedClientImpl implements DataFeedClient {
         try {
 
 
-            if(apiVersion.equals(ApiVersion.V1)) {
-                return datafeedApi.v1DatafeedCreatePost(symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken());
-            }else if(apiVersion.equals(ApiVersion.V4)){
                 return datafeedApi.v4DatafeedCreatePost(symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken());
-            }else{
-                return datafeedApi.v1DatafeedCreatePost(symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken());
-            }
-
-
 
 
         } catch (ApiException e) {
@@ -126,38 +103,6 @@ public class DataFeedClientImpl implements DataFeedClient {
         }
     }
 
-
-
-
-
-    @Override
-    @Deprecated
-    public List<V2BaseMessage> getMessagesFromDatafeed(Datafeed datafeed, int maxMessages) throws DataFeedException {
-
-        DatafeedApi datafeedApi = new DatafeedApi(apiClient);
-
-        if (datafeed == null) {
-            throw new NullPointerException("Datafeed was not provided and null..");
-        }
-
-        //V2MessageList messageList = null;
-        try {
-            return datafeedApi.v2DatafeedIdReadGet(datafeed.getId(), symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken(), maxMessages);
-        } catch (ApiException e) {
-            throw new DataFeedException("Failed to retrieve messages from datafeed...",
-                    datafeedApi.getApiClient().getBasePath(), e.getCode(), e);
-        }
-
-
-    }
-
-
-    @Override
-    @Deprecated
-    public List<V2BaseMessage> getMessagesFromDatafeed(Datafeed datafeed) throws DataFeedException {
-
-        return getMessagesFromDatafeed(datafeed, Integer.parseInt(System.getProperty(Constants.DATAFEED_MAX_MESSAGES, "100")));
-    }
 
 
     @Override

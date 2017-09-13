@@ -41,26 +41,6 @@ import java.util.List;
 @SuppressWarnings("WeakerAccess")
 public class SymMessage {
 
-
-    public enum Format {
-        TEXT("TEXT"),
-
-        MESSAGEML("MESSAGEML");
-
-        private String value;
-
-        Format(String value) {
-            this.value = value;
-        }
-
-        @Override
-        public String toString() {
-            return String.valueOf(value);
-        }
-    }
-
-    private Format format = Format.TEXT;
-
     private String id = null;
 
     private String timestamp = null;
@@ -170,14 +150,6 @@ public class SymMessage {
         this.entityData = entityData;
     }
 
-    public Format getFormat() {
-        return format;
-    }
-
-    public void setFormat(Format format) {
-        this.format = format;
-    }
-
 
     public SymStream getStream() {
         return stream;
@@ -204,17 +176,6 @@ public class SymMessage {
         this.attachementThumbnail = attachementThumbnail;
     }
 
-    @Deprecated
-    public static SymMessage toSymMessage(Message message) {
-        SymMessage symMessage = new SymMessage();
-        symMessage.setId(message.getId());
-        symMessage.setStreamId(message.getStreamId());
-        symMessage.setMessage(message.getMessage());
-        symMessage.setMessageType(message.getMessageType());
-        symMessage.setFromUserId(message.getFromUserId());
-        symMessage.setTimestamp(message.getTimestamp());
-        return symMessage;
-    }
 
     public static SymMessage toSymMessage(V2BaseMessage v2BaseMessage) {
 
@@ -243,7 +204,6 @@ public class SymMessage {
         symMessage.setTimestamp(Long.toString(v4Message.getTimestamp()));
         symMessage.setId(v4Message.getMessageId());
         symMessage.setStreamId(v4Message.getStream().getStreamId());
-        symMessage.setMessageType(Format.MESSAGEML.toString());
         symMessage.setFromUserId(v4Message.getUser().getUserId());
         symMessage.setSymUser(SymUser.toSymUser(v4Message.getUser()));
         symMessage.setMessage(v4Message.getMessage());
@@ -255,41 +215,6 @@ public class SymMessage {
         return symMessage;
     }
 
-    @Deprecated
-    public static Message toV1Message(V2BaseMessage v2BaseMessage) {
-
-        return toV2Message(v2BaseMessage);
-    }
-
-    @Deprecated
-    public static Message toV1Message(SymMessage symMessage) {
-
-        Message v1Message = new Message();
-        v1Message.setId(symMessage.getId());
-        v1Message.setStreamId(symMessage.getStreamId());
-        v1Message.setMessage(symMessage.getMessage());
-        v1Message.setMessageType(symMessage.getMessageType());
-        v1Message.setFromUserId(symMessage.getFromUserId());
-        v1Message.setTimestamp(symMessage.getTimestamp());
-        return v1Message;
-    }
-
-
-    @Deprecated
-    public static Message toV2Message(V2BaseMessage v2BaseMessage) {
-
-        Message v1Message = new Message();
-        v1Message.setId(v2BaseMessage.getId());
-        v1Message.setStreamId(v2BaseMessage.getStreamId());
-        v1Message.setMessageType(v2BaseMessage.getV2messageType());
-        v1Message.setTimestamp(v2BaseMessage.getTimestamp());
-        if (v2BaseMessage instanceof V2Message) {
-            v1Message.setMessage(((V2Message) v2BaseMessage).getMessage());
-            v1Message.setFromUserId(((V2Message) v2BaseMessage).getFromUserId());
-        }
-
-        return v1Message;
-    }
 
 
     public String getMessageText() {

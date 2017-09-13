@@ -150,15 +150,6 @@ class MessageFeedWorker implements Runnable {
 
 
 
-//            List<V2BaseMessage> messageList = symClient.getDataFeedClient().getMessagesFromDatafeed(datafeed);
-//
-//            if (messageList != null) {
-//
-//                logger.debug("Received {} messages..", messageList.size());
-//
-//                messageList.forEach(dataFeedListener::onMessage);
-//            }
-
         } catch (Exception e) {
             logger.error("Failed to create read datafeed from pod, please check connection..resetting.", e);
             datafeed = null;

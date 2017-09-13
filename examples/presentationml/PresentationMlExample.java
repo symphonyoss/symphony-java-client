@@ -178,12 +178,11 @@ public class PresentationMlExample implements ChatListener, ChatServiceListener 
         if (message == null)
             return;
 
-        logger.debug("TS: {}\nFrom ID: {}\nSymMessage: {}\nSymMessage Type: {}\nSymMessage Format: {}",
+        logger.debug("TS: {}\nFrom ID: {}\nSymMessage: {}\nSymMessage Type: {}",
                 message.getTimestamp(),
                 message.getFromUserId(),
                 message.getMessage(),
-                message.getMessageType(),
-                message.getFormat().toString());
+                message.getMessageType());
 
         Chat chat = symClient.getChatService().getChatByStream(message.getStreamId());
 

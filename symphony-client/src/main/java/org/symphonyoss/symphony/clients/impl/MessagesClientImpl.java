@@ -51,8 +51,7 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
 
     private final ApiClient apiClient;
     private final SymAuth symAuth;
-    private ApiVersion apiVersion = ApiVersion.V2;
-    @SuppressWarnings("unused")
+    private ApiVersion apiVersion = ApiVersion.V4;
     private Logger logger = LoggerFactory.getLogger(MessagesClientImpl.class);
 
     public MessagesClientImpl(SymAuth symAuth, String agentUrl) {
@@ -113,34 +112,6 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
     }
 
 
-    /**
-     * Send a message using Symphony defined model. Please use {@link #sendMessage(Stream, SymMessage)} which supports
-     * {@link SymMessage}.
-     *
-     * @param stream  Stream object identifying destination endpoint
-     * @param message Message to send leveraging the MessageSubmission message
-     * @return Message that was submitted
-     * @throws MessagesException Caused by Symphony API problems
-     */
-    @Deprecated
-    public Message sendMessage(Stream stream, MessageSubmission message) throws MessagesException {
-        if (stream == null || message == null) {
-            throw new NullPointerException("Stream or message submission was not provided..");
-        }
-
-
-        MessagesApi messagesApi = new MessagesApi(apiClient);
-
-
-        try {
-            return messagesApi.v1StreamSidMessageCreatePost(stream.getId(), symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken(), message);
-        } catch (ApiException e) {
-            throw new MessagesException("Failed to send message to stream: " + stream,
-                    new RestException(messagesApi.getApiClient().getBasePath(), e.getCode(), e));
-        }
-
-    }
-
 
     /**
      * Send message to stream
@@ -172,7 +143,7 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
     public SymMessage sendMessage(SymStream stream, SymMessage message) throws MessagesException {
 
 
-        return apiVersion.equals(ApiVersion.V4) ? sendMessageV4(stream, message) : sendMessageV2(SymStream.toSymStream(stream), message);
+        return  sendMessageV4(stream, message);
 
 
     }
@@ -191,9 +162,8 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
     @Override
     public List<SymMessage> getMessagesFromStream(SymStream symStream, Long since, Integer offset, Integer maxMessages) throws MessagesException {
 
-        return apiVersion.equals(ApiVersion.V4) ?
-                getMessagesFromStreamV4(symStream, since, offset, maxMessages) :
-                getMessagesFromStreamV2(SymStream.toSymStream(symStream), since, offset, maxMessages);
+        return getMessagesFromStreamV4(symStream, since, offset, maxMessages);
+
     }
 
     /**
@@ -252,42 +222,6 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
     }
 
 
-    /**
-     * Retrieve historical messages from a given stream.  This is NOT a blocking call.
-     *
-     * @param stream      Stream to retrieve messages from
-     * @param since       Date (long) from point in time
-     * @param offset      Offset
-     * @param maxMessages Maximum number of messages to retrieve from the specified time (since)
-     * @return List of messages
-     * @throws MessagesException Exception caused by Symphony API calls
-     */
-    private List<SymMessage> getMessagesFromStreamV2(Stream stream, Long since, Integer offset, Integer maxMessages) throws MessagesException {
-
-        if (stream == null) {
-            throw new NullPointerException("Stream submission was not provided..");
-        }
-
-
-        MessagesApi messagesApi = new MessagesApi(apiClient);
-
-        V2MessageList v2MessageList;
-        try {
-            v2MessageList = messagesApi.v2StreamSidMessageGet(stream.getId(), since, symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken(), offset, maxMessages);
-        } catch (ApiException e) {
-            throw new MessagesException("Failed to retrieve messages from stream: " + stream,
-                    new RestException(messagesApi.getApiClient().getBasePath(), e.getCode(), e));
-        }
-
-        List<SymMessage> symMessageList = new ArrayList<>();
-
-        if (v2MessageList != null) {
-            symMessageList.addAll(v2MessageList.stream().filter(v2BaseMessage -> v2BaseMessage instanceof V2Message).map(SymMessage::toSymMessage).collect(Collectors.toList()));
-        }
-
-
-        return symMessageList;
-    }
 
 
     /**
@@ -329,42 +263,6 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
     }
 
 
-    /**
-     * Send  v2message to stream
-     *
-     * @param stream  Stream to send message to
-     * @param message Message to send
-     * @return Message sent
-     * @throws MessagesException Exception caused by Symphony API calls
-     */
-    @Deprecated
-    private SymMessage sendMessageV2(Stream stream, SymMessage message) throws MessagesException {
-
-        if (stream == null || message == null) {
-            throw new NullPointerException("Stream or message submission was not provided..");
-        }
-
-        MessagesApi messagesApi = new MessagesApi(apiClient);
-
-        V2MessageSubmission messageSubmission = new V2MessageSubmission();
-
-        messageSubmission.setMessage(message.getMessage());
-        messageSubmission.setFormat(
-                message.getFormat().toString().equals(V2MessageSubmission.FormatEnum.TEXT.toString()) ?
-                        V2MessageSubmission.FormatEnum.TEXT :
-                        V2MessageSubmission.FormatEnum.MESSAGEML
-        );
-        messageSubmission.setAttachments(SymAttachmentInfo.toV2AttachmentsInfo(message.getAttachments()));
-
-
-        try {
-            return SymMessage.toSymMessage(messagesApi.v2StreamSidMessageCreatePost(stream.getId(), symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken(), messageSubmission));
-        } catch (ApiException e) {
-            throw new MessagesException("Failed to send message to stream: " + stream.getId(),
-                    new RestException(messagesApi.getApiClient().getBasePath(), e.getCode(), e));
-        }
-
-    }
 
 
 

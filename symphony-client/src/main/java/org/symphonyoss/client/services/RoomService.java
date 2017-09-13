@@ -53,13 +53,12 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author Frank Tarsillo
  */
-public class RoomService implements RoomServiceListener, RoomServiceEventListener {
+public class RoomService implements RoomServiceEventListener {
 
 
     private final ConcurrentHashMap<String, Room> roomsByStream = new ConcurrentHashMap<>();
     private final SymphonyClient symClient;
     private final Logger logger = LoggerFactory.getLogger(RoomService.class);
-    private final Set<RoomServiceListener> roomServiceListeners = ConcurrentHashMap.newKeySet();
     private final Set<RoomServiceEventListener> roomServiceEventListeners = ConcurrentHashMap.newKeySet();
     private ApiVersion apiVersion;
 
@@ -68,7 +67,7 @@ public class RoomService implements RoomServiceListener, RoomServiceEventListene
      *                  {@link MessageService}
      */
     public RoomService(SymphonyClient symClient) {
-        this(symClient, ApiVersion.V2);
+        this(symClient, ApiVersion.getDefault());
     }
 
 
@@ -85,12 +84,8 @@ public class RoomService implements RoomServiceListener, RoomServiceEventListene
 
         MessageService messageService = symClient.getMessageService();
 
-        if(messageService != null) {
-            if(apiVersion.equals(ApiVersion.V4)){
-                messageService.addRoomServiceEventListener(this);
-            }else{
-                messageService.addRoomListener(this);
-            }
+        if (messageService != null) {
+            messageService.addRoomServiceEventListener(this);
         }
 
 
@@ -182,7 +177,7 @@ public class RoomService implements RoomServiceListener, RoomServiceEventListene
     /**
      * Callback from registered room listener on the MessageService.  All messages will be associated with Rooms.
      * If a message underlying stream is not associated with a registered room, then a new room object is created and
-     * events are published to registered {@link RoomServiceListener}
+     * events are published to registered {@link RoomServiceEventListener}
      * <p>
      * Messages associated with registered rooms are published to room object listeners.
      *
@@ -196,14 +191,6 @@ public class RoomService implements RoomServiceListener, RoomServiceEventListene
             //Automatically register new room events
             if (roomsByStream.get(symMessage.getStreamId()) == null) {
                 addRoom(symMessage.getStreamId());
-            }
-
-
-            //Publish messages to any generic RoomService Listeners
-            for (RoomServiceListener roomServiceListener : roomServiceListeners) {
-
-                roomServiceListener.onMessage(symMessage);
-
             }
 
 
@@ -353,158 +340,11 @@ public class RoomService implements RoomServiceListener, RoomServiceEventListene
     @Override
     public void onNewRoom(Room room) {
 
-        for (RoomServiceListener roomServiceListener : roomServiceListeners)
-            roomServiceListener.onNewRoom(room);
-
 
         for (RoomServiceEventListener roomServiceEventListener : roomServiceEventListeners)
             roomServiceEventListener.onNewRoom(room);
     }
 
-    /**
-     * Events provided by the MessageService related to new rooms created (defined)
-     *
-     * @param roomCreatedMessage {@link RoomCreatedMessage}
-     */
-    @Override
-    public void onRoomCreatedMessage(RoomCreatedMessage roomCreatedMessage) {
-
-        for (RoomServiceListener roomServiceListener : roomServiceListeners) {
-            roomServiceListener.onRoomCreatedMessage(roomCreatedMessage);
-
-        }
-
-
-    }
-
-    /**
-     * Room deactivated events triggered by administration event.
-     *
-     * @param roomDeactivatedMessage {@link RoomDeactivatedMessage}
-     */
-    @SuppressWarnings("deprecation")
-    @Override
-    public void onRoomDeactivatedMessage(RoomDeactivatedMessage roomDeactivatedMessage) {
-
-        for (Map.Entry<String, Room> entry : roomsByStream.entrySet()) {
-
-            RoomListener roomListener = entry.getValue().getRoomListener();
-            if (roomListener != null)
-                roomListener.onRoomDeactivatedMessage(roomDeactivatedMessage);
-
-        }
-    }
-
-    /**
-     * Room member demotion event triggered from administration changes
-     *
-     * @param roomMemberDemotedFromOwnerMessage {@link RoomMemberDemotedFromOwnerMessage}
-     */
-    @SuppressWarnings("deprecation")
-    @Override
-    public void onRoomMemberDemotedFromOwnerMessage(RoomMemberDemotedFromOwnerMessage roomMemberDemotedFromOwnerMessage) {
-        for (Map.Entry<String, Room> entry : roomsByStream.entrySet()) {
-
-            RoomListener roomListener = entry.getValue().getRoomListener();
-            if (roomListener != null)
-                roomListener.onRoomMemberDemotedFromOwnerMessage(roomMemberDemotedFromOwnerMessage);
-
-        }
-    }
-
-    /**
-     * Room member promotion event triggered from administration changes
-     *
-     * @param roomMemberPromotedToOwnerMessage {@link RoomMemberPromotedToOwnerMessage}
-     */
-    @SuppressWarnings("deprecation")
-    @Override
-    public void onRoomMemberPromotedToOwnerMessage(RoomMemberPromotedToOwnerMessage roomMemberPromotedToOwnerMessage) {
-
-        for (Map.Entry<String, Room> entry : roomsByStream.entrySet()) {
-
-            RoomListener roomListener = entry.getValue().getRoomListener();
-            if (roomListener != null)
-                roomListener.onRoomMemberPromotedToOwnerMessage(roomMemberPromotedToOwnerMessage);
-
-        }
-    }
-
-    /**
-     * Room reactivated event triggered from administration changes
-     *
-     * @param roomReactivatedMessage {@link RoomReactivatedMessage}
-     */
-    @SuppressWarnings("deprecation")
-    @Override
-    public void onRoomReactivatedMessage(RoomReactivatedMessage roomReactivatedMessage) {
-        for (Map.Entry<String, Room> entry : roomsByStream.entrySet()) {
-
-            RoomListener roomListener = entry.getValue().getRoomListener();
-            if (roomListener != null)
-                roomListener.onRoomReactivatedMessage(roomReactivatedMessage);
-
-        }
-    }
-
-    @SuppressWarnings("deprecation")
-    @Override
-    public void onRoomUpdatedMessage(RoomUpdatedMessage roomUpdatedMessage) {
-        for (Map.Entry<String, Room> entry : roomsByStream.entrySet()) {
-
-            RoomListener roomListener = entry.getValue().getRoomListener();
-            if (roomListener != null)
-                roomListener.onRoomUpdatedMessage(roomUpdatedMessage);
-
-        }
-    }
-
-    @SuppressWarnings("deprecation")
-    @Override
-    public void onUserJoinedRoomMessage(UserJoinedRoomMessage userJoinedRoomMessage) {
-
-        for (Map.Entry<String, Room> entry : roomsByStream.entrySet()) {
-
-            RoomListener roomListener = entry.getValue().getRoomListener();
-            if (roomListener != null)
-                roomListener.onUserJoinedRoomMessage(userJoinedRoomMessage);
-
-        }
-    }
-
-    @SuppressWarnings("deprecation")
-    @Override
-    public void onUserLeftRoomMessage(UserLeftRoomMessage userLeftRoomMessage) {
-        for (Map.Entry<String, Room> entry : roomsByStream.entrySet()) {
-
-            RoomListener roomListener = entry.getValue().getRoomListener();
-            if (roomListener != null)
-                roomListener.onUserLeftRoomMessage(userLeftRoomMessage);
-
-        }
-
-    }
-
-    /**
-     * Please use {@link #addRoomServiceListener(RoomServiceListener)}
-     *
-     * @param roomServiceListener Listener to register
-     */
-    @Deprecated
-    public void registerRoomServiceListener(RoomServiceListener roomServiceListener) {
-        addRoomServiceListener(roomServiceListener);
-    }
-
-
-    @Deprecated
-    public void addRoomServiceListener(RoomServiceListener roomServiceListener) {
-        roomServiceListeners.add(roomServiceListener);
-    }
-
-    @Deprecated
-    public void removeRoomServiceListener(RoomServiceListener roomServiceListener) {
-        roomServiceListeners.remove(roomServiceListener);
-    }
 
 
     public void addRoomServiceEventListener(RoomServiceEventListener roomServiceEventListener) {

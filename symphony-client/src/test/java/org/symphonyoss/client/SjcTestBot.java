@@ -26,6 +26,7 @@ package org.symphonyoss.client;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.symphonyoss.client.events.*;
 import org.symphonyoss.client.exceptions.AttachmentsException;
 import org.symphonyoss.client.exceptions.MessagesException;
 import org.symphonyoss.client.exceptions.PresenceException;
@@ -53,7 +54,7 @@ import java.util.List;
  *
  * @author Frank Tarsillo
  */
-public class SjcTestBot implements ChatListener, ChatServiceListener, RoomListener, RoomServiceListener, ConnectionsListener {
+public class SjcTestBot implements ChatListener, ChatServiceListener, RoomEventListener, RoomServiceEventListener, ConnectionsListener {
 
     SymphonyClient symphonyClient;
     String sjcClient = System.getProperty("sender.user.email", "sjc.testclient");
@@ -70,7 +71,7 @@ public class SjcTestBot implements ChatListener, ChatServiceListener, RoomListen
                 System.getProperty("truststore.file"),
                 System.getProperty("truststore.password"));
 
-        symphonyClient.getRoomService().addRoomServiceListener(this);
+        symphonyClient.getRoomService().addRoomServiceEventListener(this);
 
 
         testClientStreamId = symphonyClient.getStreamsClient().getStreamFromEmail(sjcClient).getId();
@@ -79,7 +80,7 @@ public class SjcTestBot implements ChatListener, ChatServiceListener, RoomListen
         Room room = new Room();
         room.setStreamId(System.getProperty("test.room.stream"));
         room.setId(System.getProperty("test.room.stream"));
-        room.addListener(this);
+        room.addEventListener(this);
         symphonyClient.getRoomService().joinRoom(room);
 
         symphonyClient.getChatService().addListener(this);
@@ -97,44 +98,45 @@ public class SjcTestBot implements ChatListener, ChatServiceListener, RoomListen
     }
 
     @Override
-    public void onRoomDeactivatedMessage(RoomDeactivatedMessage roomDeactivatedMessage) {
+    public void onSymRoomDeactivated(SymRoomDeactivated symRoomDeactivated) {
 
     }
 
     @Override
-    public void onRoomMemberDemotedFromOwnerMessage(RoomMemberDemotedFromOwnerMessage roomMemberDemotedFromOwnerMessage) {
+    public void onSymRoomMemberDemotedFromOwner(SymRoomMemberDemotedFromOwner symRoomMemberDemotedFromOwner) {
 
     }
 
     @Override
-    public void onRoomMemberPromotedToOwnerMessage(RoomMemberPromotedToOwnerMessage roomMemberPromotedToOwnerMessage) {
+    public void onSymRoomMemberPromotedToOwner(SymRoomMemberPromotedToOwner symRoomMemberPromotedToOwner) {
 
     }
 
     @Override
-    public void onRoomReactivatedMessage(RoomReactivatedMessage roomReactivatedMessage) {
+    public void onSymRoomReactivated(SymRoomReactivated symRoomReactivated) {
 
     }
 
     @Override
-    public void onRoomUpdatedMessage(RoomUpdatedMessage roomUpdatedMessage) {
+    public void onSymRoomUpdated(SymRoomUpdated symRoomUpdated) {
 
     }
 
     @Override
-    public void onUserJoinedRoomMessage(UserJoinedRoomMessage userJoinedRoomMessage) {
+    public void onSymUserJoinedRoom(SymUserJoinedRoom symUserJoinedRoom) {
 
     }
 
     @Override
-    public void onUserLeftRoomMessage(UserLeftRoomMessage userLeftRoomMessage) {
+    public void onSymUserLeftRoom(SymUserLeftRoom symUserLeftRoom) {
 
     }
 
     @Override
-    public void onRoomCreatedMessage(RoomCreatedMessage roomCreatedMessage) {
+    public void onSymRoomCreated(SymRoomCreated symRoomCreated) {
 
     }
+
 
     @Override
     public void onMessage(SymMessage symMessage) {
@@ -143,7 +145,7 @@ public class SjcTestBot implements ChatListener, ChatServiceListener, RoomListen
 
     @Override
     public void onNewRoom(Room room) {
-        room.addListener(this);
+        room.addEventListener(this);
 
     }
 

@@ -24,7 +24,6 @@
 package org.symphonyoss.client.model;
 
 import org.symphonyoss.client.services.RoomEventListener;
-import org.symphonyoss.client.services.RoomListener;
 import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.clients.model.SymRoomDetail;
 import org.symphonyoss.symphony.pod.model.MembershipList;
@@ -46,15 +45,13 @@ public class Room {
     private String streamId;
     private MembershipList membershipList;
     private SymRoomDetail roomDetail;
-    private RoomListener roomListener;
-    private final Set<RoomListener> roomListeners = ConcurrentHashMap.newKeySet();
     private final Set<RoomEventListener> roomEventListeners = ConcurrentHashMap.newKeySet();
 
     public String getStreamId() {
         return streamId;
     }
 
-    @SuppressWarnings("unused")
+
     public void setStreamId(String streamId) {
         this.streamId = streamId;
         if (stream == null) {
@@ -73,7 +70,7 @@ public class Room {
         this.id = id;
     }
 
-    @SuppressWarnings("unused")
+
     public MembershipList getMembershipList() {
         return membershipList;
     }
@@ -101,19 +98,6 @@ public class Room {
     }
 
 
-    @SuppressWarnings("DeprecatedIsStillUsed")
-    @Deprecated
-    public RoomListener getRoomListener() {
-        return roomListener;
-    }
-
-
-    @Deprecated
-    public void setRoomListener(RoomListener roomListener) {
-        this.roomListener = roomListener;
-        roomListeners.add(roomListener);
-    }
-
 
     /**
      * Return all event listeners for this room
@@ -134,27 +118,12 @@ public class Room {
     public void onRoomMessage(SymMessage message) {
 
 
-        for (RoomListener roomListener : roomListeners)
-            roomListener.onRoomMessage(message);
-
         for (RoomEventListener roomEventListener : roomEventListeners)
             roomEventListener.onRoomMessage(message);
 
     }
 
-    @Deprecated
-    public void addListener(RoomListener roomListener) {
-        roomListeners.add(roomListener);
 
-    }
-
-    @Deprecated
-    public void removeListener(RoomListener roomListener) {
-
-        roomListeners.remove(roomListener);
-
-
-    }
 
     public void addEventListener(RoomEventListener roomEventListener) {
         roomEventListeners.add(roomEventListener);

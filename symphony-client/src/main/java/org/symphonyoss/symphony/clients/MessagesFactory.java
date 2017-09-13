@@ -35,7 +35,7 @@ public class MessagesFactory {
 
     public static MessagesClient getClient(SymphonyClient symClient, TYPE type) {
 
-       return MessagesFactory.getClient(symClient,type, ApiVersion.V2);
+       return MessagesFactory.getClient(symClient,type, ApiVersion.getDefault());
     }
 
     public static MessagesClient getClient(SymphonyClient symClient, TYPE type, ApiVersion apiVersion) {

@@ -42,10 +42,13 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 ## Change log and notes
 
 ### V1.1.0 (SNAPSHOT)
+* REMOVED ALL V2 Support and deprecated methods/classes
+* Support for for 1.46.3 or higher
 * SymphonyClient instances default to V4 API
+* SymMessage no longer has option to set Format as everything is PresentationML based moving forward.  Use SymMessage.setMessageText(TEXT) if you want to set simple text value.
 * SymMessage will default setting text message to PresentationML
 * New SymphonyConfigID for disabling services (DISABLE_SERVICES). SendMessage example added.
-* Removing all deprecated code
+* Updated all examples to reflect major changes.
 * Focus on implementing all REST API capabilities
 * Interfaces defined for external frameworks and example implementations
 * Spring support verification

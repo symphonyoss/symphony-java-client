@@ -68,7 +68,7 @@ public class ChatService implements ChatListener {
      */
     public ChatService(SymphonyClient symClient) {
 
-        this(symClient, ApiVersion.V2);
+        this(symClient, ApiVersion.getDefault());
 
 
     }

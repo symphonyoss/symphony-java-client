@@ -48,7 +48,7 @@ public class RoomMembershipClientImpl implements RoomMembershipClient {
     private final SymAuth symAuth;
     private final ApiClient apiClient;
 
-    @SuppressWarnings("unused")
+
     private Logger logger = LoggerFactory.getLogger(RoomMembershipClientImpl.class);
 
     public RoomMembershipClientImpl(SymAuth symAuth, String podUrl) {

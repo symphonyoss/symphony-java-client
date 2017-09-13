@@ -103,8 +103,7 @@ public class IgniteCacheExample {
 
             //A message to send when the BOT comes online.
             SymMessage aMessage = new SymMessage();
-            aMessage.setFormat(SymMessage.Format.TEXT);
-            aMessage.setMessage("Hello master, I'm alive again....");
+            aMessage.setMessageText("Hello master, I'm alive again....");
 
 
             //Creates a Chat session with that will receive the online message.

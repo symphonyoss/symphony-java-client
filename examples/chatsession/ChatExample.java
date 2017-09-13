@@ -102,10 +102,9 @@ public class ChatExample implements ChatListener, ChatServiceListener {
 
             //A message to send when the BOT comes online.
             SymMessage aMessage = new SymMessage();
-            aMessage.setFormat(SymMessage.Format.MESSAGEML);
 
             //V4 will wrap the text in a PresentationMl div.
-            aMessage.setMessageText(ApiVersion.V4,"Hello master, I'm alive again....");
+            aMessage.setMessageText("Hello master, I'm alive again....");
 
 
             //Creates a Chat session with that will receive the online message.
@@ -146,12 +145,11 @@ public class ChatExample implements ChatListener, ChatServiceListener {
         if (message == null)
             return;
 
-        logger.debug("TS: {}\nFrom ID: {}\nSymMessage: {}\nSymMessage Type: {}\nSymMessage Format: {}",
+        logger.debug("TS: {}\nFrom ID: {}\nSymMessage: {}\nSymMessage Type: {}",
                 message.getTimestamp(),
                 message.getFromUserId(),
                 message.getMessage(),
-                message.getMessageType(),
-                message.getFormat().toString());
+                message.getMessageType());
 
         Chat chat = symClient.getChatService().getChatByStream(message.getStreamId());
 

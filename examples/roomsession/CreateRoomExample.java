@@ -29,12 +29,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.client.SymphonyClientFactory;
+import org.symphonyoss.client.events.*;
 import org.symphonyoss.client.exceptions.MessagesException;
 import org.symphonyoss.client.exceptions.RoomException;
 import org.symphonyoss.client.model.Room;
-import org.symphonyoss.client.services.RoomListener;
+import org.symphonyoss.client.services.RoomEventListener;
 import org.symphonyoss.client.services.RoomService;
-import org.symphonyoss.client.services.RoomServiceListener;
+import org.symphonyoss.client.services.RoomServiceEventListener;
 import org.symphonyoss.symphony.agent.model.*;
 import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.clients.model.SymRoomAttributes;
@@ -65,7 +66,7 @@ import org.symphonyoss.symphony.clients.model.SymRoomAttributes;
  * @author Frank Tarsillo
  */
 //NOSONAR
-public class CreateRoomExample implements RoomServiceListener, RoomListener {
+public class CreateRoomExample implements RoomServiceEventListener, RoomEventListener {
 
 
     private final Logger logger = LoggerFactory.getLogger(CreateRoomExample.class);
@@ -107,8 +108,7 @@ public class CreateRoomExample implements RoomServiceListener, RoomListener {
 
             //A message to send when the BOT comes online.
             SymMessage aMessage = new SymMessage();
-            aMessage.setFormat(SymMessage.Format.TEXT);
-            aMessage.setMessage("Hello master, I'm alive again in this room....");
+            aMessage.setMessageText("Hello master, I'm alive again in this room....");
 
 
             //Define the room to create
@@ -123,7 +123,7 @@ public class CreateRoomExample implements RoomServiceListener, RoomListener {
 
 
             //Add the listener
-            symClient.getRoomService().addRoomServiceListener(this);
+            symClient.getRoomService().addRoomServiceEventListener(this);
 
 
             //Register the room to the service
@@ -174,53 +174,54 @@ public class CreateRoomExample implements RoomServiceListener, RoomListener {
     }
 
     @Override
-    public void onRoomCreatedMessage(RoomCreatedMessage roomCreatedMessage) {
+    public void onMessage(SymMessage symMessage) {
 
     }
 
     @Override
-    public void onMessage(SymMessage symMessage) {
+    public void onSymRoomDeactivated(SymRoomDeactivated symRoomDeactivated) {
+
+    }
+
+    @Override
+    public void onSymRoomMemberDemotedFromOwner(SymRoomMemberDemotedFromOwner symRoomMemberDemotedFromOwner) {
+
+    }
+
+    @Override
+    public void onSymRoomMemberPromotedToOwner(SymRoomMemberPromotedToOwner symRoomMemberPromotedToOwner) {
+
+    }
+
+    @Override
+    public void onSymRoomReactivated(SymRoomReactivated symRoomReactivated) {
+
+    }
+
+    @Override
+    public void onSymRoomUpdated(SymRoomUpdated symRoomUpdated) {
+
+    }
+
+    @Override
+    public void onSymUserJoinedRoom(SymUserJoinedRoom symUserJoinedRoom) {
+
+    }
+
+    @Override
+    public void onSymUserLeftRoom(SymUserLeftRoom symUserLeftRoom) {
+
+    }
+
+    @Override
+    public void onSymRoomCreated(SymRoomCreated symRoomCreated) {
 
     }
 
     @Override
     public void onNewRoom(Room room) {
         logger.info("Created new room instance from incoming message..{} {}", room.getId(), room.getRoomDetail().getRoomAttributes().getName());
-        room.addListener(this);
+        room.addEventListener(this);
     }
 
-    @Override
-    public void onRoomDeactivatedMessage(RoomDeactivatedMessage roomDeactivatedMessage) {
-
-    }
-
-    @Override
-    public void onRoomMemberDemotedFromOwnerMessage(RoomMemberDemotedFromOwnerMessage roomMemberDemotedFromOwnerMessage) {
-
-    }
-
-    @Override
-    public void onRoomMemberPromotedToOwnerMessage(RoomMemberPromotedToOwnerMessage roomMemberPromotedToOwnerMessage) {
-
-    }
-
-    @Override
-    public void onRoomReactivatedMessage(RoomReactivatedMessage roomReactivatedMessage) {
-
-    }
-
-    @Override
-    public void onRoomUpdatedMessage(RoomUpdatedMessage roomUpdatedMessage) {
-
-    }
-
-    @Override
-    public void onUserJoinedRoomMessage(UserJoinedRoomMessage userJoinedRoomMessage) {
-
-    }
-
-    @Override
-    public void onUserLeftRoomMessage(UserLeftRoomMessage userLeftRoomMessage) {
-
-    }
 }

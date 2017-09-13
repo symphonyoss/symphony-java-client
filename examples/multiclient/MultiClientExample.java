@@ -69,15 +69,16 @@ public class MultiClientExample {
 
     public MultiClientExample() {
 
+        //Note: You can replace all the properties with two different instances of SymphonyClientConfig in this example
 
-        SymphonyClient symClient1 = SymphonyClientFactory.getClient(SymphonyClientFactory.TYPE.BASIC,
+        SymphonyClient symClient1 = SymphonyClientFactory.getClient(SymphonyClientFactory.TYPE.V4,
                 System.getProperty("bot.user1") + "@" + System.getProperty("bot.domain"),
                 System.getProperty("certs.dir") + System.getProperty("bot.user1") + ".p12",
                 System.getProperty("keystore.password"),
                 System.getProperty("truststore.file"),
                 System.getProperty("truststore.password"));
 
-        SymphonyClient symClient2 = SymphonyClientFactory.getClient(SymphonyClientFactory.TYPE.BASIC,
+        SymphonyClient symClient2 = SymphonyClientFactory.getClient(SymphonyClientFactory.TYPE.V4,
                 System.getProperty("bot.user2") + "@" + System.getProperty("bot.domain"),
                 System.getProperty("certs.dir") + System.getProperty("bot.user2") + ".p12",
                 System.getProperty("keystore.password"),
@@ -93,21 +94,21 @@ public class MultiClientExample {
 
             //A message to send when the BOT comes online.
             SymMessage aMessage = new SymMessage();
-            aMessage.setFormat(SymMessage.Format.TEXT);
 
-            aMessage.setMessage("Hello master from bot1...");
+
+            aMessage.setMessageText("Hello master from bot1...");
 
             symClient1.getMessagesClient().sendMessage(stream1, aMessage);
 
-            aMessage.setMessage("Hello master from bot2...");
+            aMessage.setMessageText("Hello master from bot2...");
 
             symClient2.getMessagesClient().sendMessage(stream2, aMessage);
 
-            aMessage.setMessage("Hello master from bot1..again...");
+            aMessage.setMessageText("Hello master from bot1..again...");
 
             symClient1.getMessagesClient().sendMessage(stream1, aMessage);
 
-            aMessage.setMessage("Hello master from bot2..again and again..");
+            aMessage.setMessageText("Hello master from bot2..again and again..");
 
             symClient2.getMessagesClient().sendMessage(stream2, aMessage);
             symClient2.getMessagesClient().sendMessage(stream2, aMessage);

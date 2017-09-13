@@ -28,14 +28,15 @@ package roomsession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.client.SymphonyClientConfig;
 import org.symphonyoss.client.SymphonyClientFactory;
+import org.symphonyoss.client.events.*;
 import org.symphonyoss.client.exceptions.MessagesException;
 import org.symphonyoss.client.exceptions.RoomException;
 import org.symphonyoss.client.model.Room;
-import org.symphonyoss.client.services.RoomListener;
+import org.symphonyoss.client.services.RoomEventListener;
 import org.symphonyoss.client.services.RoomService;
-import org.symphonyoss.client.services.RoomServiceListener;
-import org.symphonyoss.symphony.agent.model.*;
+import org.symphonyoss.client.services.RoomServiceEventListener;
 import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.pod.model.Stream;
 
@@ -67,7 +68,7 @@ import org.symphonyoss.symphony.pod.model.Stream;
  * @author Frank Tarsillo
  */
 //NOSONAR
-public class RoomServiceExample implements RoomServiceListener, RoomListener {
+public class RoomServiceExample implements RoomServiceEventListener, RoomEventListener {
 
 
     private final Logger logger = LoggerFactory.getLogger(RoomServiceExample.class);
@@ -94,24 +95,16 @@ public class RoomServiceExample implements RoomServiceListener, RoomListener {
         try {
 
 
-            logger.debug("{} {}", System.getProperty("sessionauth.url"),
-                    System.getProperty("keyauth.url"));
-
+            SymphonyClientConfig symphonyClientConfig = new SymphonyClientConfig();
 
             //Create an initialized client
             SymphonyClient symClient = SymphonyClientFactory.getClient(
-                    SymphonyClientFactory.TYPE.BASIC,
-                    System.getProperty("bot.user") + System.getProperty("bot.domain"), //bot email
-                    System.getProperty("certs.dir") + System.getProperty("bot.user") + ".p12", //bot cert
-                    System.getProperty("keystore.password"), //bot cert/keystore pass
-                    System.getProperty("truststore.file"), //truststore file
-                    System.getProperty("truststore.password"));  //truststore password
+                    SymphonyClientFactory.TYPE.V4, symphonyClientConfig);
 
 
             //A message to send when the BOT comes online.
             SymMessage aMessage = new SymMessage();
-            aMessage.setFormat(SymMessage.Format.TEXT);
-            aMessage.setMessage("Hello master, I'm alive again in this room....");
+            aMessage.setMessage("<messageML>Hello master, I'm alive again in this room....</messageML>");
 
 
             Stream stream = new Stream();
@@ -119,12 +112,12 @@ public class RoomServiceExample implements RoomServiceListener, RoomListener {
 
 
             roomService = symClient.getRoomService();
-            roomService.addRoomServiceListener(this);
+            roomService.addRoomServiceEventListener(this);
 
             Room room = new Room();
             room.setStream(stream);
             room.setId(stream.getId());
-            room.addListener(this);
+            room.addEventListener(this);
 
             symClient.getRoomService().joinRoom(room);
 
@@ -136,21 +129,6 @@ public class RoomServiceExample implements RoomServiceListener, RoomListener {
         } catch (RoomException | MessagesException e) {
             logger.error("error", e);
         }
-
-    }
-
-
-    //Chat sessions callback method.
-    public void onChatMessage(Message message) {
-        if (message == null)
-            return;
-
-        logger.debug("TS: {}\nFrom ID: {}\nSymMessage: {}\nSymMessage Type: {}",
-                message.getTimestamp(),
-                message.getFromUserId(),
-                message.getMessage(),
-                message.getMessageType());
-
 
     }
 
@@ -172,54 +150,95 @@ public class RoomServiceExample implements RoomServiceListener, RoomListener {
 
     }
 
+
     @Override
-    public void onRoomCreatedMessage(RoomCreatedMessage roomCreatedMessage) {
+    public void onMessage(SymMessage symMessage) {
+        logger.info("Message detected from stream: {} from: {} message: {}",
+                symMessage.getStreamId(),
+                symMessage.getFromUserId(),
+                symMessage.getMessage());
+    }
+
+    @Override
+    public void onSymRoomDeactivated(SymRoomDeactivated symRoomDeactivated) {
+
+        logger.info("Room Deactivated  stream: {} room: {}",
+                symRoomDeactivated.getStream().getStreamId(),
+                symRoomDeactivated.getStream().getRoomName());
 
     }
 
     @Override
-    public void onMessage(SymMessage symMessage) {
+    public void onSymRoomMemberDemotedFromOwner(SymRoomMemberDemotedFromOwner symRoomMemberDemotedFromOwner) {
+
+        logger.info("Room Member Demoted from Owner stream: {}, room: {}, user: {}:{}",
+                symRoomMemberDemotedFromOwner.getStream().getStreamId(),
+                symRoomMemberDemotedFromOwner.getStream().getRoomName(),
+                symRoomMemberDemotedFromOwner.getAffectedUser().getId(),
+                symRoomMemberDemotedFromOwner.getAffectedUser().getDisplayName());
+
+    }
+
+    @Override
+    public void onSymRoomMemberPromotedToOwner(SymRoomMemberPromotedToOwner symRoomMemberPromotedToOwner) {
+
+        logger.info("Room Member Promoted to Owner stream: {}, room: {}, user: {}:{}",
+                symRoomMemberPromotedToOwner.getStream().getStreamId(),
+                symRoomMemberPromotedToOwner.getStream().getRoomName(),
+                symRoomMemberPromotedToOwner.getAffectedUser().getId(),
+                symRoomMemberPromotedToOwner.getAffectedUser().getDisplayName());
+
+    }
+
+    @Override
+    public void onSymRoomReactivated(SymRoomReactivated symRoomReactivated) {
+
+        logger.info("Room reactivated stream: {}, room: {}",
+                symRoomReactivated.getStream().getStreamId(),
+                symRoomReactivated.getStream().getRoomName());
+    }
+
+    @Override
+    public void onSymRoomUpdated(SymRoomUpdated symRoomUpdated) {
+
+        logger.info("Room updated stream: {}, room: {}, description: {}",
+                symRoomUpdated.getStream().getStreamId(),
+                symRoomUpdated.getStream().getRoomName(),
+                symRoomUpdated.getNewRoomAttributes().getDescription());
+
+    }
+
+    @Override
+    public void onSymUserJoinedRoom(SymUserJoinedRoom symUserJoinedRoom) {
+
+        logger.info("User Joined Room: stream {}, room: {}, user: {}:{}",
+                symUserJoinedRoom.getStream().getStreamId(),
+                symUserJoinedRoom.getStream().getRoomName(),
+                symUserJoinedRoom.getAffectedUser().getId(),
+                symUserJoinedRoom.getAffectedUser().getDisplayName());
+
+    }
+
+    @Override
+    public void onSymUserLeftRoom(SymUserLeftRoom symUserLeftRoom) {
+        logger.info("User Left Room: stream {}, room: {}, user: {}:{}",
+                symUserLeftRoom.getStream().getStreamId(),
+                symUserLeftRoom.getStream().getRoomName(),
+                symUserLeftRoom.getAffectedUser().getId(),
+                symUserLeftRoom.getAffectedUser().getDisplayName());
+
+    }
+
+    @Override
+    public void onSymRoomCreated(SymRoomCreated symRoomCreated) {
 
     }
 
     @Override
     public void onNewRoom(Room room) {
         logger.info("Created new room instance from incoming message..{} {}", room.getId(), room.getRoomDetail().getRoomAttributes().getName());
-        room.addListener(this);
+        room.addEventListener(this);
     }
 
-    @Override
-    public void onRoomDeactivatedMessage(RoomDeactivatedMessage roomDeactivatedMessage) {
 
-    }
-
-    @Override
-    public void onRoomMemberDemotedFromOwnerMessage(RoomMemberDemotedFromOwnerMessage roomMemberDemotedFromOwnerMessage) {
-
-    }
-
-    @Override
-    public void onRoomMemberPromotedToOwnerMessage(RoomMemberPromotedToOwnerMessage roomMemberPromotedToOwnerMessage) {
-
-    }
-
-    @Override
-    public void onRoomReactivatedMessage(RoomReactivatedMessage roomReactivatedMessage) {
-
-    }
-
-    @Override
-    public void onRoomUpdatedMessage(RoomUpdatedMessage roomUpdatedMessage) {
-
-    }
-
-    @Override
-    public void onUserJoinedRoomMessage(UserJoinedRoomMessage userJoinedRoomMessage) {
-
-    }
-
-    @Override
-    public void onUserLeftRoomMessage(UserLeftRoomMessage userLeftRoomMessage) {
-
-    }
 }

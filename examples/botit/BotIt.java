@@ -28,6 +28,8 @@ package botit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.client.SymphonyClientConfig;
+import org.symphonyoss.client.SymphonyClientConfigID;
 import org.symphonyoss.client.SymphonyClientFactory;
 import org.symphonyoss.client.ai.*;
 import org.symphonyoss.client.exceptions.*;
@@ -50,17 +52,16 @@ import java.util.Set;
  * <p>
  * REQUIRED VM Arguments or System Properties:
  * <p>
- * -Dsessionauth.url=https://pod_fqdn:port/sessionauth
- * -Dkeyauth.url=https://pod_fqdn:port/keyauth
- * -Dsymphony.agent.pod.url=https://agent_fqdn:port/pod
- * -Dsymphony.agent.agent.url=https://agent_fqdn:port/agent
- * -Dcerts.dir=/dev/certs/
- * -Dkeystore.password=(Pass)
- * -Dtruststore.file=/dev/certs/server.truststore
- * -Dtruststore.password=(Pass)
- * -Dbot.user=bot.user1
- * -Dbot.domain=@domain.com
+ * -Dtruststore.file=
+ * -Dtruststore.password=password
+ * -Dsessionauth.url=https://(hostname)/sessionauth
+ * -Dkeyauth.url=https://(hostname)/keyauth
  * -Duser.call.home=frank.tarsillo@markit.com
+ * -Duser.cert.password=password
+ * -Duser.cert.file=bot.user2.p12
+ * -Dpod.url=https://(pod host)/pod
+ * -Dagent.url=https://(agent server host)/agent
+ * -Dreceiver.email=bot.user2@markit.com or bot user email
  *
  * @author  Frank Tarsillo
  */
@@ -92,33 +93,24 @@ public class BotIt {
 
         try {
 
-
-            logger.debug("{} {}", System.getProperty("sessionauth.url"),
-                    System.getProperty("keyauth.url"));
+            SymphonyClientConfig symphonyClientConfig = new SymphonyClientConfig();
 
 
             //Create an initialized client
             symClient = SymphonyClientFactory.getClient(
-                    SymphonyClientFactory.TYPE.BASIC,
-                    System.getProperty("bot.user") + System.getProperty("bot.domain"), //bot email
-                    System.getProperty("certs.dir") + System.getProperty("bot.user") + ".p12", //bot cert
-                    System.getProperty("keystore.password"), //bot cert/keystore pass
-                    System.getProperty("truststore.file"), //truststore file
-                    System.getProperty("truststore.password"));  //truststore password
-
+                    SymphonyClientFactory.TYPE.V4, symphonyClientConfig);
 
 
             //A message to send when the BOT comes online.
             SymMessage aMessage = new SymMessage();
-            aMessage.setFormat(SymMessage.Format.TEXT);
-            aMessage.setMessage("Hello master, I'm alive again....");
+            aMessage.setMessageText("Hello master, I'm alive again....");
 
 
             //Creates a Chat session with that will receive the online message.
             Chat chat = new Chat();
             chat.setLocalUser(symClient.getLocalUser());
             Set<SymUser> remoteUsers = new HashSet<>();
-            remoteUsers.add(symClient.getUsersClient().getUserFromEmail(System.getProperty("user.call.home")));
+            remoteUsers.add(symClient.getUsersClient().getUserFromEmail(symphonyClientConfig.get(SymphonyClientConfigID.RECEIVER_EMAIL)));
             chat.setRemoteUsers(remoteUsers);
 
             //***********************************************
@@ -210,7 +202,7 @@ public class BotIt {
             symUsers.add(message.getSymUser());
 
 
-            aiResponse = new AiResponse("Received command..." + command.getCommand(), SymMessage.Format.TEXT, symUsers);
+            aiResponse = new AiResponse("Received command..." + command.getCommand(), symUsers);
             responseSequence.addResponse(aiResponse);
             return responseSequence;
 
@@ -237,7 +229,7 @@ public class BotIt {
             symUsers.add(message.getSymUser());
 
 
-            aiResponse = new AiResponse("Received command2..." + command.getCommand(), SymMessage.Format.TEXT, symUsers);
+            aiResponse = new AiResponse("Received command2..." + command.getCommand(), symUsers);
             responseSequence.addResponse(aiResponse);
             return responseSequence;
 

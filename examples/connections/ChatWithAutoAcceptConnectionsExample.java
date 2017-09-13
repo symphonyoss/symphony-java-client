@@ -110,7 +110,6 @@ public class ChatWithAutoAcceptConnectionsExample implements ChatListener, ChatS
 
             //A message to send when the BOT comes online.
             SymMessage aMessage = new SymMessage();
-            aMessage.setFormat(SymMessage.Format.MESSAGEML);
             aMessage.setMessage("<messageML>Hello <b>master</b>, I'm alive again....</messageML>");
 
 

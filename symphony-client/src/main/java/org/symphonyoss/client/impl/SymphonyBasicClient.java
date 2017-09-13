@@ -229,28 +229,10 @@ public class SymphonyBasicClient implements SymphonyClient {
     /**
      * @param agentUrl Agent URL
      */
-    @SuppressWarnings("unused")
     public void setAgentUrl(String agentUrl) {
         this.agentUrl = agentUrl;
     }
 
-    /**
-     * @return Service URL which can be either the Agent URL or POD URL
-     */
-    @Override
-    @Deprecated
-    public String getServiceUrl() {
-        return podUrl;
-    }
-
-    /**
-     * @param podUrl Service URL which can be either the Agent URL or POD URL
-     */
-    @SuppressWarnings("unused")
-    @Deprecated
-    public void setServiceUrl(String podUrl) {
-        this.podUrl = podUrl;
-    }
 
     /**
      * @return Service URL which can be either the Agent URL or POD URL
