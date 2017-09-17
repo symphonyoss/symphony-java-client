@@ -54,3 +54,5 @@ symphony-java-client.iml
 **/.project
 **/.classpath
 /examples/symphony-client-examples.iml
+/temp.doc
+/ping_auth.png

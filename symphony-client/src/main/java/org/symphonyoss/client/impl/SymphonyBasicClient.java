@@ -101,13 +101,9 @@ public class SymphonyBasicClient implements SymphonyClient {
 
         AuthenticationClient authClient = new AuthenticationClient(
                 initParams.get(SymphonyClientConfigID.SESSIONAUTH_URL),
-                initParams.get(SymphonyClientConfigID.KEYAUTH_URL));
+                initParams.get(SymphonyClientConfigID.KEYAUTH_URL),
+                httpClient);
 
-        authClient.setKeystores(
-                initParams.get(SymphonyClientConfigID.TRUSTSTORE_FILE),
-                initParams.get(SymphonyClientConfigID.TRUSTSTORE_PASSWORD),
-                initParams.get(SymphonyClientConfigID.USER_CERT_FILE),
-                initParams.get(SymphonyClientConfigID.USER_CERT_PASSWORD));
 
         SymAuth symAuth = authClient.authenticate();
 

@@ -31,10 +31,7 @@ import org.symphonyoss.client.exceptions.StreamsException;
 import org.symphonyoss.client.exceptions.SymException;
 import org.symphonyoss.client.model.Room;
 import org.symphonyoss.symphony.agent.model.*;
-import org.symphonyoss.symphony.clients.model.ApiVersion;
-import org.symphonyoss.symphony.clients.model.SymMessage;
-import org.symphonyoss.symphony.clients.model.SymRoomAttributes;
-import org.symphonyoss.symphony.clients.model.SymRoomDetail;
+import org.symphonyoss.symphony.clients.model.*;
 import org.symphonyoss.symphony.pod.model.Stream;
 
 import java.util.Map;
@@ -57,6 +54,7 @@ public class RoomService implements RoomServiceEventListener {
 
 
     private final ConcurrentHashMap<String, Room> roomsByStream = new ConcurrentHashMap<>();
+
     private final SymphonyClient symClient;
     private final Logger logger = LoggerFactory.getLogger(RoomService.class);
     private final Set<RoomServiceEventListener> roomServiceEventListeners = ConcurrentHashMap.newKeySet();
@@ -137,12 +135,26 @@ public class RoomService implements RoomServiceEventListener {
      * Return registered room by provided stream.  The room object must be registered to the service through the
      * {@link #joinRoom(Room)} method.
      *
-     * @param stream Stream ID as key to lookup registered room
+     * @param streamId Stream Room ID as key to lookup registered room
      * @return {@link Room} based on stream ID provided
      */
-    public Room getRoom(String stream) {
+    public Room getRoom(String streamId) {
 
-        return roomsByStream.get(stream);
+        return roomsByStream.get(streamId);
+    }
+
+
+
+    /**
+     * Return registered room by provided stream.  The room object must be registered to the service through the
+     * {@link #joinRoom(Room)} method.
+     *
+     * @param symStream Stream ID as key to lookup registered room
+     * @return {@link Room} based on stream ID provided
+     */
+    public Room getRoom(SymStream symStream) {
+
+        return roomsByStream.get(symStream.getStreamId());
     }
 
     /**
@@ -165,6 +177,9 @@ public class RoomService implements RoomServiceEventListener {
 
             //Register room object to internal cache
             roomsByStream.put(room.getStreamId(), room);
+
+
+
         } catch (StreamsException e) {
             logger.error("Failed to obtain room detail...", e);
             throw new RoomException("Failed to obtain room detail for requested room: " + room.getStreamId(), e);

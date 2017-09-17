@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.common.Constants;
 import org.symphonyoss.client.exceptions.DataFeedException;
+import org.symphonyoss.client.exceptions.SymFault;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.symphony.agent.api.DatafeedApi;
 import org.symphonyoss.symphony.agent.invoker.ApiClient;
@@ -100,6 +101,9 @@ public class DataFeedClientImpl implements DataFeedClient {
         } catch (ApiException e) {
             throw new DataFeedException("Could not start datafeed..",
                     datafeedApi.getApiClient().getBasePath(), e.getCode(), e);
+        } catch(RuntimeException ef){
+            throw new DataFeedException("Could not start datafeed due to network issue..",
+                    datafeedApi.getApiClient().getBasePath(),500, ef);
         }
     }
 
@@ -124,6 +128,9 @@ public class DataFeedClientImpl implements DataFeedClient {
         } catch (ApiException e) {
             throw new DataFeedException("Failed to retrieve messages from datafeed...",
                     datafeedApi.getApiClient().getBasePath(), e.getCode(), e);
+        }catch(RuntimeException ef){
+            throw new DataFeedException("Failed to retrieve messages due to network issue..",
+                    datafeedApi.getApiClient().getBasePath(),500, ef);
         }
 
 

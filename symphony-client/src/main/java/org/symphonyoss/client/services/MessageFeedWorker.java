@@ -28,9 +28,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.client.common.Constants;
-import org.symphonyoss.client.exceptions.DataFeedException;
-import org.symphonyoss.symphony.agent.model.Datafeed;
 import org.symphonyoss.client.events.SymEvent;
+import org.symphonyoss.client.exceptions.DataFeedException;
+import org.symphonyoss.client.exceptions.SymFault;
+import org.symphonyoss.symphony.agent.model.Datafeed;
 import org.symphonyoss.symphony.clients.model.ApiVersion;
 
 import java.util.List;
@@ -72,11 +73,11 @@ class MessageFeedWorker implements Runnable {
         //noinspection InfiniteLoopStatement
         while (!shutdown) {
 
-            //Make sure its active
-            initDatafeed();
+                //Make sure its active
+                initDatafeed();
 
-            //Poll it
-            readDatafeed();
+                //Poll it
+                readDatafeed();
 
 
         }
@@ -97,11 +98,10 @@ class MessageFeedWorker implements Runnable {
                 datafeed = symClient.getDataFeedClient().createDatafeed(ApiVersion.V4);
 
                 break;
-            } 
-            catch( DataFeedException e) {
+            } catch (DataFeedException e) {
 
         	/*
-        	 * TODO:
+             * TODO:
         	 * This seems wrong to me, if the result of this is 404
         	 * or some other non-transient error then there is hardly
         	 * any point re-trying and a fault should be propagated
@@ -142,15 +142,14 @@ class MessageFeedWorker implements Runnable {
 
             List<SymEvent> symEvents = symClient.getDataFeedClient().getEventsFromDatafeed(datafeed);
 
-            if(symEvents!=null){
+            if (symEvents != null) {
 
-               symEvents.forEach(dataFeedListener::onEvent);
+                symEvents.forEach(dataFeedListener::onEvent);
 
             }
 
 
-
-        } catch (Exception e) {
+        } catch (DataFeedException e) {
             logger.error("Failed to create read datafeed from pod, please check connection..resetting.", e);
             datafeed = null;
 
