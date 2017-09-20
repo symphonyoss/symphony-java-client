@@ -92,7 +92,7 @@ public class PresentationMlExample implements ChatListener, ChatServiceListener 
 
         try {
 
-            SymphonyClientConfig symphonyClientConfig = new SymphonyClientConfig();
+            SymphonyClientConfig symphonyClientConfig = new SymphonyClientConfig(true);
 
             //Create an initialized client
             symClient = SymphonyClientFactory.getClient(

@@ -95,7 +95,7 @@ public class ChatWithAutoAcceptConnectionsExample implements ChatListener, ChatS
 
             //Create an initialized client
             symClient = SymphonyClientFactory.getClient(
-                    SymphonyClientFactory.TYPE.BASIC,new SymphonyClientConfig());  //truststore password
+                    SymphonyClientFactory.TYPE.BASIC,new SymphonyClientConfig(true));  //truststore password
 
 
             //Will notify the bot of new Chat conversations.

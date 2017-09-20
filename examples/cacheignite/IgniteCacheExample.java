@@ -96,7 +96,7 @@ public class IgniteCacheExample {
 
             //Create an initialized client
             symClient = SymphonyClientFactory.getClient(
-                    SymphonyClientFactory.TYPE.BASIC,new SymphonyClientConfig());  //truststore password
+                    SymphonyClientFactory.TYPE.BASIC,new SymphonyClientConfig(true));  //truststore password
 
 
             symClient.setCache(new IgniteUserCache(symClient));

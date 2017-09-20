@@ -92,7 +92,7 @@ public class RoomSearchExample {
 
 
             //Create an initialized client
-            SymphonyClient symClient = SymphonyClientFactory.getClient(SymphonyClientFactory.TYPE.V4,new SymphonyClientConfig());
+            SymphonyClient symClient = SymphonyClientFactory.getClient(SymphonyClientFactory.TYPE.V4,new SymphonyClientConfig(true));
 
 
             SymRoomSearchCriteria symRoomSearchCriteria = new SymRoomSearchCriteria();

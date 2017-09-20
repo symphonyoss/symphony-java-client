@@ -79,25 +79,30 @@ public class SymphonyBasicClient implements SymphonyClient {
     private final long SYMAUTH_REFRESH_TIME = Long.parseLong(System.getProperty(Constants.SYMAUTH_REFRESH_TIME, "7200000"));
     SymUserCache symUserCache;
     private ApiVersion apiVersion = ApiVersion.V4;
-    private SymphonyClientConfig config;
+
 
     public SymphonyBasicClient() {
-       this(ApiVersion.V4);
+        this(ApiVersion.V4);
     }
 
 
     public SymphonyBasicClient(ApiVersion apiVersion) {
 
         this.apiVersion = apiVersion;
-        config = new SymphonyClientConfig();
 
+
+    }
+
+    @Override
+    public void init(SymphonyClientConfig config) throws InitException, AuthenticationException {
+        init(null, config);
     }
 
 
     @Override
     public void init(Client httpClient, SymphonyClientConfig initParams) throws InitException, AuthenticationException {
         this.defaultHttpClient = httpClient;
-        this.config = initParams;
+
 
         AuthenticationClient authClient = new AuthenticationClient(
                 initParams.get(SymphonyClientConfigID.SESSIONAUTH_URL),
@@ -107,20 +112,17 @@ public class SymphonyBasicClient implements SymphonyClient {
 
         SymAuth symAuth = authClient.authenticate();
 
+
+        boolean disableServices = Boolean.parseBoolean(initParams.get(SymphonyClientConfigID.DISABLE_SERVICES, "False"));
+
         init(
                 symAuth,
                 initParams.get(SymphonyClientConfigID.USER_EMAIL),
                 initParams.get(SymphonyClientConfigID.AGENT_URL),
-                initParams.get(SymphonyClientConfigID.POD_URL)
+                initParams.get(SymphonyClientConfigID.POD_URL),
+                disableServices
         );
     }
-
-
-    @Override
-    public void init(SymphonyClientConfig config) throws InitException, AuthenticationException {
-        init(null, config);
-    }
-
 
     /**
      * Initialize client with required parameters.
@@ -133,6 +135,43 @@ public class SymphonyBasicClient implements SymphonyClient {
      */
     @Override
     public void init(SymAuth symAuth, String email, String agentUrl, String podUrl) throws InitException {
+
+
+        init(symAuth, email, agentUrl, podUrl, false);
+
+
+    }
+
+
+    /**
+     * Initialize client with required parameters.  Services will be enabled by default.
+     * @param httpClient Custom http client to use when initiating the client
+     * @param symAuth  Contains valid key and session tokens generated from AuthenticationClient.
+     * @param email    Email address of the BOT
+     * @param agentUrl The Agent URL
+     * @param podUrl   The Service URL (in most cases it's the POD URL)
+     * @throws InitException Failure of a specific service most likely due to connectivity issues
+     */
+    @Override
+    public void init(Client httpClient, SymAuth symAuth, String email, String agentUrl, String podUrl) throws InitException {
+
+        this.defaultHttpClient = httpClient;
+        init(symAuth, email, agentUrl, podUrl);
+    }
+
+
+    /**
+     * Initialize client with required parameters.
+     *
+     * @param symAuth  Contains valid key and session tokens generated from AuthenticationClient.
+     * @param email    Email address of the BOT
+     * @param agentUrl The Agent URL
+     * @param podUrl   The Service URL (in most cases it's the POD URL)
+     * @param disableServices Disable all real-time services (MessageService, RoomService, ChatService)
+     * @throws InitException Failure of a specific service most likely due to connectivity issues
+     */
+    @Override
+    public void init(SymAuth symAuth, String email, String agentUrl, String podUrl, boolean disableServices) throws InitException {
 
         String NOT_LOGGED_IN_MESSAGE = "Currently not logged into Agent, please check certificates and tokens.";
         if (symAuth == null || symAuth.getSessionToken() == null || symAuth.getKeyToken() == null)
@@ -163,7 +202,7 @@ public class SymphonyBasicClient implements SymphonyClient {
         try {
 
 
-            if (config != null && !Boolean.valueOf(config.get(SymphonyClientConfigID.DISABLE_SERVICES))) {
+            if (!disableServices) {
                 messageService = new MessageService(this, apiVersion);
                 chatService = new ChatService(this, apiVersion);
                 roomService = new RoomService(this, apiVersion);
@@ -197,12 +236,6 @@ public class SymphonyBasicClient implements SymphonyClient {
     }
 
 
-    @Override
-    public void init(Client httpClient, SymAuth symAuth, String email, String agentUrl, String podUrl) throws InitException {
-
-        this.defaultHttpClient = httpClient;
-        init(symAuth, email, agentUrl, podUrl);
-    }
 
     @Override
     public SymAuth getSymAuth() {

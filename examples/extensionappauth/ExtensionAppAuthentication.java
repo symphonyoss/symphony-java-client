@@ -89,7 +89,7 @@ public class ExtensionAppAuthentication  {
 
 
 
-            SymphonyClientConfig symphonyClientConfig = new SymphonyClientConfig();
+            SymphonyClientConfig symphonyClientConfig = new SymphonyClientConfig(true);
 
             try {
                 Client httpClient = CustomHttpClient.getClient(

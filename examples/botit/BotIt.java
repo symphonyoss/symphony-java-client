@@ -93,7 +93,8 @@ public class BotIt {
 
         try {
 
-            SymphonyClientConfig symphonyClientConfig = new SymphonyClientConfig();
+            SymphonyClientConfig symphonyClientConfig = new SymphonyClientConfig(true);
+
 
 
             //Create an initialized client

@@ -91,7 +91,7 @@ public class StreamsExample {
 
             //Create an initialized client
             symClient = SymphonyClientFactory.getClient(
-                    SymphonyClientFactory.TYPE.V4,new SymphonyClientConfig());  //truststore password
+                    SymphonyClientFactory.TYPE.V4,new SymphonyClientConfig(true));  //truststore password
 
             SymAdminStreamFilter symAdminStreamFilter = new SymAdminStreamFilter();
 

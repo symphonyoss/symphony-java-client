@@ -43,6 +43,8 @@ import javax.ws.rs.client.Client;
 
 public interface SymphonyClient {
 
+    void init(SymAuth symAuth, String email, String agentUrl, String podUrl, boolean disableServices) throws InitException;
+
     /**
      * Initialize client with required parameters.
      *

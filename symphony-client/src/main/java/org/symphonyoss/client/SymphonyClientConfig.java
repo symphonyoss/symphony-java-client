@@ -38,7 +38,20 @@ public class SymphonyClientConfig {
 
     private Properties config = new Properties();
 
+    private boolean initialized;
+
     public SymphonyClientConfig() {
+
+    }
+
+    public SymphonyClientConfig(boolean load) {
+
+        if(load)
+            load();
+
+    }
+
+    public void load() throws ProgramFault {
         String configFile = get(SymphonyClientConfigID.SYMPHONY_CONFIG_FILE);
 
         if (configFile != null) {
@@ -47,7 +60,7 @@ public class SymphonyClientConfig {
             } catch (FileNotFoundException e) {
                 throw new ProgramFault("Config file \"" + configFile + "\" not found");
             } catch (IOException e) {
-                throw new ProgramFault("Config file \"" + configFile + "\" cannot be loaded", e);
+                throw new ProgramFault("Config file \"" + configFile + "\" cannot be built", e);
             }
         }
 
@@ -71,6 +84,9 @@ public class SymphonyClientConfig {
         if (s != null)
             throw new ProgramFault("The following required properties are undefined:\n"
                     + s.toString());
+
+
+        initialized = true;
     }
 
     public String get(SymphonyClientConfigID id) {
@@ -86,6 +102,15 @@ public class SymphonyClientConfig {
             value = System.getProperty(id.getAltName());
 
         return value;
+    }
+
+
+    public String get(SymphonyClientConfigID id, String defaultValue){
+
+        String value = get(id);
+        return (value!=null)? value:defaultValue;
+
+
     }
 
     public String getRequired(SymphonyClientConfigID id) {
@@ -120,8 +145,12 @@ public class SymphonyClientConfig {
 
     public void set(SymphonyClientConfigID id, String value) {
 
-         config.setProperty(id.getPropName(),value);
+        config.setProperty(id.getPropName(), value);
 
+    }
+
+    public boolean isInitialized() {
+        return initialized;
     }
 
 }

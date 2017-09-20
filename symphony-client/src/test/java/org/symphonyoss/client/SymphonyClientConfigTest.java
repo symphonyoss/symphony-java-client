@@ -35,7 +35,7 @@ public class SymphonyClientConfigTest {
 	@Test
     public void configTest() {
 		try {
-			new SymphonyClientConfig();
+			new SymphonyClientConfig(true);
 			fail("Expected ProgramFault with no valid config");
 		}
 		catch(ProgramFault e)
@@ -131,6 +131,6 @@ public class SymphonyClientConfigTest {
 			fail("Expected symphony.properties with SYMPHONY_CONFIG_FILE");
 		}
 		
-		assertEquals("https://YOURNAME-api.symphony.com:8444/sessionauth", config.get(SESSIONAUTH_NAME));
+		assertEquals("https://corporate-api.symphony.com:8444/sessionauth", config.get(SESSIONAUTH_NAME));
     }
 }

@@ -95,7 +95,7 @@ public class RoomServiceExample implements RoomServiceEventListener, RoomEventLi
         try {
 
 
-            SymphonyClientConfig symphonyClientConfig = new SymphonyClientConfig();
+            SymphonyClientConfig symphonyClientConfig = new SymphonyClientConfig(true);
 
             //Create an initialized client
             SymphonyClient symClient = SymphonyClientFactory.getClient(

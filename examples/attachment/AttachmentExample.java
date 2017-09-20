@@ -103,7 +103,9 @@ public class AttachmentExample implements ChatListener, ChatServiceListener {
             logger.info("Attachment example starting...");
 
 
-            SymphonyClientConfig symphonyClientConfig = new SymphonyClientConfig();
+            SymphonyClientConfig symphonyClientConfig = new SymphonyClientConfig(true);
+
+
 
             //Create an initialized client
             symClient = SymphonyClientFactory.getClient(
