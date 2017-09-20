@@ -254,7 +254,7 @@ public class SjcTestBot implements ChatListener, ChatServiceListener, RoomEventL
 
 
             SymMessage message = new SymMessage();
-            message.setMessage(SymphonyClientIT.PRESENCE_COMMAND_MESSAGE + " " + presence.getCategory().toString());
+            message.setMessageText(SymphonyClientIT.PRESENCE_COMMAND_MESSAGE + " " + presence.getCategory().toString());
 
             sendResponse(message);
 
