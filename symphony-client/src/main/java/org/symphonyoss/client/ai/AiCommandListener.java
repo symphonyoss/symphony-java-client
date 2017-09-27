@@ -294,16 +294,16 @@ public class AiCommandListener implements ChatListener {
 
         if (chat != null) {
 
-            if (listeners.containsKey(chat.getStream().getId())) {
+            if (listeners.containsKey(chat.getStream().getStreamId())) {
 
-                listeners.get(chat.getStream().getId()).add(this);
+                listeners.get(chat.getStream().getStreamId()).add(this);
 
             } else {
 
                 HashSet<AiCommandListener> newChat = new HashSet<>();
                 newChat.add(this);
 
-                listeners.put(chat.getStream().getId(), newChat);
+                listeners.put(chat.getStream().getStreamId(), newChat);
 
             }
 
@@ -325,12 +325,12 @@ public class AiCommandListener implements ChatListener {
             chat.removeListener(this);
 
             if (chat.getStream() != null
-                    && chat.getStream().getId() != null) {
+                    && chat.getStream().getStreamId() != null) {
 
-                if (listeners.containsKey(chat.getStream().getId())
-                        && listeners.get(chat.getStream().getId()).contains(this)) {
+                if (listeners.containsKey(chat.getStream().getStreamId())
+                        && listeners.get(chat.getStream().getStreamId()).contains(this)) {
 
-                    listeners.get(chat.getStream().getId()).remove(this);
+                    listeners.get(chat.getStream().getStreamId()).remove(this);
 
                 }
 
@@ -354,7 +354,7 @@ public class AiCommandListener implements ChatListener {
                 logger.error("Could not put stream in push hash. " +
                         "Chat stream was null value.", e);
 
-            } else if (chat.getStream().getId() == null) {
+            } else if (chat.getStream().getStreamId() == null) {
                 logger.error("Could not put stream in push hash. " +
                         "Chat stream id was null value.", e);
             }

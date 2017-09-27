@@ -28,7 +28,7 @@ package org.symphonyoss.symphony.clients.model;
  * @author Frank Tarsillo on 6/26/17.
  */
 public enum ApiVersion {
-    V1,V3,V4;
+    V1,V2,V3,V4;
 
 
     public static ApiVersion getDefault(){

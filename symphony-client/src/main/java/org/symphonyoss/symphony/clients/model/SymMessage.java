@@ -66,6 +66,8 @@ public class SymMessage {
 
     private File attachementThumbnail = null;
 
+    private ApiVersion apiVersion = null;
+
     public SymUser getSymUser() {
         return symUser;
     }
@@ -177,6 +179,18 @@ public class SymMessage {
     }
 
 
+    public ApiVersion getApiVersion() {
+
+        if(apiVersion==null)
+            apiVersion = ApiVersion.V4;
+
+        return apiVersion;
+    }
+
+    public void setApiVersion(ApiVersion apiVersion) {
+        this.apiVersion = apiVersion;
+    }
+
     public static SymMessage toSymMessage(V2BaseMessage v2BaseMessage) {
 
 
@@ -234,13 +248,19 @@ public class SymMessage {
 
     public void setMessageText(ApiVersion apiVersion, String text) {
 
-        //Currently at V4 latest, so not checking version.
-        setMessage(MLTypes.START_PML + text + MLTypes.END_PML);
+
+        if (apiVersion != null && !apiVersion.equals(ApiVersion.V2)) {
+            setMessage(MLTypes.START_PML + text + MLTypes.END_PML);
+        } else {
+            setMessageType("MESSAGEML");
+            setMessage(MLTypes.START_ML + text + MLTypes.END_ML);
+        }
+
 
     }
 
     public void setMessageText(String text){
-        setMessageText(null,text);
+        setMessageText(apiVersion,text);
 
     }
 

@@ -35,6 +35,7 @@ import org.symphonyoss.client.model.Chat;
 import org.symphonyoss.client.model.Room;
 import org.symphonyoss.client.services.*;
 import org.symphonyoss.symphony.agent.model.*;
+import org.symphonyoss.symphony.clients.model.ApiVersion;
 import org.symphonyoss.symphony.clients.model.SymAttachmentInfo;
 import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.clients.model.SymUserConnection;
@@ -64,7 +65,7 @@ public class SjcTestBot implements ChatListener, ChatServiceListener, RoomEventL
 
     public SjcTestBot() throws SymException {
 
-        symphonyClient = SymphonyClientFactory.getClient(SymphonyClientFactory.TYPE.BASIC,
+        symphonyClient = SymphonyClientFactory.getClient(SymphonyClientFactory.TYPE.V4,
                 System.getProperty("bot.user.email", "sjc.testbot"),
                 System.getProperty("bot.user.cert.file"),
                 System.getProperty("bot.user.cert.password"),
@@ -254,6 +255,7 @@ public class SjcTestBot implements ChatListener, ChatServiceListener, RoomEventL
 
 
             SymMessage message = new SymMessage();
+         //  message.setApiVersion(ApiVersion.V2);
             message.setMessageText(SymphonyClientIT.PRESENCE_COMMAND_MESSAGE + " " + presence.getCategory().toString());
 
             sendResponse(message);
@@ -273,6 +275,7 @@ public class SjcTestBot implements ChatListener, ChatServiceListener, RoomEventL
         try {
 
             symMessage.setStreamId(testClientStreamId);
+
             symphonyClient.getMessageService().sendMessage(sjcClient, symMessage);
         } catch (MessagesException e) {
             logger.error("Could not send onRoomMessage reply", e);

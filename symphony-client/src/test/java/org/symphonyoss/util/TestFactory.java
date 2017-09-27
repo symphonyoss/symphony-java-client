@@ -30,6 +30,7 @@ import org.symphonyoss.client.SymphonyClientFactory;
 import org.symphonyoss.client.model.Chat;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.symphony.authenticator.model.Token;
+import org.symphonyoss.symphony.clients.model.SymStream;
 import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.pod.model.Stream;
 
@@ -76,8 +77,8 @@ public class TestFactory {
 
         chat.setRemoteUsers(remoteUsers);
 
-        Stream stream = new Stream();
-        stream.setId("ABCDEFGHIJKLMNOPQRSTUV");
+        SymStream stream = new SymStream();
+        stream.setStreamId("ABCDEFGHIJKLMNOPQRSTUV");
         chat.setStream(stream);
 
         return chat;

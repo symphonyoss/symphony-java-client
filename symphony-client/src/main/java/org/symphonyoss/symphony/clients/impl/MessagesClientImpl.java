@@ -112,7 +112,6 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
     }
 
 
-
     /**
      * Send message to stream
      *
@@ -131,6 +130,8 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
 
     }
 
+
+
     /**
      * Send message to SymStream
      *
@@ -142,12 +143,29 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
     @Override
     public SymMessage sendMessage(SymStream stream, SymMessage message) throws MessagesException {
 
-
-        return  sendMessageV4(stream, message);
-
+        return (ApiVersion.V4 == message.getApiVersion()) ? sendMessageV4(stream, message) : sendMessageV2(stream, message);
 
     }
 
+
+
+    /**
+     * Retrieve historical messages from a given SymStream.  This is NOT a blocking call.
+     *
+     * @param symStream   Stream to retrieve messages from
+     * @param since       Date (long) from point in time
+     * @param offset      Offset
+     * @param maxMessages Maximum number of messages to retrieve from the specified time (since)
+     *
+     * @return List of messages
+     * @throws MessagesException Exception caused by Symphony API calls
+     */
+    @Override
+    public List<SymMessage> getMessagesFromStream(SymStream symStream, Long since, Integer offset, Integer maxMessages, ApiVersion apiVersion1) throws MessagesException {
+
+        return (ApiVersion.V4==apiVersion1)?getMessagesFromStreamV4(symStream, since, offset, maxMessages): getMessagesFromStreamV2(symStream, since, offset, maxMessages);
+
+    }
 
     /**
      * Retrieve historical messages from a given SymStream.  This is NOT a blocking call.
@@ -223,6 +241,43 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
 
 
 
+    /**
+     * Retrieve historical messages from a given stream.  This is NOT a blocking call.
+     *
+     * @param stream      Stream to retrieve messages from
+     * @param since       Date (long) from point in time
+     * @param offset      Offset
+     * @param maxMessages Maximum number of messages to retrieve from the specified time (since)
+     * @return List of messages
+     * @throws MessagesException Exception caused by Symphony API calls
+     */
+    private List<SymMessage> getMessagesFromStreamV2(SymStream stream, Long since, Integer offset, Integer maxMessages) throws MessagesException {
+
+        if (stream == null) {
+            throw new NullPointerException("Stream submission was not provided..");
+        }
+
+
+        MessagesApi messagesApi = new MessagesApi(apiClient);
+
+        V2MessageList v2MessageList;
+        try {
+            v2MessageList = messagesApi.v2StreamSidMessageGet(stream.getStreamId(), since, symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken(), offset, maxMessages);
+        } catch (ApiException e) {
+            throw new MessagesException("Failed to retrieve messages from stream: " + stream,
+                    new RestException(messagesApi.getApiClient().getBasePath(), e.getCode(), e));
+        }
+
+        List<SymMessage> symMessageList = new ArrayList<>();
+
+        if (v2MessageList != null) {
+            symMessageList.addAll(v2MessageList.stream().filter(v2BaseMessage -> v2BaseMessage instanceof V2Message).map(SymMessage::toSymMessage).collect(Collectors.toList()));
+        }
+
+
+        return symMessageList;
+    }
+
 
     /**
      * Send new v4message to stream
@@ -263,7 +318,45 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
     }
 
 
+    /**
+     * Send  v2message to stream
+     *
+     * @param stream  Stream to send message to
+     * @param message Message to send
+     * @return Message sent
+     * @throws MessagesException Exception caused by Symphony API calls
+     */
+    private SymMessage sendMessageV2(SymStream stream, SymMessage message) throws MessagesException {
 
+        if (stream == null || message == null) {
+            throw new NullPointerException("Stream or message submission was not provided..");
+        }
+
+        MessagesApi messagesApi = new MessagesApi(apiClient);
+
+        V2MessageSubmission messageSubmission = new V2MessageSubmission();
+
+        messageSubmission.setMessage(message.getMessage());
+        messageSubmission.setFormat(
+
+                V2MessageSubmission.FormatEnum.MESSAGEML
+        );
+        messageSubmission.setAttachments(SymAttachmentInfo.toV2AttachmentsInfo(message.getAttachments()));
+
+
+        try {
+            return SymMessage.toSymMessage(messagesApi.v2StreamSidMessageCreatePost(stream.getStreamId(), symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken(), messageSubmission));
+        } catch (ApiException e) {
+            throw new MessagesException("Failed to send message to stream: " + stream.getStreamId() + ": " + message.getMessage(),
+                    new RestException(messagesApi.getApiClient().getBasePath(), e.getCode(), e));
+        }
+
+    }
 
 
 }
+
+
+
+
+

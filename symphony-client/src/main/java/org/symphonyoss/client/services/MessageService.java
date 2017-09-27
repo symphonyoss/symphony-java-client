@@ -115,6 +115,7 @@ public class MessageService implements DataFeedListener {
      * @param room       Room object
      * @param symMessage Message to send to the room
      * @throws MessagesException Generated from API calls into Symphony
+     * @return Symphony message
      */
     public SymMessage sendMessage(Room room, SymMessage symMessage) throws MessagesException {
 
@@ -129,6 +130,7 @@ public class MessageService implements DataFeedListener {
      * @param chat       Chat object representing conversation
      * @param symMessage Message to send to the conversation
      * @throws MessagesException Generated from API calls into Symphony
+     * @return Symphony Message
      */
     public SymMessage sendMessage(Chat chat, SymMessage symMessage) throws MessagesException {
 
@@ -143,6 +145,7 @@ public class MessageService implements DataFeedListener {
      * @param email      email of destination user
      * @param symMessage Message to send
      * @throws MessagesException Generated from API calls into Symphony
+     * @return Symphony message
      */
     public SymMessage sendMessage(String email, SymMessage symMessage) throws MessagesException {
 

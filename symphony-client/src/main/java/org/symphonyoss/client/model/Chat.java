@@ -24,8 +24,9 @@ package org.symphonyoss.client.model;
 
 import org.symphonyoss.client.services.ChatListener;
 import org.symphonyoss.symphony.clients.model.SymMessage;
+import org.symphonyoss.symphony.clients.model.SymStream;
 import org.symphonyoss.symphony.clients.model.SymUser;
-import org.symphonyoss.symphony.pod.model.Stream;
+
 
 import java.util.Objects;
 import java.util.Set;
@@ -42,7 +43,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Chat {
     private Set<SymUser> remoteUsers;
     private SymUser localUser;
-    private Stream stream;
+    private SymStream stream;
     private String streamId;
 
 
@@ -63,9 +64,9 @@ public class Chat {
         this.streamId = streamId;
 
         if (stream == null)
-            stream = new Stream();
+            stream = new SymStream();
 
-        stream.setId(streamId);
+        stream.setStreamId(streamId);
 
     }
 
@@ -86,14 +87,14 @@ public class Chat {
         this.localUser = localUser;
     }
 
-    public Stream getStream() {
+    public SymStream getStream() {
         return stream;
     }
 
 
-    public void setStream(Stream stream) {
+    public void setStream(SymStream stream) {
         this.stream = stream;
-        streamId = stream.getId();
+        streamId = stream.getStreamId();
 
     }
 
