@@ -25,38 +25,19 @@
 package lex;
 
 
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.regions.Regions;
-import com.amazonaws.services.lexruntime.AmazonLexRuntime;
-import com.amazonaws.services.lexruntime.AmazonLexRuntimeClient;
-import com.amazonaws.services.lexruntime.AmazonLexRuntimeClientBuilder;
-import com.amazonaws.services.lexruntime.model.PostContentRequest;
-import com.amazonaws.services.lexruntime.model.PostTextRequest;
-import com.amazonaws.services.lexruntime.model.PostTextResult;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.client.SymphonyClientConfig;
-import org.symphonyoss.client.SymphonyClientConfigID;
 import org.symphonyoss.client.SymphonyClientFactory;
-import org.symphonyoss.client.exceptions.MessagesException;
-import org.symphonyoss.client.exceptions.UsersClientException;
 import org.symphonyoss.client.model.Chat;
-import org.symphonyoss.symphony.clients.model.SymMessage;
-import org.symphonyoss.symphony.clients.model.SymUser;
-
-import java.util.HashSet;
-import java.util.Set;
+import org.symphonyoss.client.services.ChatServiceListener;
 
 
 /**
- * BotIt is an example of creating an interactive Bot with use of SJC services and AI framework
- * <p>
- * Will highlight command line framework as part of AI package.
+ * LexBot is an example of an integration with AWS LEX bots.  It acts as a simple relay between the Symphony endpoint and
+ * a AWS Lex bot.  The idea here is to handle all input through Lex NLP engines and responses through Lambda.
+ *
  * <p>
  * <p>
  * REQUIRED VM Arguments or System Properties:
@@ -75,92 +56,61 @@ import java.util.Set;
  * @author Frank Tarsillo
  */
 //NOSONAR
-public class LexBot {
+public class LexBot  implements ChatServiceListener{
 
 
     private final Logger logger = LoggerFactory.getLogger(LexBot.class);
 
     private SymphonyClient symClient;
 
+    private LexBotDetail lexBotDetail = new LexBotDetail();
 
 
 
-    public LexBot() {
+    public LexBot(String botName, String botAlias) {
 
-
+        lexBotDetail.setBotName(botName);
+        lexBotDetail.setBotAlias(botAlias);
         init();
-
 
     }
 
     public static void main(String[] args) {
 
-        new LexBot();
+        if(args.length == 2) {
+            new LexBot(args[0], args[1]);
+        }else{
 
+            System.out.println("You need to provide a (lexbotname) (lexbotalias) to start");
+        }
     }
 
     //Start it up..
     public void init() {
 
 
-//
-        try {
+        SymphonyClientConfig symphonyClientConfig = new SymphonyClientConfig(true);
 
-            SymphonyClientConfig symphonyClientConfig = new SymphonyClientConfig(true);
+        //Create an initialized client
+        symClient = SymphonyClientFactory.getClient(
+                SymphonyClientFactory.TYPE.V4, symphonyClientConfig);
 
-
-            AWSCredentials credentials = new BasicAWSCredentials(System.getProperty("s3.key.id"), System.getProperty("s3.access.key"));
-            AmazonLexRuntime lexClient = AmazonLexRuntimeClientBuilder.standard().withRegion(Regions.US_EAST_1).withCredentials(new AWSStaticCredentialsProvider(credentials)).build();
-
-
-            PostTextRequest postTextRequest = new PostTextRequest();
-
-            postTextRequest.setBotName("ScheduleAppointment");
-            postTextRequest.setBotAlias("ScheduleAppointment");
-            postTextRequest.setUserId("21232");
-            postTextRequest.setInputText("I would like to make an appointment");
-
-
-            PostTextResult postTextResult = lexClient.postText(postTextRequest);
-
-            logger.debug("Returned: [{}]", postTextResult.getMessage());
-
-
-                    //Create an initialized client
-            symClient = SymphonyClientFactory.getClient(
-                    SymphonyClientFactory.TYPE.V4, symphonyClientConfig);
-
-
-            //A message to send when the BOT comes online.
-            SymMessage aMessage = new SymMessage();
-            aMessage.setMessageText("Hello master, I'm alive again....");
-
-
-            //Creates a Chat session with that will receive the online message.
-            Chat chat = new Chat();
-            chat.setLocalUser(symClient.getLocalUser());
-            Set<SymUser> remoteUsers = new HashSet<>();
-            remoteUsers.add(symClient.getUsersClient().getUserFromEmail(symphonyClientConfig.get(SymphonyClientConfigID.RECEIVER_EMAIL)));
-            chat.setRemoteUsers(remoteUsers);
-
-
-            //Add the chat to the chat service, in case the "master" continues the conversation.
-            symClient.getChatService().addChat(chat);
-
-
-            //Send a message to the master user.
-            symClient.getMessageService().sendMessage(chat, aMessage);
-
-
-        } catch (MessagesException e) {
-            logger.error("error", e);
-        } catch (UsersClientException e) {
-            e.printStackTrace();
-        }
-
+        if(symClient!=null)
+            symClient.getChatService().addListener(this);
     }
 
 
+    @Override
+    public void onNewChat(Chat chat) {
+
+        chat.addListener(new LexBotRelay(symClient, lexBotDetail));
+
+    }
+
+    @Override
+    public void onRemovedChat(Chat chat) {
+
+    }
 }
 
 

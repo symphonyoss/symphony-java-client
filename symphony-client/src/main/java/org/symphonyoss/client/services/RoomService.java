@@ -115,6 +115,7 @@ public class RoomService implements RoomServiceEventListener {
             Room room = new Room();
             room.setId(symRoomDetail.getRoomSystemInfo().getId());
             room.setRoomDetail(symRoomDetail);
+            room.setStreamId(room.getId());
 
             //Enrich
             room.setMembershipList(symClient.getRoomMembershipClient().getRoomMembership(room.getId()));
