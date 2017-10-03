@@ -233,7 +233,7 @@ public class SymphonyClientIT implements ChatServiceListener, ChatListener, Room
         SymMessage symMessage = new SymMessage();
         symMessage.setMessageText(ApiVersion.V4, ATTACHMENT_COMMAND_MESSAGE);
 
-        symMessage.setStreamId(sjcTestClient.getStreamsClient().getStreamFromEmail(botEmail).getId());
+        symMessage.setStreamId(sjcTestClient.getStreamsClient().getStreamFromEmail(botEmail).getStreamId());
 
         new File(TMP_FILE).delete();
 

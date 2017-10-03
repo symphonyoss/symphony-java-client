@@ -197,7 +197,7 @@ public class PresentationMlExample implements ChatListener, ChatServiceListener 
 
         chat.addListener(this);
 
-        logger.debug("New chat session detected on stream {} with {}", chat.getStream().getId(), remoteUsersString(chat.getRemoteUsers()));
+        logger.debug("New chat session detected on stream {} with {}", chat.getStream().getStreamId(), remoteUsersString(chat.getRemoteUsers()));
 
 
     }

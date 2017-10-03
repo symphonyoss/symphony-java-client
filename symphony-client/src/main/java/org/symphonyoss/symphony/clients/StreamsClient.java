@@ -35,17 +35,17 @@ import java.util.Set;
  */
 @SuppressWarnings("unused")
 public interface StreamsClient {
-    Stream getStream(SymUser user) throws StreamsException;
+    SymStream getStream(SymUser user) throws StreamsException;
 
-    Stream getStream(Set<SymUser> users) throws StreamsException;
+    SymStream getStream(Set<SymUser> users) throws StreamsException;
 
-    Stream getStream(UserIdList userIdList) throws StreamsException;
+    SymStream getStream(UserIdList userIdList) throws StreamsException;
 
     SymAdminStreamList getStreams(Integer skip, Integer limit, SymAdminStreamFilter symAdminStreamFilter) throws StreamsException;
 
     List<SymStreamAttributes> getStreams(Integer skip, Integer limit, SymStreamFilter symStreamFilter) throws StreamsException;
 
-    Stream getStreamFromEmail(String email) throws StreamsException;
+    SymStream getStreamFromEmail(String email) throws StreamsException;
 
     SymRoomDetail getRoomDetail(String id) throws StreamsException;
 

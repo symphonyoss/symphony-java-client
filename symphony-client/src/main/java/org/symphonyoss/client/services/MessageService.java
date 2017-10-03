@@ -32,10 +32,7 @@ import org.symphonyoss.client.exceptions.UsersClientException;
 import org.symphonyoss.client.model.CacheType;
 import org.symphonyoss.client.model.Chat;
 import org.symphonyoss.client.model.Room;
-import org.symphonyoss.symphony.clients.model.ApiVersion;
-import org.symphonyoss.symphony.clients.model.SymMessage;
-import org.symphonyoss.symphony.clients.model.SymStreamTypes;
-import org.symphonyoss.symphony.clients.model.SymUser;
+import org.symphonyoss.symphony.clients.model.*;
 import org.symphonyoss.symphony.pod.model.Stream;
 
 import java.util.List;
@@ -175,7 +172,7 @@ public class MessageService implements DataFeedListener {
      * @throws MessagesException Generated from API calls into Symphony
      */
 
-    private List<SymMessage> getMessagesFromStream(Stream stream, Long since, Integer offset, Integer maxMessages) throws MessagesException {
+    private List<SymMessage> getMessagesFromStream(SymStream stream, Long since, Integer offset, Integer maxMessages) throws MessagesException {
 
         return symClient.getMessagesClient().getMessagesFromStream(
                 stream, since, offset, maxMessages);

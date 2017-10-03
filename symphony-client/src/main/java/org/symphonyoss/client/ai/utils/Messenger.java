@@ -31,6 +31,7 @@ import org.symphonyoss.client.exceptions.MessagesException;
 import org.symphonyoss.client.exceptions.StreamsException;
 import org.symphonyoss.client.model.Chat;
 import org.symphonyoss.symphony.clients.model.SymMessage;
+import org.symphonyoss.symphony.clients.model.SymStream;
 import org.symphonyoss.symphony.pod.model.Stream;
 import org.symphonyoss.symphony.pod.model.UserIdList;
 
@@ -110,13 +111,13 @@ public class Messenger {
     public static Chat getChat(Long userID, SymphonyClient symClient) {
         UserIdList list = new UserIdList();
         list.add(userID);
-        Stream stream;
+        SymStream stream;
         try {
 
             stream = symClient.getStreamsClient().getStream(list);
 
-            if( stream.getId() != null)
-                return symClient.getChatService().getChatByStream( stream.getId());
+            if( stream.getStreamId() != null)
+                return symClient.getChatService().getChatByStream( stream.getStreamId());
 
 
 

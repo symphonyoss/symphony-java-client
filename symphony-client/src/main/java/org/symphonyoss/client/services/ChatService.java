@@ -31,8 +31,9 @@ import org.symphonyoss.client.model.CacheType;
 import org.symphonyoss.client.model.Chat;
 import org.symphonyoss.symphony.clients.model.ApiVersion;
 import org.symphonyoss.symphony.clients.model.SymMessage;
+import org.symphonyoss.symphony.clients.model.SymStream;
 import org.symphonyoss.symphony.clients.model.SymUser;
-import org.symphonyoss.symphony.pod.model.Stream;
+
 
 import java.util.HashSet;
 import java.util.Set;
@@ -127,9 +128,9 @@ public class ChatService implements ChatListener {
             //Lets find the stream ID for all users in conversation.
             try {
 
-                Stream stream = symClient.getStreamsClient().getStream(chat.getRemoteUsers());
+                SymStream stream = symClient.getStreamsClient().getStream(chat.getRemoteUsers());
                 if (stream != null) {
-                    chat.setStreamId(stream.getId());
+                    chat.setStreamId(stream.getStreamId());
 
                 } else {
                     logger.error("Failed to obtain stream ID for chat...");

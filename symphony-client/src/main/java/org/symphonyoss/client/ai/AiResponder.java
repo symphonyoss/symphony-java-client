@@ -89,7 +89,7 @@ public class AiResponder {
      * @param symClient the org.org.symphonyoss.ai's sym client
      */
 
-    public void sendMessage(String message, Stream stream, SymphonyClient symClient) {
+    public void sendMessage(String message, SymStream stream, SymphonyClient symClient) {
 
         SymMessage userMessage = new SymMessage();
         userMessage.setMessageText(message);
@@ -170,8 +170,8 @@ public class AiResponder {
             if (list != null)
                 for (AiResponse response : list.getAiResponseSet()) {
 
-                    Stream stream = new Stream();
-                    stream.setId(streamId);
+                    SymStream stream = new SymStream();
+                    stream.setStreamId(streamId);
                     sendMessage(response.getMessage(), stream, symClient);
 
 

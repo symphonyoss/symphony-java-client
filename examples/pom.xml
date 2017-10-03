@@ -47,6 +47,7 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <ignite.version>1.9.0</ignite.version>
+    <aws-sdk-version>1.11.205</aws-sdk-version>
   </properties>
 
     <repositories>
@@ -66,7 +67,7 @@
     <dependency>
       <groupId>org.symphonyoss.symphony</groupId>
       <artifactId>symphony-client</artifactId>
-      <version>1.0.3-SNAPSHOT</version>
+      <version>1.1.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.rometools</groupId>
@@ -92,6 +93,11 @@
       <groupId>org.apache.ignite</groupId>
       <artifactId>ignite-indexing</artifactId>
       <version>${ignite.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.amazonaws</groupId>
+      <artifactId>aws-java-sdk</artifactId>
+      <version>${aws-sdk-version}</version>
     </dependency>
   </dependencies>
 

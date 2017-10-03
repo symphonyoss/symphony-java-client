@@ -75,7 +75,7 @@ public class SjcTestBot implements ChatListener, ChatServiceListener, RoomEventL
         symphonyClient.getRoomService().addRoomServiceEventListener(this);
 
 
-        testClientStreamId = symphonyClient.getStreamsClient().getStreamFromEmail(sjcClient).getId();
+        testClientStreamId = symphonyClient.getStreamsClient().getStreamFromEmail(sjcClient).getStreamId();
         testClientId = symphonyClient.getUsersClient().getUserFromEmail(sjcClient).getId();
 
         Room room = new Room();

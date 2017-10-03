@@ -32,6 +32,7 @@ import org.symphonyoss.client.SymphonyClientFactory;
 import org.symphonyoss.client.exceptions.MessagesException;
 import org.symphonyoss.client.exceptions.StreamsException;
 import org.symphonyoss.symphony.clients.model.SymMessage;
+import org.symphonyoss.symphony.clients.model.SymStream;
 import org.symphonyoss.symphony.pod.model.Stream;
 
 
@@ -87,9 +88,9 @@ public class MultiClientExample {
 
 
         try {
-            Stream stream1 = symClient1.getStreamsClient().getStreamFromEmail(System.getProperty("user.call.home"));
+            SymStream stream1 = symClient1.getStreamsClient().getStreamFromEmail(System.getProperty("user.call.home"));
 
-            Stream stream2 = symClient2.getStreamsClient().getStreamFromEmail(System.getProperty("user.call.home"));
+            SymStream stream2 = symClient2.getStreamsClient().getStreamFromEmail(System.getProperty("user.call.home"));
 
 
             //A message to send when the BOT comes online.

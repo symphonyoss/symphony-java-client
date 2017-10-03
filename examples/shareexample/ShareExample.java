@@ -102,7 +102,7 @@ public class ShareExample {
             shareArticle.setAuthor("Frank Tarsillo");
             shareArticle.setAppId("APP ID");
 
-            symClient.getShareClient().shareArticle(symClient.getStreamsClient().getStreamFromEmail("frank.tarsillo@markit.com").getId(), shareArticle);
+            symClient.getShareClient().shareArticle(symClient.getStreamsClient().getStreamFromEmail("frank.tarsillo@markit.com").getStreamId(), shareArticle);
 
 
         } catch ( StreamsException | ShareException e) {
