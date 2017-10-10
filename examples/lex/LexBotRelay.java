@@ -42,8 +42,8 @@ import org.symphonyoss.symphony.clients.model.SymMessage;
  */
 public class LexBotRelay implements ChatListener {
 
-    SymphonyClient symClient;
-    LexBotDetail lexBotDetail;
+    private SymphonyClient symClient;
+    private LexBotDetail lexBotDetail;
 
     private AWSCredentials credentials = new BasicAWSCredentials(System.getProperty("s3.key.id"), System.getProperty("s3.access.key"));
     private AmazonLexRuntime lexClient = AmazonLexRuntimeClientBuilder.standard().withRegion(Regions.US_EAST_1).withCredentials(new AWSStaticCredentialsProvider(credentials)).build();
@@ -70,7 +70,7 @@ public class LexBotRelay implements ChatListener {
 
         }else{
 
-            message.setMessageText(postTextResult.getMessage());
+            message.setMessageText(lexBotDetail.getBotName() + ": " + postTextResult.getMessage());
 
         }
 

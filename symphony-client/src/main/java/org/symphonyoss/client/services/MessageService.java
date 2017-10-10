@@ -33,7 +33,6 @@ import org.symphonyoss.client.model.CacheType;
 import org.symphonyoss.client.model.Chat;
 import org.symphonyoss.client.model.Room;
 import org.symphonyoss.symphony.clients.model.*;
-import org.symphonyoss.symphony.pod.model.Stream;
 
 import java.util.List;
 import java.util.Set;
@@ -70,7 +69,7 @@ public class MessageService implements DataFeedListener {
     private final Set<ConnectionsEventListener> connectionsEventListeners = ConcurrentHashMap.newKeySet();
     private final Set<String> roomStreamCache = ConcurrentHashMap.newKeySet();
     private final Set<String> chatStreamCache = ConcurrentHashMap.newKeySet();
-    MessageFeedWorker messageFeedWorker;
+    DataFeedWorker dataFeedWorker;
 
 
     /**
@@ -98,9 +97,9 @@ public class MessageService implements DataFeedListener {
 
 
         //Lets startup the worker thread to listen for raw datafeed messages
-        messageFeedWorker = new MessageFeedWorker(symClient, this);
+        dataFeedWorker = new DataFeedWorker(symClient, this);
 
-        new Thread(messageFeedWorker).start();
+        new Thread(dataFeedWorker).start();
 
 
     }
@@ -521,9 +520,9 @@ public class MessageService implements DataFeedListener {
      */
     public void shutdown() {
 
-        if (messageFeedWorker != null) {
-            messageFeedWorker.shutdown();
-            messageFeedWorker = null;
+        if (dataFeedWorker != null) {
+            dataFeedWorker.shutdown();
+            dataFeedWorker = null;
         }
 
 

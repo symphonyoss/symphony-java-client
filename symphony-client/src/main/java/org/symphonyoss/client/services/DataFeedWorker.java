@@ -30,7 +30,6 @@ import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.client.common.Constants;
 import org.symphonyoss.client.events.SymEvent;
 import org.symphonyoss.client.exceptions.DataFeedException;
-import org.symphonyoss.client.exceptions.SymFault;
 import org.symphonyoss.symphony.agent.model.Datafeed;
 import org.symphonyoss.symphony.clients.model.ApiVersion;
 
@@ -44,11 +43,11 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Frank Tarsillo
  */
-class MessageFeedWorker implements Runnable {
+class DataFeedWorker implements Runnable {
 
     private final DataFeedListener dataFeedListener;
     private final SymphonyClient symClient;
-    private final Logger logger = LoggerFactory.getLogger(MessageFeedWorker.class);
+    private final Logger logger = LoggerFactory.getLogger(DataFeedWorker.class);
     private Datafeed datafeed;
     private boolean shutdown;
 
@@ -59,7 +58,7 @@ class MessageFeedWorker implements Runnable {
      * @param symClient        Identifies the BOT user and exposes client APIs
      * @param dataFeedListener Callback listener to publish new base messages on.
      */
-    public MessageFeedWorker(SymphonyClient symClient, DataFeedListener dataFeedListener) {
+    public DataFeedWorker(SymphonyClient symClient, DataFeedListener dataFeedListener) {
         this.symClient = symClient;
         this.dataFeedListener = dataFeedListener;
 
@@ -98,7 +97,7 @@ class MessageFeedWorker implements Runnable {
                 datafeed = symClient.getDataFeedClient().createDatafeed(ApiVersion.V4);
 
                 break;
-            } catch (DataFeedException e) {
+            } catch (Exception e) {
 
         	/*
              * TODO:
@@ -149,7 +148,7 @@ class MessageFeedWorker implements Runnable {
             }
 
 
-        } catch (DataFeedException e) {
+        } catch (Exception e) {
             logger.error("Failed to create read datafeed from pod, please check connection..resetting.", e);
             datafeed = null;
 
