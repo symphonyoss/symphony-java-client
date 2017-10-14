@@ -42,17 +42,18 @@ import org.symphonyoss.client.model.SymShareArticle;
  * <p>
  * REQUIRED VM Arguments or System Properties:
  * <p>
- * -Dsessionauth.url=https://pod_fqdn:port/sessionauth
- * -Dkeyauth.url=https://pod_fqdn:port/keyauth
- * -Dsymphony.agent.pod.url=https://agent_fqdn:port/pod
- * -Dsymphony.agent.agent.url=https://agent_fqdn:port/agent
- * -Dcerts.dir=/dev/certs/
- * -Dkeystore.password=(Pass)
- * -Dtruststore.file=/dev/certs/server.truststore
- * -Dtruststore.password=(Pass)
- * -Dbot.user=bot.user1
- * -Dbot.domain=@domain.com
+ * -Dtruststore.file=
+ * -Dtruststore.password=password
+ * -Dsessionauth.url=https://(hostname)/sessionauth
+ * -Dkeyauth.url=https://(hostname)/keyauth
  * -Duser.call.home=frank.tarsillo@markit.com
+ * -Duser.cert.password=password
+ * -Duser.cert.file=bot.user2.p12
+ * -Duser.email=bot.user2@domain.com
+ * -Dpod.url=https://(pod host)/pod
+ * -Dagent.url=https://(agent server host)/agent
+ * -Dreceiver.email=bot.user2@markit.com or bot user email
+
  *
  * @author Frank Tarsillo
  */

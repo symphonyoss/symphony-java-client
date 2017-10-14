@@ -28,6 +28,8 @@ package multiclient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.client.SymphonyClientConfig;
+import org.symphonyoss.client.SymphonyClientConfigID;
 import org.symphonyoss.client.SymphonyClientFactory;
 import org.symphonyoss.client.exceptions.MessagesException;
 import org.symphonyoss.client.exceptions.StreamsException;
@@ -46,18 +48,24 @@ import org.symphonyoss.symphony.pod.model.Stream;
  * <p>
  * REQUIRED VM Arguments or System Properties:
  * <p>
- * -Dsessionauth.url=https://pod_fqdn:port/sessionauth
- * -Dkeyauth.url=https://pod_fqdn:port/keyauth
- * -Dsymphony.agent.pod.url=https://agent_fqdn:port/pod
- * -Dsymphony.agent.agent.url=https://agent_fqdn:port/agent
- * -Dcerts.dir=/dev/certs/
- * -Dkeystore.password=(Pass)
- * -Dtruststore.file=/dev/certs/server.truststore
- * -Dtruststore.password=(Pass)
- * -Dbot.user1=bot.user1
- * -Dbot.user2=bot.user2
- * -Dbot.domain=domain.com
+ * -Dtruststore.file=
+ * -Dtruststore.password=password
+ * -Dsessionauth.url=https://(hostname)/sessionauth
+ * -Dkeyauth.url=https://(hostname)/keyauth
  * -Duser.call.home=frank.tarsillo@markit.com
+ *
+ * -Duser.cert.password=password
+ * -Duser.cert.file=bot.user1.p12
+ * -Duser.email=bot.user1@markit.com
+ *
+ * -Duser2.cert.password=password
+ * -Duser2.cert.file=bot.user2.p12
+ * -Duser2.email=bot.user2@markit.com
+ *
+ * -Dpod.url=https://(pod host)/pod
+ * -Dagent.url=https://(agent server host)/agent
+ * -Dreceiver.email=bot.user2@markit.com or bot user email
+ *
  *
  * @author Frank Tarsillo
  */
@@ -72,19 +80,22 @@ public class MultiClientExample {
 
         //Note: You can replace all the properties with two different instances of SymphonyClientConfig in this example
 
-        SymphonyClient symClient1 = SymphonyClientFactory.getClient(SymphonyClientFactory.TYPE.V4,
-                System.getProperty("bot.user1") + "@" + System.getProperty("bot.domain"),
-                System.getProperty("certs.dir") + System.getProperty("bot.user1") + ".p12",
-                System.getProperty("keystore.password"),
-                System.getProperty("truststore.file"),
-                System.getProperty("truststore.password"));
+        SymphonyClientConfig symphonyClientConfig = new SymphonyClientConfig(true);
 
-        SymphonyClient symClient2 = SymphonyClientFactory.getClient(SymphonyClientFactory.TYPE.V4,
-                System.getProperty("bot.user2") + "@" + System.getProperty("bot.domain"),
-                System.getProperty("certs.dir") + System.getProperty("bot.user2") + ".p12",
-                System.getProperty("keystore.password"),
-                System.getProperty("truststore.file"),
-                System.getProperty("truststore.password"));
+
+        //This will take all the default properties as defined by enums in configuration
+        SymphonyClient symClient1 = SymphonyClientFactory.getClient(SymphonyClientFactory.TYPE.V4,
+                symphonyClientConfig);
+
+
+        //We will override the default and pull in a different user
+        SymphonyClientConfig symphonyClientConfig1 = new SymphonyClientConfig(true);
+
+        symphonyClientConfig1.set(SymphonyClientConfigID.USER_EMAIL, System.getProperty("user2.email"));
+        symphonyClientConfig1.set(SymphonyClientConfigID.USER_CERT_FILE, System.getProperty("user2.cert.file"));
+        symphonyClientConfig.set(SymphonyClientConfigID.USER_CERT_PASSWORD, System.getProperty("user2.cert.password"));
+
+        SymphonyClient symClient2 = SymphonyClientFactory.getClient(SymphonyClientFactory.TYPE.V4,symphonyClientConfig1);
 
 
         try {

@@ -28,6 +28,7 @@ package setpresence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.client.SymphonyClientConfig;
 import org.symphonyoss.client.SymphonyClientFactory;
 import org.symphonyoss.symphony.pod.model.Presence;
 
@@ -48,18 +49,17 @@ import java.util.concurrent.TimeUnit;
  *
  * REQUIRED VM Arguments or System Properties:
  *
- *        -Dsessionauth.url=https://pod_fqdn:port/sessionauth
- *        -Dkeyauth.url=https://pod_fqdn:port/keyauth
- *        -Dsymphony.agent.pod.url=https://agent_fqdn:port/pod
- *        -Dsymphony.agent.agent.url=https://agent_fqdn:port/agent
- *        -Dcerts.dir=/dev/certs/
- *        -Dkeystore.password=(Pass)
- *        -Dtruststore.file=/dev/certs/server.truststore
- *        -Dtruststore.password=(Pass)
- *        -Dbot.user=bot.user1
- *        -Dbot.domain=@domain.com
- *        -Duser.call.home=frank.tarsillo@markit.com
- *
+ * -Dtruststore.file=
+ * -Dtruststore.password=password
+ * -Dsessionauth.url=https://(hostname)/sessionauth
+ * -Dkeyauth.url=https://(hostname)/keyauth
+ * -Duser.call.home=frank.tarsillo@markit.com
+ * -Duser.cert.password=password
+ * -Duser.cert.file=bot.user2.p12
+ * -Duser.email=bot.user2@domain.com
+ * -Dpod.url=https://(pod host)/pod
+ * -Dagent.url=https://(agent server host)/agent
+ * -Dreceiver.email=bot.user2@markit.com or bot user email
  *
  *
  *
@@ -95,18 +95,10 @@ public class SetPresenceExample {
         try {
 
 
-            logger.debug("{} {}", System.getProperty("sessionauth.url"),
-                    System.getProperty("keyauth.url"));
-
 
             //Create an initialized client
             symClient = SymphonyClientFactory.getClient(
-                    SymphonyClientFactory.TYPE.BASIC,
-                    System.getProperty("bot.user") + System.getProperty("bot.domain"), //bot email
-                    System.getProperty("certs.dir") + System.getProperty("bot.user") + ".p12", //bot cert
-                    System.getProperty("keystore.password"), //bot cert/keystore pass
-                    System.getProperty("truststore.file"), //truststore file
-                    System.getProperty("truststore.password"));  //truststore password
+                    SymphonyClientFactory.TYPE.V4, new SymphonyClientConfig(true));
 
 
 

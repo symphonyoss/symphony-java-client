@@ -65,12 +65,15 @@ public class SjcTestBot implements ChatListener, ChatServiceListener, RoomEventL
 
     public SjcTestBot() throws SymException {
 
-        symphonyClient = SymphonyClientFactory.getClient(SymphonyClientFactory.TYPE.V4,
-                System.getProperty("bot.user.email", "sjc.testbot"),
-                System.getProperty("bot.user.cert.file"),
-                System.getProperty("bot.user.cert.password"),
-                System.getProperty("truststore.file"),
-                System.getProperty("truststore.password"));
+        SymphonyClientConfig symphonyClientConfig = new SymphonyClientConfig();
+        symphonyClientConfig.set(SymphonyClientConfigID.USER_CERT_FILE,System.getProperty("bot.user.cert.file"));
+        symphonyClientConfig.set(SymphonyClientConfigID.USER_CERT_PASSWORD,System.getProperty("bot.user.cert.password"));
+        symphonyClientConfig.set(SymphonyClientConfigID.TRUSTSTORE_FILE,System.getProperty("truststore.file"));
+        symphonyClientConfig.set(SymphonyClientConfigID.TRUSTSTORE_PASSWORD,System.getProperty("truststore.password"));
+        symphonyClientConfig.set(SymphonyClientConfigID.USER_EMAIL, System.getProperty("bot.user.email", "sjc.testbot"));
+
+
+        symphonyClient = SymphonyClientFactory.getClient(SymphonyClientFactory.TYPE.V4, symphonyClientConfig);
 
         symphonyClient.getRoomService().addRoomServiceEventListener(this);
 

@@ -48,6 +48,7 @@ import org.symphonyoss.symphony.clients.model.*;
  * -Duser.call.home=frank.tarsillo@markit.com
  * -Duser.cert.password=password
  * -Duser.cert.file=bot.user2.p12
+ * -Duser.email=bot.user2@domain.com
  * -Dpod.url=https://(pod host)/pod
  * -Dagent.url=https://(agent server host)/agent
  * -Dreceiver.email= email address of user or bot who will receive a message.

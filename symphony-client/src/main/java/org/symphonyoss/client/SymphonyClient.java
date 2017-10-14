@@ -71,22 +71,33 @@ public interface SymphonyClient {
 
     /**
      * Initialize client with required parameters and custom HTTP client.
-     *
-     * @param httpClient Custom http client to use when connecting to Symphony API's
-     * @param config Configuration object
+     * @param podHttpClient Custom http client to use when connecting to the pod
+     * @param agentHttpClient Custom http client to use when connecting to the agent server
+     * @param initParams Configuration object
      * @throws InitException Failure of a specific service most likely due to connectivity issues
      * @throws AuthenticationException A network exception
      */
-    void init(Client httpClient, SymphonyClientConfig config) throws InitException, AuthenticationException;
+
+    void init(Client podHttpClient, Client agentHttpClient, SymphonyClientConfig initParams) throws InitException, AuthenticationException;
+
+    /**
+     * Initialize client with required parameters and custom HTTP client.
+     *
+     * @param httpClient Custom http client to use when connecting to Symphony API's
+     * @param initParams Configuration object
+     * @throws InitException Failure of a specific service most likely due to connectivity issues
+     * @throws AuthenticationException A network exception
+     */
+    void init(Client httpClient, SymphonyClientConfig initParams) throws InitException, AuthenticationException;
     
     /**
      * Initialize client with required parameters.
      *
-     * @param config Configuration object
+     * @param initParams Configuration object
      * @throws InitException Failure of a specific service most likely due to connectivity issues
      * @throws AuthenticationException Exception thrown from authorization issue.
      */
-    void init(SymphonyClientConfig config) throws InitException, AuthenticationException;
+    void init(SymphonyClientConfig initParams) throws InitException, AuthenticationException;
     
     /**
      * Retrieve authorization object.
@@ -239,4 +250,29 @@ public interface SymphonyClient {
      * Terminates all underlying services and threads.
      */
     void shutdown();
+
+
+    /**
+     * Retrieve the HTTP client for POD connectivity
+     * @return HttpClient for pod
+     */
+    Client getPodHttpClient();
+
+    /**
+     * Set the HTTP client for POD connectivity
+     * @param  podHttpClient HttpClient for POD
+     */
+    void setPodHttpClient(Client podHttpClient);
+
+    /**
+     * Retrieve the HTTP client for Agent connectivity
+     * @return HttpClient for agent
+     */
+    Client getAgentHttpClient();
+
+    /**
+     * Set the HTTP client for Agent connectivity
+     * @param  agentHttpClient HttpClient for Agent
+     */
+    void setAgentHttpClient(Client agentHttpClient);
 }

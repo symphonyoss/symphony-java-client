@@ -55,6 +55,7 @@ import javax.ws.rs.client.Client;
  * -Duser.call.home=joe.smith@email.com
  * -Duser.cert.password=password
  * -Duser.cert.file=(AppId).p12
+ * -Duser.email=(AppId.email)
  * -Dpod.url=https://(pod host)/pod
  * -Dagent.url=https://(agent server host)/agent
  * -Dreceiver.email=bot.user2@markit.com or bot user email

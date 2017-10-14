@@ -85,12 +85,16 @@ public class SymphonyClientIT implements ChatServiceListener, ChatListener, Room
             sjcTestBot = new SjcTestBot();
 
 
+            SymphonyClientConfig symphonyClientConfig = new SymphonyClientConfig();
+            symphonyClientConfig.set(SymphonyClientConfigID.USER_CERT_FILE,System.getProperty("sender.user.cert.file"));
+            symphonyClientConfig.set(SymphonyClientConfigID.USER_CERT_PASSWORD,System.getProperty("sender.user.cert.password"));
+            symphonyClientConfig.set(SymphonyClientConfigID.TRUSTSTORE_FILE,System.getProperty("truststore.file"));
+            symphonyClientConfig.set(SymphonyClientConfigID.TRUSTSTORE_PASSWORD,System.getProperty("truststore.password"));
+            symphonyClientConfig.set(SymphonyClientConfigID.USER_EMAIL, System.getProperty("sender.user.email", "sjc.testclient"));
+
+
             sjcTestClient = SymphonyClientFactory.getClient(
-                    SymphonyClientFactory.TYPE.V4, System.getProperty("sender.user.email", "sjc.testclient"),
-                    System.getProperty("sender.user.cert.file"),
-                    System.getProperty("sender.user.cert.password"),
-                    System.getProperty("truststore.file"),
-                    System.getProperty("truststore.password"));
+                    SymphonyClientFactory.TYPE.V4, symphonyClientConfig);
 
 
         } catch (Exception e) {

@@ -43,7 +43,7 @@
 
     <properties>
         <jsoup-version>1.9.2</jsoup-version>
-        <symphony-api-version>1.47.0</symphony-api-version>
+        <symphony-api-version>1.48.0-SNAPSHOT</symphony-api-version>
         <gson-version>2.7</gson-version>
         <org-javassist>3.21.0-GA</org-javassist>
         <failsafe.jvm.args>-Dlog4j.configurationFile=src/test/resources/log4j.properties -Xmx1024m

@@ -62,73 +62,6 @@ public class SymphonyClientFactory {
 
     }
 
-    /**
-     * Generate a new SymphonyClient and init it based on type
-     *
-     * @param type               The type of SymphonyClient.  Currently only BASIC is available.
-     * @param email              Email address of the BOT
-     * @param clientKeyStore     BOT keystore file location
-     * @param clientKeyStorePass BOT keystore password
-     * @param trustStore         TrustStore file location
-     * @param trustStorePass     Truststore password
-     * @return A SymphonyClient instance based on type which is already instantiated.
-     */
-    @Deprecated
-    public static SymphonyClient getClient(TYPE type, String email, String clientKeyStore, String clientKeyStorePass, String trustStore, String trustStorePass) {
-
-
-        try {
-
-            //Create a basic client instance.
-            SymphonyClient symClient = SymphonyClientFactory.getClient(type);
-
-            logger.debug("{} {}", System.getProperty("sessionauth.url"),
-                    System.getProperty("keyauth.url"));
-
-
-            try {
-                Client httpClient = CustomHttpClient.getClient(clientKeyStore, clientKeyStorePass, trustStore, trustStorePass);
-                symClient.setDefaultHttpClient(httpClient);
-            } catch (Exception e) {
-                logger.error("Failed to create custom http client", e);
-                return null;
-            }
-
-
-            //Init the Symphony authorization client, which requires both the key and session URL's.  In most cases,
-            //the same fqdn but different URLs.
-            AuthenticationClient authClient = new AuthenticationClient(
-                    System.getProperty("sessionauth.url"),
-                    System.getProperty("keyauth.url"),
-                    symClient.getDefaultHttpClient());
-
-
-            //Create a SymAuth which holds both key and session tokens.  This will call the external service.
-            SymAuth symAuth = authClient.authenticate();
-
-
-            //With a valid SymAuth we can now init our client.
-            symClient.init(
-                    symClient.getDefaultHttpClient(),
-                    symAuth,
-                    email,
-                    System.getProperty("symphony.agent.agent.url"),
-                    System.getProperty("symphony.agent.pod.url")
-
-            );
-
-
-            return symClient;
-
-        } catch (NetworkException ae) {
-
-            logger.error(ae.getMessage(), ae);
-        } catch (InitException e) {
-            logger.error("error", e);
-        }
-
-        return null;
-    }
 
 
     /**
@@ -151,11 +84,20 @@ public class SymphonyClientFactory {
 
 
             try {
-                Client httpClient = CustomHttpClient.getClient(
-                        initParams.get(SymphonyClientConfigID.USER_CERT_FILE),
-                        initParams.get(SymphonyClientConfigID.USER_CERT_PASSWORD),
-                        initParams.get(SymphonyClientConfigID.TRUSTSTORE_FILE),
-                        initParams.get(SymphonyClientConfigID.TRUSTSTORE_PASSWORD));
+                Client httpClient;
+                if (initParams.get(SymphonyClientConfigID.TRUSTSTORE_FILE) != null) {
+                    httpClient =CustomHttpClient.getClient(
+                            initParams.get(SymphonyClientConfigID.USER_CERT_FILE),
+                            initParams.get(SymphonyClientConfigID.USER_CERT_PASSWORD),
+                            initParams.get(SymphonyClientConfigID.TRUSTSTORE_FILE),
+                            initParams.get(SymphonyClientConfigID.TRUSTSTORE_PASSWORD));
+
+                }else{
+                    httpClient=CustomHttpClient.getClient(
+                            initParams.get(SymphonyClientConfigID.USER_CERT_FILE),
+                            initParams.get(SymphonyClientConfigID.USER_CERT_PASSWORD));
+                }
+
 
                 symClient.setDefaultHttpClient(httpClient);
             } catch (Exception e) {

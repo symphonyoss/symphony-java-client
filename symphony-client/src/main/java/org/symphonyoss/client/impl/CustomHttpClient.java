@@ -48,6 +48,50 @@ public class CustomHttpClient {
 
 
     /**
+     * Create custom client with specific keystore.  This ignores the need for a truststore.
+     *
+     * @param clientKeyStore     Client (BOT) keystore file
+     * @param clientKeyStorePass Client (BOT) keystore password
+     * @return Custom HttpClient
+     * @throws Exception Generally IOExceptions thrown from instantiation.
+     */
+    public static Client getClient(String clientKeyStore, String clientKeyStorePass) throws Exception {
+
+
+        KeyStore cks = KeyStore.getInstance("PKCS12");
+
+        loadKeyStore(cks, clientKeyStore, clientKeyStorePass);
+
+        return ClientBuilder.newBuilder().keyStore(cks, clientKeyStorePass.toCharArray()).build();
+
+
+    }
+
+
+
+    /**
+     * Create custom client with specific keystore.  This ignores the need for a truststore.
+     *
+     * @param clientKeyStore     Client (BOT) keystore file
+     * @param clientKeyStorePass Client (BOT) keystore password
+     * @param clientConfig Client configuration to use when initializing client
+     * @return Custom HttpClient
+     * @throws Exception Generally IOExceptions thrown from instantiation.
+     */
+    public static Client getClient(String clientKeyStore, String clientKeyStorePass, ClientConfig clientConfig) throws Exception {
+
+
+        KeyStore cks = KeyStore.getInstance("PKCS12");
+
+        loadKeyStore(cks, clientKeyStore, clientKeyStorePass);
+
+        return ClientBuilder.newBuilder().keyStore(cks, clientKeyStorePass.toCharArray()).withConfig(clientConfig).build();
+
+
+    }
+
+
+    /**
      * Create custom client with specific keystores.
      *
      * @param clientKeyStore     Client (BOT) keystore file

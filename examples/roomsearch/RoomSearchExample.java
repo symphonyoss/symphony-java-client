@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.client.SymphonyClientConfig;
+import org.symphonyoss.client.SymphonyClientConfigID;
 import org.symphonyoss.client.SymphonyClientFactory;
 import org.symphonyoss.client.exceptions.StreamsException;
 import org.symphonyoss.client.services.RoomService;
@@ -91,8 +92,13 @@ public class RoomSearchExample {
         try {
 
 
+            SymphonyClientConfig symphonyClientConfig = new SymphonyClientConfig(true);
+
+            //No need to run real-time feed.
+            symphonyClientConfig.set(SymphonyClientConfigID.DISABLE_SERVICES, "True");
+
             //Create an initialized client
-            SymphonyClient symClient = SymphonyClientFactory.getClient(SymphonyClientFactory.TYPE.V4,new SymphonyClientConfig(true));
+            SymphonyClient symClient = SymphonyClientFactory.getClient(SymphonyClientFactory.TYPE.V4,symphonyClientConfig);
 
 
             SymRoomSearchCriteria symRoomSearchCriteria = new SymRoomSearchCriteria();
