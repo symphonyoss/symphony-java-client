@@ -89,7 +89,7 @@
         <slfj4-version>1.7.21</slfj4-version>
         <jaxrs-version>2.1</jaxrs-version>
         <junit-version>4.12</junit-version>
-        <mokito-version>2.10.0</mokito-version>
+        <mokito-version>2.4.0</mokito-version>
         <powermock-version>1.7.0RC2</powermock-version>
         <jsoup-version>1.10.3</jsoup-version>
         <jackson.version>2.9.1</jackson.version>
