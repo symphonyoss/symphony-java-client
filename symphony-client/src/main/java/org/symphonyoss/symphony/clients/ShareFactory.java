@@ -38,7 +38,7 @@ public class ShareFactory {
     public static ShareClient getClient(SymphonyClient symClient, TYPE type) {
 
         if (type.equals(TYPE.HTTPCLIENT)) {
-            return new ShareClientImpl(symClient.getSymAuth(), symClient.getPodUrl(), symClient.getDefaultHttpClient());
+            return new ShareClientImpl(symClient.getSymAuth(), symClient.getPodUrl(), symClient.getPodHttpClient());
         } else {
             return new ShareClientImpl(symClient.getSymAuth(), symClient.getPodUrl());
         }

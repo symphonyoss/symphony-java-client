@@ -1,5 +1,6 @@
 /*
  *
+ *
  * Copyright 2016 The Symphony Software Foundation
  *
  * Licensed to The Symphony Software Foundation (SSF) under one
@@ -18,28 +19,26 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
+ *
  */
 
-package org.symphonyoss.symphony.clients;
-
-import org.symphonyoss.client.SymphonyClient;
-import org.symphonyoss.symphony.clients.impl.PresenceClientImpl;
+package org.symphonyoss.client.exceptions;
 
 /**
- * Created by frank.tarsillo on 6/6/2016.
+ * Created by Frank Tarsillo on 9/11/2016.
  */
-public class PresenceFactory {
-
-    public enum TYPE {DEFAULT, HTTPCLIENT}
-
-    public static PresenceClient getClient(SymphonyClient symClient, TYPE type) {
-
-        if (type.equals(TYPE.HTTPCLIENT)) {
-            return new PresenceClientImpl(symClient.getSymAuth(), symClient.getPodUrl(), symClient.getPodHttpClient());
-        } else {
-            return new PresenceClientImpl(symClient.getSymAuth(), symClient.getPodUrl());
-        }
-
+public class SystemException extends SymException {
+    @SuppressWarnings("unused")
+    public SystemException(String message) {
+        super(message);
     }
 
+    @SuppressWarnings("unused")
+    public SystemException(Throwable cause) {
+        super(cause);
+    }
+
+    public SystemException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

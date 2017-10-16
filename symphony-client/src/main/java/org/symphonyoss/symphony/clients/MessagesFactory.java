@@ -42,7 +42,7 @@ public class MessagesFactory {
 
 
         if (type.equals(TYPE.HTTPCLIENT)) {
-            return new MessagesClientImpl(symClient.getSymAuth(), symClient.getAgentUrl(), symClient.getDefaultHttpClient(), apiVersion);
+            return new MessagesClientImpl(symClient.getSymAuth(), symClient.getAgentUrl(), symClient.getAgentHttpClient(), apiVersion);
         } else {
             return new MessagesClientImpl(symClient.getSymAuth(), symClient.getAgentUrl(), apiVersion);
         }

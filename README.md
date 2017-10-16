@@ -61,7 +61,9 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 * Focus on implementing all REST API capabilities
 * Interfaces defined for external frameworks and example implementations
 * Spring support verification
-* Implement health-check
+* Implement Agent Server health-check under new AgentSystemClient
+* Updated ShareClient to use V3 endpoint
+* Added getUserBySession(SymAuth) to UsersClient
 
 
 
@@ -123,28 +125,7 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 * CI integration testing (mvn goal -Pintegration-testing)
 * Bug fixes, documentation, new examples
 
-### V0.9.1 
 
-* Compatible with 1.40.1 API, V2 and Agent 1.39+
-* New Connections Service for managing connection requests.  This includes auto-accept.
-* Support for attachments through new SymMessage and Attachments Client
-* Message and User objects have been replaced with SymMessage and SymUser in order to handle future underlying versioning changes
-* Listeners have been upgraded to support new object models
-* Room Service is now linked into Datafeed for real-time processing and dynamic room formation
-* New UserV2 lookups have been implemented that should alleviate the need for elevated privileges
-* New exceptions handling implemented with detailed message outputs
-* Lazy cache for room identification
-* Additional examples added for new features
-* Examples updated to reflect core changes
-* Many..many..underlying code updates resolving sonar issues
-
-### V0.9.0 
-
-* Compatible with 1.38 API, V1 and Agent
-* Bot user requires elevated privileges to acquire
-* Inititial release includes the basic client, chat service, presence service and basic room functions.
-* Exposes clients for Symphoni API including Authorization, Streams, Presence, RoomMembership, User, Users,
-* Utilizes generated API models from Symphony
 
 ## Branch Strategy
 

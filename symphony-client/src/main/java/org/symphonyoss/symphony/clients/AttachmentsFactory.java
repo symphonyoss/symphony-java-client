@@ -35,7 +35,7 @@ public class AttachmentsFactory {
     public static AttachmentsClient getClient(SymphonyClient symClient, TYPE type){
 
             if(type.equals(TYPE.HTTPCLIENT)) {
-                return new AttachmentsClientImpl(symClient.getSymAuth(), symClient.getAgentUrl(), symClient.getDefaultHttpClient());
+                return new AttachmentsClientImpl(symClient.getSymAuth(), symClient.getAgentUrl(), symClient.getAgentHttpClient());
             }else{
 
                 return new AttachmentsClientImpl(symClient.getSymAuth(), symClient.getAgentUrl());

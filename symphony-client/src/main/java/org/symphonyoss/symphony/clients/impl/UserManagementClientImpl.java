@@ -48,11 +48,11 @@ public class UserManagementClientImpl implements UserManagementClient {
     private final SymAuth symAuth;
     private final ApiClient apiClient;
 
-    public UserManagementClientImpl(SymAuth symAuth, String serviceUrl) {
+    public UserManagementClientImpl(SymAuth symAuth, String podUrl) {
         this.symAuth = symAuth;
 
         apiClient = Configuration.getDefaultApiClient();
-        apiClient.setBasePath(serviceUrl);
+        apiClient.setBasePath(podUrl);
 
     }
 

@@ -36,7 +36,7 @@ public class StreamsFactory {
 
 
         if(type.equals(TYPE.HTTPCLIENT)) {
-            return new StreamsClientImpl(symClient.getSymAuth(), symClient.getPodUrl(), symClient.getDefaultHttpClient());
+            return new StreamsClientImpl(symClient.getSymAuth(), symClient.getPodUrl(), symClient.getPodHttpClient());
         }else{
             return new StreamsClientImpl(symClient.getSymAuth(), symClient.getPodUrl());
         }

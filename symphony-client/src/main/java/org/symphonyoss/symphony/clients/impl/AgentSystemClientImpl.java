@@ -11,7 +11,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -20,48 +20,45 @@
  * specific language governing permissions and limitations
  * under the License.
  *
- *
  */
 
 package org.symphonyoss.symphony.clients.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.symphonyoss.client.exceptions.ShareException;
+import org.symphonyoss.client.exceptions.SystemException;
 import org.symphonyoss.client.model.SymAuth;
-import org.symphonyoss.client.model.SymShareArticle;
-import org.symphonyoss.symphony.agent.api.ShareApi;
-import org.symphonyoss.symphony.agent.invoker.ApiException;
-import org.symphonyoss.symphony.agent.model.ShareContent;
-import org.symphonyoss.symphony.clients.ShareClient;
+import org.symphonyoss.symphony.agent.api.SystemApi;
 import org.symphonyoss.symphony.agent.invoker.ApiClient;
+import org.symphonyoss.symphony.agent.invoker.ApiException;
+import org.symphonyoss.symphony.clients.AgentSystemClient;
+import org.symphonyoss.symphony.clients.model.SymAgentHealthCheck;
 
 import javax.ws.rs.client.Client;
 
-
 /**
  *
- * @author Frank Tarsillo on 10/22/2016.
+ * Used for agent server health check
+ *
+ *
+ * @author Frank Tarsillo on 10/15/17.
  */
-public class ShareClientImpl implements ShareClient{
+public class AgentSystemClientImpl implements AgentSystemClient {
 
-    private final SymAuth symAuth;
-    @SuppressWarnings("unused")
-    private final String podUrl;
+
     private final ApiClient apiClient;
+    private final SymAuth symAuth;
 
-    @SuppressWarnings("unused")
-    private final Logger logger = LoggerFactory.getLogger(StreamsClientImpl.class);
+    private Logger logger = LoggerFactory.getLogger(AgentSystemClientImpl.class);
 
-    public ShareClientImpl(SymAuth symAuth, String podUrl) {
+    public AgentSystemClientImpl(SymAuth symAuth, String agentUrl) {
 
         this.symAuth = symAuth;
-        this.podUrl = podUrl;
 
 
         //Get Service client to query for userID.
         apiClient = org.symphonyoss.symphony.agent.invoker.Configuration.getDefaultApiClient();
-        apiClient.setBasePath(podUrl);
+        apiClient.setBasePath(agentUrl);
 
 
     }
@@ -69,39 +66,37 @@ public class ShareClientImpl implements ShareClient{
     /**
      * If you need to override HttpClient.  Important for handling individual client certs.
      * @param symAuth Authorization model containing session and key tokens
-     * @param podUrl Service URL used to access API
-     * @param httpClient Custom HTTP client
+     * @param agentUrl Agent URL
+     * @param httpClient Custom client utilized to access Symphony APIs
      */
-    public ShareClientImpl(SymAuth symAuth, String podUrl, Client httpClient) {
+    public AgentSystemClientImpl(SymAuth symAuth, String agentUrl, Client httpClient) {
         this.symAuth = symAuth;
-        this.podUrl = podUrl;
 
         //Get Service client to query for userID.
         apiClient = org.symphonyoss.symphony.agent.invoker.Configuration.getDefaultApiClient();
         apiClient.setHttpClient(httpClient);
-        apiClient.setBasePath(podUrl);
-
+        apiClient.setBasePath(agentUrl);
 
 
     }
 
 
-    @Override
-    public void shareArticle(String streamId, SymShareArticle article) throws ShareException{
 
-        ShareApi shareApi = new ShareApi(apiClient);
 
-        ShareContent shareContent = new ShareContent();
-        shareContent.setContent(SymShareArticle.toShareArticle(article));
-        shareContent.setType("com.symphony.sharing.article");
+    public SymAgentHealthCheck getAgentHealthCheck() throws SystemException{
+
+        SystemApi systemApi = new SystemApi(apiClient);
 
         try {
-
-            shareApi.v3StreamSidSharePost(streamId, symAuth.getSessionToken().getToken(),shareContent,symAuth.getKeyToken().getToken());
+            return SymAgentHealthCheck.toSymAgentHealthCheck(systemApi.v2HealthCheckGet(symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken()));
         } catch (ApiException e) {
-          throw new ShareException(e);
+            throw new SystemException("Could not execute health check on agent server",e);
         }
 
 
     }
+
+
+
+
 }

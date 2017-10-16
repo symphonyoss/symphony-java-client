@@ -32,6 +32,7 @@ import org.symphonyoss.client.exceptions.UsersClientException;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.pod.api.RoomMembershipApi;
+import org.symphonyoss.symphony.pod.api.SessionApi;
 import org.symphonyoss.symphony.pod.api.UserApi;
 import org.symphonyoss.symphony.pod.api.UsersApi;
 import org.symphonyoss.symphony.pod.invoker.ApiClient;
@@ -417,9 +418,7 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
         return SymUser.toSymUser(userDetail);
     }
 
-	/* ************************************************************************
-     * Private Methods
-	 * ***********************************************************************/
+
 
     private String getSessionToken() throws IllegalStateException {
         String sessionToken = symAuth.getSessionToken().getToken();
@@ -429,5 +428,24 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
         }
         return sessionToken;
     }
+
+    @Override
+    public SymUser getUserBySession(SymAuth symAuth) throws UsersClientException{
+
+        if(symAuth==null)
+            return null;
+
+
+        SessionApi sessionApi = new SessionApi(apiClient);
+
+        try {
+            return SymUser.toSymUser(sessionApi.v2SessioninfoGet(symAuth.getSessionToken().getToken()));
+        } catch (ApiException e) {
+            throw new UsersClientException("Unable to obtain user by session token", e);
+        }
+
+    }
+
+
 
 }

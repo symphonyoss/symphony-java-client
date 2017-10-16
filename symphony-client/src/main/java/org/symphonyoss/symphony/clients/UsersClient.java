@@ -25,6 +25,7 @@ package org.symphonyoss.symphony.clients;
 import java.util.Set;
 
 import org.symphonyoss.client.exceptions.UsersClientException;
+import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.pod.model.UserCreate;
 import org.symphonyoss.symphony.pod.model.UserStatus;
@@ -53,4 +54,5 @@ public interface UsersClient {
 
     Set<SymUser> getAllUsersWithDetails() throws UsersClientException;
 
+    SymUser getUserBySession(SymAuth symAuth) throws UsersClientException;
 }

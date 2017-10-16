@@ -1,5 +1,6 @@
 /*
  *
+ *
  * Copyright 2016 The Symphony Software Foundation
  *
  * Licensed to The Symphony Software Foundation (SSF) under one
@@ -18,28 +19,30 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
+ *
  */
 
 package org.symphonyoss.symphony.clients;
 
 import org.symphonyoss.client.SymphonyClient;
-import org.symphonyoss.symphony.clients.impl.PresenceClientImpl;
+import org.symphonyoss.symphony.clients.impl.AgentSystemClientImpl;
+import org.symphonyoss.symphony.clients.impl.AttachmentsClientImpl;
 
 /**
- * Created by frank.tarsillo on 6/6/2016.
+ * @author Frank Tarsillo
  */
-public class PresenceFactory {
+public class AgentSystemClientFactory {
 
-    public enum TYPE {DEFAULT, HTTPCLIENT}
+    public enum TYPE { DEFAULT, HTTPCLIENT }
 
-    public static PresenceClient getClient(SymphonyClient symClient, TYPE type) {
+    public static AgentSystemClient getClient(SymphonyClient symClient, TYPE type){
 
-        if (type.equals(TYPE.HTTPCLIENT)) {
-            return new PresenceClientImpl(symClient.getSymAuth(), symClient.getPodUrl(), symClient.getPodHttpClient());
-        } else {
-            return new PresenceClientImpl(symClient.getSymAuth(), symClient.getPodUrl());
-        }
+            if(type.equals(TYPE.HTTPCLIENT)) {
+                return new AgentSystemClientImpl(symClient.getSymAuth(), symClient.getAgentUrl(), symClient.getAgentHttpClient());
+            }else{
 
+                return new AgentSystemClientImpl(symClient.getSymAuth(), symClient.getAgentUrl());
+            }
     }
 
 }

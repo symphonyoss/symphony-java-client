@@ -35,7 +35,7 @@ public class DataFeedFactory {
     public static DataFeedClient getClient(SymphonyClient symClient, TYPE type){
 
         if(type.equals(TYPE.HTTPCLIENT)) {
-            return new DataFeedClientImpl(symClient.getSymAuth(), symClient.getAgentUrl(), symClient.getDefaultHttpClient());
+            return new DataFeedClientImpl(symClient.getSymAuth(), symClient.getAgentUrl(), symClient.getAgentHttpClient());
         }else{
             return new DataFeedClientImpl(symClient.getSymAuth(), symClient.getAgentUrl());
         }
