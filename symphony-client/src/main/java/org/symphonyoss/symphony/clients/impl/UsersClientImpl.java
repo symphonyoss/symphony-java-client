@@ -37,9 +37,20 @@ import org.symphonyoss.symphony.pod.api.UserApi;
 import org.symphonyoss.symphony.pod.api.UsersApi;
 import org.symphonyoss.symphony.pod.invoker.ApiClient;
 import org.symphonyoss.symphony.pod.invoker.ApiException;
-import org.symphonyoss.symphony.pod.model.*;
+import org.symphonyoss.symphony.pod.model.AvatarUpdate;
+import org.symphonyoss.symphony.pod.model.FeatureList;
+import org.symphonyoss.symphony.pod.model.MemberInfo;
+import org.symphonyoss.symphony.pod.model.MembershipList;
+import org.symphonyoss.symphony.pod.model.SuccessResponse;
+import org.symphonyoss.symphony.pod.model.UserAttributes;
+import org.symphonyoss.symphony.pod.model.UserCreate;
+import org.symphonyoss.symphony.pod.model.UserDetail;
+import org.symphonyoss.symphony.pod.model.UserIdList;
+import org.symphonyoss.symphony.pod.model.UserStatus;
+import org.symphonyoss.symphony.pod.model.UserV2;
 
 import javax.ws.rs.client.Client;
+import java.util.Base64;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -446,6 +457,45 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
 
     }
 
+    /**
+    * Update the avatar of a particular user
+    *
+    * @param userId
+    *         User ID as a decimal integer  (required)
+    * @param avatar
+    *         user image. Should be less then 2MB.
+    * @throws UsersClientException
+    *         if fails to make the avatar update
+    */
+    @Override
+    public void updateUserAvatar(long userId, byte[] avatar) throws UsersClientException {
+        if (avatar != null) {
+            UserApi usersApi = new UserApi(apiClient);
+            try {
+                String sessionToken = getSessionToken();
 
+                String image = Base64.getEncoder().encodeToString(avatar);
 
+                AvatarUpdate avatarUpdate = new AvatarUpdate();
+                avatarUpdate.setImage(image);
+
+                SuccessResponse response = usersApi.v1AdminUserUidAvatarUpdatePost(sessionToken, userId, avatarUpdate);
+
+                if (!"OK".equals(response.getMessage())) {
+                    throw new IllegalStateException(
+                            "The message differs from expected OK message. Response message: " + response.getMessage());
+                }
+
+            } catch (ApiException e) {
+                String message = "API error communicating with POD, while updating avatar";
+                logger.error(message, e);
+                throw new UsersClientException(message,
+                        new RestException(usersApi.getApiClient().getBasePath(), e.getCode(), e));
+            } catch (IllegalStateException e) {
+                String message = "Avatar update failed";
+                logger.error(message, e);
+                throw new UsersClientException(message);
+            }
+        }
+    }
 }

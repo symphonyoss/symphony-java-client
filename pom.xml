@@ -88,7 +88,8 @@
         <slfj4-version>1.7.21</slfj4-version>
         <jaxrs-version>2.0.1</jaxrs-version>
         <junit-version>4.12</junit-version>
-        <mokito-version>1.10.19</mokito-version>
+        <mokito-version>2.4.0</mokito-version>
+        <powermock-version>1.7.0RC2</powermock-version>
         <jsoup-version>1.9.2</jsoup-version>
         <jackson.version>2.8.8</jackson.version>
     </properties>
@@ -119,6 +120,16 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <version>${mokito-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-junit4</artifactId>
+            <version>${powermock-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-api-mockito2</artifactId>
+            <version>${powermock-version}</version>
         </dependency>
         <dependency>
             <groupId>org.jsoup</groupId>
