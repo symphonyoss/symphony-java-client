@@ -191,6 +191,8 @@ public class SymphonyBasicClient implements SymphonyClient {
     public void init(Client httpClient, SymAuth symAuth, String email, String agentUrl, String podUrl) throws InitException {
 
         this.defaultHttpClient = httpClient;
+        this.agentHttpClient = httpClient;
+        this.defaultHttpClient = httpClient;
         init(symAuth, email, agentUrl, podUrl);
     }
 
@@ -207,6 +209,14 @@ public class SymphonyBasicClient implements SymphonyClient {
      */
     @Override
     public void init(SymAuth symAuth, String email, String agentUrl, String podUrl, boolean disableServices) throws InitException {
+
+        if(podHttpClient==null)
+            podHttpClient = defaultHttpClient;
+
+        if(agentHttpClient==null)
+            agentHttpClient = defaultHttpClient;
+
+
 
         String NOT_LOGGED_IN_MESSAGE = "Currently not logged into Agent, please check certificates and tokens.";
         if (symAuth == null || symAuth.getSessionToken() == null || symAuth.getKeyToken() == null)
