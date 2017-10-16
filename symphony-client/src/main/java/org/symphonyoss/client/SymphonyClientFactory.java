@@ -106,19 +106,6 @@ public class SymphonyClientFactory {
             }
 
 
-            //Init the Symphony authorization client, which requires both the key and session URL's.  In most cases,
-            //the same fqdn but different URLs.
-            AuthenticationClient authClient = new AuthenticationClient(
-                    initParams.get(SymphonyClientConfigID.SESSIONAUTH_URL),
-                    initParams.get(SymphonyClientConfigID.KEYAUTH_URL),
-                    symClient.getDefaultHttpClient());
-
-
-            //Create a SymAuth which holds both key and session tokens.  This will call the external service.
-            SymAuth symAuth = authClient.authenticate();
-
-
-            //With a valid SymAuth we can now init our client.
             symClient.init(symClient.getDefaultHttpClient(), initParams);
 
 

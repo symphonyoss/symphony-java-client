@@ -110,8 +110,8 @@ public class MessageService implements DataFeedListener {
      *
      * @param room       Room object
      * @param symMessage Message to send to the room
-     * @throws MessagesException Generated from API calls into Symphony
      * @return Symphony message
+     * @throws MessagesException Generated from API calls into Symphony
      */
     public SymMessage sendMessage(Room room, SymMessage symMessage) throws MessagesException {
 
@@ -125,8 +125,8 @@ public class MessageService implements DataFeedListener {
      *
      * @param chat       Chat object representing conversation
      * @param symMessage Message to send to the conversation
-     * @throws MessagesException Generated from API calls into Symphony
      * @return Symphony Message
+     * @throws MessagesException Generated from API calls into Symphony
      */
     public SymMessage sendMessage(Chat chat, SymMessage symMessage) throws MessagesException {
 
@@ -140,8 +140,8 @@ public class MessageService implements DataFeedListener {
      *
      * @param email      email of destination user
      * @param symMessage Message to send
-     * @throws MessagesException Generated from API calls into Symphony
      * @return Symphony message
+     * @throws MessagesException Generated from API calls into Symphony
      */
     public SymMessage sendMessage(String email, SymMessage symMessage) throws MessagesException {
 
@@ -159,6 +159,59 @@ public class MessageService implements DataFeedListener {
         }
 
     }
+
+
+    /**
+     * Send a message to a given user
+     *
+     * @param symUser  User to send message to
+     * @param symMessage Message to send
+     * @return Symphony message
+     * @throws MessagesException Generated from API calls into Symphony
+     */
+    public SymMessage sendMessage(SymUser symUser, SymMessage symMessage) throws MessagesException {
+
+        if (symUser.getId() == null) {
+            throw new MessagesException("Failed to send message. SymUser ID not provided");
+        }
+
+        try {
+
+            return symClient.getMessagesClient().sendMessage(symClient.getStreamsClient().getStream(symUser), symMessage);
+
+        } catch (StreamsException e) {
+            throw new MessagesException("Failed to send message. Unable to identify stream from userId: " + symUser.getId(), e);
+        }
+
+    }
+
+
+    /**
+     * Send a message to a given stream
+     *
+     * @param symStream  Stream to send message to
+     * @param symMessage Message to send
+     * @return Symphony message
+     * @throws MessagesException Generated from API calls into Symphony
+     */
+    public SymMessage sendMessage(SymStream symStream, SymMessage symMessage) throws MessagesException {
+
+        if (symStream.getStreamId() == null) {
+            throw new MessagesException("Failed to send message. StreamID not provided");
+        }
+
+        try {
+
+            return symClient.getMessagesClient().sendMessage(symStream, symMessage);
+
+        } catch (MessagesException e) {
+            throw new MessagesException("Failed to send message to streamId" + symStream.getStreamId(), e);
+        }
+
+    }
+
+
+
 
     /**
      * Retrieve messages for a given stream based on window of time
@@ -233,8 +286,6 @@ public class MessageService implements DataFeedListener {
                 SymMessage symMessage = symEvent.getPayload().getMessageSent();
 
                 if (symMessage != null && !symClient.getLocalUser().getId().equals(symMessage.getFromUserId())) {
-
-
 
 
                     //Verify if this message is part of room conversation
@@ -407,9 +458,6 @@ public class MessageService implements DataFeedListener {
 
 
     }
-
-
-
 
 
     /**

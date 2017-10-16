@@ -43,10 +43,17 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 
 ### V1.1.0 (SNAPSHOT)
 * REMOVED MOST V2 Support and deprecated methods/classes
-* Support for for 1.46.3 or higher
+* Support for for 1.46.3 or higher. 1.48.0 added as dependency
+* SymphonyClient now support custom http clients for both Pod and Agent clients 
+* SymphonyClientConfigID TRUSTSTORE_FILE and TRUSTSTORE_PASSWORD set to optional now.
+* SymphonyClient can be initialized without defining truststore, taking defaults. 
+* Added session logout to AuthenticationClient
 * Added special attribute (ApiVersion) to SymMessage to support sending MessageMLv1 messages over V2 endpoints. This gets around some of the limitations of PresentationML/MessageMLv2
 * SymStream object replacing all use of legacy Stream objects.
+* SymMessage.setMessageText(..) will automatically escapeXml
+* Added new methods in MessageService to send message by SymUser and SymStream (Convenience)
 * SymphonyClient instances default to V4 API
+* Added a convenience class SymphonyApis accessible through SymphonyClient supporting retrieval of all language binding APIs (Not recommended for use)
 * SymMessage no longer has option to set Format as everything is PresentationML based moving forward.  Use SymMessage.setMessageText(TEXT) if you want to set simple text value.
 * SymMessage will default setting text message to PresentationML
 * New SymphonyConfigID for disabling services (DISABLE_SERVICES). SendMessage example added.
@@ -55,7 +62,7 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 * Interfaces defined for external frameworks and example implementations
 * Spring support verification
 * Implement health-check
-* Move to logback
+
 
 
 

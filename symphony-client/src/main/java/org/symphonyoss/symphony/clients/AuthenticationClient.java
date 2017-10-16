@@ -144,6 +144,41 @@ public class AuthenticationClient {
 
 
     /**
+     * Logout from an existing session
+     *
+     * @param symAuth SymAuth object containing session token to logout
+     * @throws AuthenticationException Exception generated from underlying REST API calls.
+     */
+    public void sessionLogout(SymAuth symAuth) throws AuthenticationException {
+
+
+        try {
+
+            AuthenticationApi authenticationApi = getAuthenticationApi();
+
+            // Configure the authenticator connection
+            authenticationApi.getApiClient().setBasePath(sessionUrl);
+
+            if (httpClientForSessionToken != null) {
+                Configuration.getDefaultApiClient().setHttpClient(httpClientForSessionToken);
+            }
+
+            authenticationApi.v1LogoutPost(symAuth.getSessionToken().getToken());
+            logger.debug("Logged out from session: {} : {}", symAuth.getSessionToken().getName(), symAuth.getSessionToken().getToken());
+
+
+
+        } catch (ApiException e) {
+
+            throw new AuthenticationException("Please check if you supplied the correct session token.. ", e.getCode(), e);
+
+        }
+
+
+    }
+
+
+    /**
      * Authentication call for Extensions API Applications.  Returns
      *
      * @param appToken Arbitrary application token to assign session.
@@ -247,6 +282,9 @@ public class AuthenticationClient {
 
 
     }
+
+
+
 
     public boolean isLoggedIn() {
         return loginStatus;

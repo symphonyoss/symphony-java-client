@@ -22,6 +22,7 @@
 
 package org.symphonyoss.symphony.clients.model;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.symphonyoss.client.common.MLTypes;
 import org.symphonyoss.client.exceptions.SymException;
 import org.symphonyoss.client.util.MlMessageParser;
@@ -247,6 +248,9 @@ public class SymMessage {
     }
 
     public void setMessageText(ApiVersion apiVersion, String text) {
+
+        //Lets make sure we comply with XML
+        text = StringEscapeUtils.escapeXml(text);
 
 
         if (apiVersion != null && !apiVersion.equals(ApiVersion.V2)) {

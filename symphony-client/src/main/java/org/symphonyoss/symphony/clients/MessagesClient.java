@@ -26,6 +26,7 @@ import org.symphonyoss.client.exceptions.MessagesException;
 import org.symphonyoss.symphony.clients.model.ApiVersion;
 import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.clients.model.SymStream;
+import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.pod.model.Stream;
 
 import java.util.List;
@@ -81,5 +82,6 @@ public interface MessagesClient {
      * @throws MessagesException Exception caused by Symphony API calls
      */
     List<SymMessage> getMessagesFromStream(Stream stream, Long since, Integer offset, Integer maxMessages) throws MessagesException;
+
 
 }

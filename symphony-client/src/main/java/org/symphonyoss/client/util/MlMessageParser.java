@@ -22,6 +22,7 @@
 
 package org.symphonyoss.client.util;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.jsoup.nodes.Attribute;
 import org.jsoup.select.Elements;
 import org.symphonyoss.client.model.*;
@@ -38,19 +39,19 @@ import org.symphonyoss.symphony.clients.model.SymUser;
 import org.xml.sax.helpers.DefaultHandler;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Provides simple utility to parse MlMessage formatted text
  *
  * @author Frank Tarsillo
  */
-@SuppressWarnings("WeakerAccess")
 public class MlMessageParser extends DefaultHandler {
 
-    @SuppressWarnings("unused")
+
     private String messageMl;
     private Element elementMessageML;
-    @SuppressWarnings("unused")
     private Document doc;
     private Document originalDoc;
     private StringBuilder textDoc = new StringBuilder();
@@ -310,6 +311,39 @@ public class MlMessageParser extends DefaultHandler {
     public List<Node> getChildNodes() {
 
         return elementMessageML.childNodes();
+    }
+
+
+    /**
+     * Experimental - will attempt to escape all text within xml elements
+     * @param xml full xml
+     * @return escaped xml string
+     */
+    public static String escapeAllXml(String xml)
+    {
+        // Match the pattern <something>text</something>
+        Pattern xmlCleanerPattern = Pattern.compile("(<[^/<>]*>)([^<>]*)(</[^<>]*>)");
+
+        StringBuilder xmlStringBuilder = new StringBuilder();
+
+        Matcher matcher = xmlCleanerPattern.matcher(xml);
+        int lastEnd = 0;
+        while (matcher.find())
+        {
+            // Include any non-matching text between this result and the previous result
+            if (matcher.start() > lastEnd) {
+                xmlStringBuilder.append(xml.substring(lastEnd, matcher.start()));
+            }
+            lastEnd = matcher.end();
+
+            // Sanitise the characters inside the tags and append the sanitised version
+            String cleanText = StringEscapeUtils.escapeXml(matcher.group(2));
+            xmlStringBuilder.append(matcher.group(1)).append(cleanText).append(matcher.group(3));
+        }
+        // Include any leftover text after the last result
+        xmlStringBuilder.append(xml.substring(lastEnd));
+
+        return xmlStringBuilder.toString();
     }
 }
 

@@ -275,4 +275,12 @@ public interface SymphonyClient {
      * @param  agentHttpClient HttpClient for Agent
      */
     void setAgentHttpClient(Client agentHttpClient);
+
+    /**
+     * Convenience in obtaining all underlying language binding APIs
+     * Accessing language bindings directly is discouraged as changes are bound to REST API
+     *
+     * @return SymphonyApis which provide access to all REST API Apis
+     */
+    SymphonyApis getSymphonyApis();
 }

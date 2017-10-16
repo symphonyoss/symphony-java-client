@@ -32,6 +32,7 @@ import org.symphonyoss.client.SymphonyClientConfigID;
 import org.symphonyoss.client.SymphonyClientFactory;
 import org.symphonyoss.client.exceptions.MessagesException;
 import org.symphonyoss.client.exceptions.StreamsException;
+import org.symphonyoss.client.util.MlMessageParser;
 import org.symphonyoss.symphony.clients.model.*;
 
 
@@ -101,7 +102,9 @@ public class SendMessage {
 
             SymMessage symMessage = new SymMessage();
 
-            symMessage.setMessageText(ApiVersion.V4,"Hello world..");
+            symMessage.setMessageText(ApiVersion.V4,"Hello world'..&&..");
+
+            logger.debug("{}", MlMessageParser.escapeAllXml(symMessage.getMessage()));
 
 
             try {

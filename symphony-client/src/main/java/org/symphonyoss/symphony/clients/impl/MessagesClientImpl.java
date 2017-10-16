@@ -131,7 +131,6 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
     }
 
 
-
     /**
      * Send message to SymStream
      *
@@ -148,7 +147,6 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
     }
 
 
-
     /**
      * Retrieve historical messages from a given SymStream.  This is NOT a blocking call.
      *
@@ -156,14 +154,13 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
      * @param since       Date (long) from point in time
      * @param offset      Offset
      * @param maxMessages Maximum number of messages to retrieve from the specified time (since)
-     *
      * @return List of messages
      * @throws MessagesException Exception caused by Symphony API calls
      */
     @Override
     public List<SymMessage> getMessagesFromStream(SymStream symStream, Long since, Integer offset, Integer maxMessages, ApiVersion apiVersion1) throws MessagesException {
 
-        return (ApiVersion.V4==apiVersion1)?getMessagesFromStreamV4(symStream, since, offset, maxMessages): getMessagesFromStreamV2(symStream, since, offset, maxMessages);
+        return (ApiVersion.V4 == apiVersion1) ? getMessagesFromStreamV4(symStream, since, offset, maxMessages) : getMessagesFromStreamV2(symStream, since, offset, maxMessages);
 
     }
 
@@ -240,7 +237,6 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
     }
 
 
-
     /**
      * Retrieve historical messages from a given stream.  This is NOT a blocking call.
      *
@@ -293,9 +289,11 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
             throw new NullPointerException("Stream or message submission was not provided..");
         }
 
+
         MessagesApi messagesApi = new MessagesApi(apiClient);
         V4Message v4Message;
         try {
+
 
             return SymMessage.toSymMessage(messagesApi.v4StreamSidMessageCreatePost(
                     stream.getStreamId(),

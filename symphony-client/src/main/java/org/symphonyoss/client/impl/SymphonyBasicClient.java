@@ -76,6 +76,7 @@ public class SymphonyBasicClient implements SymphonyClient {
     private AttachmentsClient attachmentsClient;
     private ConnectionsClient connectionsClient;
     private ShareClient shareClient;
+    private SymphonyApis symphonyApis;
     private Client defaultHttpClient = ClientBuilder.newClient();
     private Client podHttpClient;
     private Client agentHttpClient;
@@ -232,6 +233,7 @@ public class SymphonyBasicClient implements SymphonyClient {
         attachmentsClient = AttachmentsFactory.getClient(this, AttachmentsFactory.TYPE.HTTPCLIENT);
         roomMembershipClient = RoomMembershipFactory.getClient(this, RoomMembershipFactory.TYPE.HTTPCLIENT);
         connectionsClient = ConnectionsFactory.getClient(this, ConnectionsFactory.TYPE.HTTPCLIENT);
+        symphonyApis = SymphonyApisFactory.getClient(this,SymphonyApisFactory.TYPE.HTTPCLIENT);
 
         try {
 
@@ -453,6 +455,11 @@ public class SymphonyBasicClient implements SymphonyClient {
     @Override
     public void setAgentHttpClient(Client agentHttpClient) {
         this.agentHttpClient = agentHttpClient;
+    }
+
+    @Override
+    public SymphonyApis getSymphonyApis() {
+        return symphonyApis;
     }
 }
 
