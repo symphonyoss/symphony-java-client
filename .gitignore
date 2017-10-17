@@ -54,3 +54,4 @@ symphony-java-client.iml
 **/.project
 **/.classpath
 /examples/symphony-client-examples.iml
+.DS_Store
