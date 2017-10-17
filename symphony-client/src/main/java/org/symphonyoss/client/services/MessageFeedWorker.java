@@ -98,18 +98,9 @@ class MessageFeedWorker implements Runnable {
 
                 break;
             } 
-            catch( DataFeedException e) {
+            catch( Exception e) {
 
-        	/*
-        	 * TODO:
-        	 * This seems wrong to me, if the result of this is 404
-        	 * or some other non-transient error then there is hardly
-        	 * any point re-trying and a fault should be propagated
-        	 * to the application code.
-        	 * 
-        	 * It's not clear how best to do this though.....
-        	 * -Bruce.
-        	 */
+
                 logger.error("Failed to create datafeed with pod, please check connection..", e);
                 datafeed = null;
 
@@ -148,16 +139,6 @@ class MessageFeedWorker implements Runnable {
 
             }
 
-
-
-//            List<V2BaseMessage> messageList = symClient.getDataFeedClient().getMessagesFromDatafeed(datafeed);
-//
-//            if (messageList != null) {
-//
-//                logger.debug("Received {} messages..", messageList.size());
-//
-//                messageList.forEach(dataFeedListener::onMessage);
-//            }
 
         } catch (Exception e) {
             logger.error("Failed to create read datafeed from pod, please check connection..resetting.", e);
