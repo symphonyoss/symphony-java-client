@@ -254,7 +254,7 @@ public class SymphonyBasicClient implements SymphonyClient {
                 roomService = new RoomService(this, apiVersion);
             }
 
-            localUser = usersClient.getUserFromEmail(email);
+            localUser = usersClient.getUserBySession(symAuth);
         } catch (SymException e) {
             logger.error("Failed to initialize client..", e);
 
