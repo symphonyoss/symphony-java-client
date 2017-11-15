@@ -121,7 +121,7 @@ public class SymphonyBasicClient implements SymphonyClient {
 
     @Override
     public void setName(String name){
-        this.name=name;
+        this.name = name;
     }
 
     @Override
@@ -177,7 +177,7 @@ public class SymphonyBasicClient implements SymphonyClient {
     public void init(SymAuth symAuth, String email, String agentUrl, String podUrl) throws InitException {
 
         init(symAuth, email, agentUrl, podUrl, false);
-        this.name= email;
+        this.name = email;
 
     }
 
