@@ -99,10 +99,7 @@ public class MessageService implements DataFeedListener {
         //Lets startup the worker thread to listen for raw datafeed messages
         dataFeedWorker = new DataFeedWorker(symClient, this);
 
-        Thread thread=new Thread(dataFeedWorker);
-        thread.setName("DataFeedWorker: "+ symClient.getName());
-        thread.start();
-
+        new Thread(dataFeedWorker, "DataFeedWorker: "+ symClient.getName()).start();
 
     }
 
