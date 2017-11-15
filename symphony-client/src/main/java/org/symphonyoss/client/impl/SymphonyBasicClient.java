@@ -83,12 +83,11 @@ public class SymphonyBasicClient implements SymphonyClient {
     private final long SYMAUTH_REFRESH_TIME = Long.parseLong(System.getProperty(Constants.SYMAUTH_REFRESH_TIME, "7200000"));
     SymUserCache symUserCache;
     private ApiVersion apiVersion = ApiVersion.V4;
-
+    private String name;
 
     public SymphonyBasicClient() {
         this(ApiVersion.V4);
     }
-
 
     public SymphonyBasicClient(ApiVersion apiVersion) {
         this.apiVersion = apiVersion;
@@ -113,14 +112,21 @@ public class SymphonyBasicClient implements SymphonyClient {
                        initParams.get(SymphonyClientConfigID.USER_CERT_PASSWORD));
            }
 
-
            init(httpClient, initParams);
        }catch(Exception e){
            throw new InitException("Failed to initialize network...", e);
        }
 
+    }
 
+    @Override
+    public void setName(String name){
+        this.name=name;
+    }
 
+    @Override
+    public String getName(){
+        return this.name;
     }
 
     @Override
@@ -170,9 +176,8 @@ public class SymphonyBasicClient implements SymphonyClient {
     @Override
     public void init(SymAuth symAuth, String email, String agentUrl, String podUrl) throws InitException {
 
-
         init(symAuth, email, agentUrl, podUrl, false);
-
+        this.name= email;
 
     }
 
@@ -231,7 +236,7 @@ public class SymphonyBasicClient implements SymphonyClient {
         this.symAuth = symAuth;
         this.agentUrl = agentUrl;
         this.podUrl = podUrl;
-
+        this.name = email;
 
         //Init all clients.
         dataFeedClient = DataFeedFactory.getClient(this, DataFeedFactory.TYPE.HTTPCLIENT);
@@ -275,7 +280,7 @@ public class SymphonyBasicClient implements SymphonyClient {
         //Refresh token every so often..
         TimerTask authRefreshTask = new AuthRefreshTask(this);
         // running timer task as daemon thread
-        Timer timer = new Timer(true);
+        Timer timer = new Timer("AuthRefresh:"+this.getName(), true);
         timer.scheduleAtFixedRate(authRefreshTask, SYMAUTH_REFRESH_TIME, SYMAUTH_REFRESH_TIME);
 
 
