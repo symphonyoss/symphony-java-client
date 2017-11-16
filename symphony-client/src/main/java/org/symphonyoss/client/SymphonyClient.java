@@ -98,7 +98,18 @@ public interface SymphonyClient {
      * @throws AuthenticationException Exception thrown from authorization issue.
      */
     void init(SymphonyClientConfig initParams) throws InitException, AuthenticationException;
-    
+
+    /**
+     * Gets the name of the client (defaults to first part of email address) to use in all spawned thread names.
+     */
+    String getName();
+
+    /**
+     * Sets the name of the client to use in all spawned thread names.
+     */
+    void setName(String name);
+
+
     /**
      * Retrieve authorization object.
      *

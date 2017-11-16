@@ -51,10 +51,8 @@ public class ConnectionsService implements ConnectionsListener, ConnectionsEvent
     public ConnectionsService(SymphonyClient symClient) {
         this.symClient = symClient;
         connectionsWorker = new ConnectionsWorker(symClient, this);
-        new Thread(connectionsWorker).start();
-
         symClient.getMessageService().addConnectionsEventListener(this);
-
+        new Thread(connectionsWorker,"ConnectionsWorker: "+symClient.getName()).start();
     }
 
 
