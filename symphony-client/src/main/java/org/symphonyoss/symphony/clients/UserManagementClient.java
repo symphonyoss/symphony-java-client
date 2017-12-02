@@ -34,6 +34,6 @@ public interface UserManagementClient {
      * @param allowExternalAccess true to turn external access on for the given user, false to turn it off
      * @throws UserManagementClientException if user external access fails to update
      */
-    public void updateExternalAccess(long userId, boolean allowExternalAccess) throws UserManagementClientException;
+     void updateExternalAccess(long userId, boolean allowExternalAccess) throws UserManagementClientException;
 
 }

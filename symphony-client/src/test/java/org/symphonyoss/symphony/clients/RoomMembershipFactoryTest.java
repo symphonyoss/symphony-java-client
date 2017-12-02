@@ -38,7 +38,7 @@ public class RoomMembershipFactoryTest {
     @Test
     public void getClient() throws Exception {
 
-        assertTrue("get DEFAULT client",  RoomMembershipFactory.getClient(TestFactory.getSymClient(),RoomMembershipFactory.TYPE.DEFAULT) instanceof RoomMembershipClientImpl);
+        assertTrue("get DEFAULT client",  RoomMembershipFactory.getClient(TestFactory.getSymClient()) instanceof RoomMembershipClientImpl);
 
 
     }

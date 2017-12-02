@@ -34,8 +34,6 @@ import org.symphonyoss.client.exceptions.SymException;
 import org.symphonyoss.client.model.Chat;
 import org.symphonyoss.client.model.Room;
 import org.symphonyoss.client.services.*;
-import org.symphonyoss.symphony.agent.model.*;
-import org.symphonyoss.symphony.clients.model.ApiVersion;
 import org.symphonyoss.symphony.clients.model.SymAttachmentInfo;
 import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.clients.model.SymUserConnection;
@@ -178,21 +176,26 @@ public class SjcTestBot implements ChatListener, ChatServiceListener, RoomEventL
         if (chunks == null)
             return;
 
-        if (chunks[0].equals(SymphonyClientIT.CHAT_COMMAND_MESSAGE)) {
-            logger.info("Test Bot: New chat message detected: {}", symMessage.getMessageText());
-            sendResponse(symMessage);
-        } else if (chunks[0].equals(SymphonyClientIT.MULTI_PARTY_CHAT_COMMAND_MESSAGE)) {
-            logger.info("Test Bot: New chat message detected: {}", symMessage.getMessageText());
-            sendResponse(symMessage);
-        } else if (chunks[0].equals(SymphonyClientIT.PRESENCE_COMMAND_MESSAGE)) {
+        switch (chunks[0]) {
+            case SymphonyClientIT.CHAT_COMMAND_MESSAGE:
+                logger.info("Test Bot: New chat message detected: {}", symMessage.getMessageText());
+                sendResponse(symMessage);
+                break;
+            case SymphonyClientIT.MULTI_PARTY_CHAT_COMMAND_MESSAGE:
+                logger.info("Test Bot: New chat message detected: {}", symMessage.getMessageText());
+                sendResponse(symMessage);
+                break;
+            case SymphonyClientIT.PRESENCE_COMMAND_MESSAGE:
 
-            sendPresenceResponse();
+                sendPresenceResponse();
 
-        } else if (chunks[0].equals(SymphonyClientIT.ATTACHMENT_COMMAND_MESSAGE)) {
+                break;
+            case SymphonyClientIT.ATTACHMENT_COMMAND_MESSAGE:
 
-            logger.info("Attachment message received");
-            sendAttachmentResponse(symMessage);
+                logger.info("Attachment message received");
+                sendAttachmentResponse(symMessage);
 
+                break;
         }
 
 

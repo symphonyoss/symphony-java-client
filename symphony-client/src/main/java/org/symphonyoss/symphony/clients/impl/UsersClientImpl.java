@@ -25,6 +25,8 @@ package org.symphonyoss.symphony.clients.impl;
 import com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.symphonyoss.client.SymphonyClientConfig;
+import org.symphonyoss.client.SymphonyClientConfigID;
 import org.symphonyoss.client.common.Constants;
 import org.symphonyoss.client.exceptions.RestException;
 import org.symphonyoss.client.exceptions.UserNotFoundException;
@@ -37,20 +39,11 @@ import org.symphonyoss.symphony.pod.api.UserApi;
 import org.symphonyoss.symphony.pod.api.UsersApi;
 import org.symphonyoss.symphony.pod.invoker.ApiClient;
 import org.symphonyoss.symphony.pod.invoker.ApiException;
-import org.symphonyoss.symphony.pod.model.AvatarUpdate;
-import org.symphonyoss.symphony.pod.model.FeatureList;
-import org.symphonyoss.symphony.pod.model.MemberInfo;
-import org.symphonyoss.symphony.pod.model.MembershipList;
-import org.symphonyoss.symphony.pod.model.SuccessResponse;
-import org.symphonyoss.symphony.pod.model.UserAttributes;
-import org.symphonyoss.symphony.pod.model.UserCreate;
-import org.symphonyoss.symphony.pod.model.UserDetail;
-import org.symphonyoss.symphony.pod.model.UserIdList;
-import org.symphonyoss.symphony.pod.model.UserStatus;
-import org.symphonyoss.symphony.pod.model.UserV2;
+import org.symphonyoss.symphony.pod.model.*;
 
 import javax.ws.rs.client.Client;
 import java.util.Base64;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -68,15 +61,15 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
 
     private final Logger logger = LoggerFactory.getLogger(UsersClientImpl.class);
 
+    /**
+     * Init
+     *
+     * @param symAuth Authorization model containing session and key tokens
+     * @param config  Symphony Client config
+     */
+    public UsersClientImpl(SymAuth symAuth, SymphonyClientConfig config) {
 
-    public UsersClientImpl(SymAuth symAuth, String podUrl) {
-
-        this.symAuth = symAuth;
-
-
-        //Get Service client to query for userID.
-        apiClient = org.symphonyoss.symphony.pod.invoker.Configuration.getDefaultApiClient();
-        apiClient.setBasePath(podUrl);
+        this(symAuth, config, null);
 
 
     }
@@ -85,18 +78,20 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
      * If you need to override HttpClient.  Important for handling individual client certs.
      *
      * @param symAuth    Authorization model containing session and key tokens
-     * @param podUrl Service URL used to access API
+     * @param config     Symphony Client config
      * @param httpClient Custom HTTP client
      */
-    public UsersClientImpl(SymAuth symAuth, String podUrl, Client httpClient) {
+    public UsersClientImpl(SymAuth symAuth, SymphonyClientConfig config, Client httpClient) {
         this.symAuth = symAuth;
 
 
         //Get Service client to query for userID.
         apiClient = org.symphonyoss.symphony.pod.invoker.Configuration.getDefaultApiClient();
-        apiClient.setHttpClient(httpClient);
-        apiClient.setBasePath(podUrl);
 
+        if (httpClient != null)
+            apiClient.setHttpClient(httpClient);
+
+        apiClient.setBasePath(config.get(SymphonyClientConfigID.POD_URL));
 
 
     }
@@ -252,7 +247,7 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
         try {
             UserIdList userIdList = userApi.v1AdminUserListGet(symAuth.getSessionToken().getToken());
 
-            int nThreads = Integer.parseInt(System.getProperty(Constants.USERSCLIENT_GETALLUSERS_THREADPOOL, "16"));
+            int nThreads = Integer.parseInt(System.getProperty(Constants.USERSCLIENT_GETALLUSERS_THREADPOOL, "8"));
 
             ExecutorService executor = Executors.newFixedThreadPool(nThreads);
 
@@ -274,7 +269,7 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
                     try {
                         user1 = usersApi2.v2UserGet(symAuth.getSessionToken().getToken(), userId, null, null, true);
 
-                        if(user1 == null) {
+                        if (user1 == null) {
                             user1 = usersApi2.v2UserGet(symAuth.getSessionToken().getToken(), userId, null, null, false);
                         }
 
@@ -320,6 +315,7 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
 
     /**
      * Retrieve all symphony users with details of features and roles
+     *
      * @return All users including details of features and roles as part of a set
      * @throws UsersClientException Exceptions thrown from Symphony API's
      */
@@ -332,11 +328,18 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
         UserDetail userDetail;
         try {
             for (SymUser symUser : symUsers) {
+                logger.debug("Obtaining user details for {}", symUser.getDisplayName());
                 Long uid = symUser.getId();
                 featureList = userApi.v1AdminUserUidFeaturesGet(sessionToken, uid);
                 symUser.setFeatures(featureList);
                 userDetail = userApi.v1AdminUserUidGet(sessionToken, uid);
                 symUser.setRoles(new HashSet<>(userDetail.getRoles()));
+                if (userDetail.getUserSystemInfo().getLastLoginDate() != null)
+                    symUser.setLastLoginDate(new Date(userDetail.getUserSystemInfo().getLastLoginDate()));
+
+                if (userDetail.getUserSystemInfo().getCreatedDate() != null)
+                    symUser.setCreatedDate(new Date(userDetail.getUserSystemInfo().getCreatedDate()));
+
             }
         } catch (ApiException e) {
             throw new UsersClientException("API Error communicating with POD, while retrieving all user details",
@@ -430,7 +433,6 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
     }
 
 
-
     private String getSessionToken() throws IllegalStateException {
         String sessionToken = symAuth.getSessionToken().getToken();
 
@@ -441,9 +443,9 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
     }
 
     @Override
-    public SymUser getUserBySession(SymAuth symAuth) throws UsersClientException{
+    public SymUser getUserBySession(SymAuth symAuth) throws UsersClientException {
 
-        if(symAuth==null)
+        if (symAuth == null)
             return null;
 
 
@@ -458,15 +460,12 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
     }
 
     /**
-    * Update the avatar of a particular user
-    *
-    * @param userId
-    *         User ID as a decimal integer  (required)
-    * @param avatar
-    *         user image. Should be less then 2MB.
-    * @throws UsersClientException
-    *         if fails to make the avatar update
-    */
+     * Update the avatar of a particular user
+     *
+     * @param userId User ID as a decimal integer  (required)
+     * @param avatar user image. Should be less then 2MB.
+     * @throws UsersClientException if fails to make the avatar update
+     */
     @Override
     public void updateUserAvatar(long userId, byte[] avatar) throws UsersClientException {
         if (avatar != null) {

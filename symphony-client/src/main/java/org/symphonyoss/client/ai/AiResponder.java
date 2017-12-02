@@ -36,7 +36,6 @@ import org.symphonyoss.client.util.MlMessageParser;
 import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.clients.model.SymStream;
 import org.symphonyoss.symphony.clients.model.SymUser;
-import org.symphonyoss.symphony.pod.model.Stream;
 
 import java.util.ArrayList;
 import java.util.Set;

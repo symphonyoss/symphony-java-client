@@ -26,6 +26,8 @@ package org.symphonyoss.symphony.clients.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.symphonyoss.client.SymphonyClientConfig;
+import org.symphonyoss.client.SymphonyClientConfigID;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.symphony.agent.api.AttachmentsApi;
 import org.symphonyoss.symphony.agent.api.DatafeedApi;
@@ -33,7 +35,6 @@ import org.symphonyoss.symphony.agent.api.MessagesApi;
 import org.symphonyoss.symphony.agent.api.ShareApi;
 import org.symphonyoss.symphony.clients.SymphonyApis;
 import org.symphonyoss.symphony.pod.api.*;
-
 
 import javax.ws.rs.client.Client;
 
@@ -47,27 +48,23 @@ import javax.ws.rs.client.Client;
 public class SymphonyApisImpl implements SymphonyApis {
 
     private final SymAuth symAuth;
-    private final String podUrl;
     private org.symphonyoss.symphony.pod.invoker.ApiClient podApiClient;
     private org.symphonyoss.symphony.agent.invoker.ApiClient agentApiCient;
 
-    private Client podHttpClient = null;
-    private Client agentHttpClient = null;
 
     private final Logger logger = LoggerFactory.getLogger(SymphonyApisImpl.class);
 
 
-    public SymphonyApisImpl(SymAuth symAuth, String podUrl, String agentUrl) {
+    /**
+     * Init
+     *
+     * @param symAuth         Authorization model containing session and key tokens
+     * @param config Symphony Client config
+     */
+    public SymphonyApisImpl(SymAuth symAuth, SymphonyClientConfig config) {
 
-        this.symAuth = symAuth;
-        this.podUrl = podUrl;
+        this(symAuth, config, null, null);
 
-
-        podApiClient = org.symphonyoss.symphony.pod.invoker.Configuration.getDefaultApiClient();
-        podApiClient.setBasePath(podUrl);
-
-        agentApiCient = org.symphonyoss.symphony.agent.invoker.Configuration.getDefaultApiClient();
-        agentApiCient.setBasePath(agentUrl);
 
     }
 
@@ -75,27 +72,25 @@ public class SymphonyApisImpl implements SymphonyApis {
      * If you need to override HttpClient.  Important for handling individual client certs.
      *
      * @param symAuth         Authorization model containing session and key tokens
-     * @param podUrl          Pod URL
+     * @param config Symphony Client config
      * @param podHttpClient   Custom pod HTTP Client to use
-     * @param agentUrl        Agent Url
      * @param agentHttpClient Custom agent HTTP client
      */
-    public SymphonyApisImpl(SymAuth symAuth, String podUrl, Client podHttpClient, String agentUrl, Client agentHttpClient) {
+    public SymphonyApisImpl(SymAuth symAuth, SymphonyClientConfig config, Client podHttpClient, Client agentHttpClient) {
         this.symAuth = symAuth;
-        this.podUrl = podUrl;
-        this.podHttpClient = podHttpClient;
-        this.agentHttpClient = agentHttpClient;
 
 
         podApiClient = org.symphonyoss.symphony.pod.invoker.Configuration.getDefaultApiClient();
-        podApiClient.setHttpClient(podHttpClient);
-        podApiClient.setBasePath(podUrl);
+        if (podHttpClient != null)
+            podApiClient.setHttpClient(podHttpClient);
+        podApiClient.setBasePath(config.get(SymphonyClientConfigID.POD_URL));
 
 
         //Get Service client to query for userID.
         agentApiCient = org.symphonyoss.symphony.agent.invoker.Configuration.getDefaultApiClient();
-        agentApiCient.setHttpClient(agentHttpClient);
-        agentApiCient.setBasePath(agentUrl);
+        if (agentHttpClient != null)
+            agentApiCient.setHttpClient(agentHttpClient);
+        agentApiCient.setBasePath(config.get(SymphonyClientConfigID.AGENT_URL));
 
 
     }
@@ -128,7 +123,7 @@ public class SymphonyApisImpl implements SymphonyApis {
     }
 
     @Override
-    public RoomMembershipApi getRoomMembershipApi(){
+    public RoomMembershipApi getRoomMembershipApi() {
         return new RoomMembershipApi(podApiClient);
     }
 
@@ -143,12 +138,12 @@ public class SymphonyApisImpl implements SymphonyApis {
     }
 
     @Override
-    public UserApi getUserApi(){
+    public UserApi getUserApi() {
         return new UserApi(podApiClient);
     }
 
     @Override
-    public ShareApi getShareApi(){
+    public ShareApi getShareApi() {
         return new ShareApi(agentApiCient);
     }
 

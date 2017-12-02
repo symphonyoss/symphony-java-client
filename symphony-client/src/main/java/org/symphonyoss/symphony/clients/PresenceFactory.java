@@ -23,23 +23,30 @@
 package org.symphonyoss.symphony.clients;
 
 import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.client.SymphonyClientConfig;
+import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.symphony.clients.impl.PresenceClientImpl;
+
+import javax.ws.rs.client.Client;
 
 /**
  * Created by frank.tarsillo on 6/6/2016.
  */
 public class PresenceFactory {
 
-    public enum TYPE {DEFAULT, HTTPCLIENT}
 
-    public static PresenceClient getClient(SymphonyClient symClient, TYPE type) {
 
-        if (type.equals(TYPE.HTTPCLIENT)) {
-            return new PresenceClientImpl(symClient.getSymAuth(), symClient.getPodUrl(), symClient.getPodHttpClient());
-        } else {
-            return new PresenceClientImpl(symClient.getSymAuth(), symClient.getPodUrl());
-        }
+    public static PresenceClient getClient(SymphonyClient symClient) {
+
+            return new PresenceClientImpl(symClient.getSymAuth(), symClient.getConfig(), symClient.getPodHttpClient());
 
     }
 
+
+    public static PresenceClient getClient(SymAuth symAuth, SymphonyClientConfig config, Client client) {
+
+        return new PresenceClientImpl(symAuth, config, client);
+
+
+    }
 }

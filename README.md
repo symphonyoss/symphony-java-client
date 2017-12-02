@@ -50,6 +50,7 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 * Added session logout to AuthenticationClient
 * Added special attribute (ApiVersion) to SymMessage to support sending MessageMLv1 messages over V2 endpoints. This gets around some of the limitations of PresentationML/MessageMLv2
 * SymStream object replacing all use of legacy Stream objects.
+* SymphonyClient automatically identifies the Agent and Pod versions to select the latest versions.
 * SymMessage.setMessageText(..) will automatically escapeXml
 * Added new methods in MessageService to send message by SymUser and SymStream (Convenience)
 * SymphonyClient instances default to V4 API

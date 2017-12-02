@@ -24,6 +24,7 @@ package org.symphonyoss.symphony.clients.model;
 
 import org.symphonyoss.symphony.pod.model.RoomSearchCriteria;
 import org.symphonyoss.symphony.pod.model.RoomSearchResults;
+import org.symphonyoss.symphony.pod.model.V3RoomSearchResults;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -104,6 +105,7 @@ public class SymRoomSearchResults {
     }
 
     //Convert from base models
+    @Deprecated
     public static SymRoomSearchResults toSymRoomSearchResults(RoomSearchResults roomSearchResults) {
 
         SymRoomSearchResults symRoomSearchResults = new SymRoomSearchResults();
@@ -119,4 +121,17 @@ public class SymRoomSearchResults {
     }
 
 
+    public static SymRoomSearchResults toSymRoomSearchResults(V3RoomSearchResults v3RoomSearchResults) {
+
+        SymRoomSearchResults symRoomSearchResults = new SymRoomSearchResults();
+        symRoomSearchResults.setCount(v3RoomSearchResults.getCount());
+        symRoomSearchResults.setFacetedMatchCount(v3RoomSearchResults.getFacetedMatchCount().stream().map(SymFacetedMatchCount::toSymFacetedMatchCount).collect(Collectors.toList()));
+        symRoomSearchResults.setLimit(v3RoomSearchResults.getLimit());
+        symRoomSearchResults.setQuery(v3RoomSearchResults.getQuery());
+        symRoomSearchResults.setRooms(v3RoomSearchResults.getRooms().stream().map(SymRoomDetail::toSymRoomDetail).collect(Collectors.toList()));
+        symRoomSearchResults.setSkip(v3RoomSearchResults.getSkip());
+
+
+        return symRoomSearchResults;
+    }
 }

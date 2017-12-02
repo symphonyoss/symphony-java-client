@@ -26,14 +26,15 @@
 package org.symphonyoss.util;
 
 import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.client.SymphonyClientConfig;
+import org.symphonyoss.client.SymphonyClientConfigID;
 import org.symphonyoss.client.SymphonyClientFactory;
 import org.symphonyoss.client.model.Chat;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.symphony.authenticator.model.Token;
 import org.symphonyoss.symphony.clients.model.SymStream;
 import org.symphonyoss.symphony.clients.model.SymUser;
-import org.symphonyoss.symphony.pod.model.Stream;
-
+import javax.ws.rs.client.ClientBuilder;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -52,8 +53,19 @@ public class TestFactory {
         symAuth.setKeyToken(token);
         symAuth.setSessionToken(token);
         symClient.setSymAuth(symAuth);
+        SymphonyClientConfig symphonyClientConfig = new SymphonyClientConfig();
 
+        symphonyClientConfig.set(SymphonyClientConfigID.POD_URL,"POD_URL");
+        symphonyClientConfig.set(SymphonyClientConfigID.AGENT_URL,"AGENT_URL");
+        symphonyClientConfig.set(SymphonyClientConfigID.USER_EMAIL,"USER_EMAIL");
+        symphonyClientConfig.set(SymphonyClientConfigID.TRUSTSTORE_FILE,"TRUSTSTORE_FILE");
+        symphonyClientConfig.set(SymphonyClientConfigID.TRUSTSTORE_PASSWORD,"TRUSTSTORE_PASSWORD");
+        symphonyClientConfig.set(SymphonyClientConfigID.USER_CERT_PASSWORD,"USER_CERT_PASSWORD");
+        symphonyClientConfig.set(SymphonyClientConfigID.USER_CERT_FILE, "USER_CERT_FILE");
+        symClient.setConfig(symphonyClientConfig);
 
+        symClient.setAgentHttpClient(ClientBuilder.newBuilder().build());
+        symClient.setPodHttpClient(ClientBuilder.newBuilder().build());
 
     }
 

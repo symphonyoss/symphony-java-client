@@ -26,20 +26,22 @@ package org.symphonyoss.symphony.clients.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+//import org.symphonyoss.client.exceptions.SystemException;
+import org.symphonyoss.client.SymphonyClientConfig;
+import org.symphonyoss.client.SymphonyClientConfigID;
 import org.symphonyoss.client.exceptions.SystemException;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.symphony.agent.api.SystemApi;
 import org.symphonyoss.symphony.agent.invoker.ApiClient;
 import org.symphonyoss.symphony.agent.invoker.ApiException;
 import org.symphonyoss.symphony.clients.AgentSystemClient;
+import org.symphonyoss.symphony.clients.model.RestApiVersion;
 import org.symphonyoss.symphony.clients.model.SymAgentHealthCheck;
 
 import javax.ws.rs.client.Client;
 
 /**
- *
  * Used for agent server health check
- *
  *
  * @author Frank Tarsillo on 10/15/17.
  */
@@ -51,52 +53,74 @@ public class AgentSystemClientImpl implements AgentSystemClient {
 
     private Logger logger = LoggerFactory.getLogger(AgentSystemClientImpl.class);
 
-    public AgentSystemClientImpl(SymAuth symAuth, String agentUrl) {
+    private String restApiVersion;
+
+
+
+    /**
+     * If you need to override HttpClient.  Important for handling individual client certs.
+     *
+     * @param symAuth    Authorization model containing session and key tokens
+     * @param config   Symphony client config
+      */
+    public AgentSystemClientImpl(SymAuth symAuth, SymphonyClientConfig config) {
 
         this.symAuth = symAuth;
 
-
         //Get Service client to query for userID.
         apiClient = org.symphonyoss.symphony.agent.invoker.Configuration.getDefaultApiClient();
-        apiClient.setBasePath(agentUrl);
+        apiClient.setBasePath(config.get(SymphonyClientConfigID.AGENT_URL));
 
 
     }
 
     /**
      * If you need to override HttpClient.  Important for handling individual client certs.
-     * @param symAuth Authorization model containing session and key tokens
-     * @param agentUrl Agent URL
+     *
+     * @param symAuth    Authorization model containing session and key tokens
+     * @param config   Symphony client config
      * @param httpClient Custom client utilized to access Symphony APIs
      */
-    public AgentSystemClientImpl(SymAuth symAuth, String agentUrl, Client httpClient) {
+    public AgentSystemClientImpl(SymAuth symAuth, SymphonyClientConfig config, Client httpClient) {
         this.symAuth = symAuth;
 
         //Get Service client to query for userID.
         apiClient = org.symphonyoss.symphony.agent.invoker.Configuration.getDefaultApiClient();
-        apiClient.setHttpClient(httpClient);
-        apiClient.setBasePath(agentUrl);
+        if (httpClient != null)
+            apiClient.setHttpClient(httpClient);
+
+        apiClient.setBasePath(config.get(SymphonyClientConfigID.AGENT_URL));
 
 
     }
 
 
-
-
-    public SymAgentHealthCheck getAgentHealthCheck() throws SystemException{
+    @Override
+    public SymAgentHealthCheck getAgentHealthCheck() throws SystemException {
 
         SystemApi systemApi = new SystemApi(apiClient);
 
         try {
             return SymAgentHealthCheck.toSymAgentHealthCheck(systemApi.v2HealthCheckGet(symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken()));
         } catch (ApiException e) {
-            throw new SystemException("Could not execute health check on agent server",e);
+            throw new SystemException("Could not execute health check on agent server", e);
         }
 
 
     }
 
+    @Override
+    public boolean isRestApiVersionCompatible(RestApiVersion apiVersion) throws SystemException {
 
+        if (restApiVersion == null) {
+
+            restApiVersion = getAgentHealthCheck().getAgentVersion();
+
+        }
+
+        return apiVersion.isCompatible(restApiVersion);
+
+    }
 
 
 }

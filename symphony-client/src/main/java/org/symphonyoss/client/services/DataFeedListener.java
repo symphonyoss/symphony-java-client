@@ -22,7 +22,6 @@
 
 package org.symphonyoss.client.services;
 
-import org.symphonyoss.symphony.agent.model.V2BaseMessage;
 import org.symphonyoss.client.events.SymEvent;
 
 /**

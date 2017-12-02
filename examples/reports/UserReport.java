@@ -22,7 +22,7 @@
  *
  */
 
-package sendmessage;
+package reports;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,16 +30,20 @@ import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.client.SymphonyClientConfig;
 import org.symphonyoss.client.SymphonyClientConfigID;
 import org.symphonyoss.client.SymphonyClientFactory;
-import org.symphonyoss.client.exceptions.MessagesException;
-import org.symphonyoss.client.exceptions.StreamsException;
-import org.symphonyoss.client.util.MlMessageParser;
-import org.symphonyoss.symphony.clients.model.*;
+import org.symphonyoss.client.exceptions.UsersClientException;
+import org.symphonyoss.symphony.clients.model.SymUser;
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Set;
 
 
 /**
- * Streams example showing how you can search for bot user associated streams by criteria filer.
+ * Outputs a CSV file of users with limited fields (you can always extend)
  *
- *
+ * <p>
+ * <p>
  * REQUIRED VM Arguments or System Properties or using SymphonyClientConfig:
  * <p>
  * -Dtruststore.file=
@@ -53,21 +57,20 @@ import org.symphonyoss.symphony.clients.model.*;
  * -Dpod.url=https://(pod host)/pod
  * -Dagent.url=https://(agent server host)/agent
  * -Dreceiver.email= email address of user or bot who will receive a message.
- *
- *
+ * -Dreport.file=UsersReport.csv
  *
  * @author Frank Tarsillo on 5/9/17.
  */
 //NOSONAR
-public class SendMessage {
+public class UserReport {
 
 
-    private final Logger logger = LoggerFactory.getLogger(SendMessage.class);
+    private final Logger logger = LoggerFactory.getLogger(UserReport.class);
 
 
     private SymphonyClient symClient;
 
-    public SendMessage() {
+    public UserReport() {
 
 
         init();
@@ -77,56 +80,57 @@ public class SendMessage {
 
     public static void main(String[] args) {
 
-        new SendMessage();
+        new UserReport();
 
     }
 
     public void init() {
 
 
+        SymphonyClientConfig symphonyClientConfig = new SymphonyClientConfig();
+
+        //Disable all real-time services
+        symphonyClientConfig.set(SymphonyClientConfigID.DISABLE_SERVICES, "True");
+
+        //Create an initialized client
+        symClient = SymphonyClientFactory.getClient(
+                SymphonyClientFactory.TYPE.V4, symphonyClientConfig);
+
+
+
         try {
 
+            final FileWriter fw = new FileWriter(System.getProperty("report.file","UsersReport.csv"));
+            final BufferedWriter bw = new BufferedWriter(fw);
 
-            SymphonyClientConfig symphonyClientConfig = new SymphonyClientConfig();
-
-            //Disable all real-time services
-            symphonyClientConfig.set(SymphonyClientConfigID.DISABLE_SERVICES, "True");
-
-            //Create an initialized client
-            symClient = SymphonyClientFactory.getClient(
-                    SymphonyClientFactory.TYPE.V4,symphonyClientConfig);
-
-
-            String receiverEmail = symphonyClientConfig.get(SymphonyClientConfigID.RECEIVER_EMAIL);
-
-
-            SymMessage symMessage = new SymMessage();
-
-            symMessage.setMessageText(ApiVersion.V4,"Hello world'..&&..");
-
-            logger.debug("{}", MlMessageParser.escapeAllXml(symMessage.getMessage()));
-
-
-            try {
-
-                symClient.getMessagesClient().sendMessage(symClient.getStreamsClient().getStreamFromEmail(receiverEmail), symMessage);
-
-            } catch (MessagesException e) {
-                logger.error("Failed to send message",e);
-            }
+            Set<SymUser> allUsers = symClient.getUsersClient().getAllUsersWithDetails();
 
 
 
-            if(symClient != null)
-                symClient.shutdown();
+            allUsers.forEach(symUser -> {
+                try {
+                    logger.debug("{}:{}:{}:{}", symUser.getUsername(), symUser.getId(), symUser.getCreatedDate(), symUser.getLastLoginDate());
 
-            logger.info("Finished");
+                    bw.write(symUser.getUsername() + "," + symUser.getId() + "," + symUser.getCreatedDate() + "," + symUser.getLastLoginDate() + "\n");
+
+                } catch (IOException e) {
+                    logger.error("Writing to file");
+                }
+            });
 
 
-
-        } catch (StreamsException e) {
-            logger.error("error", e);
+        } catch (UsersClientException e) {
+            logger.error("Failed to send message", e);
+        } catch (IOException e) {
+            logger.error("Writing to file");
         }
+
+
+        if (symClient != null)
+            symClient.shutdown();
+
+        logger.info("Finished");
+
 
     }
 

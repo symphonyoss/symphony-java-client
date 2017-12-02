@@ -24,7 +24,6 @@
 
 package org.symphonyoss.client.ai;
 
-import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.clients.model.SymUser;
 
 import java.util.ArrayList;

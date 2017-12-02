@@ -24,6 +24,8 @@ package org.symphonyoss.symphony.clients.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.symphonyoss.client.SymphonyClientConfig;
+import org.symphonyoss.client.SymphonyClientConfigID;
 import org.symphonyoss.client.exceptions.PresenceException;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.symphony.pod.api.PresenceApi;
@@ -51,30 +53,34 @@ public class PresenceClientImpl implements org.symphonyoss.symphony.clients.Pres
     private Logger logger = LoggerFactory.getLogger(PresenceClientImpl.class);
 
 
-    public PresenceClientImpl(SymAuth symAuth, String podUrl) {
+    /**
+     * Init
+     * @param symAuth Authorization object holding session and key tokens
+     * @param config Symphony client config
+     *
+     */
+    public PresenceClientImpl(SymAuth symAuth, SymphonyClientConfig config) {
 
-        this.symAuth = symAuth;
-
-
-        //Get Service client to query for userID.
-        apiClient = org.symphonyoss.symphony.pod.invoker.Configuration.getDefaultApiClient();
-        apiClient.setBasePath(podUrl);
+        this(symAuth, config, null);
 
     }
 
     /**
      * If you need to override HttpClient.  Important for handling individual client certs.
      * @param symAuth Authorization object holding session and key tokens
-     * @param podUrl The Symphony service URL
+     * @param config Symphony client config
      * @param httpClient The HttpClient to use when calling Symphony API
      */
-    public PresenceClientImpl(SymAuth symAuth, String podUrl, Client httpClient) {
+    public PresenceClientImpl(SymAuth symAuth, SymphonyClientConfig config, Client httpClient) {
         this.symAuth = symAuth;
 
         //Get Service client to query for userID.
         apiClient = org.symphonyoss.symphony.pod.invoker.Configuration.getDefaultApiClient();
+
+        if(httpClient!=null)
         apiClient.setHttpClient(httpClient);
-        apiClient.setBasePath(podUrl);
+
+        apiClient.setBasePath(config.get(SymphonyClientConfigID.POD_URL));
 
     }
 

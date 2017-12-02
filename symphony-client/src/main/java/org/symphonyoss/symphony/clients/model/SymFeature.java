@@ -126,9 +126,7 @@ public class SymFeature {
      */
     public static List<SymFeature> toSymFeatures(FeatureList features) {
         List<SymFeature> symFeatureList = new ArrayList<>();
-        features.forEach(feature -> {
-            symFeatureList.add(SymFeature.toSymFeature(feature));
-        });
+        features.forEach(feature -> symFeatureList.add(SymFeature.toSymFeature(feature)));
         return symFeatureList;
     }
 
@@ -139,9 +137,7 @@ public class SymFeature {
      */
     public static List<Feature> toFeatures(SymFeatureList symFeatures) {
         List<Feature> featureList = new ArrayList<>();
-        symFeatures.forEach(symFeature -> {
-            featureList.add(SymFeature.toFeature(symFeature));
-        });
+        symFeatures.forEach(symFeature -> featureList.add(SymFeature.toFeature(symFeature)));
         return featureList;
     }
 

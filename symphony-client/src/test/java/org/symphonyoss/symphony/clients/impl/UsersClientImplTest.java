@@ -10,6 +10,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.symphonyoss.client.SymphonyClientConfig;
 import org.symphonyoss.client.exceptions.UsersClientException;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.symphony.authenticator.model.Token;
@@ -64,6 +65,9 @@ public class UsersClientImplTest {
     @Mock
     private SuccessResponse successResponseMock;
 
+    @Mock
+    private SymphonyClientConfig configMock;
+
     @Before
     public void before() throws Exception {
         mockLogger();
@@ -73,7 +77,7 @@ public class UsersClientImplTest {
 
         whenNew(AvatarUpdate.class).withNoArguments().thenReturn(avatarUpdateMock);
 
-        usersClient = new UsersClientImpl(symAuthMock, POD_URL);
+        usersClient = new UsersClientImpl(symAuthMock, configMock, apiClientMock.getHttpClient());
     }
 
     @Test

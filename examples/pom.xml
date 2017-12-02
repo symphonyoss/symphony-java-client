@@ -103,6 +103,35 @@
 
   <build>
     <sourceDirectory>.</sourceDirectory>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.6.0</version>
+        <executions>
+          <execution>
+
+            <goals>
+              <goal>java</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <arguments>
+          </arguments>
+          <systemProperties>
+            <systemProperty>
+              <key>symphony.config.file</key>
+              <value>resources/symphony.properties</value>
+            </systemProperty>
+            <systemProperty>
+              <key>log4j.configuration</key>
+              <value>file:resources/log4j.properties</value>
+            </systemProperty>
+          </systemProperties>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
 
 </project>

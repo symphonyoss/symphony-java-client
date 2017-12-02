@@ -26,7 +26,6 @@ import org.symphonyoss.client.exceptions.MessagesException;
 import org.symphonyoss.symphony.clients.model.ApiVersion;
 import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.clients.model.SymStream;
-import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.pod.model.Stream;
 
 import java.util.List;

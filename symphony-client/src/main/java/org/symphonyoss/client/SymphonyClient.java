@@ -43,57 +43,70 @@ import javax.ws.rs.client.Client;
 
 public interface SymphonyClient {
 
-    void init(SymAuth symAuth, String email, String agentUrl, String podUrl, boolean disableServices) throws InitException;
+    /**
+     * Initialize client with required parameters.
+     *
+     * @param symAuth         Contains valid key and session tokens generated from AuthenticationClient.
+     * @param userEmail           Email address of the BOT
+     * @param agentUrl        The Agent URL
+     * @param podUrl          The Service URL (in most cases it's the POD URL)
+     * @param disableServices Disable all real-time services (MessageService, RoomService, ChatService)
+     * @throws InitException Failure of a specific service most likely due to connectivity issues
+     */
+    @Deprecated
+    void init(SymAuth symAuth, String userEmail, String agentUrl, String podUrl, boolean disableServices) throws InitException;
 
     /**
      * Initialize client with required parameters.
      *
      * @param symAuth    Contains valid key and session tokens generated from AuthenticationClient.
-     * @param email      Email address of the BOT
+     * @param userEmail      Email address of the BOT
      * @param agentUrl   The Agent URL
      * @param podUrl The Service URL (in most cases it's the POD URL)
      * @throws InitException Failure of a specific service most likely due to connectivity issues
      */
-    void init(SymAuth symAuth, String email, String agentUrl, String podUrl) throws InitException;
+    @Deprecated
+    void init(SymAuth symAuth, String userEmail, String agentUrl, String podUrl) throws InitException;
 
     /**
      * Initialize client with required parameters and custom HTTP client.
      *
      * @param httpClient Custom http client to use when connecting to Symphony API's
      * @param symAuth    Contains valid key and session tokens generated from AuthenticationClient.
-     * @param email      Email address of the BOT
+     * @param userEmail      Email address of the BOT
      * @param agentUrl   The Agent URL
      * @param podUrl The Service URL (in most cases it's the POD URL)
      * @throws InitException Failure of a specific service most likely due to connectivity issues
      */
-    void init(Client httpClient, SymAuth symAuth, String email, String agentUrl, String podUrl) throws InitException;
+    @Deprecated
+    void init(Client httpClient, SymAuth symAuth, String userEmail, String agentUrl, String podUrl) throws InitException;
 
 
     /**
      * Initialize client with required parameters and custom HTTP client.
      * @param podHttpClient Custom http client to use when connecting to the pod
      * @param agentHttpClient Custom http client to use when connecting to the agent server
-     * @param initParams Configuration object
+     * @param config Configuration object
      * @throws InitException Failure of a specific service most likely due to connectivity issues
      * @throws AuthenticationException A network exception
      */
 
-    void init(Client podHttpClient, Client agentHttpClient, SymphonyClientConfig initParams) throws InitException, AuthenticationException;
+    void init(Client podHttpClient, Client agentHttpClient, SymphonyClientConfig config) throws InitException, AuthenticationException;
 
     /**
      * Initialize client with required parameters and custom HTTP client.
      *
      * @param httpClient Custom http client to use when connecting to Symphony API's
-     * @param initParams Configuration object
+     * @param config Configuration object
      * @throws InitException Failure of a specific service most likely due to connectivity issues
      * @throws AuthenticationException A network exception
      */
-    void init(Client httpClient, SymphonyClientConfig initParams) throws InitException, AuthenticationException;
+    void init(Client httpClient, SymphonyClientConfig config) throws InitException, AuthenticationException;
     
     /**
      * Initialize client with required parameters.
      *
-     * @param initParams Configuration object
+     * @param config Configuration object
      * @throws InitException Failure of a specific service most likely due to connectivity issues
      * @throws AuthenticationException Exception thrown from authorization issue.
      */
@@ -109,6 +122,10 @@ public interface SymphonyClient {
      */
     void setName(String name);
 
+
+    void init(SymphonyClientConfig config) throws InitException, AuthenticationException;
+
+    void init(SymAuth symAuth, SymphonyClientConfig config) throws InitException;
 
     /**
      * Retrieve authorization object.
@@ -294,4 +311,8 @@ public interface SymphonyClient {
      * @return SymphonyApis which provide access to all REST API Apis
      */
     SymphonyApis getSymphonyApis();
+
+    SymphonyClientConfig getConfig();
+
+    void setConfig(SymphonyClientConfig config);
 }
