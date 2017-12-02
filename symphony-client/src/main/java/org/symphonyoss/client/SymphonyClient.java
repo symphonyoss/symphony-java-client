@@ -103,14 +103,6 @@ public interface SymphonyClient {
      */
     void init(Client httpClient, SymphonyClientConfig config) throws InitException, AuthenticationException;
     
-    /**
-     * Initialize client with required parameters.
-     *
-     * @param config Configuration object
-     * @throws InitException Failure of a specific service most likely due to connectivity issues
-     * @throws AuthenticationException Exception thrown from authorization issue.
-     */
-    void init(SymphonyClientConfig initParams) throws InitException, AuthenticationException;
 
     /**
      * Gets the name of the client (defaults to first part of email address) to use in all spawned thread names.
