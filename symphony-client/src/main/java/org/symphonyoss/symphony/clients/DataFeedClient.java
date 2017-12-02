@@ -24,7 +24,6 @@ package org.symphonyoss.symphony.clients;
 
 import org.symphonyoss.client.exceptions.DataFeedException;
 import org.symphonyoss.symphony.agent.model.Datafeed;
-import org.symphonyoss.symphony.agent.model.V2BaseMessage;
 import org.symphonyoss.client.events.SymEvent;
 import org.symphonyoss.symphony.clients.model.ApiVersion;
 

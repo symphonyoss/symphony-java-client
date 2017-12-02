@@ -24,6 +24,8 @@ package org.symphonyoss.symphony.clients.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.symphonyoss.client.SymphonyClientConfig;
+import org.symphonyoss.client.SymphonyClientConfigID;
 import org.symphonyoss.client.exceptions.AttachmentsException;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.symphony.agent.api.AttachmentsApi;
@@ -42,7 +44,7 @@ import java.util.Base64;
 /**
  * Support for message attachments
  *
- * @author  Frank Tarsillo
+ * @author Frank Tarsillo
  */
 public class AttachmentsClientImpl implements AttachmentsClient {
 
@@ -51,32 +53,36 @@ public class AttachmentsClientImpl implements AttachmentsClient {
     @SuppressWarnings("unused")
     private Logger logger = LoggerFactory.getLogger(AttachmentsClientImpl.class);
 
-    public AttachmentsClientImpl(SymAuth symAuth, String agentUrl) {
 
-        this.symAuth = symAuth;
+    /**
+     * Init
+     *
+     * @param symAuth Authorization model containing session and key tokens
+     * @param config  Symphony Client Config
+     */
+    public AttachmentsClientImpl(SymAuth symAuth, SymphonyClientConfig config) {
 
-
-        //Get Service client to query for userID.
-        apiClient = org.symphonyoss.symphony.agent.invoker.Configuration.getDefaultApiClient();
-        apiClient.setBasePath(agentUrl);
-        //apiClient.getHttpClient().register(MultiPartFeature.class);
+        this(symAuth, config, null);
 
     }
 
     /**
      * If you need to override HttpClient.  Important for handling individual client certs.
-     * @param symAuth Authorization model containing session and key tokens
-     * @param agentUrl Agent URL
+     *
+     * @param symAuth    Authorization model containing session and key tokens
+     * @param config     Symphony Client Config
      * @param httpClient Custom client utilized to access Symphony APIs
      */
-    public AttachmentsClientImpl(SymAuth symAuth, String agentUrl, Client httpClient) {
+    public AttachmentsClientImpl(SymAuth symAuth, SymphonyClientConfig config, Client httpClient) {
         this.symAuth = symAuth;
 
         //Get Service client to query for userID.
         apiClient = org.symphonyoss.symphony.agent.invoker.Configuration.getDefaultApiClient();
-        apiClient.setHttpClient(httpClient);
-        apiClient.setBasePath(agentUrl);
-        //apiClient.getHttpClient().register(MultiPartFeature.class);
+        if (httpClient != null)
+            apiClient.setHttpClient(httpClient);
+
+        apiClient.setBasePath(config.get(SymphonyClientConfigID.AGENT_URL));
+
 
     }
 
@@ -93,8 +99,7 @@ public class AttachmentsClientImpl implements AttachmentsClient {
 
         try {
 
-
-            return  Base64.getDecoder().decode(attachmentsApi.v1StreamSidAttachmentGet(symMessage.getStreamId(),
+            return Base64.getDecoder().decode(attachmentsApi.v1StreamSidAttachmentGet(symMessage.getStreamId(),
                     symAttachmentInfo.getId(),
                     symMessage.getId(),
                     symAuth.getSessionToken().getToken(),
@@ -108,24 +113,25 @@ public class AttachmentsClientImpl implements AttachmentsClient {
 
 
     @Override
-    public SymAttachmentInfo postAttachment(String sid, File attachment)throws AttachmentsException {
+    public SymAttachmentInfo postAttachment(String sid, File attachment) throws AttachmentsException {
         AttachmentsApi attachmentsApi = new AttachmentsApi(apiClient);
 
-        if(sid == null || attachment == null)
-         throw new NullPointerException("Either stream ID or file is null..");
+        if (sid == null || attachment == null)
+            throw new NullPointerException("Either stream ID or file is null..");
 
 
         AttachmentInfo attachmentInfo;
         try {
-            attachmentInfo = attachmentsApi.v1StreamSidAttachmentCreatePost(sid,
+            attachmentInfo = attachmentsApi.v3StreamSidAttachmentCreatePost(sid,
                     symAuth.getSessionToken().getToken(),
-                    symAuth.getKeyToken().getToken(),
-                    attachment);
+                    attachment,
+                    symAuth.getKeyToken().getToken()
+            );
         } catch (ApiException e) {
             throw new AttachmentsException("Failed to post attachment for file " + attachment.getName(), e);
         }
 
-        if(attachmentInfo == null)
+        if (attachmentInfo == null)
             throw new AttachmentsException("Failed to post attachment.  Posting results returned no information.");
 
 

@@ -52,9 +52,7 @@ public class SymFeatureList extends ArrayList<SymFeature> {
 
         List<SymFeature> symFeatures = SymFeature.toSymFeatures(featureList);
         SymFeatureList symFeatureList = new SymFeatureList();
-        symFeatures.forEach(symFeature -> {
-            symFeatureList.add(symFeature);
-        });
+        symFeatureList.addAll(symFeatures);
         return symFeatureList;
     }
 
@@ -70,18 +68,12 @@ public class SymFeatureList extends ArrayList<SymFeature> {
 
         List<Feature> features = SymFeature.toFeatures(symFeatureList);
         FeatureList featureList = new FeatureList();
-        features.forEach(feature -> {
-            featureList.add(feature);
-        });
+        featureList.addAll(features);
         return featureList;
     }
 
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        } else {
-            return o != null && this.getClass() == o.getClass() ? super.equals(o) : false;
-        }
+        return this == o || (o != null && this.getClass() == o.getClass()) && super.equals(o);
     }
 
     public int hashCode() {

@@ -24,20 +24,23 @@
 package org.symphonyoss.symphony.clients;
 
 import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.client.SymphonyClientConfig;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.symphony.clients.impl.UserManagementClientImpl;
+
+import javax.ws.rs.client.Client;
 
 /**
  * Factory to create instances of {@link UserManagementClientImpl}.
  */
 public class UserManagementFactory {
-    public enum TYPE {DEFAULT}
 
-    public static UserManagementClient getClient(SymphonyClient symphonyClient, UsersFactory.TYPE type) {
-        return new UserManagementClientImpl(symphonyClient.getSymAuth(), symphonyClient.getAgentUrl());
+
+    public static UserManagementClient getClient(SymphonyClient symphonyClient) {
+        return new UserManagementClientImpl(symphonyClient.getSymAuth(), symphonyClient.getConfig(), symphonyClient.getPodHttpClient());
     }
 
-    public static UserManagementClient getClient(SymAuth symAuth, String serviceUrl, UsersFactory.TYPE type) {
-        return new UserManagementClientImpl(symAuth, serviceUrl);
+    public static UserManagementClient getClient(SymAuth symAuth, SymphonyClientConfig config, Client client) {
+        return new UserManagementClientImpl(symAuth, config, client);
     }
 }

@@ -28,8 +28,6 @@ import org.symphonyoss.client.exceptions.InitException;
 import org.symphonyoss.client.exceptions.NetworkException;
 import org.symphonyoss.client.impl.CustomHttpClient;
 import org.symphonyoss.client.impl.SymphonyBasicClient;
-import org.symphonyoss.client.model.SymAuth;
-import org.symphonyoss.symphony.clients.AuthenticationClient;
 import org.symphonyoss.symphony.clients.model.ApiVersion;
 
 import javax.ws.rs.client.Client;

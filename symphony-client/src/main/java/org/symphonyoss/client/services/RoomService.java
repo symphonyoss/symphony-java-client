@@ -30,7 +30,6 @@ import org.symphonyoss.client.exceptions.RoomException;
 import org.symphonyoss.client.exceptions.StreamsException;
 import org.symphonyoss.client.exceptions.SymException;
 import org.symphonyoss.client.model.Room;
-import org.symphonyoss.symphony.agent.model.*;
 import org.symphonyoss.symphony.clients.model.*;
 import org.symphonyoss.symphony.pod.model.Stream;
 

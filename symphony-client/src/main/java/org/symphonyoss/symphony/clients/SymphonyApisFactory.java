@@ -25,24 +25,26 @@
 package org.symphonyoss.symphony.clients;
 
 import org.symphonyoss.client.SymphonyClient;
-import org.symphonyoss.symphony.clients.impl.AttachmentsClientImpl;
+import org.symphonyoss.client.SymphonyClientConfig;
+import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.symphony.clients.impl.SymphonyApisImpl;
+
+import javax.ws.rs.client.Client;
 
 /**
  * @author Frank Tarsillo
  */
 public class SymphonyApisFactory {
 
-    public enum TYPE { DEFAULT, HTTPCLIENT }
 
-    public static SymphonyApis getClient(SymphonyClient symClient, TYPE type){
+    public static SymphonyApis getClient(SymphonyClient symClient) {
 
-            if(type.equals(TYPE.HTTPCLIENT)) {
-                return new SymphonyApisImpl(symClient.getSymAuth(), symClient.getPodUrl(), symClient.getPodHttpClient(), symClient.getAgentUrl(), symClient.getAgentHttpClient());
-            }else{
+        return new SymphonyApisImpl(symClient.getSymAuth(), symClient.getConfig(), symClient.getPodHttpClient(), symClient.getAgentHttpClient());
 
-                return new SymphonyApisImpl(symClient.getSymAuth(), symClient.getPodUrl(), symClient.getAgentUrl());
-            }
     }
 
+    public static SymphonyApis getClient(SymAuth symAuth, SymphonyClientConfig config, Client podClient, Client agentClient) {
+
+        return new SymphonyApisImpl(symAuth, config, podClient, agentClient);
+    }
 }

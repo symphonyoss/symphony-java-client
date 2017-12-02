@@ -1,5 +1,6 @@
 /*
  *
+ *
  * Copyright 2016 The Symphony Software Foundation
  *
  * Licensed to The Symphony Software Foundation (SSF) under one
@@ -18,35 +19,47 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
+ *
  */
 
-package org.symphonyoss.symphony.clients;
-
-import org.symphonyoss.client.SymphonyClient;
-import org.symphonyoss.client.SymphonyClientConfig;
-import org.symphonyoss.client.model.SymAuth;
-import org.symphonyoss.symphony.clients.impl.AttachmentsClientImpl;
-
-import javax.ws.rs.client.Client;
+package org.symphonyoss.symphony.clients.model;
 
 /**
- * @author Frank Tarsillo
+ * @author Frank Tarsillo on 11/17/17.
  */
-public class AttachmentsFactory {
 
-    public enum TYPE { DEFAULT, HTTPCLIENT }
+public enum RestApiVersion {
 
-    public static AttachmentsClient getClient(SymphonyClient symClient){
+    v1_46_0(14600),
+    v1_47_0(14700),
+    v1_48_0(14800);
 
-        return new AttachmentsClientImpl(symClient.getSymAuth(), symClient.getConfig(), symClient.getAgentHttpClient());
+
+
+
+    private Integer apiVersion;
+
+    RestApiVersion(int apiVersion) {
+        this.apiVersion = apiVersion;
+    }
+
+    public  boolean isCompatible( String actual) {
+        int actualValue;
+
+        try{
+            actualValue = Integer.valueOf(actual.replace(".",""));
+
+        }catch(NumberFormatException e){
+            return false;
+        }
+
+        return actualValue >= this.apiVersion;
+
 
     }
 
 
-    public static AttachmentsClient getClient(SymAuth symAuth, SymphonyClientConfig config, Client client){
 
-        return new AttachmentsClientImpl(symAuth, config, client);
-
-    }
 }
+
 

@@ -28,6 +28,7 @@ package org.symphonyoss.client.services;
 import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.client.exceptions.UsersClientException;
 import org.symphonyoss.symphony.clients.model.SymUser;
+
 import java.util.Set;
 
 /**
@@ -37,59 +38,49 @@ import java.util.Set;
  *
  * @author Frank Tarsillo 4/1/17.
  */
-public interface SymUserCache extends SymCache{
-
+public interface SymUserCache extends SymCache {
 
 
     /**
      * Get SymUser by email address through cache.
      *
-     *
-     * @param email     Email address of the user
+     * @param email Email address of the user
      * @return {@link SymUser }
      * @throws UsersClientException Exception from underlying API
      */
-    public  SymUser getUserByEmail( String email) throws UsersClientException;
+    SymUser getUserByEmail(String email) throws UsersClientException;
 
 
     /**
      * Get SymUser by user ID through cache.
      *
-     *
-     * @param id        UserID of user
+     * @param id UserID of user
      * @return {@link SymUser }
      * @throws UsersClientException Exception from underlying API
      */
-    public  SymUser getUserById( Long id) throws UsersClientException;
-
-
+    SymUser getUserById(Long id) throws UsersClientException;
 
 
     /**
      * Get SymUser by name through cache.
      *
-     *
-     * @param name      Name of user
+     * @param name Name of user
      * @return {@link SymUser }
      * @throws UsersClientException Exception from underlying API
      */
-    public  SymUser getUserByName( String name) throws UsersClientException ;
+    SymUser getUserByName(String name) throws UsersClientException;
 
     /**
      * Get SymUsers by stream through cache.
      *
-     *
-     * @param streamId  StreamID that users are part of
+     * @param streamId StreamID that users are part of
      * @return Set of {@link SymUser }
      * @throws UsersClientException Exception from underlying API
      */
-    public  Set<SymUser> getUsersByStream(String streamId) throws UsersClientException;
+    Set<SymUser> getUsersByStream(String streamId) throws UsersClientException;
 
 
-
-
-    public void setSymphonyClient(SymphonyClient symphonyClient);
-
+    void setSymphonyClient(SymphonyClient symphonyClient);
 
 
 }

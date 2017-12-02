@@ -24,22 +24,21 @@ package org.symphonyoss.symphony.clients.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.symphonyoss.client.SymphonyClientConfig;
+import org.symphonyoss.client.SymphonyClientConfigID;
 import org.symphonyoss.client.common.Constants;
+import org.symphonyoss.client.events.SymEvent;
 import org.symphonyoss.client.exceptions.DataFeedException;
-import org.symphonyoss.client.exceptions.SymFault;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.symphony.agent.api.DatafeedApi;
 import org.symphonyoss.symphony.agent.invoker.ApiClient;
 import org.symphonyoss.symphony.agent.invoker.ApiException;
 import org.symphonyoss.symphony.agent.model.Datafeed;
-import org.symphonyoss.symphony.agent.model.V2BaseMessage;
 import org.symphonyoss.symphony.agent.model.V4Event;
 import org.symphonyoss.symphony.clients.DataFeedClient;
-import org.symphonyoss.client.events.SymEvent;
 import org.symphonyoss.symphony.clients.model.ApiVersion;
 
 import javax.ws.rs.client.Client;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -55,34 +54,37 @@ public class DataFeedClientImpl implements DataFeedClient {
     private Logger logger = LoggerFactory.getLogger(DataFeedClientImpl.class);
 
 
-    public DataFeedClientImpl(SymAuth symAuth, String agentUrl) {
+    /**
+     * Init
+     *
+     * @param symAuth    Authorization model containing session and key tokens
+     * @param config     Config containing the Agent URL used to access API
+     *
+     */
+    public DataFeedClientImpl(SymAuth symAuth, SymphonyClientConfig config) {
 
-        this.symAuth = symAuth;
-
-
-        //Get Service client to query for userID.
-        apiClient = org.symphonyoss.symphony.agent.invoker.Configuration.getDefaultApiClient();
-        apiClient.setBasePath(agentUrl);
-
+        this(symAuth, config, null);
     }
 
     /**
      * If you need to override HttpClient.  Important for handling individual client certs.
      *
      * @param symAuth    Authorization model containing session and key tokens
-     * @param podUrl Service URL used to access API
+     * @param config     Config containing the Agent URL used to access API
      * @param httpClient Custom HTTP client
      */
-    public DataFeedClientImpl(SymAuth symAuth, String podUrl, Client httpClient) {
+    public DataFeedClientImpl(SymAuth symAuth, SymphonyClientConfig config, Client httpClient) {
         this.symAuth = symAuth;
 
         //Get Service client to query for userID.
         apiClient = org.symphonyoss.symphony.agent.invoker.Configuration.getDefaultApiClient();
-        apiClient.setHttpClient(httpClient);
-        apiClient.setBasePath(podUrl);
+
+        if (httpClient != null)
+            apiClient.setHttpClient(httpClient);
+
+        apiClient.setBasePath(config.get(SymphonyClientConfigID.AGENT_URL));
 
     }
-
 
 
     @Override
@@ -95,18 +97,17 @@ public class DataFeedClientImpl implements DataFeedClient {
         try {
 
 
-                return datafeedApi.v4DatafeedCreatePost(symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken());
+            return datafeedApi.v4DatafeedCreatePost(symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken());
 
 
         } catch (ApiException e) {
             throw new DataFeedException("Could not start datafeed..",
                     datafeedApi.getApiClient().getBasePath(), e.getCode(), e);
-        } catch(RuntimeException ef){
+        } catch (RuntimeException ef) {
             throw new DataFeedException("Could not start datafeed due to network issue..",
-                    datafeedApi.getApiClient().getBasePath(),500, ef);
+                    datafeedApi.getApiClient().getBasePath(), 500, ef);
         }
     }
-
 
 
     @Override
@@ -128,9 +129,9 @@ public class DataFeedClientImpl implements DataFeedClient {
         } catch (ApiException e) {
             throw new DataFeedException("Failed to retrieve messages from datafeed...",
                     datafeedApi.getApiClient().getBasePath(), e.getCode(), e);
-        }catch(RuntimeException ef){
+        } catch (RuntimeException ef) {
             throw new DataFeedException("Failed to retrieve messages due to network issue..",
-                    datafeedApi.getApiClient().getBasePath(),500, ef);
+                    datafeedApi.getApiClient().getBasePath(), 500, ef);
         }
 
 

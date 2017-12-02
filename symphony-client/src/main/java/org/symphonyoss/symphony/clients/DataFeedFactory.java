@@ -23,22 +23,34 @@
 package org.symphonyoss.symphony.clients;
 
 import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.client.SymphonyClientConfig;
+import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.symphony.clients.impl.DataFeedClientImpl;
+
+import javax.ws.rs.client.Client;
 
 /**
  * Created by frank.tarsillo on 6/6/2016.
  */
 public class DataFeedFactory {
 
-    public enum TYPE { DEFAULT, HTTPCLIENT }
 
-    public static DataFeedClient getClient(SymphonyClient symClient, TYPE type){
+    public static DataFeedClient getClient(SymphonyClient symClient){
 
-        if(type.equals(TYPE.HTTPCLIENT)) {
-            return new DataFeedClientImpl(symClient.getSymAuth(), symClient.getAgentUrl(), symClient.getAgentHttpClient());
-        }else{
-            return new DataFeedClientImpl(symClient.getSymAuth(), symClient.getAgentUrl());
-        }
+
+        return new DataFeedClientImpl(symClient.getSymAuth(), symClient.getConfig(), symClient.getAgentHttpClient());
+
+
     }
+
+
+    public static DataFeedClient getClient(SymAuth symAuth, SymphonyClientConfig config, Client client) {
+
+
+        return new DataFeedClientImpl(symAuth, config, client);
+
+
+    }
+
 
 }

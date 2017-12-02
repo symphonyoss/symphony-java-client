@@ -25,6 +25,8 @@ package org.symphonyoss.symphony.clients.impl;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.symphonyoss.client.SymphonyClientConfig;
+import org.symphonyoss.client.SymphonyClientConfigID;
 import org.symphonyoss.client.exceptions.MessagesException;
 import org.symphonyoss.client.exceptions.RestException;
 import org.symphonyoss.client.model.SymAuth;
@@ -51,12 +53,19 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
 
     private final ApiClient apiClient;
     private final SymAuth symAuth;
-    private ApiVersion apiVersion = ApiVersion.V4;
+
     private Logger logger = LoggerFactory.getLogger(MessagesClientImpl.class);
 
-    public MessagesClientImpl(SymAuth symAuth, String agentUrl) {
+    /**
+     * Constructor supports custom HTTP clients
+     *
+     * @param symAuth    Authorization model containing session and key tokens
+     * @param config   Symphony Client config
+     *
+     */
+    public MessagesClientImpl(SymAuth symAuth, SymphonyClientConfig config) {
 
-        this(symAuth, agentUrl, null, null);
+        this(symAuth, config, null);
 
     }
 
@@ -64,40 +73,12 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
      * Constructor supports custom HTTP clients
      *
      * @param symAuth    Authorization model containing session and key tokens
-     * @param agentUrl   Agent URL
+     * @param config   Symphony Client Config
      * @param httpClient Custom HTTP Client
      */
-    public MessagesClientImpl(SymAuth symAuth, String agentUrl, Client httpClient) {
+    public MessagesClientImpl(SymAuth symAuth, SymphonyClientConfig config, Client httpClient) {
 
-        this(symAuth, agentUrl, httpClient, null);
-
-    }
-
-
-    /**
-     * @param symAuth    Authorization model containing session and key tokens
-     * @param agentUrl   Agent URL
-     * @param apiVersion Version of API to use
-     */
-    public MessagesClientImpl(SymAuth symAuth, String agentUrl, ApiVersion apiVersion) {
-
-        this(symAuth, agentUrl, null, apiVersion);
-    }
-
-
-    /**
-     * Constructor supports custom HTTP clients
-     *
-     * @param symAuth    Authorization model containing session and key tokens
-     * @param agentUrl   Agent URL
-     * @param httpClient Custom HTTP Client
-     * @param apiVersion Version of API to use
-     */
-    public MessagesClientImpl(SymAuth symAuth, String agentUrl, Client httpClient, ApiVersion apiVersion) {
         this.symAuth = symAuth;
-
-        if (apiVersion != null)
-            this.apiVersion = apiVersion;
 
         //Get Service client to query for userID.
         apiClient = org.symphonyoss.symphony.agent.invoker.Configuration.getDefaultApiClient();
@@ -107,9 +88,13 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
 
         apiClient.getHttpClient().register(MultiPartFeature.class);
 
-        apiClient.setBasePath(agentUrl);
+        apiClient.setBasePath(config.get(SymphonyClientConfigID.AGENT_URL));
+
 
     }
+
+
+
 
 
     /**
@@ -293,6 +278,7 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
         MessagesApi messagesApi = new MessagesApi(apiClient);
         V4Message v4Message;
         try {
+
 
 
             return SymMessage.toSymMessage(messagesApi.v4StreamSidMessageCreatePost(

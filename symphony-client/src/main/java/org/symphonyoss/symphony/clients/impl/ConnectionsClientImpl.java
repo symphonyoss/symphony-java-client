@@ -22,8 +22,9 @@
 
 package org.symphonyoss.symphony.clients.impl;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import org.symphonyoss.client.SymphonyClientConfig;
+import org.symphonyoss.client.SymphonyClientConfigID;
 import org.symphonyoss.client.exceptions.ConnectionsException;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.symphony.clients.ConnectionsClient;
@@ -48,35 +49,40 @@ public class ConnectionsClientImpl implements ConnectionsClient {
 
     private final ApiClient apiClient;
     private final SymAuth symAuth;
-    @SuppressWarnings("unused")
-    private Logger logger = LoggerFactory.getLogger(ConnectionsClientImpl.class);
 
 
-    public ConnectionsClientImpl(SymAuth symAuth, String podUrl) {
+    /**
+     * Init
+     *
+     * @param symAuth
+     * @param config Symphony Client config
+     *
+     */
+    public ConnectionsClientImpl(SymAuth symAuth, SymphonyClientConfig config) {
 
-        this.symAuth = symAuth;
-
-
-        //Get Service client to query for userID.
-        apiClient = org.symphonyoss.symphony.pod.invoker.Configuration.getDefaultApiClient();
-        apiClient.setBasePath(podUrl);
+        this(symAuth, config, null);
 
     }
+
 
     /**
      * If you need to override HttpClient.  Important for handling individual client certs.
      *
      * @param symAuth    Authorization model containing session and key tokens
-     * @param podUrl Service URL
+     * @param config Config updated with pod url
      * @param httpClient Custom HTTP Client to use
      */
-    public ConnectionsClientImpl(SymAuth symAuth, String podUrl, Client httpClient) {
+    public ConnectionsClientImpl(SymAuth symAuth, SymphonyClientConfig config, Client httpClient) {
         this.symAuth = symAuth;
 
         //Get Service client to query for userID.
         apiClient = org.symphonyoss.symphony.pod.invoker.Configuration.getDefaultApiClient();
-        apiClient.setHttpClient(httpClient);
-        apiClient.setBasePath(podUrl);
+
+        if(httpClient!=null)
+            apiClient.setHttpClient(httpClient);
+
+        apiClient.setBasePath(config.get(SymphonyClientConfigID.POD_URL));
+
 
     }
 

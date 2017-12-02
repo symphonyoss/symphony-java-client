@@ -23,22 +23,28 @@
 package org.symphonyoss.symphony.clients;
 
 import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.client.SymphonyClientConfig;
+import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.symphony.clients.impl.RoomMembershipClientImpl;
+
+import javax.ws.rs.client.Client;
 
 /**
  * Created by frank.tarsillo on 6/6/2016.
  */
 public class RoomMembershipFactory {
 
-    public enum TYPE { DEFAULT, HTTPCLIENT }
 
-    public static RoomMembershipClient getClient(SymphonyClient symClient, TYPE type){
+    public static RoomMembershipClient getClient(SymphonyClient symClient) {
 
-        if(type.equals(TYPE.HTTPCLIENT)) {
-            return new RoomMembershipClientImpl(symClient.getSymAuth(), symClient.getPodUrl(), symClient.getPodHttpClient());
-        }else{
-            return new RoomMembershipClientImpl(symClient.getSymAuth(), symClient.getPodUrl());
-        }
+        return new RoomMembershipClientImpl(symClient.getSymAuth(), symClient.getConfig(), symClient.getPodHttpClient());
+
+    }
+
+    public static RoomMembershipClient getClient(SymAuth symAuth, SymphonyClientConfig config, Client client) {
+
+        return new RoomMembershipClientImpl(symAuth, config, client);
+
     }
 
 }

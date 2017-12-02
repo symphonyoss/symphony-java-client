@@ -26,6 +26,8 @@
 package org.symphonyoss.symphony.clients;
 
 import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.client.SymphonyClientConfig;
+import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.symphony.clients.impl.ShareClientImpl;
 
 /**
@@ -33,15 +35,16 @@ import org.symphonyoss.symphony.clients.impl.ShareClientImpl;
  */
 public class ShareFactory {
 
-    public enum TYPE {DEFAULT, HTTPCLIENT}
+    public static ShareClient getClient(SymphonyClient symClient){
 
-    public static ShareClient getClient(SymphonyClient symClient, TYPE type) {
+        return new ShareClientImpl(symClient.getSymAuth(),symClient.getConfig(), symClient.getPodHttpClient());
 
-        if (type.equals(TYPE.HTTPCLIENT)) {
-            return new ShareClientImpl(symClient.getSymAuth(), symClient.getPodUrl(), symClient.getPodHttpClient());
-        } else {
-            return new ShareClientImpl(symClient.getSymAuth(), symClient.getPodUrl());
-        }
+    }
+
+    public static ShareClient getClient(SymAuth symAuth, SymphonyClientConfig config){
+
+        return new ShareClientImpl(symAuth, config);
+
     }
 
 }

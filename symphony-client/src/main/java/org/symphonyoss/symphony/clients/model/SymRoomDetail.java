@@ -23,6 +23,7 @@
 package org.symphonyoss.symphony.clients.model;
 
 import org.symphonyoss.symphony.pod.model.V2RoomDetail;
+import org.symphonyoss.symphony.pod.model.V3RoomDetail;
 
 
 /**
@@ -54,6 +55,14 @@ public class SymRoomDetail {
 
 
     public static SymRoomDetail toSymRoomDetail(V2RoomDetail roomDetail){
+
+        SymRoomDetail symRoomDetail = new SymRoomDetail();
+        symRoomDetail.setRoomAttributes(SymRoomAttributes.toSymRoomAttributes(roomDetail.getRoomAttributes()));
+        symRoomDetail.setRoomSystemInfo(SymRoomSystemInfo.toSymRoomSystemInfo(roomDetail.getRoomSystemInfo()));
+        return symRoomDetail;
+
+    }
+    public static SymRoomDetail toSymRoomDetail(V3RoomDetail roomDetail){
 
         SymRoomDetail symRoomDetail = new SymRoomDetail();
         symRoomDetail.setRoomAttributes(SymRoomAttributes.toSymRoomAttributes(roomDetail.getRoomAttributes()));

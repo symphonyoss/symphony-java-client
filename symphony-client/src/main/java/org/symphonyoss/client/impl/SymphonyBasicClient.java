@@ -80,9 +80,11 @@ public class SymphonyBasicClient implements SymphonyClient {
     private Client defaultHttpClient = ClientBuilder.newClient();
     private Client podHttpClient;
     private Client agentHttpClient;
+    private SymphonyClientConfig config;
     private final long SYMAUTH_REFRESH_TIME = Long.parseLong(System.getProperty(Constants.SYMAUTH_REFRESH_TIME, "7200000"));
-    SymUserCache symUserCache;
+    private SymUserCache symUserCache;
     private ApiVersion apiVersion = ApiVersion.V4;
+
 
 
     public SymphonyBasicClient() {
@@ -95,26 +97,28 @@ public class SymphonyBasicClient implements SymphonyClient {
     }
 
     @Override
-    public void init(SymphonyClientConfig initParams) throws InitException, AuthenticationException {
+    public void init(SymphonyClientConfig config) throws InitException, AuthenticationException {
+
+        this.config  = config;
        try {
            Client httpClient;
 
            //If a truststore file is provided..
-           if (initParams.get(SymphonyClientConfigID.TRUSTSTORE_FILE) != null) {
+           if (config.get(SymphonyClientConfigID.TRUSTSTORE_FILE) != null) {
               httpClient =CustomHttpClient.getClient(
-                       initParams.get(SymphonyClientConfigID.USER_CERT_FILE),
-                       initParams.get(SymphonyClientConfigID.USER_CERT_PASSWORD),
-                       initParams.get(SymphonyClientConfigID.TRUSTSTORE_FILE),
-                       initParams.get(SymphonyClientConfigID.TRUSTSTORE_PASSWORD));
+                       config.get(SymphonyClientConfigID.USER_CERT_FILE),
+                       config.get(SymphonyClientConfigID.USER_CERT_PASSWORD),
+                       config.get(SymphonyClientConfigID.TRUSTSTORE_FILE),
+                       config.get(SymphonyClientConfigID.TRUSTSTORE_PASSWORD));
 
            }else{
                httpClient=CustomHttpClient.getClient(
-                       initParams.get(SymphonyClientConfigID.USER_CERT_FILE),
-                       initParams.get(SymphonyClientConfigID.USER_CERT_PASSWORD));
+                       config.get(SymphonyClientConfigID.USER_CERT_FILE),
+                       config.get(SymphonyClientConfigID.USER_CERT_PASSWORD));
            }
 
 
-           init(httpClient, initParams);
+           init(httpClient, config);
        }catch(Exception e){
            throw new InitException("Failed to initialize network...", e);
        }
@@ -124,54 +128,48 @@ public class SymphonyBasicClient implements SymphonyClient {
     }
 
     @Override
-    public void init(Client podHttpClient, Client agentHttpClient, SymphonyClientConfig initParams) throws InitException, AuthenticationException {
+    public void init(Client podHttpClient, Client agentHttpClient, SymphonyClientConfig config) throws InitException, AuthenticationException {
         this.podHttpClient = podHttpClient;
         this.agentHttpClient = agentHttpClient;
         this.defaultHttpClient = podHttpClient;
+        this.config = config;
 
 
         AuthenticationClient authClient = new AuthenticationClient(
-                initParams.get(SymphonyClientConfigID.SESSIONAUTH_URL),
-                initParams.get(SymphonyClientConfigID.KEYAUTH_URL),
-                podHttpClient);
+                config.get(SymphonyClientConfigID.SESSIONAUTH_URL),
+                config.get(SymphonyClientConfigID.KEYAUTH_URL),
+                agentHttpClient);
 
 
         SymAuth symAuth = authClient.authenticate();
 
+        init(symAuth,config);
 
-        boolean disableServices = Boolean.parseBoolean(initParams.get(SymphonyClientConfigID.DISABLE_SERVICES, "False"));
-
-        init(
-                symAuth,
-                initParams.get(SymphonyClientConfigID.USER_EMAIL),
-                initParams.get(SymphonyClientConfigID.AGENT_URL),
-                initParams.get(SymphonyClientConfigID.POD_URL),
-                disableServices
-        );
 
     }
 
     @Override
-    public void init(Client httpClient, SymphonyClientConfig initParams) throws InitException, AuthenticationException {
+    public void init(Client httpClient, SymphonyClientConfig config) throws InitException, AuthenticationException {
         this.defaultHttpClient = httpClient;
-        init(defaultHttpClient, defaultHttpClient, initParams);
+        init(defaultHttpClient, defaultHttpClient, config);
 
     }
 
     /**
      * Initialize client with required parameters.
      *
+     *
      * @param symAuth  Contains valid key and session tokens generated from AuthenticationClient.
-     * @param email    Email address of the BOT
+     * @param userEmail    Email address of the BOT
      * @param agentUrl The Agent URL
      * @param podUrl   The Service URL (in most cases it's the POD URL)
      * @throws InitException Failure of a specific service most likely due to connectivity issues
      */
     @Override
-    public void init(SymAuth symAuth, String email, String agentUrl, String podUrl) throws InitException {
-
-
-        init(symAuth, email, agentUrl, podUrl, false);
+    @Deprecated
+    public void init(SymAuth symAuth, String userEmail, String agentUrl, String podUrl) throws InitException {
+        updateConfig(agentUrl,podUrl,userEmail);
+        init(symAuth, config);
 
 
     }
@@ -182,18 +180,43 @@ public class SymphonyBasicClient implements SymphonyClient {
      *
      * @param httpClient Custom http client to use when initiating the client
      * @param symAuth    Contains valid key and session tokens generated from AuthenticationClient.
-     * @param email      Email address of the BOT
+     * @param userEmail      Email address of the BOT
      * @param agentUrl   The Agent URL
      * @param podUrl     The Service URL (in most cases it's the POD URL)
      * @throws InitException Failure of a specific service most likely due to connectivity issues
      */
     @Override
-    public void init(Client httpClient, SymAuth symAuth, String email, String agentUrl, String podUrl) throws InitException {
+    @Deprecated
+    public void init(Client httpClient, SymAuth symAuth, String userEmail, String agentUrl, String podUrl) throws InitException {
 
         this.defaultHttpClient = httpClient;
         this.agentHttpClient = httpClient;
         this.defaultHttpClient = httpClient;
-        init(symAuth, email, agentUrl, podUrl);
+
+        updateConfig(agentUrl,podUrl,userEmail);
+
+        init(symAuth, config);
+    }
+
+    /**
+     * Initialize client with required parameters.
+     *
+     * @param symAuth         Contains valid key and session tokens generated from AuthenticationClient.
+     * @param userEmail           Email address of the BOT
+     * @param agentUrl        The Agent URL
+     * @param podUrl          The Service URL (in most cases it's the POD URL)
+     * @param disableServices Disable all real-time services (MessageService, RoomService, ChatService)
+     * @throws InitException Failure of a specific service most likely due to connectivity issues
+     */
+    @Override
+    @Deprecated
+    public void init(SymAuth symAuth, String userEmail, String agentUrl, String podUrl, boolean disableServices) throws InitException {
+
+       updateConfig(agentUrl,podUrl,userEmail);
+       config.set(SymphonyClientConfigID.DISABLE_SERVICES,String.valueOf(disableServices));
+
+        init(symAuth, config);
+
     }
 
 
@@ -201,14 +224,17 @@ public class SymphonyBasicClient implements SymphonyClient {
      * Initialize client with required parameters.
      *
      * @param symAuth         Contains valid key and session tokens generated from AuthenticationClient.
-     * @param email           Email address of the BOT
-     * @param agentUrl        The Agent URL
-     * @param podUrl          The Service URL (in most cases it's the POD URL)
-     * @param disableServices Disable all real-time services (MessageService, RoomService, ChatService)
+     * @param config          Symphony client config
      * @throws InitException Failure of a specific service most likely due to connectivity issues
      */
     @Override
-    public void init(SymAuth symAuth, String email, String agentUrl, String podUrl, boolean disableServices) throws InitException {
+    public void init(SymAuth symAuth, SymphonyClientConfig config) throws InitException {
+
+        this.config = config;
+        this.symAuth = symAuth;
+
+        updateConfig(config);
+
 
         if(podHttpClient==null)
             podHttpClient = defaultHttpClient;
@@ -222,39 +248,37 @@ public class SymphonyBasicClient implements SymphonyClient {
         if (symAuth == null || symAuth.getSessionToken() == null || symAuth.getKeyToken() == null)
             throw new InitException("Symphony Authorization is not valid", new Throwable(NOT_LOGGED_IN_MESSAGE));
 
-        if (agentUrl == null)
+        if (config.get(SymphonyClientConfigID.AGENT_URL) == null)
             throw new InitException("Failed to provide agent URL", new Throwable("Failed to provide agent URL"));
 
-        if (podUrl == null)
+        if (config.get(SymphonyClientConfigID.POD_URL) == null)
             throw new InitException("Failed to provide service URL", new Throwable("Failed to provide service URL"));
 
-        this.symAuth = symAuth;
-        this.agentUrl = agentUrl;
-        this.podUrl = podUrl;
 
 
         //Init all clients.
-        dataFeedClient = DataFeedFactory.getClient(this, DataFeedFactory.TYPE.HTTPCLIENT);
-        messagesClient = MessagesFactory.getClient(this, MessagesFactory.TYPE.HTTPCLIENT, apiVersion);
-        presenceClient = PresenceFactory.getClient(this, PresenceFactory.TYPE.HTTPCLIENT);
-        streamsClient = StreamsFactory.getClient(this, StreamsFactory.TYPE.HTTPCLIENT);
-        usersClient = UsersFactory.getClient(this, UsersFactory.TYPE.HTTPCLIENT);
-        shareClient = ShareFactory.getClient(this, ShareFactory.TYPE.HTTPCLIENT);
-        attachmentsClient = AttachmentsFactory.getClient(this, AttachmentsFactory.TYPE.HTTPCLIENT);
-        roomMembershipClient = RoomMembershipFactory.getClient(this, RoomMembershipFactory.TYPE.HTTPCLIENT);
-        connectionsClient = ConnectionsFactory.getClient(this, ConnectionsFactory.TYPE.HTTPCLIENT);
-        symphonyApis = SymphonyApisFactory.getClient(this,SymphonyApisFactory.TYPE.HTTPCLIENT);
+        dataFeedClient = DataFeedFactory.getClient(this);
+        messagesClient = MessagesFactory.getClient(this);
+        presenceClient = PresenceFactory.getClient(this);
+        streamsClient = StreamsFactory.getClient(this);
+        usersClient = UsersFactory.getClient(this);
+        shareClient = ShareFactory.getClient(this);
+        attachmentsClient = AttachmentsFactory.getClient(this);
+        roomMembershipClient = RoomMembershipFactory.getClient(this);
+        connectionsClient = ConnectionsFactory.getClient(this);
+        symphonyApis = SymphonyApisFactory.getClient(this);
 
         try {
 
 
-            if (!disableServices) {
+            if (!Boolean.parseBoolean(config.get(SymphonyClientConfigID.DISABLE_SERVICES,"False"))) {
                 messageService = new MessageService(this, apiVersion);
                 chatService = new ChatService(this, apiVersion);
                 roomService = new RoomService(this, apiVersion);
             }
 
-            localUser = usersClient.getUserFromEmail(email);
+            localUser = usersClient.getUserFromEmail(config.get(SymphonyClientConfigID.USER_EMAIL));
+
         } catch (SymException e) {
             logger.error("Failed to initialize client..", e);
 
@@ -264,9 +288,9 @@ public class SymphonyBasicClient implements SymphonyClient {
                     " Here is what you have configured:\n" +
                     "SessionToken: " + symAuth.getSessionToken() + "\n" +
                     "KeyToken: " + symAuth.getKeyToken() + "\n" +
-                    "Email: " + email + "\n" +
-                    "AgentUrl: " + agentUrl + "\n" +
-                    "podUrl: " + podUrl);
+                    "Email: " + config.get(SymphonyClientConfigID.USER_EMAIL) + "\n" +
+                    "AgentUrl: " + config.get(SymphonyClientConfigID.AGENT_URL) + "\n" +
+                    "podUrl: " + config.get(SymphonyClientConfigID.POD_URL));
         }
 
 
@@ -471,6 +495,49 @@ public class SymphonyBasicClient implements SymphonyClient {
     public SymphonyApis getSymphonyApis() {
         return symphonyApis;
     }
+
+
+    @Override
+    public SymphonyClientConfig getConfig() {
+        return config;
+    }
+
+    @Override
+    public void setConfig(SymphonyClientConfig config) {
+        this.config = config;
+    }
+
+    /**
+     * Added to support transition to SymphonyClientConfig init.  Will be removed in next major version.
+     * @param agentUrl Agent URL
+     * @param podUrl Pod URL
+     * @param userEmail Bot user email
+     */
+    private void updateConfig(String agentUrl, String podUrl, String userEmail){
+
+        if(config==null){
+            config = new SymphonyClientConfig(false);
+        }
+
+        config.set(SymphonyClientConfigID.AGENT_URL, agentUrl);
+        config.set(SymphonyClientConfigID.POD_URL,podUrl);
+        config.set(SymphonyClientConfigID.USER_EMAIL, userEmail);
+    }
+
+    /**
+     * Added to support transition to SymphonyClientConfig init.  Will be removed in next major version.
+     * @param config SymphonyClientConfig
+     *
+     */
+    private void updateConfig(SymphonyClientConfig config){
+
+       agentUrl= config.get(SymphonyClientConfigID.AGENT_URL);
+       podUrl=config.get(SymphonyClientConfigID.POD_URL);
+
+    }
+
+
+
 }
 
 

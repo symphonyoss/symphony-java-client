@@ -24,8 +24,15 @@
 
 package org.symphonyoss.symphony.clients;
 
+import org.symphonyoss.client.exceptions.SystemException;
+import org.symphonyoss.symphony.clients.model.RestApiVersion;
+import org.symphonyoss.symphony.clients.model.SymAgentHealthCheck;
+
 /**
  * @author Frank Tarsillo on 10/15/17.
  */
 public interface AgentSystemClient {
+    SymAgentHealthCheck getAgentHealthCheck() throws SystemException;
+
+    boolean isRestApiVersionCompatible(RestApiVersion apiVersion) throws SystemException;
 }

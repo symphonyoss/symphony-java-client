@@ -22,10 +22,11 @@
 
 package org.symphonyoss.symphony.clients.impl;
 
-import javax.ws.rs.client.Client;
-
+import com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.symphonyoss.client.SymphonyClientConfig;
+import org.symphonyoss.client.SymphonyClientConfigID;
 import org.symphonyoss.client.exceptions.SymException;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.symphony.clients.RoomMembershipClient;
@@ -35,7 +36,7 @@ import org.symphonyoss.symphony.pod.invoker.ApiException;
 import org.symphonyoss.symphony.pod.model.MembershipList;
 import org.symphonyoss.symphony.pod.model.UserId;
 
-import com.google.common.base.Strings;
+import javax.ws.rs.client.Client;
 
 
 /**
@@ -45,20 +46,21 @@ import com.google.common.base.Strings;
  * @author Frank Tarsillo
  */
 public class RoomMembershipClientImpl implements RoomMembershipClient {
+
     private final SymAuth symAuth;
     private final ApiClient apiClient;
 
-
     private Logger logger = LoggerFactory.getLogger(RoomMembershipClientImpl.class);
 
-    public RoomMembershipClientImpl(SymAuth symAuth, String podUrl) {
+    /**
+     * Init
+     *
+     * @param symAuth Authorization object holding session and key tokens
+     * @param config  Symphony client config
+     */
+    public RoomMembershipClientImpl(SymAuth symAuth, SymphonyClientConfig config) {
 
-        this.symAuth = symAuth;
-
-
-        //Get Service client to query for userID.
-        apiClient = org.symphonyoss.symphony.pod.invoker.Configuration.getDefaultApiClient();
-        apiClient.setBasePath(podUrl);
+        this(symAuth, config, null);
 
     }
 
@@ -66,16 +68,19 @@ public class RoomMembershipClientImpl implements RoomMembershipClient {
      * If you need to override HttpClient.  Important for handling individual client certs.
      *
      * @param symAuth    Authorization object holding session and key tokens
-     * @param podUrl The Symphony service URL
+     * @param config     Symphony Client config
      * @param httpClient The HttpClient to use when calling Symphony API
      */
-    public RoomMembershipClientImpl(SymAuth symAuth, String podUrl, Client httpClient) {
+    public RoomMembershipClientImpl(SymAuth symAuth, SymphonyClientConfig config, Client httpClient) {
         this.symAuth = symAuth;
 
         //Get Service client to query for userID.
         apiClient = org.symphonyoss.symphony.pod.invoker.Configuration.getDefaultApiClient();
-        apiClient.setHttpClient(httpClient);
-        apiClient.setBasePath(podUrl);
+        if (httpClient != null)
+            apiClient.setHttpClient(httpClient);
+
+
+        apiClient.setBasePath(config.get(SymphonyClientConfigID.POD_URL));
 
         apiClient.addDefaultHeader(symAuth.getSessionToken().getName(), symAuth.getSessionToken().getToken());
         apiClient.addDefaultHeader(symAuth.getKeyToken().getName(), symAuth.getKeyToken().getToken());
@@ -108,8 +113,8 @@ public class RoomMembershipClientImpl implements RoomMembershipClient {
      * @param roomStreamId - stream-id of the chat room you want to add the member to
      * @param userId       userId for the user in Symphony
      * @throws SymException throws an {@link org.symphonyoss.symphony.pod.invoker.ApiException} if there were any issues while invoking the endpoint,
-     *                   {@link IllegalArgumentException} if the arguments were wrong, {@link IllegalStateException} if the
-     *                   session-token is null
+     *                      {@link IllegalArgumentException} if the arguments were wrong, {@link IllegalStateException} if the
+     *                      session-token is null
      */
     @Override
     public void addMemberToRoom(String roomStreamId, long userId) throws SymException {
@@ -138,8 +143,8 @@ public class RoomMembershipClientImpl implements RoomMembershipClient {
      * @param roomStreamId - stream-id of the chat room you want to add the member to Room
      * @param userId       userId for the user in Symphony
      * @throws SymException throws an {@link org.symphonyoss.symphony.pod.invoker.ApiException} if there were any issues while invoking the endpoint,
-     *                   {@link IllegalArgumentException} if the arguments were wrong, {@link IllegalStateException} if the
-     *                   session-token is null
+     *                      {@link IllegalArgumentException} if the arguments were wrong, {@link IllegalStateException} if the
+     *                      session-token is null
      */
     @Override
     public void removeMemberFromRoom(String roomStreamId, long userId) throws SymException {
