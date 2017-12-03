@@ -43,7 +43,9 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 
 ### V1.1.0 (SNAPSHOT)
 * REMOVED MOST V2 Support and deprecated methods/classes
-* Support for for 1.46.3 or higher. 1.48.0 added as dependency
+* Support for for 1.46.3 or higher. 1.48.1 added as dependency
+* PresenceService reinstated - Utilizes new feed calls
+* Using latest endpoints for presence functions.  Also replaced Presence objects with SymPresence.  
 * SymphonyClient now support custom http clients for both Pod and Agent clients 
 * SymphonyClientConfigID TRUSTSTORE_FILE and TRUSTSTORE_PASSWORD set to optional now.
 * SymphonyClient can be initialized without defining truststore, taking defaults. 
@@ -54,6 +56,8 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 * SymMessage.setMessageText(..) will automatically escapeXml
 * Added new methods in MessageService to send message by SymUser and SymStream (Convenience)
 * SymphonyClient instances default to V4 API
+* ConnectionsClient now supports removal of connections.
+* SymphonyClient has new internal name identifier for Thread handling bound to email address. 
 * Added a convenience class SymphonyApis accessible through SymphonyClient supporting retrieval of all language binding APIs (Not recommended for use)
 * SymMessage no longer has option to set Format as everything is PresentationML based moving forward.  Use SymMessage.setMessageText(TEXT) if you want to set simple text value.
 * SymMessage will default setting text message to PresentationML
@@ -65,6 +69,7 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 * Implement Agent Server health-check under new AgentSystemClient
 * Updated ShareClient to use V3 endpoint
 * Added getUserBySession(SymAuth) to UsersClient
+* Some new examples on use of AWS Lex, Copy data between chat rooms, and reporting
 
 
 

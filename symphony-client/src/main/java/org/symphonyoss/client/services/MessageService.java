@@ -72,25 +72,14 @@ public class MessageService implements DataFeedListener {
     DataFeedWorker dataFeedWorker;
 
 
+
+
     /**
      * Constructor
      *
      * @param symClient Identifies the BOT user and exposes client APIs
      */
     public MessageService(SymphonyClient symClient) {
-
-        this(symClient, ApiVersion.getDefault());
-
-    }
-
-
-    /**
-     * Specify a version of MessageService to use.  Version is aligning with LLC REST API endpoint versions.
-     *
-     * @param symClient  Symphony client required to access all underlying clients functions.
-     * @param apiVersion The version of the ChatServer to use which is aligned with LLC REST API endpoint versions.
-     */
-    public MessageService(SymphonyClient symClient, ApiVersion apiVersion) {
 
 
         this.symClient = symClient;

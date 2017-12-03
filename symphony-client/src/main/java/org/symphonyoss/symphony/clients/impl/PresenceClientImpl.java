@@ -28,23 +28,20 @@ import org.symphonyoss.client.SymphonyClientConfig;
 import org.symphonyoss.client.SymphonyClientConfigID;
 import org.symphonyoss.client.exceptions.PresenceException;
 import org.symphonyoss.client.model.SymAuth;
+import org.symphonyoss.symphony.clients.model.SymPresence;
+import org.symphonyoss.symphony.clients.model.SymPresenceFeed;
+import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.pod.api.PresenceApi;
 import org.symphonyoss.symphony.pod.invoker.ApiClient;
 import org.symphonyoss.symphony.pod.invoker.ApiException;
-import org.symphonyoss.symphony.pod.invoker.Pair;
-import org.symphonyoss.symphony.pod.model.Presence;
-
+import org.symphonyoss.symphony.pod.model.V2PresenceStatus;
 
 import javax.ws.rs.client.Client;
-import javax.ws.rs.core.GenericType;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 /**
- * @author  Frank Tarsillo
+ * @author Frank Tarsillo
  */
 public class PresenceClientImpl implements org.symphonyoss.symphony.clients.PresenceClient {
     private final SymAuth symAuth;
@@ -55,9 +52,9 @@ public class PresenceClientImpl implements org.symphonyoss.symphony.clients.Pres
 
     /**
      * Init
-     * @param symAuth Authorization object holding session and key tokens
-     * @param config Symphony client config
      *
+     * @param symAuth Authorization object holding session and key tokens
+     * @param config  Symphony client config
      */
     public PresenceClientImpl(SymAuth symAuth, SymphonyClientConfig config) {
 
@@ -67,8 +64,9 @@ public class PresenceClientImpl implements org.symphonyoss.symphony.clients.Pres
 
     /**
      * If you need to override HttpClient.  Important for handling individual client certs.
-     * @param symAuth Authorization object holding session and key tokens
-     * @param config Symphony client config
+     *
+     * @param symAuth    Authorization object holding session and key tokens
+     * @param config     Symphony client config
      * @param httpClient The HttpClient to use when calling Symphony API
      */
     public PresenceClientImpl(SymAuth symAuth, SymphonyClientConfig config, Client httpClient) {
@@ -77,8 +75,8 @@ public class PresenceClientImpl implements org.symphonyoss.symphony.clients.Pres
         //Get Service client to query for userID.
         apiClient = org.symphonyoss.symphony.pod.invoker.Configuration.getDefaultApiClient();
 
-        if(httpClient!=null)
-        apiClient.setHttpClient(httpClient);
+        if (httpClient != null)
+            apiClient.setHttpClient(httpClient);
 
         apiClient.setBasePath(config.get(SymphonyClientConfigID.POD_URL));
 
@@ -86,68 +84,130 @@ public class PresenceClientImpl implements org.symphonyoss.symphony.clients.Pres
 
 
     @Override
-    public Presence getUserPresence(Long userId) throws PresenceException {
+    public SymPresence getUserPresence(Long userId, Boolean local) throws PresenceException{
 
+        SymUser symUser = new SymUser();
+        symUser.setId(userId);
+
+        return getUserPresence(symUser, local);
+
+    }
+
+
+    @Override
+    public SymPresence getUserPresence(SymUser symUser, Boolean local) throws PresenceException {
 
         PresenceApi presenceApi = new PresenceApi(apiClient);
 
-        if (userId == null) {
+        if (symUser == null || symUser.getId() == null) {
             throw new NullPointerException("UserId was not provided...");
         }
 
+
         try {
-            return presenceApi.v1UserUidPresenceGet(userId,symAuth.getSessionToken().getToken());
+
+            //This should return V2Presence..but returning Presence instead..need to contact LLC.
+            return SymPresence.toSymPresence(presenceApi.v2UserUidPresenceGet(symUser.getId(),symAuth.getSessionToken().getToken(), local));
         } catch (ApiException e) {
-            throw new PresenceException("Failed to retrieve user presence for ID: " + userId,e);
+            throw new PresenceException("Failed to retrieve user presence for ID: " + symUser.getId(), e);
+        }
+    }
+
+    /**
+     * Obtain a presence feed id to attach to.
+     *
+     * @return SymPresenceFeed
+     */
+    @Override
+    public SymPresenceFeed createPresenceFeed() throws PresenceException {
+        PresenceApi presenceApi = new PresenceApi(apiClient);
+
+        try {
+
+            return SymPresenceFeed.toSymPresenceFeed(presenceApi.v1PresenceFeedCreatePost(symAuth.getSessionToken().getToken()));
+
+        } catch (ApiException e) {
+            throw new PresenceException("Failed to retrieve presence ID..", e);
         }
 
 
     }
 
+    /**
+     * Remove a presence feed
+     *
+     * @param symPresenceFeed Feed id to remove
+     *
+     */
     @Override
-    public Presence setUserPresence(Long userId, Presence presence) throws PresenceException {
-        // INFO: This uses code from pod-api 0.9.0 as version 0.9.1 does not contain that
-        //       functionality anymore. If/When Symphony put that functionality back in its
-        //       pod-api, then we can invoke the set presence endpoint like done elsewhere.
+    public void removePresenceFeed(SymPresenceFeed symPresenceFeed) throws PresenceException {
 
-        if (userId == null) {
-            throw new PresenceException("Failed to set user presence. User id must not be null");
-        }
+        if (symPresenceFeed == null || symPresenceFeed.getId() == null)
+            throw new NullPointerException("SymPresence was null...");
 
-        if (presence == null) {
-            throw new PresenceException("Failed to set user presence. Presence must not be null");
-        }
+        PresenceApi presenceApi = new PresenceApi(apiClient);
 
-        // create path and map variables
-        String urlPath = "/v1/user/{uid}/presence"
-                .replaceAll("\\{format\\}", "json")
-                .replaceAll("\\{" + "uid" + "\\}", apiClient.escapeString(userId.toString()));
-
-        // query params
-        List<Pair> queryParams = new ArrayList<>();
-        Map<String, String> headerParams = new HashMap<>();
-        Map<String, Object> formParams = new HashMap<>();
-
-        String sessionToken = symAuth.getSessionToken().getToken();
-
-        if (sessionToken != null) {
-            headerParams.put("sessionToken", apiClient.parameterToString(sessionToken));
-        }
-
-        final String[] accepts = { "application/json" };
-        final String accept = apiClient.selectHeaderAccept(accepts);
-        final String[] contentTypes = {};
-        final String contentType = apiClient.selectHeaderContentType(contentTypes);
-        final String[] authNames = new String[] {};
-        final GenericType<Presence> returnType = new GenericType<Presence>() { };
-
-        Object postBody = presence;
 
         try {
-            return apiClient.invokeAPI(urlPath, "POST", queryParams, postBody, headerParams, formParams, accept, contentType, authNames, returnType);
+
+            presenceApi.v1PresenceFeedFeedIdDeletePost(symAuth.getSessionToken().getToken(), symPresenceFeed.getId());
+
         } catch (ApiException e) {
-            throw new PresenceException("Failed to set user presence for user " + userId + ". Error while invoking Symphony API.", e);
+            throw new PresenceException("Failed to remove presence ID..", e);
         }
+
+
+    }
+
+
+    /**
+     * Obtain a presence feed id to attach to.
+     *
+     * @return SymPresenceFeed
+     */
+    @Override
+    public List<SymPresence> getPresenceFeedUpdates(SymPresenceFeed symPresenceFeed) throws PresenceException {
+
+        if (symPresenceFeed == null || symPresenceFeed.getId() == null)
+            return null;
+
+        PresenceApi presenceApi = new PresenceApi(apiClient);
+
+
+        try {
+
+            return SymPresence.toSymPresence(presenceApi.v1PresenceFeedFeedIdReadGet(symAuth.getSessionToken().getToken(), symPresenceFeed.getId()));
+
+
+        } catch (ApiException e) {
+            throw new PresenceException("Failed to remove presence ID..", e);
+        }
+
+
+    }
+
+
+    @Override
+    public SymPresence setUserPresence(SymPresence presence) throws PresenceException {
+
+
+        if( presence == null)
+            return null;
+
+        PresenceApi presenceApi = new PresenceApi(apiClient);
+
+        try {
+
+            V2PresenceStatus v2PresenceStatus = new V2PresenceStatus();
+            v2PresenceStatus.setCategory(presence.getCategory().toString());
+
+            return SymPresence.toSymPresence(presenceApi.v2UserPresencePost(symAuth.getSessionToken().getToken(), v2PresenceStatus));
+
+        } catch (ApiException e) {
+            throw new PresenceException("Failed to set presence for user.", e);
+        }
+
+
     }
 
 

@@ -36,8 +36,8 @@ import org.symphonyoss.client.model.Room;
 import org.symphonyoss.client.services.*;
 import org.symphonyoss.symphony.clients.model.SymAttachmentInfo;
 import org.symphonyoss.symphony.clients.model.SymMessage;
+import org.symphonyoss.symphony.clients.model.SymPresence;
 import org.symphonyoss.symphony.clients.model.SymUserConnection;
-import org.symphonyoss.symphony.pod.model.Presence;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -257,7 +257,7 @@ public class SjcTestBot implements ChatListener, ChatServiceListener, RoomEventL
         try {
 
 
-            Presence presence = symphonyClient.getPresenceClient().getUserPresence(testClientId);
+            SymPresence presence = symphonyClient.getPresenceClient().getUserPresence(testClientId, false);
 
 
             SymMessage message = new SymMessage();

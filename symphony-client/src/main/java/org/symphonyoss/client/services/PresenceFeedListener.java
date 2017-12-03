@@ -1,5 +1,6 @@
 /*
  *
+ *
  * Copyright 2016 The Symphony Software Foundation
  *
  * Licensed to The Symphony Software Foundation (SSF) under one
@@ -18,35 +19,29 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
+ *
  */
 
-package org.symphonyoss.symphony.clients;
+package org.symphonyoss.client.services;
 
-import org.symphonyoss.client.exceptions.PresenceException;
 import org.symphonyoss.symphony.clients.model.SymPresence;
-import org.symphonyoss.symphony.clients.model.SymPresenceFeed;
-import org.symphonyoss.symphony.clients.model.SymUser;
-import org.symphonyoss.symphony.pod.model.Presence;
-
-import java.util.List;
-
 
 /**
- * Created by frank.tarsillo on 6/6/2016.
+ * Callback listener used by the {@link PresenceService}
+ *
+ * @author Frank Tarsillo
  */
-public interface PresenceClient {
+public interface PresenceFeedListener {
 
 
-    SymPresence getUserPresence(Long userId, Boolean local) throws PresenceException;
-
-    SymPresence getUserPresence(SymUser symUser, Boolean local) throws PresenceException;
-
-    SymPresenceFeed createPresenceFeed() throws PresenceException;
-
-    void removePresenceFeed(SymPresenceFeed symPresenceFeed) throws PresenceException;
-
-    List<SymPresence> getPresenceFeedUpdates(SymPresenceFeed symPresenceFeed) throws PresenceException;
+    /**
+     * Listen to all state changes from presence feed polling
+     *
+     * @param  symPresence received from presence feed polling
+     */
+    void onEvent(SymPresence symPresence);
 
 
-    SymPresence setUserPresence(SymPresence presence) throws PresenceException;
+
+
 }

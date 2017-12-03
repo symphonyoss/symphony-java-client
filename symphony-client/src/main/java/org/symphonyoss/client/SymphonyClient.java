@@ -106,11 +106,13 @@ public interface SymphonyClient {
 
     /**
      * Gets the name of the client (defaults to first part of email address) to use in all spawned thread names.
+     * @return  Name
      */
     String getName();
 
     /**
      * Sets the name of the client to use in all spawned thread names.
+     * @param name name for thread
      */
     void setName(String name);
 
@@ -184,6 +186,10 @@ public interface SymphonyClient {
      */
     MessagesClient getMessagesClient();
 
+    /**
+     * Retrieve the POD url.
+     * @return pod url
+     */
     String getPodUrl();
 
     /**
@@ -304,7 +310,20 @@ public interface SymphonyClient {
      */
     SymphonyApis getSymphonyApis();
 
+
+    /**
+     * Get SJC configuration
+     *
+     * @return SJC configuration
+     */
     SymphonyClientConfig getConfig();
 
+    /**
+     * Set SJC configuration
+     *
+     * @param config SymphonyClientConfiguration for SJC
+     */
     void setConfig(SymphonyClientConfig config);
+
+    PresenceService getPresenceService();
 }

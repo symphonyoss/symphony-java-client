@@ -30,7 +30,10 @@ import org.symphonyoss.client.exceptions.RoomException;
 import org.symphonyoss.client.exceptions.StreamsException;
 import org.symphonyoss.client.exceptions.SymException;
 import org.symphonyoss.client.model.Room;
-import org.symphonyoss.symphony.clients.model.*;
+import org.symphonyoss.symphony.clients.model.SymMessage;
+import org.symphonyoss.symphony.clients.model.SymRoomAttributes;
+import org.symphonyoss.symphony.clients.model.SymRoomDetail;
+import org.symphonyoss.symphony.clients.model.SymStream;
 import org.symphonyoss.symphony.pod.model.Stream;
 
 import java.util.Map;
@@ -57,26 +60,14 @@ public class RoomService implements RoomServiceEventListener {
     private final SymphonyClient symClient;
     private final Logger logger = LoggerFactory.getLogger(RoomService.class);
     private final Set<RoomServiceEventListener> roomServiceEventListeners = ConcurrentHashMap.newKeySet();
-    private ApiVersion apiVersion;
+
 
     /**
      * @param symClient SymphonyClient provides access to client implementations and dependant services such as the
      *                  {@link MessageService}
      */
     public RoomService(SymphonyClient symClient) {
-        this(symClient, ApiVersion.getDefault());
-    }
 
-
-    /**
-     * Specify a version of RoomService to use.  Version is aligning with LLC REST API endpoint versions.
-     *
-     * @param symClient  Symphony client required to access all underlying clients functions.
-     * @param apiVersion The version of the ChatServer to use which is aligned with LLC REST API endpoint versions.
-     */
-    public RoomService(SymphonyClient symClient, ApiVersion apiVersion) {
-
-        this.apiVersion = apiVersion;
         this.symClient = symClient;
 
         MessageService messageService = symClient.getMessageService();
@@ -144,7 +135,6 @@ public class RoomService implements RoomServiceEventListener {
     }
 
 
-
     /**
      * Return registered room by provided stream.  The room object must be registered to the service through the
      * {@link #joinRoom(Room)} method.
@@ -177,7 +167,6 @@ public class RoomService implements RoomServiceEventListener {
 
             //Register room object to internal cache
             roomsByStream.put(room.getStreamId(), room);
-
 
 
         } catch (StreamsException e) {
@@ -359,7 +348,6 @@ public class RoomService implements RoomServiceEventListener {
         for (RoomServiceEventListener roomServiceEventListener : roomServiceEventListeners)
             roomServiceEventListener.onNewRoom(room);
     }
-
 
 
     public void addRoomServiceEventListener(RoomServiceEventListener roomServiceEventListener) {
