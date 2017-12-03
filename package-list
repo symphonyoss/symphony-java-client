@@ -11,3 +11,4 @@ org.symphonyoss.client.util
 org.symphonyoss.symphony.clients
 org.symphonyoss.symphony.clients.impl
 org.symphonyoss.symphony.clients.model
+org.symphonyoss.util
