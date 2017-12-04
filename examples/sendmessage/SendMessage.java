@@ -24,6 +24,7 @@
 
 package sendmessage;
 
+import org.glassfish.jersey.logging.LoggingFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
@@ -96,6 +97,9 @@ public class SendMessage {
             symClient = SymphonyClientFactory.getClient(
                     SymphonyClientFactory.TYPE.V4,symphonyClientConfig);
 
+
+            symClient.getAgentHttpClient().property(LoggingFeature.LOGGING_FEATURE_VERBOSITY_CLIENT, LoggingFeature.Verbosity.PAYLOAD_ANY);
+            symClient.getAgentHttpClient().property(LoggingFeature.LOGGING_FEATURE_LOGGER_LEVEL_CLIENT, "WARNING");
 
             String receiverEmail = symphonyClientConfig.get(SymphonyClientConfigID.RECEIVER_EMAIL);
 

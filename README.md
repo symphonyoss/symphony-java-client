@@ -41,7 +41,11 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 
 ## Change log and notes
 
-### V1.1.0 (SNAPSHOT)
+### V1.1.1 (SNAPSHOT)
+* Focus on covering all language binding features. 
+
+
+### V1.1.0 
 * REMOVED MOST V2 Support and deprecated methods/classes
 * Support for for 1.46.3 or higher. 1.48.1 added as dependency
 * PresenceService reinstated - Utilizes new feed calls
@@ -102,34 +106,6 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 * Updated MessageService to take advantage of new stream attributes functions
 * Added additional integration testing
 
-
-
-### V1.0.1 (Stable)
-* Added Users local cache (Lazy) for services
-* SymphonyClient now supports cache plugin setCache(CacheType). Extension sample provided.
-* Updated REST API Spec to 1.45
-* Simplification of CustomHttpClient
-* Focus on performance
-* Deferred: Although progress was made on moving symphony-apis module, more testing required 
-
-
-### V1.0.0 
-* Compatible with 1.45 API, V2 and Agent 1.39+
-* Presence service is now disabled by default
-* ShareAPI supporting article (news) posts implemented
-* Support for custom HTTP Clients when initiating SymphonyClient.
-* Can support multiple SymphonyClient instances running in a single JVM representing different users.
-* Automatic Auth refresh in client
-* ChatService enhancements including remote user identification on Chat creation.
-* Added ability to retrieve users by stream
-* New admin features, creating users, updating user details, modify room membership
-* Added room search under streams client
-* REMOVED Experimental firehose service as per LLC
-* Performance Updates
-* All incoming SymMessages from MessageService are now set to MessageML format
-* Command Framework (AI Package) supporting command parsing and actions
-* CI integration testing (mvn goal -Pintegration-testing)
-* Bug fixes, documentation, new examples
 
 
 
