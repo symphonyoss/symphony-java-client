@@ -40,15 +40,35 @@ public class SymphonyClientConfig {
 
     private boolean initialized;
 
+    /**
+     * Default constructor will no load or validate configuration.
+     */
     public SymphonyClientConfig() {
 
     }
 
+
+    /**
+     * Constructor that has option to load/validate configuration requirements
+     *
+     * @param load Load and validate configuration
+     */
     public SymphonyClientConfig(boolean load) {
 
-        if(load)
+        if (load)
             load();
 
+    }
+
+
+    /**
+     * Constructor requiring configuration properties file, which is loaded and validated
+     *
+     * @param configFile Properties file containing configuration detail.
+     */
+    public SymphonyClientConfig(String configFile) {
+        this.set(SymphonyClientConfigID.SYMPHONY_CONFIG_FILE, configFile);
+        load();
     }
 
     public void load() throws ProgramFault {
@@ -105,10 +125,10 @@ public class SymphonyClientConfig {
     }
 
 
-    public String get(SymphonyClientConfigID id, String defaultValue){
+    public String get(SymphonyClientConfigID id, String defaultValue) {
 
         String value = get(id);
-        return (value!=null)? value:defaultValue;
+        return (value != null) ? value : defaultValue;
 
 
     }
