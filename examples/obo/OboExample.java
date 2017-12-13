@@ -70,7 +70,7 @@ import java.util.Set;
  * @author Frank Tarsillo
  */
 //NOSONAR
-public class OboExample implements ChatListener, ChatServiceListener {
+public class OboExample {
 
 
     private final Logger logger = LoggerFactory.getLogger(OboExample.class);
@@ -159,51 +159,5 @@ public class OboExample implements ChatListener, ChatServiceListener {
 
     }
 
-
-    //Chat sessions callback method.
-    @Override
-    public void onChatMessage(SymMessage message) {
-        if (message == null)
-            return;
-
-        logger.debug("TS: {}\nFrom ID: {}\nSymMessage: {}\nSymMessage Type: {}",
-                message.getTimestamp(),
-                message.getFromUserId(),
-                message.getMessage(),
-                message.getMessageType());
-
-        Chat chat = symClient.getChatService().getChatByStream(message.getStreamId());
-
-        if (chat != null)
-            logger.debug("New message is related to chat with users: {}", remoteUsersString(chat.getRemoteUsers()));
-
-
-    }
-
-    @Override
-    public void onNewChat(Chat chat) {
-
-        chat.addListener(this);
-
-        logger.debug("New chat session detected on stream {} with {}", chat.getStream().getStreamId(), remoteUsersString(chat.getRemoteUsers()));
-
-
-    }
-
-    @Override
-    public void onRemovedChat(Chat chat) {
-
-    }
-
-    private String remoteUsersString(Set<SymUser> symUsers) {
-
-        String output = "";
-        for (SymUser symUser : symUsers) {
-            output += "[" + symUser.getId() + ":" + symUser.getDisplayName() + "] ";
-
-        }
-
-        return output;
-    }
 
 }
