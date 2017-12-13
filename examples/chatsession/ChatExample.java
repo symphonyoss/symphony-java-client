@@ -125,7 +125,7 @@ public class ChatExample implements ChatListener, ChatServiceListener {
             symClient.getMessageService().sendMessage(chat, aMessage);
 
 
-            symClient.shutdown();
+           // symClient.shutdown();
 
             logger.info("Finished");
 

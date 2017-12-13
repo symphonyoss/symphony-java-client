@@ -180,7 +180,7 @@ public class SymphonyClientConfig {
     /**
      * Set a any config property
      *
-     * @param id    Any config property
+     * @param property    Any config property
      * @param value Value for property
      */
     public void set(String property, String value) {
@@ -194,8 +194,7 @@ public class SymphonyClientConfig {
      * Supports the ability to update and insert new properties from additional properties files.
      *
      * @param propertiesFile Properties file to upsert
-     *
-     * @throws ProgramFault
+     * @throws ProgramFault  Fault from merging properties
      *
      */
     public void upsertProperties(String propertiesFile) throws ProgramFault{

@@ -78,7 +78,7 @@ public class SymphonyBasicClient implements SymphonyClient {
     private ConnectionsClient connectionsClient;
     private ShareClient shareClient;
     private SymphonyApis symphonyApis;
-    private Client defaultHttpClient = ClientBuilder.newClient();
+    private Client defaultHttpClient;
     private Client podHttpClient;
     private Client agentHttpClient;
     private SymphonyClientConfig config;
@@ -101,24 +101,9 @@ public class SymphonyBasicClient implements SymphonyClient {
 
         this.config = config;
         try {
-            Client httpClient;
 
-            //If a truststore file is provided..
-            if (config.get(SymphonyClientConfigID.TRUSTSTORE_FILE) != null) {
-                httpClient = CustomHttpClient.getClient(
-                        config.get(SymphonyClientConfigID.USER_CERT_FILE),
-                        config.get(SymphonyClientConfigID.USER_CERT_PASSWORD),
-                        config.get(SymphonyClientConfigID.TRUSTSTORE_FILE),
-                        config.get(SymphonyClientConfigID.TRUSTSTORE_PASSWORD));
+            init(getDefaultHttpClient(config) , config);
 
-            } else {
-                httpClient = CustomHttpClient.getClient(
-                        config.get(SymphonyClientConfigID.USER_CERT_FILE),
-                        config.get(SymphonyClientConfigID.USER_CERT_PASSWORD));
-            }
-
-
-            init(httpClient, config);
         } catch (Exception e) {
             throw new InitException("Failed to initialize network...", e);
         }
@@ -260,6 +245,15 @@ public class SymphonyBasicClient implements SymphonyClient {
         this.symAuth = symAuth;
 
         updateConfig(config);
+
+
+        try {
+            if (defaultHttpClient == null)
+                defaultHttpClient = getDefaultHttpClient(config);
+        }catch(Exception e){
+            logger.error("Could not set default http client from config...",e);
+        }
+
 
 
         if (podHttpClient == null)
@@ -556,6 +550,9 @@ public class SymphonyBasicClient implements SymphonyClient {
         config.set(SymphonyClientConfigID.AGENT_URL, agentUrl);
         config.set(SymphonyClientConfigID.POD_URL, podUrl);
         config.set(SymphonyClientConfigID.USER_EMAIL, userEmail);
+
+
+
     }
 
     /**
@@ -567,6 +564,32 @@ public class SymphonyBasicClient implements SymphonyClient {
 
         agentUrl = config.get(SymphonyClientConfigID.AGENT_URL);
         podUrl = config.get(SymphonyClientConfigID.POD_URL);
+
+    }
+
+    private Client getDefaultHttpClient(SymphonyClientConfig config) throws Exception{
+
+
+            Client httpClient;
+
+            //If a truststore file is provided..
+            if (config.get(SymphonyClientConfigID.TRUSTSTORE_FILE) != null) {
+                httpClient = CustomHttpClient.getClient(
+                        config.get(SymphonyClientConfigID.USER_CERT_FILE),
+                        config.get(SymphonyClientConfigID.USER_CERT_PASSWORD),
+                        config.get(SymphonyClientConfigID.TRUSTSTORE_FILE),
+                        config.get(SymphonyClientConfigID.TRUSTSTORE_PASSWORD));
+
+            } else {
+                httpClient = CustomHttpClient.getClient(
+                        config.get(SymphonyClientConfigID.USER_CERT_FILE),
+                        config.get(SymphonyClientConfigID.USER_CERT_PASSWORD));
+            }
+
+
+            return httpClient;
+
+
 
     }
 

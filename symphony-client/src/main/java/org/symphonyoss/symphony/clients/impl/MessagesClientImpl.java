@@ -117,6 +117,24 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
 
 
     /**
+     * Send message to SymStream with alternate session token (OBO)
+     *
+     *
+     * @param stream  Stream to send message to
+     * @param message Message to send
+     * @param symAuth Alternate authorization containing session token to use.
+     * @return Message sent
+     * @throws MessagesException Exception caused by Symphony API calls
+     */
+    @Override
+    public SymMessage sendMessage(SymStream stream, SymMessage message, SymAuth symAuth) throws MessagesException {
+
+        return  sendMessageV4( stream, message,symAuth);
+
+    }
+
+
+    /**
      * Send message to SymStream
      *
      * @param stream  Stream to send message to
@@ -270,20 +288,38 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
      */
     private SymMessage sendMessageV4(SymStream stream, SymMessage message) throws MessagesException {
 
+        return sendMessageV4(stream, message, null);
+    }
+
+
+    /**
+     * Send new v4message to stream on an alternate session ID
+     *
+     * @param altSymAuth Alternate SymAuth to use for things like OBO requests
+     * @param stream  Stream to send message to
+     * @param message Message to send
+     * @return Message sent
+     * @throws MessagesException Exception caused by Symphony API calls
+     */
+    private SymMessage sendMessageV4( SymStream stream, SymMessage message,SymAuth altSymAuth) throws MessagesException {
+
         if (stream == null || message == null) {
             throw new NullPointerException("Stream or message submission was not provided..");
         }
 
+        String sessionToken = symAuth.getSessionToken().getToken();
+
+        if(altSymAuth !=null && altSymAuth.getSessionToken()!=null)
+            sessionToken = altSymAuth.getSessionToken().getToken();
 
         MessagesApi messagesApi = new MessagesApi(apiClient);
         V4Message v4Message;
         try {
 
 
-
             return SymMessage.toSymMessage(messagesApi.v4StreamSidMessageCreatePost(
                     stream.getStreamId(),
-                    symAuth.getSessionToken().getToken(),
+                    sessionToken,
                     symAuth.getKeyToken().getToken(),
                     message.getMessage(),
                     message.getEntityData(),

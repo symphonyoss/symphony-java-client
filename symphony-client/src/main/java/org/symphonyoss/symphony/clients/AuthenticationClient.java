@@ -24,7 +24,10 @@ package org.symphonyoss.symphony.clients;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.symphonyoss.client.SymphonyClientConfig;
+import org.symphonyoss.client.SymphonyClientConfigID;
 import org.symphonyoss.client.exceptions.AuthenticationException;
+import org.symphonyoss.client.impl.CustomHttpClient;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.symphony.authenticator.api.AuthenticationApi;
 import org.symphonyoss.symphony.authenticator.invoker.ApiException;
@@ -32,6 +35,7 @@ import org.symphonyoss.symphony.authenticator.invoker.Configuration;
 import org.symphonyoss.symphony.authenticator.model.AuthenticateRequest;
 import org.symphonyoss.symphony.authenticator.model.Token;
 import org.symphonyoss.symphony.clients.model.SymExtensionAppAuth;
+import org.symphonyoss.symphony.clients.model.SymUser;
 
 import javax.ws.rs.client.Client;
 
@@ -81,13 +85,41 @@ public class AuthenticationClient {
     }
 
     /**
+     * Construct client implementation with session and key endpoints with overridden HTTP client
+     *
+     * @param symphonyClientConfig Symphony Client Config
+     *
+     */
+    public AuthenticationClient(SymphonyClientConfig symphonyClientConfig)  {
+
+
+        try {
+            this.httpClient = CustomHttpClient.getClient(
+                    symphonyClientConfig.get(SymphonyClientConfigID.USER_CERT_FILE),
+                    symphonyClientConfig.get(SymphonyClientConfigID.USER_CERT_PASSWORD),
+                    symphonyClientConfig.get(SymphonyClientConfigID.TRUSTSTORE_FILE),
+                    symphonyClientConfig.get(SymphonyClientConfigID.TRUSTSTORE_PASSWORD));
+
+        }catch(Exception e){
+
+            logger.error("Could not create custom http client for use...",e);
+
+        }
+        this.sessionUrl = symphonyClientConfig.get(SymphonyClientConfigID.SESSIONAUTH_URL);
+        this.keyUrl = symphonyClientConfig.get(SymphonyClientConfigID.KEYAUTH_URL);
+
+    }
+
+
+
+    /**
      * Construct client implementation with session and key endpoints with two different
      * overridden HTTP clients for session-token and key-token
      *
-     * @param sessionUrl Session Service URL base endpoint
-     * @param keyUrl     Key Service URL base endpoint
+     * @param sessionUrl                Session Service URL base endpoint
+     * @param keyUrl                    Key Service URL base endpoint
      * @param httpClientForSessionToken Http Client to use when communicating to the session-token endpoint
-     * @param httpClientForKeyToken Http Client to use when communicating to the key-token endpoint
+     * @param httpClientForKeyToken     Http Client to use when communicating to the key-token endpoint
      */
     public AuthenticationClient(String sessionUrl, String keyUrl, Client httpClientForSessionToken, Client httpClientForKeyToken) {
         this.sessionUrl = sessionUrl;
@@ -167,7 +199,6 @@ public class AuthenticationClient {
             logger.debug("Logged out from session: {} : {}", symAuth.getSessionToken().getName(), symAuth.getSessionToken().getToken());
 
 
-
         } catch (ApiException e) {
 
             throw new AuthenticationException("Please check if you supplied the correct session token.. ", e.getCode(), e);
@@ -219,20 +250,98 @@ public class AuthenticationClient {
 
 
     /**
+     * Authentication call for Applications to be used with OBO workflow.
+     *
+     *
+     * @return SymExtensionAppAuth object containing session token and application ID.
+     * @throws AuthenticationException Exception generated from underlying REST API calls.
+     */
+    public SymAuth authenticateApp() throws AuthenticationException {
+
+        SymAuth symAuth = new SymAuth();
+
+        try {
+
+            AuthenticationApi authenticationApi = getAuthenticationApi();
+
+            // Configure the authenticator connection
+            authenticationApi.getApiClient().setBasePath(sessionUrl);
+
+            if (httpClientForSessionToken != null) {
+                Configuration.getDefaultApiClient().setHttpClient(httpClientForSessionToken);
+            }
+
+            symAuth.setSessionToken(authenticationApi.v1AppAuthenticatePost());
+            logger.debug("App SessionToken: {} : {}", symAuth.getSessionToken().getName(), symAuth.getSessionToken().getToken());
+
+
+//            // Configure the keyManager path
+//            authenticationApi.getApiClient().setBasePath(keyUrl);
+//
+//            if (httpClientForKeyToken != null) {
+//                Configuration.getDefaultApiClient().setHttpClient(httpClientForKeyToken);
+//            }
+//
+//            symAuth.setKeyToken(authenticationApi.v1AuthenticatePost());
+//            logger.debug("KeyToken: {} : {}", symAuth.getKeyToken().getName(), symAuth.getKeyToken().getToken());
+
+        } catch (ApiException e) {
+
+
+            throw new AuthenticationException("Please check certificates, tokens and paths.. ", e.getCode(), e);
+
+        }
+
+        loginStatus = true;
+        return symAuth;
+
+
+    }
+
+
+    /**
+     * Authentication for OBO user.
+     *
+     * @param symUser Symphony user to obtain a session token for.
+     * @param symAuth Arbitrary application token to assign session.
+     * @return SymExtensionAppAuth object containing session token and application ID.
+     * @throws AuthenticationException Exception generated from underlying REST API calls.
+     */
+    public SymAuth authenticateAppUser(SymUser symUser, SymAuth symAuth) throws AuthenticationException {
+
+
+        try {
+
+            AuthenticationApi authenticationApi = getAuthenticationApi();
+            authenticationApi.getApiClient().setBasePath(sessionUrl);
+
+            return SymAuth.fromOboAuth(authenticationApi.v1AppUserUidAuthenticatePost(symUser.getId(), symAuth.getSessionToken().getToken()));
+
+
+        } catch (ApiException e) {
+
+            throw new AuthenticationException("Authentication of App User for OBO failed, please check certificates, tokens and paths.. ", e.getCode(), e);
+
+        }
+
+
+    }
+
+    /**
      * Force registration of certificate stores
      *
-     * @param serverTruststore  Truststore file containing root and chain certs
-     * @param truststorePass  Truststore password
-     * @param clientKeystore  Client certificate keystore (P12) containing CN= bot user name
-     * @param keystorePass Client keystore password
+     * @param serverTruststore Truststore file containing root and chain certs
+     * @param truststorePass   Truststore password
+     * @param clientKeystore   Client certificate keystore (P12) containing CN= bot user name
+     * @param keystorePass     Client keystore password
      */
     public void setKeystores(String serverTruststore, String truststorePass, String clientKeystore, String keystorePass) {
 
 
         System.setProperty("javax.net.ssl.trustStore", serverTruststore);
 
-        if(truststorePass!=null)
-        System.setProperty("javax.net.ssl.trustStorePassword", truststorePass);
+        if (truststorePass != null)
+            System.setProperty("javax.net.ssl.trustStorePassword", truststorePass);
         System.setProperty("javax.net.ssl.keyStore", clientKeystore);
         System.setProperty("javax.net.ssl.keyStorePassword", keystorePass);
         System.setProperty("javax.net.ssl.keyStoreType", "pkcs12");
@@ -282,8 +391,6 @@ public class AuthenticationClient {
 
 
     }
-
-
 
 
     public boolean isLoggedIn() {

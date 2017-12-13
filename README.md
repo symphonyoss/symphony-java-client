@@ -12,8 +12,9 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 
 ## Features
 * Basic client:
-    * Authentication management
+    * Authentication management for all variants (bot, Extension Apps, Apps, OBO)
     * Implements and exposes functional services and underlying clients.
+    * Support for OBO workflow
 * Chat Service:
     * Support for chat session creation and eventing
     * Filters only on chat messages
@@ -26,6 +27,8 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
     * Real-time listeners on all room events
     * Enriches Room objects with associated system attributes
     * X-Pod Support
+* Presence Service
+    * Real-time notification of presence events and client functions
 * Connections request handling including auto-accept.
 * Attachment Support
 * Publish formatted articles (news) using ShareApi
@@ -42,6 +45,9 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 ## Change log and notes
 
 ### V1.1.1 (SNAPSHOT)
+* Support for OBO workflow AuthenticationClient and MessagesClient modified
+* SymphonyClientConfig can now support general application properties
+* Fixed issue with room mappings
 * Focus on covering all language binding features. 
 
 

@@ -85,11 +85,17 @@ public class SymRoomTag {
     }
 
     public static List<SymRoomTag> toSymRoomTagsV2(List<RoomTag> roomTags){
+        if(roomTags==null)
+            return null;
+
         return roomTags.stream().map(SymRoomTag::toSymRoomTag).collect(Collectors.toList());
 
     }
 
     public static List<RoomTag> toRoomTags(List<SymRoomTag> roomTags){
+        if(roomTags==null)
+            return null;
+
         return roomTags.stream().map(SymRoomTag::toRoomTag).collect(Collectors.toList());
 
     }
@@ -97,6 +103,8 @@ public class SymRoomTag {
 
     public static List<SymRoomTag> toSymRoomTags(List<V4KeyValuePair> v4KeyValuePairs){
 
+        if(v4KeyValuePairs==null)
+            return null;
 
         return v4KeyValuePairs.stream().map(SymRoomTag::toSymRoomTag).collect(Collectors.toList());
 
