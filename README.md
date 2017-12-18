@@ -43,7 +43,7 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 
 ## Change log and notes
 
-## V1.1.2 (SNAPSHOT)
+### V1.1.2 (SNAPSHOT)
 * Focus on testing and implementing more APIs
 
 ### V1.1.1 
