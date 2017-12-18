@@ -43,11 +43,14 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 
 ## Change log and notes
 
-### V1.1.1 (SNAPSHOT)
+## V1.1.2 (SNAPSHOT)
+* Focus on testing and implementing more APIs
+
+### V1.1.1 
 * Support for OBO workflow AuthenticationClient and MessagesClient modified
 * SymphonyClientConfig can now support general application properties
 * Fixed issue with room mappings
-* Firehose
+* Firehose initial build
 
 
 ### V1.1.0 
