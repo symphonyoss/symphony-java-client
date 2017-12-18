@@ -108,26 +108,35 @@ public class MessageReport {
         long since = 0;
         List<SymMessage> symMessageList = null;
 
-        // while (true) {
+        while (true) {
 
 
         try {
-            symMessageList = symClient.getMessagesClient().getMessagesFromStream(symStream, since, -5, 20, ApiVersion.V4);
+            symMessageList = symClient.getMessagesClient().getMessagesFromStream(symStream, since, 0, 20, ApiVersion.V4);
+
 
 
 
             if (symMessageList.size() == 0) {
 
                 logger.debug("NOTHING FOUND");
-              //  break;
+              break;
             }
 
+            boolean first = true;
             for (SymMessage symMessage : symMessageList) {
 
-                logger.debug("TS: {}\nFrom ID: {}\nSymMessage: {}\n",
+                if(first) {
+                    since = Long.valueOf(symMessage.getTimestamp()) + 1;
+                    first = false;
+                }
+
+                logger.debug("TS: {}\nFrom ID: {}\nSymMessage: {}:{}\n",
                         symMessage.getTimestamp(),
                         symMessage.getFromUserId(),
-                        symMessage.getMessage());
+                        symMessage.getMessage(),
+                        symMessage.getEntityData());
+
 
 
             }
@@ -141,7 +150,7 @@ public class MessageReport {
 
 
         logger.debug("------NEXT---------");
-        // }
+        }
 
 
         if (symClient != null)

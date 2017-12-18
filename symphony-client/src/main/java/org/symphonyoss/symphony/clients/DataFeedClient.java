@@ -26,6 +26,7 @@ import org.symphonyoss.client.exceptions.DataFeedException;
 import org.symphonyoss.symphony.agent.model.Datafeed;
 import org.symphonyoss.client.events.SymEvent;
 import org.symphonyoss.symphony.clients.model.ApiVersion;
+import org.symphonyoss.symphony.clients.model.SymDatafeed;
 
 
 import java.util.List;
@@ -45,7 +46,7 @@ public interface DataFeedClient {
      * @return Datafeed object to process messages from
      * @throws DataFeedException Caused by Symphony API calls
      */
-    Datafeed createDatafeed(ApiVersion apiVersion) throws DataFeedException;
+    SymDatafeed createDatafeed(ApiVersion apiVersion) throws DataFeedException;
 
 
     /**
@@ -59,7 +60,7 @@ public interface DataFeedClient {
      * @return List of base messages
      * @throws DataFeedException Caused by Symphony API calls
      */
-    List<SymEvent> getEventsFromDatafeed(Datafeed datafeed, int maxMessages) throws DataFeedException;
+    List<SymEvent> getEventsFromDatafeed(SymDatafeed datafeed, int maxMessages) throws DataFeedException;
 
 
     /**
@@ -72,5 +73,5 @@ public interface DataFeedClient {
      * @return List of base messages
      * @throws DataFeedException Caused by Symphony API calls
      */
-    List<SymEvent> getEventsFromDatafeed(Datafeed datafeed) throws DataFeedException;
+    List<SymEvent> getEventsFromDatafeed(SymDatafeed datafeed) throws DataFeedException;
 }

@@ -1,5 +1,6 @@
 /*
  *
+ *
  * Copyright 2016 The Symphony Software Foundation
  *
  * Licensed to The Symphony Software Foundation (SSF) under one
@@ -18,6 +19,7 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
+ *
  */
 
 package org.symphonyoss.symphony.clients.impl;
@@ -31,13 +33,18 @@ import org.symphonyoss.client.events.SymEvent;
 import org.symphonyoss.client.exceptions.DataFeedException;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.symphony.agent.api.DatafeedApi;
+import org.symphonyoss.symphony.agent.api.FirehoseApi;
 import org.symphonyoss.symphony.agent.invoker.ApiClient;
 import org.symphonyoss.symphony.agent.invoker.ApiException;
 import org.symphonyoss.symphony.agent.model.Datafeed;
 import org.symphonyoss.symphony.agent.model.V4Event;
+import org.symphonyoss.symphony.agent.model.V5EventList;
+import org.symphonyoss.symphony.agent.model.V5Firehose;
 import org.symphonyoss.symphony.clients.DataFeedClient;
+import org.symphonyoss.symphony.clients.FirehoseClient;
 import org.symphonyoss.symphony.clients.model.ApiVersion;
-import org.symphonyoss.symphony.clients.model.SymDatafeed;
+import org.symphonyoss.symphony.clients.model.SymFirehose;
+import org.symphonyoss.symphony.clients.model.SymFirehoseRequest;
 
 import javax.ws.rs.client.Client;
 import java.util.List;
@@ -48,11 +55,11 @@ import java.util.List;
  *
  * @author Frank Tarsillo
  */
-public class DataFeedClientImpl implements DataFeedClient {
+public class FirehoseClientImpl implements FirehoseClient {
 
     private final ApiClient apiClient;
     private final SymAuth symAuth;
-    private Logger logger = LoggerFactory.getLogger(DataFeedClientImpl.class);
+    private Logger logger = LoggerFactory.getLogger(FirehoseClientImpl.class);
 
 
     /**
@@ -62,7 +69,8 @@ public class DataFeedClientImpl implements DataFeedClient {
      * @param config     Config containing the Agent URL used to access API
      *
      */
-    public DataFeedClientImpl(SymAuth symAuth, SymphonyClientConfig config) {
+
+    public FirehoseClientImpl(SymAuth symAuth, SymphonyClientConfig config) {
 
         this(symAuth, config, null);
     }
@@ -74,7 +82,8 @@ public class DataFeedClientImpl implements DataFeedClient {
      * @param config     Config containing the Agent URL used to access API
      * @param httpClient Custom HTTP client
      */
-    public DataFeedClientImpl(SymAuth symAuth, SymphonyClientConfig config, Client httpClient) {
+
+    public FirehoseClientImpl(SymAuth symAuth, SymphonyClientConfig config, Client httpClient) {
         this.symAuth = symAuth;
 
         //Get Service client to query for userID.
@@ -89,61 +98,57 @@ public class DataFeedClientImpl implements DataFeedClient {
 
 
     @Override
-    public SymDatafeed createDatafeed(ApiVersion apiVersion) throws DataFeedException {
+    public SymFirehose createFirehose() throws DataFeedException {
 
 
-        DatafeedApi datafeedApi = new DatafeedApi(apiClient);
+        FirehoseApi firehoseApi = new FirehoseApi(apiClient);
 
 
         try {
 
 
-            return SymDatafeed.toSymDatafeed(datafeedApi.v4DatafeedCreatePost(symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken()));
+            return SymFirehose.toSymFirehose(firehoseApi.v5FirehoseCreatePost(symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken()));
 
 
         } catch (ApiException e) {
-            throw new DataFeedException("Could not start datafeed..",
-                    datafeedApi.getApiClient().getBasePath(), e.getCode(), e);
+            throw new DataFeedException("Could not start firehose..",
+                    firehoseApi.getApiClient().getBasePath(), e.getCode(), e);
         } catch (RuntimeException ef) {
-            throw new DataFeedException("Could not start datafeed due to network issue..",
-                    datafeedApi.getApiClient().getBasePath(), 500, ef);
+            throw new DataFeedException("Could not start firehose due to network issue..",
+                    firehoseApi.getApiClient().getBasePath(), 500, ef);
         }
     }
 
 
     @Override
-    public List<SymEvent> getEventsFromDatafeed(SymDatafeed datafeed, int maxMessages) throws DataFeedException {
+    public List<SymEvent> getEventsFromFirehose(SymFirehose symFirehose, SymFirehoseRequest symFirehoseRequest) throws DataFeedException {
 
-        DatafeedApi datafeedApi = new DatafeedApi(apiClient);
+        FirehoseApi firehoseApi = new FirehoseApi(apiClient);
 
-        if (datafeed == null) {
-            throw new NullPointerException("Datafeed was not provided and null..");
+        if (firehoseApi == null) {
+            throw new NullPointerException("Firehose was not provided and null..");
         }
 
 
         try {
-            List<V4Event> v4Events;
 
-            v4Events = datafeedApi.v4DatafeedIdReadGet(datafeed.getId(), symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken(), maxMessages);
 
-            return SymEvent.toSymEvent(v4Events);
+            V5EventList v5EventList = firehoseApi.v5FirehoseIdReadPost(symFirehose.getId(), symAuth.getSessionToken().getToken(), symAuth.getKeyToken().getToken(),SymFirehoseRequest.toV5FirehoseRequest(symFirehoseRequest));
+
+            return SymEvent.toSymEvent(v5EventList.getEvents());
+
+
         } catch (ApiException e) {
-            throw new DataFeedException("Failed to retrieve messages from datafeed...",
-                    datafeedApi.getApiClient().getBasePath(), e.getCode(), e);
+            throw new DataFeedException("Failed to retrieve messages from firehose...",
+                    firehoseApi.getApiClient().getBasePath(), e.getCode(), e);
         } catch (RuntimeException ef) {
             throw new DataFeedException("Failed to retrieve messages due to network issue..",
-                    datafeedApi.getApiClient().getBasePath(), 500, ef);
+                    firehoseApi.getApiClient().getBasePath(), 500, ef);
         }
 
 
     }
 
-
-    @Override
-    public List<SymEvent> getEventsFromDatafeed(SymDatafeed datafeed) throws DataFeedException {
-
-        return getEventsFromDatafeed(datafeed, Integer.parseInt(System.getProperty(Constants.DATAFEED_MAX_MESSAGES, "100")));
-    }
 
 
 }

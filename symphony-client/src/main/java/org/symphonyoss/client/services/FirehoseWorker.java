@@ -29,38 +29,41 @@ import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.client.common.Constants;
 import org.symphonyoss.client.events.SymEvent;
-import org.symphonyoss.symphony.agent.model.Datafeed;
+import org.symphonyoss.symphony.clients.FirehoseClient;
 import org.symphonyoss.symphony.clients.model.ApiVersion;
-import org.symphonyoss.symphony.clients.model.SymDatafeed;
+import org.symphonyoss.symphony.clients.model.SymFirehose;
+import org.symphonyoss.symphony.clients.model.SymFirehoseRequest;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
- * This thread will long-poll for Symphony base messages based on a specific BOT user identified through the
- * {@link SymphonyClient} and publish on the provided {@link DataFeedListener} interface.
+ * This thread will long-poll for all symphony messages related to the POD itself.
+ * The bot service user should have elevated privs.
+ *
  * <p>
  *
  * @author Frank Tarsillo
  */
-class DataFeedWorker implements Runnable {
+class FirehoseWorker implements Runnable {
 
-    private final DataFeedListener dataFeedListener;
-    private final SymphonyClient symClient;
-    private final Logger logger = LoggerFactory.getLogger(DataFeedWorker.class);
-    private SymDatafeed datafeed;
+    private final FirehoseListener firehoseListener;
+
+    private final FirehoseClient firehoseClient;
+    private final Logger logger = LoggerFactory.getLogger(FirehoseWorker.class);
+    private SymFirehose symFirehose;
     private boolean shutdown;
 
 
     /**
      * Constructor
      *
-     * @param symClient        Identifies the BOT user and exposes client APIs
-     * @param dataFeedListener Callback listener to publish new base messages on.
+     * @param firehoseClient  Firehose client
+     * @param firehoseListener Callback listener to publish new base messages on.
      */
-    public DataFeedWorker(SymphonyClient symClient, DataFeedListener dataFeedListener) {
-        this.symClient = symClient;
-        this.dataFeedListener = dataFeedListener;
+    public FirehoseWorker(FirehoseClient firehoseClient, FirehoseListener firehoseListener) {
+        this.firehoseClient = firehoseClient;
+        this.firehoseListener = firehoseListener;
 
 
     }
@@ -73,10 +76,10 @@ class DataFeedWorker implements Runnable {
         while (!shutdown) {
 
                 //Make sure its active
-                initDatafeed();
+                initFirehose();
 
                 //Poll it
-                readDatafeed();
+                readFirehose();
 
 
         }
@@ -85,32 +88,22 @@ class DataFeedWorker implements Runnable {
 
 
     /**
-     * Create or restore an instance of the {@link Datafeed}
+     * Create or restore an instance of the {@link org.symphonyoss.symphony.clients.model.SymFirehose}
      */
-    private void initDatafeed() {
+    private void initFirehose() {
 
 
-        while (datafeed == null) {
+        while (symFirehose == null) {
             try {
-                logger.info("Creating datafeed with pod...");
+                logger.info("Creating symFirehose with pod...");
 
-                datafeed = symClient.getDataFeedClient().createDatafeed(ApiVersion.V4);
+                symFirehose = firehoseClient.createFirehose();
 
                 break;
             } catch (Exception e) {
 
-        	/*
-             * TODO:
-        	 * This seems wrong to me, if the result of this is 404
-        	 * or some other non-transient error then there is hardly
-        	 * any point re-trying and a fault should be propagated
-        	 * to the application code.
-        	 * 
-        	 * It's not clear how best to do this though.....
-        	 * -Bruce.
-        	 */
-                logger.error("Failed to create datafeed with pod, please check connection..", e);
-                datafeed = null;
+                logger.error("Failed to create firehose with agent server, please check connection..", e);
+                symFirehose = null;
 
                 //Can use properties to override default time wait
                 try {
@@ -134,23 +127,27 @@ class DataFeedWorker implements Runnable {
      * Reads in raw messages from {@link org.symphonyoss.symphony.clients.DataFeedClient} and publishes out through
      * {@link DataFeedListener}
      */
-    private void readDatafeed() {
+    private void readFirehose() {
 
         try {
 
+            SymFirehoseRequest symFirehoseRequest = new SymFirehoseRequest();
+            symFirehoseRequest.setMaxMsgs(Integer.valueOf(System.getProperty(Constants.DATAFEED_MAX_MESSAGES,"100")));
+            symFirehoseRequest.setTimeout(Integer.valueOf(System.getProperty(Constants.DATAFEED_WAIT_TIME,"5000")));
 
-            List<SymEvent> symEvents = symClient.getDataFeedClient().getEventsFromDatafeed(datafeed);
+
+            List<SymEvent> symEvents = firehoseClient.getEventsFromFirehose(symFirehose,symFirehoseRequest);
 
             if (symEvents != null) {
 
-                symEvents.forEach(dataFeedListener::onEvent);
+                symEvents.forEach(firehoseListener::onEvent);
 
             }
 
 
         } catch (Exception e) {
-            logger.error("Failed to create read datafeed from pod, please check connection..resetting.", e);
-            datafeed = null;
+            logger.error("Failed to create read firehose from pod, please check connection..resetting.", e);
+            symFirehose = null;
 
 
 
