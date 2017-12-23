@@ -86,6 +86,7 @@ public class SymphonyBasicClient implements SymphonyClient {
     private SymUserCache symUserCache;
     private ApiVersion apiVersion = ApiVersion.V4;
     private String name;
+    private Timer timer;
 
 
     public SymphonyBasicClient() {
@@ -321,8 +322,9 @@ public class SymphonyBasicClient implements SymphonyClient {
         //Refresh token every so often..
         TimerTask authRefreshTask = new AuthRefreshTask(this);
         // running timer task as daemon thread
-        Timer timer = new Timer("AuthRefresh:" + this.getName(), true);
+        timer = new Timer("AuthRefresh:" + this.getName(), true);
         timer.scheduleAtFixedRate(authRefreshTask, SYMAUTH_REFRESH_TIME, SYMAUTH_REFRESH_TIME);
+
 
 
     }
@@ -488,8 +490,18 @@ public class SymphonyBasicClient implements SymphonyClient {
 
     @Override
     public void shutdown() {
+
         if (getMessageService() != null)
             getMessageService().shutdown();
+
+
+        if (getPresenceService() != null)
+            getPresenceService().shutdown();
+
+        if(timer!=null)
+            timer.cancel();
+
+
     }
 
 

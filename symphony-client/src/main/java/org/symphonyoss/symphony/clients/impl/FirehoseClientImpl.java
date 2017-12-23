@@ -125,9 +125,6 @@ public class FirehoseClientImpl implements FirehoseClient {
 
         FirehoseApi firehoseApi = new FirehoseApi(apiClient);
 
-        if (firehoseApi == null) {
-            throw new NullPointerException("Firehose was not provided and null..");
-        }
 
 
         try {
