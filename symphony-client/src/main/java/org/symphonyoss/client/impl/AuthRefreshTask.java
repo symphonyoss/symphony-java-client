@@ -107,8 +107,7 @@ public class AuthRefreshTask extends TimerTask {
             logger.info("Successfully refreshed SymAuth tokens...");
 
             logger.info("Exposing SymAgentHealthCheck as JMX MBean...");
-            AgentSystemClient agentSystemClient = AgentSystemClientFactory.getClient(symClient,
-                    AgentSystemClientFactory.TYPE.DEFAULT);
+            AgentSystemClient agentSystemClient = AgentSystemClientFactory.getClient(symClient);
             SymAgentHealthCheck check = agentSystemClient.getAgentHealthCheck();
             MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
             ObjectName mBeanName = new ObjectName("org.symphonyoss.client:type=HealthCheck");
