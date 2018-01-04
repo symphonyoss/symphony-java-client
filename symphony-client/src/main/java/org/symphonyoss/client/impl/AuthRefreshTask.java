@@ -29,9 +29,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.client.exceptions.NetworkException;
+import org.symphonyoss.client.exceptions.SystemException;
 import org.symphonyoss.client.model.SymAuth;
+import org.symphonyoss.symphony.clients.AgentSystemClient;
+import org.symphonyoss.symphony.clients.AgentSystemClientFactory;
 import org.symphonyoss.symphony.clients.AuthenticationClient;
+import org.symphonyoss.symphony.clients.model.SymAgentHealthCheck;
+import org.symphonyoss.symphony.clients.model.SymAgentHealthCheckMBean;
 
+import javax.management.*;
+import java.lang.management.ManagementFactory;
 import java.util.TimerTask;
 
 /**
@@ -99,8 +106,26 @@ public class AuthRefreshTask extends TimerTask {
 
             logger.info("Successfully refreshed SymAuth tokens...");
 
+            logger.info("Exposing SymAgentHealthCheck as JMX MBean...");
+            AgentSystemClient agentSystemClient = AgentSystemClientFactory.getClient(symClient,
+                    AgentSystemClientFactory.TYPE.DEFAULT);
+            SymAgentHealthCheck check = agentSystemClient.getAgentHealthCheck();
+            MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
+            ObjectName mBeanName = new ObjectName("org.symphonyoss.client:type=HealthCheck");
+            mbs.registerMBean(check, mBeanName);
+
         } catch (NetworkException e) {
             logger.error("Unable to refresh SymAuth keys...", e);
+        } catch (SystemException e) {
+            logger.error("Cannot get SymAgentHealthCheck...", e);
+        } catch (MalformedObjectNameException e) {
+            logger.error("Cannot expose MBean...", e);
+        } catch (NotCompliantMBeanException e) {
+            logger.error("Cannot expose MBean...", e);
+        } catch (InstanceAlreadyExistsException e) {
+            logger.error("Cannot expose MBean...", e);
+        } catch (MBeanRegistrationException e) {
+            logger.error("Cannot expose MBean...", e);
         }
 
         return symAuth;

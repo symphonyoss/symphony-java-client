@@ -30,7 +30,7 @@ import org.symphonyoss.symphony.agent.model.V2HealthCheckResponse;
 /**
  * @author Frank Tarsillo on 10/15/17.
  */
-public class SymAgentHealthCheck {
+public class SymAgentHealthCheck implements SymAgentHealthCheckMBean {
 
 
     private Boolean podConnectivity = null;
