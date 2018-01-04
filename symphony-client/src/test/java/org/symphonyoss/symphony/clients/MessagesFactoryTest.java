@@ -37,7 +37,7 @@ import static org.junit.Assert.*;
 public class MessagesFactoryTest {
     @Test
     public void getClient() throws Exception {
-        assertTrue("get DEFAULT client",  MessagesFactory.getClient(TestFactory.getSymClient(),MessagesFactory.TYPE.DEFAULT) instanceof MessagesClientImpl);
+        assertTrue("get DEFAULT client",  MessagesFactory.getClient(TestFactory.getSymClient()) instanceof MessagesClientImpl);
 
     }
 

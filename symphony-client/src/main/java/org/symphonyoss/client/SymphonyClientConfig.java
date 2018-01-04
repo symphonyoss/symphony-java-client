@@ -40,28 +40,42 @@ public class SymphonyClientConfig {
 
     private boolean initialized;
 
+    /**
+     * Default constructor will no load or validate configuration.
+     */
     public SymphonyClientConfig() {
 
     }
 
+
+    /**
+     * Constructor that has option to load/validate configuration requirements
+     *
+     * @param load Load and validate configuration
+     */
     public SymphonyClientConfig(boolean load) {
 
-        if(load)
+        if (load)
             load();
 
+    }
+
+
+    /**
+     * Constructor requiring configuration properties file, which is loaded and validated
+     *
+     * @param configFile Properties file containing configuration detail.
+     */
+    public SymphonyClientConfig(String configFile) {
+        this.set(SymphonyClientConfigID.SYMPHONY_CONFIG_FILE, configFile);
+        load();
     }
 
     public void load() throws ProgramFault {
         String configFile = get(SymphonyClientConfigID.SYMPHONY_CONFIG_FILE);
 
         if (configFile != null) {
-            try (Reader reader = new FileReader(configFile)) {
-                config.load(reader);
-            } catch (FileNotFoundException e) {
-                throw new ProgramFault("Config file \"" + configFile + "\" not found");
-            } catch (IOException e) {
-                throw new ProgramFault("Config file \"" + configFile + "\" cannot be built", e);
-            }
+            upsertProperties(configFile);
         }
 
         StringBuilder s = null;
@@ -89,6 +103,7 @@ public class SymphonyClientConfig {
         initialized = true;
     }
 
+
     public String get(SymphonyClientConfigID id) {
         String value = config.getProperty(id.getPropName());
 
@@ -105,10 +120,10 @@ public class SymphonyClientConfig {
     }
 
 
-    public String get(SymphonyClientConfigID id, String defaultValue){
+    public String get(SymphonyClientConfigID id, String defaultValue) {
 
         String value = get(id);
-        return (value!=null)? value:defaultValue;
+        return (value != null) ? value : defaultValue;
 
 
     }
@@ -122,6 +137,12 @@ public class SymphonyClientConfig {
         return value;
     }
 
+    /**
+     * This allows user to obtain a general config value by string.
+     *
+     * @param id Property name
+     * @return Value for property
+     */
     public String get(String id) {
         String value = config.getProperty(id);
 
@@ -143,11 +164,77 @@ public class SymphonyClientConfig {
         return value;
     }
 
+    /**
+     * Set a predefined config property
+     *
+     * @param id    Predefined config property
+     * @param value Value for property
+     */
     public void set(SymphonyClientConfigID id, String value) {
 
         config.setProperty(id.getPropName(), value);
 
     }
+
+
+    /**
+     * Set a any config property
+     *
+     * @param property    Any config property
+     * @param value Value for property
+     */
+    public void set(String property, String value) {
+
+        config.setProperty(property, value);
+
+    }
+
+
+    /**
+     * Supports the ability to update and insert new properties from additional properties files.
+     *
+     * @param propertiesFile Properties file to upsert
+     * @throws ProgramFault  Fault from merging properties
+     *
+     */
+    public void upsertProperties(String propertiesFile) throws ProgramFault{
+
+
+        Properties properties = loadProperties(propertiesFile);
+
+        if(config == null) {
+            config = properties;
+        }else {
+
+            config.putAll(properties);
+        }
+
+
+    }
+
+
+    private Properties loadProperties(String propertiesFile) throws ProgramFault{
+
+        Properties properties = new Properties();
+
+        if (propertiesFile != null) {
+            try (Reader reader = new FileReader(propertiesFile)) {
+                properties.load(reader);
+
+
+
+            } catch (FileNotFoundException e) {
+                throw new ProgramFault("Config file \"" + propertiesFile + "\" not found");
+            } catch (IOException e) {
+                throw new ProgramFault("Config file \"" + propertiesFile + "\" cannot be built", e);
+            }
+        }
+
+        return properties;
+
+    }
+
+
 
     public boolean isInitialized() {
         return initialized;

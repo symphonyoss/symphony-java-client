@@ -33,7 +33,6 @@ import org.symphonyoss.symphony.pod.model.UserSystemInfo;
 import org.symphonyoss.symphony.pod.model.UserV2;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -362,6 +361,7 @@ public class SymUser {
         userV2.setUsername(symUser.getUsername());
         userV2.setDepartment(symUser.getDepartment());
 
+
         AvatarList avatars = new AvatarList();
         for (SymAvatar symAvatar : symUser.getAvatars()) {
             Avatar avatar = new Avatar();
@@ -519,6 +519,7 @@ public class SymUser {
         userAttributes.setTitle(symUser.getTitle());
         userAttributes.setUserName(symUser.getUsername());
         userAttributes.setDepartment(symUser.getDepartment());
+
 
         return userAttributes;
     }

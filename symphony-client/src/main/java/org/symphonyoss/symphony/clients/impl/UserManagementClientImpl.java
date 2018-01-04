@@ -26,6 +26,8 @@ package org.symphonyoss.symphony.clients.impl;
 import com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.symphonyoss.client.SymphonyClientConfig;
+import org.symphonyoss.client.SymphonyClientConfigID;
 import org.symphonyoss.client.exceptions.UserManagementClientException;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.symphony.authenticator.model.Token;
@@ -35,6 +37,8 @@ import org.symphonyoss.symphony.pod.api.UserApi;
 import org.symphonyoss.symphony.pod.invoker.ApiClient;
 import org.symphonyoss.symphony.pod.invoker.ApiException;
 import org.symphonyoss.symphony.pod.invoker.Configuration;
+
+import javax.ws.rs.client.Client;
 
 /**
  * Implementation of {@link UserManagementClient}.
@@ -48,13 +52,39 @@ public class UserManagementClientImpl implements UserManagementClient {
     private final SymAuth symAuth;
     private final ApiClient apiClient;
 
-    public UserManagementClientImpl(SymAuth symAuth, String podUrl) {
+
+    /**
+     * Init
+     *
+     * @param symAuth Symphony auth/session tokens
+     * @param config Symphony Client config
+     */
+    public UserManagementClientImpl(SymAuth symAuth, SymphonyClientConfig config) {
+
+        this(symAuth, config, null);
+
+    }
+
+
+    /**
+     * Init for overriding httpClient for pod connectivity
+     * @param symAuth Symphony auth/session tokens
+     * @param config Symphony client config
+     * @param httpClient HttpClient to use
+     */
+    public UserManagementClientImpl(SymAuth symAuth, SymphonyClientConfig config, Client httpClient) {
         this.symAuth = symAuth;
 
         apiClient = Configuration.getDefaultApiClient();
-        apiClient.setBasePath(podUrl);
+
+        if(httpClient!=null)
+            apiClient.setHttpClient(httpClient);
+
+        apiClient.setBasePath(config.get(SymphonyClientConfigID.POD_URL));
 
     }
+
+
 
     @Override
     public void updateExternalAccess(long userId, boolean allowExternalAccess) throws UserManagementClientException {

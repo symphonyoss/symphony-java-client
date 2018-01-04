@@ -102,6 +102,7 @@ public class SymStream {
 
         symStream.setExternal(stream.getExternal());
 
+        if(stream.getMembers() != null)
         symStream.setMembers(stream.getMembers().stream().map(SymUser::toSymUser).collect(Collectors.toList()));
 
         if (stream.getRoomName() != null)

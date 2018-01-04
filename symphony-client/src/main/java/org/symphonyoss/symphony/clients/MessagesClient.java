@@ -23,10 +23,10 @@
 package org.symphonyoss.symphony.clients;
 
 import org.symphonyoss.client.exceptions.MessagesException;
+import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.symphony.clients.model.ApiVersion;
 import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.clients.model.SymStream;
-import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.pod.model.Stream;
 
 import java.util.List;
@@ -46,6 +46,18 @@ public interface MessagesClient {
      */
     SymMessage sendMessage(Stream stream, SymMessage message) throws MessagesException;
 
+
+    /**
+     * Send message to SymStream with alternate session token (OBO)
+     *
+     *
+     * @param stream  Stream to send message to
+     * @param message Message to send
+     * @param symAuth Alternate authorization containing session token to use.
+     * @return Message sent
+     * @throws MessagesException Exception caused by Symphony API calls
+     */
+    SymMessage sendMessage(SymStream stream, SymMessage message, SymAuth symAuth) throws MessagesException;
 
     /**
      * Send message to Symstream

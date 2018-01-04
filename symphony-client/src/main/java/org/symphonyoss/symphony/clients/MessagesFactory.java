@@ -23,29 +23,27 @@
 package org.symphonyoss.symphony.clients;
 
 import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.client.SymphonyClientConfig;
+import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.symphony.clients.impl.MessagesClientImpl;
-import org.symphonyoss.symphony.clients.model.ApiVersion;
+
+import javax.ws.rs.client.Client;
 
 /**
  * Created by frank.tarsillo on 6/6/2016.
  */
 public class MessagesFactory {
 
-    public enum TYPE {DEFAULT, HTTPCLIENT}
 
-    public static MessagesClient getClient(SymphonyClient symClient, TYPE type) {
+    public static MessagesClient getClient(SymphonyClient symClient) {
 
-       return MessagesFactory.getClient(symClient,type, ApiVersion.getDefault());
+        return new MessagesClientImpl(symClient.getSymAuth(), symClient.getConfig(), symClient.getAgentHttpClient());
     }
 
-    public static MessagesClient getClient(SymphonyClient symClient, TYPE type, ApiVersion apiVersion) {
+    public static MessagesClient getClient(SymAuth symAuth, SymphonyClientConfig config, Client client) {
 
+        return new MessagesClientImpl(symAuth, config, client);
 
-        if (type.equals(TYPE.HTTPCLIENT)) {
-            return new MessagesClientImpl(symClient.getSymAuth(), symClient.getAgentUrl(), symClient.getAgentHttpClient(), apiVersion);
-        } else {
-            return new MessagesClientImpl(symClient.getSymAuth(), symClient.getAgentUrl(), apiVersion);
-        }
 
     }
 

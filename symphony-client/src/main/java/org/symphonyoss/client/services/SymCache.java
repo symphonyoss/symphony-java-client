@@ -34,7 +34,7 @@ import org.symphonyoss.client.model.CacheType;
 public interface SymCache {
 
 
-    public CacheType getCacheType();
+     CacheType getCacheType();
 
-    public void setCacheType(CacheType cacheType);
+     void setCacheType(CacheType cacheType);
 }

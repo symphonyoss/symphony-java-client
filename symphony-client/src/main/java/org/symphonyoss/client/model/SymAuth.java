@@ -22,7 +22,9 @@
 
 package org.symphonyoss.client.model;
 
+import org.symphonyoss.symphony.authenticator.model.OboAuthResponse;
 import org.symphonyoss.symphony.authenticator.model.Token;
+
 
 import javax.ws.rs.client.Client;
 
@@ -127,4 +129,24 @@ public class SymAuth {
     public void setKeyUrl(String keyUrl) {
         this.keyUrl = keyUrl;
     }
+
+    public static SymAuth fromOboAuth(OboAuthResponse oboAuthResponse) {
+
+        if(oboAuthResponse==null)
+            return null;
+
+        SymAuth symAuth = new SymAuth();
+        Token token = new Token();
+        token.setName("OboSessionToken");
+        token.setToken(oboAuthResponse.getSessionToken());
+        symAuth.setSessionToken(token);
+        token = new Token();
+        token.setName("KeyToken");
+        token.setToken(null);
+        symAuth.setKeyToken(token);
+        return symAuth;
+
+    }
+
+
 }

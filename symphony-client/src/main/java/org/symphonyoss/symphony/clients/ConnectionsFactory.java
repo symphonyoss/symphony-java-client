@@ -23,22 +23,27 @@
 package org.symphonyoss.symphony.clients;
 
 import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.client.SymphonyClientConfig;
 import org.symphonyoss.symphony.clients.impl.ConnectionsClientImpl;
+
+import javax.ws.rs.client.Client;
 
 /**
  * Created by frank.tarsillo on 6/6/2016.
  */
 public class ConnectionsFactory {
 
-    public enum TYPE { DEFAULT, HTTPCLIENT }
 
-    public static ConnectionsClient getClient(SymphonyClient symClient, TYPE type){
 
-        if(type.equals(TYPE.HTTPCLIENT)) {
-            return new ConnectionsClientImpl(symClient.getSymAuth(), symClient.getPodUrl(),symClient.getPodHttpClient());
-        }else{
-            return new ConnectionsClientImpl(symClient.getSymAuth(), symClient.getPodUrl());
-        }
+    public static ConnectionsClient getClient(SymphonyClient symClient){
+
+            return new ConnectionsClientImpl(symClient.getSymAuth(), symClient.getConfig(), symClient.getPodHttpClient());
+
     }
 
+    public static ConnectionsClient getClient(SymphonyClient symClient, SymphonyClientConfig config, Client client){
+
+        return new ConnectionsClientImpl(symClient.getSymAuth(), config, client);
+
+    }
 }

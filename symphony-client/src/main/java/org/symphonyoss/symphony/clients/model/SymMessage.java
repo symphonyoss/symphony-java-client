@@ -26,7 +26,6 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.symphonyoss.client.common.MLTypes;
 import org.symphonyoss.client.exceptions.SymException;
 import org.symphonyoss.client.util.MlMessageParser;
-import org.symphonyoss.symphony.agent.model.Message;
 import org.symphonyoss.symphony.agent.model.V2BaseMessage;
 import org.symphonyoss.symphony.agent.model.V2Message;
 import org.symphonyoss.symphony.agent.model.V4Message;
@@ -72,7 +71,6 @@ public class SymMessage {
     public SymUser getSymUser() {
         return symUser;
     }
-
 
 
     @SuppressWarnings("unused")
@@ -182,7 +180,7 @@ public class SymMessage {
 
     public ApiVersion getApiVersion() {
 
-        if(apiVersion==null)
+        if (apiVersion == null)
             apiVersion = ApiVersion.V4;
 
         return apiVersion;
@@ -223,13 +221,15 @@ public class SymMessage {
         symMessage.setSymUser(SymUser.toSymUser(v4Message.getUser()));
         symMessage.setMessage(v4Message.getMessage());
         symMessage.setStream(SymStream.toSymStream(v4Message.getStream()));
-        symMessage.setAttachments(SymAttachmentInfo.toAttachmentsInfos(v4Message.getAttachments()));
+
+        if (v4Message.getAttachments() != null)
+            symMessage.setAttachments(SymAttachmentInfo.toAttachmentsInfos(v4Message.getAttachments()));
+
         symMessage.setEntityData(v4Message.getData());
 
 
         return symMessage;
     }
-
 
 
     public String getMessageText() {
@@ -263,8 +263,8 @@ public class SymMessage {
 
     }
 
-    public void setMessageText(String text){
-        setMessageText(apiVersion,text);
+    public void setMessageText(String text) {
+        setMessageText(apiVersion, text);
 
     }
 

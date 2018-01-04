@@ -23,6 +23,8 @@
 package org.symphonyoss.symphony.clients;
 
 import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.client.SymphonyClientConfig;
+import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.symphony.clients.impl.StreamsClientImpl;
 
 /**
@@ -30,16 +32,16 @@ import org.symphonyoss.symphony.clients.impl.StreamsClientImpl;
  */
 public class StreamsFactory {
 
-    public enum TYPE { DEFAULT, HTTPCLIENT }
+    public static StreamsClient getClient(SymphonyClient symClient){
 
-    public static StreamsClient getClient(SymphonyClient symClient, TYPE type){
+        return new StreamsClientImpl(symClient.getSymAuth(),symClient.getConfig(), symClient.getPodHttpClient());
 
+    }
 
-        if(type.equals(TYPE.HTTPCLIENT)) {
-            return new StreamsClientImpl(symClient.getSymAuth(), symClient.getPodUrl(), symClient.getPodHttpClient());
-        }else{
-            return new StreamsClientImpl(symClient.getSymAuth(), symClient.getPodUrl());
-        }
+    public static StreamsClient getClient(SymAuth symAuth, SymphonyClientConfig config){
+
+        return new StreamsClientImpl(symAuth, config);
+
     }
 
 }

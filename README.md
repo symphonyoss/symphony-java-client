@@ -11,8 +11,9 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 
 ## Features
 * Basic client:
-    * Authentication management
+    * Authentication management for all variants (bot, Extension Apps, Apps, OBO)
     * Implements and exposes functional services and underlying clients.
+    * Support for OBO workflow
 * Chat Service:
     * Support for chat session creation and eventing
     * Filters only on chat messages
@@ -25,6 +26,8 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
     * Real-time listeners on all room events
     * Enriches Room objects with associated system attributes
     * X-Pod Support
+* Presence Service
+    * Real-time notification of presence events and client functions
 * Connections request handling including auto-accept.
 * Attachment Support
 * Publish formatted articles (news) using ShareApi
@@ -40,18 +43,33 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 
 ## Change log and notes
 
-### V1.1.0 (SNAPSHOT)
+## V1.1.2 (SNAPSHOT)
+* Focus on testing and implementing more APIs
+
+### V1.1.1 
+* Support for OBO workflow AuthenticationClient and MessagesClient modified
+* SymphonyClientConfig can now support general application properties
+* Fixed issue with room mappings
+* Firehose initial build
+
+
+### V1.1.0 
 * REMOVED MOST V2 Support and deprecated methods/classes
-* Support for for 1.46.3 or higher. 1.48.0 added as dependency
+* Support for for 1.46.3 or higher. 1.48.1 added as dependency
+* PresenceService reinstated - Utilizes new feed calls
+* Using latest endpoints for presence functions.  Also replaced Presence objects with SymPresence.  
 * SymphonyClient now support custom http clients for both Pod and Agent clients 
 * SymphonyClientConfigID TRUSTSTORE_FILE and TRUSTSTORE_PASSWORD set to optional now.
 * SymphonyClient can be initialized without defining truststore, taking defaults. 
 * Added session logout to AuthenticationClient
 * Added special attribute (ApiVersion) to SymMessage to support sending MessageMLv1 messages over V2 endpoints. This gets around some of the limitations of PresentationML/MessageMLv2
 * SymStream object replacing all use of legacy Stream objects.
+* SymphonyClient automatically identifies the Agent and Pod versions to select the latest versions.
 * SymMessage.setMessageText(..) will automatically escapeXml
 * Added new methods in MessageService to send message by SymUser and SymStream (Convenience)
 * SymphonyClient instances default to V4 API
+* ConnectionsClient now supports removal of connections.
+* SymphonyClient has new internal name identifier for Thread handling bound to email address. 
 * Added a convenience class SymphonyApis accessible through SymphonyClient supporting retrieval of all language binding APIs (Not recommended for use)
 * SymMessage no longer has option to set Format as everything is PresentationML based moving forward.  Use SymMessage.setMessageText(TEXT) if you want to set simple text value.
 * SymMessage will default setting text message to PresentationML
@@ -63,6 +81,7 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 * Implement Agent Server health-check under new AgentSystemClient
 * Updated ShareClient to use V3 endpoint
 * Added getUserBySession(SymAuth) to UsersClient
+* Some new examples on use of AWS Lex, Copy data between chat rooms, and reporting
 
 
 
@@ -95,34 +114,6 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 * Updated MessageService to take advantage of new stream attributes functions
 * Added additional integration testing
 
-
-
-### V1.0.1 (Stable)
-* Added Users local cache (Lazy) for services
-* SymphonyClient now supports cache plugin setCache(CacheType). Extension sample provided.
-* Updated REST API Spec to 1.45
-* Simplification of CustomHttpClient
-* Focus on performance
-* Deferred: Although progress was made on moving symphony-apis module, more testing required 
-
-
-### V1.0.0 
-* Compatible with 1.45 API, V2 and Agent 1.39+
-* Presence service is now disabled by default
-* ShareAPI supporting article (news) posts implemented
-* Support for custom HTTP Clients when initiating SymphonyClient.
-* Can support multiple SymphonyClient instances running in a single JVM representing different users.
-* Automatic Auth refresh in client
-* ChatService enhancements including remote user identification on Chat creation.
-* Added ability to retrieve users by stream
-* New admin features, creating users, updating user details, modify room membership
-* Added room search under streams client
-* REMOVED Experimental firehose service as per LLC
-* Performance Updates
-* All incoming SymMessages from MessageService are now set to MessageML format
-* Command Framework (AI Package) supporting command parsing and actions
-* CI integration testing (mvn goal -Pintegration-testing)
-* Bug fixes, documentation, new examples
 
 
 

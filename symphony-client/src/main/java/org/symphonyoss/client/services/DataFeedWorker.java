@@ -29,9 +29,9 @@ import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
 import org.symphonyoss.client.common.Constants;
 import org.symphonyoss.client.events.SymEvent;
-import org.symphonyoss.client.exceptions.DataFeedException;
 import org.symphonyoss.symphony.agent.model.Datafeed;
 import org.symphonyoss.symphony.clients.model.ApiVersion;
+import org.symphonyoss.symphony.clients.model.SymDatafeed;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -48,7 +48,7 @@ class DataFeedWorker implements Runnable {
     private final DataFeedListener dataFeedListener;
     private final SymphonyClient symClient;
     private final Logger logger = LoggerFactory.getLogger(DataFeedWorker.class);
-    private Datafeed datafeed;
+    private SymDatafeed datafeed;
     private boolean shutdown;
 
 

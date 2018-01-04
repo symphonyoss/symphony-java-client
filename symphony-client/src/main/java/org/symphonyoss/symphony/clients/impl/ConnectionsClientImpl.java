@@ -22,11 +22,13 @@
 
 package org.symphonyoss.symphony.clients.impl;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import org.symphonyoss.client.SymphonyClientConfig;
+import org.symphonyoss.client.SymphonyClientConfigID;
 import org.symphonyoss.client.exceptions.ConnectionsException;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.symphony.clients.ConnectionsClient;
+import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.clients.model.SymUserConnection;
 import org.symphonyoss.symphony.clients.model.SymUserConnectionRequest;
 import org.symphonyoss.symphony.pod.api.ConnectionApi;
@@ -48,35 +50,39 @@ public class ConnectionsClientImpl implements ConnectionsClient {
 
     private final ApiClient apiClient;
     private final SymAuth symAuth;
-    @SuppressWarnings("unused")
-    private Logger logger = LoggerFactory.getLogger(ConnectionsClientImpl.class);
 
 
-    public ConnectionsClientImpl(SymAuth symAuth, String podUrl) {
+    /**
+     * Init
+     *
+     * @param symAuth Syphony Authorization tokens
+     * @param config  Symphony Client config
+     */
+    public ConnectionsClientImpl(SymAuth symAuth, SymphonyClientConfig config) {
 
-        this.symAuth = symAuth;
-
-
-        //Get Service client to query for userID.
-        apiClient = org.symphonyoss.symphony.pod.invoker.Configuration.getDefaultApiClient();
-        apiClient.setBasePath(podUrl);
+        this(symAuth, config, null);
 
     }
+
 
     /**
      * If you need to override HttpClient.  Important for handling individual client certs.
      *
      * @param symAuth    Authorization model containing session and key tokens
-     * @param podUrl Service URL
+     * @param config     Config updated with pod url
      * @param httpClient Custom HTTP Client to use
      */
-    public ConnectionsClientImpl(SymAuth symAuth, String podUrl, Client httpClient) {
+    public ConnectionsClientImpl(SymAuth symAuth, SymphonyClientConfig config, Client httpClient) {
         this.symAuth = symAuth;
 
         //Get Service client to query for userID.
         apiClient = org.symphonyoss.symphony.pod.invoker.Configuration.getDefaultApiClient();
-        apiClient.setHttpClient(httpClient);
-        apiClient.setBasePath(podUrl);
+
+        if (httpClient != null)
+            apiClient.setHttpClient(httpClient);
+
+        apiClient.setBasePath(config.get(SymphonyClientConfigID.POD_URL));
+
 
     }
 
@@ -122,6 +128,28 @@ public class ConnectionsClientImpl implements ConnectionsClient {
 
     }
 
+
+    /**
+     * Remove an existing user connection
+     *
+     * @param symUser Symphony user to remove connection with
+     * @throws ConnectionsException thrown by underlying API or not providing a valid SymUser
+     */
+    @Override
+    public void removeConnectionRequest(SymUser symUser) throws ConnectionsException {
+        ConnectionApi connectionApi = new ConnectionApi(apiClient);
+
+        if (symUser == null)
+            throw new NullPointerException("Symphony user was not provided.");
+
+
+        try {
+            connectionApi.v1ConnectionUserUidRemovePost(symAuth.getSessionToken().getToken(), symUser.getId());
+        } catch (ApiException e) {
+            throw new ConnectionsException("Error removing connected user: " + symUser.getId(), e);
+        }
+
+    }
 
     @Override
     public SymUserConnection sendConnectionRequest(SymUserConnectionRequest symUserConnectionRequest) throws ConnectionsException {
@@ -190,24 +218,45 @@ public class ConnectionsClientImpl implements ConnectionsClient {
     }
 
 
+    /**
+     * @deprecated please use {@link #getUserConnection(SymUser)}
+     *
+     * @param userId Symphony user ID
+     * @return Symphony User connection
+     * @throws ConnectionsException from underlying API
+     */
     @Override
+    @Deprecated
     public SymUserConnection getUserConnection(String userId) throws ConnectionsException {
-
-        ConnectionApi connectionApi = new ConnectionApi(apiClient);
 
         if (userId == null) {
             throw new NullPointerException("UserID was not provided..");
         }
+        SymUser symUser = new SymUser();
+        symUser.setId(Long.valueOf(userId));
+
+
+        return getUserConnection(symUser);
+    }
+
+
+    @Override
+    public SymUserConnection getUserConnection(SymUser symUser) throws ConnectionsException {
+
+        ConnectionApi connectionApi = new ConnectionApi(apiClient);
+
+        if (symUser == null) {
+            throw new NullPointerException("SymUser was not provided..");
+        }
 
         try {
-            return SymUserConnection.toSymUserConnection(connectionApi.v1ConnectionUserUserIdInfoGet(symAuth.getSessionToken().getToken(), userId));
+            return SymUserConnection.toSymUserConnection(connectionApi.v1ConnectionUserUserIdInfoGet(symAuth.getSessionToken().getToken(), symUser.getId().toString()));
         } catch (ApiException e) {
-            throw new ConnectionsException("Unable to retrieve connection information for ID: " + userId, e);
+            throw new ConnectionsException("Unable to retrieve connection information for ID: " + symUser.getId(), e);
         }
 
 
     }
-
 
     @SuppressWarnings("SameParameterValue")
     private List<SymUserConnection> getAllConnections(SymUserConnection.Status status, String userIds) throws ConnectionsException {

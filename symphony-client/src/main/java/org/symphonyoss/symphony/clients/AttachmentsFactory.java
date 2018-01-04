@@ -23,7 +23,11 @@
 package org.symphonyoss.symphony.clients;
 
 import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.client.SymphonyClientConfig;
+import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.symphony.clients.impl.AttachmentsClientImpl;
+
+import javax.ws.rs.client.Client;
 
 /**
  * @author Frank Tarsillo
@@ -32,14 +36,17 @@ public class AttachmentsFactory {
 
     public enum TYPE { DEFAULT, HTTPCLIENT }
 
-    public static AttachmentsClient getClient(SymphonyClient symClient, TYPE type){
+    public static AttachmentsClient getClient(SymphonyClient symClient){
 
-            if(type.equals(TYPE.HTTPCLIENT)) {
-                return new AttachmentsClientImpl(symClient.getSymAuth(), symClient.getAgentUrl(), symClient.getAgentHttpClient());
-            }else{
+        return new AttachmentsClientImpl(symClient.getSymAuth(), symClient.getConfig(), symClient.getAgentHttpClient());
 
-                return new AttachmentsClientImpl(symClient.getSymAuth(), symClient.getAgentUrl());
-            }
     }
 
+
+    public static AttachmentsClient getClient(SymAuth symAuth, SymphonyClientConfig config, Client client){
+
+        return new AttachmentsClientImpl(symAuth, config, client);
+
+    }
 }
+

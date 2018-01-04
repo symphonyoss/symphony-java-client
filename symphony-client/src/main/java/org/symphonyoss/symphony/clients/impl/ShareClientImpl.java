@@ -25,69 +25,67 @@
 
 package org.symphonyoss.symphony.clients.impl;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.symphonyoss.client.SymphonyClientConfig;
+import org.symphonyoss.client.SymphonyClientConfigID;
 import org.symphonyoss.client.exceptions.ShareException;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.client.model.SymShareArticle;
 import org.symphonyoss.symphony.agent.api.ShareApi;
+import org.symphonyoss.symphony.agent.invoker.ApiClient;
 import org.symphonyoss.symphony.agent.invoker.ApiException;
 import org.symphonyoss.symphony.agent.model.ShareContent;
 import org.symphonyoss.symphony.clients.ShareClient;
-import org.symphonyoss.symphony.agent.invoker.ApiClient;
 
 import javax.ws.rs.client.Client;
 
 
 /**
- *
  * @author Frank Tarsillo on 10/22/2016.
  */
-public class ShareClientImpl implements ShareClient{
+public class ShareClientImpl implements ShareClient {
 
     private final SymAuth symAuth;
-    @SuppressWarnings("unused")
-    private final String podUrl;
     private final ApiClient apiClient;
 
-    @SuppressWarnings("unused")
-    private final Logger logger = LoggerFactory.getLogger(StreamsClientImpl.class);
 
-    public ShareClientImpl(SymAuth symAuth, String podUrl) {
+    /**
+     * Init
+     *
+     * @param symAuth Authorization model containing session and key tokens
+     * @param config  Symphony Client Config
+     */
+    public ShareClientImpl(SymAuth symAuth, SymphonyClientConfig config) {
 
-        this.symAuth = symAuth;
-        this.podUrl = podUrl;
-
-
-        //Get Service client to query for userID.
-        apiClient = org.symphonyoss.symphony.agent.invoker.Configuration.getDefaultApiClient();
-        apiClient.setBasePath(podUrl);
+        this(symAuth, config, null);
 
 
     }
 
     /**
      * If you need to override HttpClient.  Important for handling individual client certs.
-     * @param symAuth Authorization model containing session and key tokens
-     * @param podUrl Service URL used to access API
+     *
+     * @param symAuth    Authorization model containing session and key tokens
+     * @param config     Symphony client config
      * @param httpClient Custom HTTP client
      */
-    public ShareClientImpl(SymAuth symAuth, String podUrl, Client httpClient) {
+    public ShareClientImpl(SymAuth symAuth, SymphonyClientConfig config, Client httpClient) {
         this.symAuth = symAuth;
-        this.podUrl = podUrl;
 
         //Get Service client to query for userID.
         apiClient = org.symphonyoss.symphony.agent.invoker.Configuration.getDefaultApiClient();
-        apiClient.setHttpClient(httpClient);
-        apiClient.setBasePath(podUrl);
 
+        if (httpClient != null)
+            apiClient.setHttpClient(httpClient);
+
+        apiClient.setBasePath(config.get(SymphonyClientConfigID.POD_URL));
 
 
     }
 
 
+
     @Override
-    public void shareArticle(String streamId, SymShareArticle article) throws ShareException{
+    public void shareArticle(String streamId, SymShareArticle article) throws ShareException {
 
         ShareApi shareApi = new ShareApi(apiClient);
 
@@ -97,9 +95,9 @@ public class ShareClientImpl implements ShareClient{
 
         try {
 
-            shareApi.v3StreamSidSharePost(streamId, symAuth.getSessionToken().getToken(),shareContent,symAuth.getKeyToken().getToken());
+            shareApi.v3StreamSidSharePost(streamId, symAuth.getSessionToken().getToken(), shareContent, symAuth.getKeyToken().getToken());
         } catch (ApiException e) {
-          throw new ShareException(e);
+            throw new ShareException(e);
         }
 
 

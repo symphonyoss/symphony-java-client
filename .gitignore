@@ -56,3 +56,4 @@ symphony-java-client.iml
 /examples/symphony-client-examples.iml
 /temp.doc
 /ping_auth.png
+.DS_Store

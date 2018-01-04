@@ -25,6 +25,7 @@ package org.symphonyoss.symphony.clients.model;
 
 import org.symphonyoss.symphony.agent.model.V4RoomProperties;
 import org.symphonyoss.symphony.pod.model.V2RoomAttributes;
+import org.symphonyoss.symphony.pod.model.V3RoomAttributes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +55,10 @@ public class SymRoomAttributes {
     private Boolean copyProtected = null;
 
     private SymUser creatorUser = null;
+
+    private Boolean crossPod = null;
+
+    private Boolean viewHistory = null;
 
 
     public SymUser getCreatorUser() {
@@ -130,6 +135,22 @@ public class SymRoomAttributes {
     }
 
 
+    public Boolean getCrossPod() {
+        return crossPod;
+    }
+
+    public void setCrossPod(Boolean crossPod) {
+        this.crossPod = crossPod;
+    }
+
+    public Boolean getViewHistory() {
+        return viewHistory;
+    }
+
+    public void setViewHistory(Boolean viewHistory) {
+        this.viewHistory = viewHistory;
+    }
+
     public static SymRoomAttributes toSymRoomAttributes(V2RoomAttributes roomAttributes) {
 
         SymRoomAttributes symRoomAttributes = new SymRoomAttributes();
@@ -141,6 +162,7 @@ public class SymRoomAttributes {
         symRoomAttributes.setMembersCanInvite(roomAttributes.getMembersCanInvite());
         symRoomAttributes.setName(roomAttributes.getName());
         symRoomAttributes.setReadOnly(roomAttributes.getReadOnly());
+        symRoomAttributes.setKeywords(SymRoomTag.toSymRoomTagsV2(roomAttributes.getKeywords()));
 
         return symRoomAttributes;
     }
@@ -156,8 +178,43 @@ public class SymRoomAttributes {
         v2RoomAttributes.setMembersCanInvite(roomAttributes.getMembersCanInvite());
         v2RoomAttributes.setName(roomAttributes.getName());
         v2RoomAttributes.setReadOnly(roomAttributes.getReadOnly());
+        v2RoomAttributes.setKeywords(SymRoomTag.toRoomTags(roomAttributes.getKeywords()));
 
         return v2RoomAttributes;
+    }
+
+
+    public static SymRoomAttributes toSymRoomAttributes(V3RoomAttributes roomAttributes) {
+
+        SymRoomAttributes symRoomAttributes = new SymRoomAttributes();
+        symRoomAttributes.setPublic(roomAttributes.getPublic());
+        symRoomAttributes.setCopyProtected(roomAttributes.getCopyProtected());
+        symRoomAttributes.setDescription(roomAttributes.getDescription());
+        symRoomAttributes.setDiscoverable(roomAttributes.getDiscoverable());
+        symRoomAttributes.setKeywords(SymRoomTag.toSymRoomTagsV2(roomAttributes.getKeywords()));
+        symRoomAttributes.setMembersCanInvite(roomAttributes.getMembersCanInvite());
+        symRoomAttributes.setName(roomAttributes.getName());
+        symRoomAttributes.setReadOnly(roomAttributes.getReadOnly());
+        symRoomAttributes.setCrossPod(roomAttributes.getCrossPod());
+        symRoomAttributes.setViewHistory(roomAttributes.getViewHistory());
+        return symRoomAttributes;
+    }
+
+    public static V3RoomAttributes toV3RoomAttributes(SymRoomAttributes roomAttributes) {
+
+        V3RoomAttributes v3RoomAttributes = new V3RoomAttributes();
+        v3RoomAttributes.setPublic(roomAttributes.getPublic());
+        v3RoomAttributes.setCopyProtected(roomAttributes.getCopyProtected());
+        v3RoomAttributes.setDescription(roomAttributes.getDescription());
+        v3RoomAttributes.setDiscoverable(roomAttributes.getDiscoverable());
+        v3RoomAttributes.setKeywords(SymRoomTag.toRoomTags(roomAttributes.getKeywords()));
+        v3RoomAttributes.setMembersCanInvite(roomAttributes.getMembersCanInvite());
+        v3RoomAttributes.setName(roomAttributes.getName());
+        v3RoomAttributes.setReadOnly(roomAttributes.getReadOnly());
+        v3RoomAttributes.setCrossPod(roomAttributes.getCrossPod());
+        v3RoomAttributes.setViewHistory(roomAttributes.getViewHistory());
+
+        return v3RoomAttributes;
     }
 
 
@@ -175,6 +232,7 @@ public class SymRoomAttributes {
         symRoomAttributes.setName(roomProperties.getName());
         symRoomAttributes.setReadOnly(roomProperties.getReadOnly());
         symRoomAttributes.setCreatorUser(SymUser.toSymUser(roomProperties.getCreatorUser()));
+
 
 
         return symRoomAttributes;

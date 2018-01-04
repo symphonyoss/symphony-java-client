@@ -25,6 +25,8 @@ package org.symphonyoss.symphony.clients.impl;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.symphonyoss.client.SymphonyClientConfig;
+import org.symphonyoss.client.SymphonyClientConfigID;
 import org.symphonyoss.client.exceptions.MessagesException;
 import org.symphonyoss.client.exceptions.RestException;
 import org.symphonyoss.client.model.SymAuth;
@@ -51,12 +53,19 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
 
     private final ApiClient apiClient;
     private final SymAuth symAuth;
-    private ApiVersion apiVersion = ApiVersion.V4;
+
     private Logger logger = LoggerFactory.getLogger(MessagesClientImpl.class);
 
-    public MessagesClientImpl(SymAuth symAuth, String agentUrl) {
+    /**
+     * Constructor supports custom HTTP clients
+     *
+     * @param symAuth    Authorization model containing session and key tokens
+     * @param config   Symphony Client config
+     *
+     */
+    public MessagesClientImpl(SymAuth symAuth, SymphonyClientConfig config) {
 
-        this(symAuth, agentUrl, null, null);
+        this(symAuth, config, null);
 
     }
 
@@ -64,40 +73,12 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
      * Constructor supports custom HTTP clients
      *
      * @param symAuth    Authorization model containing session and key tokens
-     * @param agentUrl   Agent URL
+     * @param config   Symphony Client Config
      * @param httpClient Custom HTTP Client
      */
-    public MessagesClientImpl(SymAuth symAuth, String agentUrl, Client httpClient) {
+    public MessagesClientImpl(SymAuth symAuth, SymphonyClientConfig config, Client httpClient) {
 
-        this(symAuth, agentUrl, httpClient, null);
-
-    }
-
-
-    /**
-     * @param symAuth    Authorization model containing session and key tokens
-     * @param agentUrl   Agent URL
-     * @param apiVersion Version of API to use
-     */
-    public MessagesClientImpl(SymAuth symAuth, String agentUrl, ApiVersion apiVersion) {
-
-        this(symAuth, agentUrl, null, apiVersion);
-    }
-
-
-    /**
-     * Constructor supports custom HTTP clients
-     *
-     * @param symAuth    Authorization model containing session and key tokens
-     * @param agentUrl   Agent URL
-     * @param httpClient Custom HTTP Client
-     * @param apiVersion Version of API to use
-     */
-    public MessagesClientImpl(SymAuth symAuth, String agentUrl, Client httpClient, ApiVersion apiVersion) {
         this.symAuth = symAuth;
-
-        if (apiVersion != null)
-            this.apiVersion = apiVersion;
 
         //Get Service client to query for userID.
         apiClient = org.symphonyoss.symphony.agent.invoker.Configuration.getDefaultApiClient();
@@ -107,9 +88,13 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
 
         apiClient.getHttpClient().register(MultiPartFeature.class);
 
-        apiClient.setBasePath(agentUrl);
+        apiClient.setBasePath(config.get(SymphonyClientConfigID.AGENT_URL));
+
 
     }
+
+
+
 
 
     /**
@@ -127,6 +112,24 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
 
         return sendMessage(SymStream.toSymStream(stream), message);
 
+
+    }
+
+
+    /**
+     * Send message to SymStream with alternate session token (OBO)
+     *
+     *
+     * @param stream  Stream to send message to
+     * @param message Message to send
+     * @param symAuth Alternate authorization containing session token to use.
+     * @return Message sent
+     * @throws MessagesException Exception caused by Symphony API calls
+     */
+    @Override
+    public SymMessage sendMessage(SymStream stream, SymMessage message, SymAuth symAuth) throws MessagesException {
+
+        return  sendMessageV4( stream, message,symAuth);
 
     }
 
@@ -285,10 +288,29 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
      */
     private SymMessage sendMessageV4(SymStream stream, SymMessage message) throws MessagesException {
 
+        return sendMessageV4(stream, message, null);
+    }
+
+
+    /**
+     * Send new v4message to stream on an alternate session ID
+     *
+     * @param altSymAuth Alternate SymAuth to use for things like OBO requests
+     * @param stream  Stream to send message to
+     * @param message Message to send
+     * @return Message sent
+     * @throws MessagesException Exception caused by Symphony API calls
+     */
+    private SymMessage sendMessageV4( SymStream stream, SymMessage message,SymAuth altSymAuth) throws MessagesException {
+
         if (stream == null || message == null) {
             throw new NullPointerException("Stream or message submission was not provided..");
         }
 
+        String sessionToken = symAuth.getSessionToken().getToken();
+
+        if(altSymAuth !=null && altSymAuth.getSessionToken()!=null)
+            sessionToken = altSymAuth.getSessionToken().getToken();
 
         MessagesApi messagesApi = new MessagesApi(apiClient);
         V4Message v4Message;
@@ -297,7 +319,7 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
 
             return SymMessage.toSymMessage(messagesApi.v4StreamSidMessageCreatePost(
                     stream.getStreamId(),
-                    symAuth.getSessionToken().getToken(),
+                    sessionToken,
                     symAuth.getKeyToken().getToken(),
                     message.getMessage(),
                     message.getEntityData(),

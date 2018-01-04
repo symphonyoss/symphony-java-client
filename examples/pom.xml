@@ -29,7 +29,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.symphonyoss</groupId>
   <artifactId>symphony-client-examples</artifactId>
-  <version>1.0.3-SNAPSHOT</version>
+  <version>1.1.1-SNAPSHOT</version>
   <name>Symphony Client Examples</name>
   <description>Symphony Client Examples</description>
 
@@ -67,7 +67,7 @@
     <dependency>
       <groupId>org.symphonyoss.symphony</groupId>
       <artifactId>symphony-client</artifactId>
-      <version>1.1.0-SNAPSHOT</version>
+      <version>1.1.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.rometools</groupId>
@@ -98,11 +98,46 @@
       <groupId>com.amazonaws</groupId>
       <artifactId>aws-java-sdk</artifactId>
       <version>${aws-sdk-version}</version>
+    <exclusions>
+      <exclusion>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+      </exclusion>
+    </exclusions>
     </dependency>
   </dependencies>
 
   <build>
     <sourceDirectory>.</sourceDirectory>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.6.0</version>
+        <executions>
+          <execution>
+
+            <goals>
+              <goal>java</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <arguments>
+          </arguments>
+          <systemProperties>
+            <systemProperty>
+              <key>symphony.config.file</key>
+              <value>resources/symphony.properties</value>
+            </systemProperty>
+            <systemProperty>
+              <key>log4j.configuration</key>
+              <value>file:resources/log4j.properties</value>
+            </systemProperty>
+          </systemProperties>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
 
 </project>

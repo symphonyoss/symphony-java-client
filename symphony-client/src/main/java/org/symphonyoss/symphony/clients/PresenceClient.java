@@ -23,7 +23,12 @@
 package org.symphonyoss.symphony.clients;
 
 import org.symphonyoss.client.exceptions.PresenceException;
+import org.symphonyoss.symphony.clients.model.SymPresence;
+import org.symphonyoss.symphony.clients.model.SymPresenceFeed;
+import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.pod.model.Presence;
+
+import java.util.List;
 
 
 /**
@@ -31,7 +36,17 @@ import org.symphonyoss.symphony.pod.model.Presence;
  */
 public interface PresenceClient {
 
-    Presence getUserPresence(Long userId) throws PresenceException;
 
-     Presence setUserPresence(Long userId, Presence presence) throws PresenceException;
+    SymPresence getUserPresence(Long userId, Boolean local) throws PresenceException;
+
+    SymPresence getUserPresence(SymUser symUser, Boolean local) throws PresenceException;
+
+    SymPresenceFeed createPresenceFeed() throws PresenceException;
+
+    void removePresenceFeed(SymPresenceFeed symPresenceFeed) throws PresenceException;
+
+    List<SymPresence> getPresenceFeedUpdates(SymPresenceFeed symPresenceFeed) throws PresenceException;
+
+
+    SymPresence setUserPresence(SymPresence presence) throws PresenceException;
 }

@@ -61,27 +61,17 @@ public class ChatService implements ChatListener {
 
     private final SymphonyClient symClient;
     private final Logger logger = LoggerFactory.getLogger(ChatService.class);
-    private ApiVersion apiVersion;
+
+
 
 
     /**
+     * Init
+     *
      * @param symClient Symphony Client required to access all underlying clients functions.
      */
     public ChatService(SymphonyClient symClient) {
 
-        this(symClient, ApiVersion.getDefault());
-
-
-    }
-
-    /**
-     * Specify a version of ChatServer to use.  Version is aligning with LLC REST API endpoint versions.
-     * @param symClient Symphony client required to access all underlying clients functions.
-     * @param apiVersion The version of the ChatServer to use which is aligned with LLC REST API endpoint versions.
-     */
-    public ChatService(SymphonyClient symClient, ApiVersion apiVersion) {
-
-        this.apiVersion = apiVersion;
         this.symClient = symClient;
 
         //Register this service against the message service which is backed by datafeed.

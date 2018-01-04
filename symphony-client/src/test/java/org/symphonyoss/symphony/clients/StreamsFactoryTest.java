@@ -38,7 +38,7 @@ public class StreamsFactoryTest {
     @Test
     public void getClient() throws Exception {
 
-        assertTrue("get DEFAULT client",  StreamsFactory.getClient(TestFactory.getSymClient(),StreamsFactory.TYPE.DEFAULT) instanceof StreamsClientImpl);
+        assertTrue("get DEFAULT client",  StreamsFactory.getClient(TestFactory.getSymClient()) instanceof StreamsClientImpl);
 
 
     }

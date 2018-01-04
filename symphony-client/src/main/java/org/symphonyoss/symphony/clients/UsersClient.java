@@ -55,4 +55,6 @@ public interface UsersClient {
     Set<SymUser> getAllUsersWithDetails() throws UsersClientException;
 
     SymUser getUserBySession(SymAuth symAuth) throws UsersClientException;
+
+    void updateUserAvatar(long userId, byte[] avatar) throws UsersClientException;
 }

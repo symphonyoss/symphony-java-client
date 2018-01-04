@@ -37,12 +37,11 @@ package org.symphonyoss.client.common;
 public class Constants {
 
     public static final String CONNECTIONS_POLL_SLEEP = "connections.poll.sleep";
-    public static final String PRESENCE_POLL_SLEEP = "presence.poll.sleep";
     public static final String SYMAUTH_REFRESH_TIME = "symauth.refresh.time";
     public static final String DATAFEED_RECOVERY_WAIT_TIME = "datafeed.recovery.wait.time";
+    public static final String PRESENCEFEED_RECOVERY_WAIT_TIME = "presencefeed.recovery.wait.time";
     public static final String USERSCLIENT_GETALLUSERS_THREADPOOL ="usersclient.getallusers.threadpool";
-    public static final String PRESENCE_POLL = "presence.poll";
     public static final String SYMUSERS_CACHE_ACCESSEDEXPIRY = "symusers.cache.accessedexpiry";
     public static final String DATAFEED_MAX_MESSAGES = "datafeed.max.messages";
-
+    public static final String DATAFEED_WAIT_TIME = "datafeed.wait.time";
 }

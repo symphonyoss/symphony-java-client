@@ -25,24 +25,40 @@
 package org.symphonyoss.symphony.clients;
 
 import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.client.SymphonyClientConfig;
+import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.symphony.clients.impl.AgentSystemClientImpl;
-import org.symphonyoss.symphony.clients.impl.AttachmentsClientImpl;
+
+import javax.ws.rs.client.Client;
 
 /**
  * @author Frank Tarsillo
  */
 public class AgentSystemClientFactory {
 
-    public enum TYPE { DEFAULT, HTTPCLIENT }
 
-    public static AgentSystemClient getClient(SymphonyClient symClient, TYPE type){
+    /**
+     * Create instance from SymClient which should have already set SymAuth
+     *
+     * @param symClient Symphony client instance
+     * @return AgentSystemClient
+     */
+    public static AgentSystemClient getClient(SymphonyClient symClient) {
 
-            if(type.equals(TYPE.HTTPCLIENT)) {
-                return new AgentSystemClientImpl(symClient.getSymAuth(), symClient.getAgentUrl(), symClient.getAgentHttpClient());
-            }else{
+        return new AgentSystemClientImpl(symClient.getSymAuth(), symClient.getConfig(), symClient.getAgentHttpClient());
 
-                return new AgentSystemClientImpl(symClient.getSymAuth(), symClient.getAgentUrl());
-            }
     }
 
+    /**
+     * Create instance from SymClient
+     *
+     * @param symAuth SymAuth
+     * @param config  Symphony client config
+     * @param client  HttpClient to use
+     * @return AgentSystemClient
+     */
+    public static AgentSystemClient getClient(SymAuth symAuth, SymphonyClientConfig config, Client client) {
+
+        return new AgentSystemClientImpl(symAuth, config, client);
+    }
 }

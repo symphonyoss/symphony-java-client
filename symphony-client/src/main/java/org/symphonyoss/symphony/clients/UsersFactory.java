@@ -23,6 +23,7 @@
 package org.symphonyoss.symphony.clients;
 
 import org.symphonyoss.client.SymphonyClient;
+import org.symphonyoss.client.SymphonyClientConfig;
 import org.symphonyoss.symphony.clients.impl.UsersClientImpl;
 import org.symphonyoss.client.model.SymAuth;
 
@@ -35,28 +36,21 @@ import javax.ws.rs.client.Client;
 @SuppressWarnings("SameParameterValue")
 public class UsersFactory {
 
-    public enum TYPE { DEFAULT, HTTPCLIENT }
 
-    public static UsersClient getClient(SymphonyClient symClient, TYPE type){
 
-        if(type.equals(TYPE.HTTPCLIENT)) {
-            return new UsersClientImpl(symClient.getSymAuth(), symClient.getPodUrl(), symClient.getPodHttpClient());
-        }else{
-            return new UsersClientImpl(symClient.getSymAuth(), symClient.getPodUrl());
-        }
-    }
-    @SuppressWarnings("unused")
-    public static UsersClient getClient(SymAuth symAuth, String podUrl, TYPE type){
+    public static UsersClient getClient(SymphonyClient symClient){
 
-        return new UsersClientImpl(symAuth, podUrl);
+            return new UsersClientImpl(symClient.getSymAuth(), symClient.getConfig(), symClient.getPodHttpClient());
 
     }
 
-    public static UsersClient getClient(SymAuth symAuth, String podUrl, Client httpClient){
+    public static UsersClient getClient(SymAuth symAuth, SymphonyClientConfig config, Client client){
 
-        return new UsersClientImpl(symAuth, podUrl, httpClient);
+        return new UsersClientImpl(symAuth, config, client);
 
     }
+
+
 
 
 }

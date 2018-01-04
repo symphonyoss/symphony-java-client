@@ -26,7 +26,7 @@
 
     <groupId>org.symphonyoss.symphony</groupId>
     <artifactId>symphony-java-client</artifactId>
-    <version>1.1.0-SNAPSHOT</version>
+    <version>1.1.2-SNAPSHOT</version>
     <name>Symphony Java Client</name>
     <packaging>pom</packaging>
     <url>https://github.com/symphonyoss/symphony-java-client</url>
@@ -89,8 +89,9 @@
         <slfj4-version>1.7.21</slfj4-version>
         <jaxrs-version>2.1</jaxrs-version>
         <junit-version>4.12</junit-version>
-        <mokito-version>2.10.0</mokito-version>
-        <jsoup-version>1.10.3</jsoup-version>
+        <mokito-version>2.4.0</mokito-version>
+        <powermock-version>1.7.0RC2</powermock-version>
+        <jsoup-version>1.11.2</jsoup-version>
         <jackson.version>2.9.1</jackson.version>
     </properties>
 
@@ -120,6 +121,19 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <version>${mokito-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-junit4</artifactId>
+            <version>${powermock-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-api-mockito2</artifactId>
+            <version>${powermock-version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jsoup</groupId>
@@ -129,6 +143,11 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.jaxrs</groupId>
+            <artifactId>jackson-jaxrs-json-provider</artifactId>
             <version>${jackson.version}</version>
         </dependency>
     </dependencies>
