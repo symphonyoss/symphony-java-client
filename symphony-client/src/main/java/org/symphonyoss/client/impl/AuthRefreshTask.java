@@ -104,18 +104,26 @@ public class AuthRefreshTask extends TimerTask {
             symClient.getSymAuth().setKeyToken(symAuth.getKeyToken());
             symClient.getSymAuth().setSessionToken(symAuth.getSessionToken());
 
+            registerHealthMBean();
+
             logger.info("Successfully refreshed SymAuth tokens...");
 
-            logger.info("Exposing SymAgentHealthCheck as JMX MBean...");
-            AgentSystemClient agentSystemClient = AgentSystemClientFactory.getClient(symClient);
-            //SymAgentHealthCheck check = agentSystemClient.getAgentHealthCheck();
-            MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
-            ObjectName mBeanName = new ObjectName("org.symphonyoss.client:type=HealthCheck");
-            mbs.registerMBean(agentSystemClient, mBeanName);
         } catch (NetworkException e) {
             logger.error("Unable to refresh SymAuth keys...", e);
-//        } catch (SystemException e) {
-//            logger.error("Cannot get SymAgentHealthCheck...", e);
+        }
+
+        return symAuth;
+
+    }
+
+    public void registerHealthMBean() {
+        logger.info("Exposing SymAgentHealthCheck as JMX MBean...");
+        AgentSystemClient agentSystemClient = AgentSystemClientFactory.getClient(symClient);
+        //SymAgentHealthCheck check = agentSystemClient.getAgentHealthCheck();
+        MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
+        try {
+            ObjectName mBeanName = new ObjectName("org.symphonyoss.client:type=HealthCheck");
+            mbs.registerMBean(agentSystemClient, mBeanName);
         } catch (MalformedObjectNameException e) {
             logger.error("Cannot expose MBean...", e);
         } catch (NotCompliantMBeanException e) {
@@ -125,10 +133,5 @@ public class AuthRefreshTask extends TimerTask {
         } catch (MBeanRegistrationException e) {
             logger.error("Cannot expose MBean...", e);
         }
-
-        return symAuth;
-
     }
-
-
 }

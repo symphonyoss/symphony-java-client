@@ -320,13 +320,13 @@ public class SymphonyBasicClient implements SymphonyClient {
         symUserCache = new DefaultUserCache(this);
 
         //Refresh token every so often..
-        TimerTask authRefreshTask = new AuthRefreshTask(this);
+        AuthRefreshTask authRefreshTask = new AuthRefreshTask(this);
         // running timer task as daemon thread
         timer = new Timer("AuthRefresh:" + this.getName(), true);
         timer.scheduleAtFixedRate(authRefreshTask, SYMAUTH_REFRESH_TIME, SYMAUTH_REFRESH_TIME);
 
-
-
+        //Publish MBean via JMX
+        authRefreshTask.registerHealthMBean();
     }
 
 
