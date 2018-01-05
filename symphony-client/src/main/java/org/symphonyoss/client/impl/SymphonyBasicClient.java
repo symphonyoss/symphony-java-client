@@ -40,8 +40,10 @@ import org.symphonyoss.symphony.clients.*;
 import org.symphonyoss.symphony.clients.model.ApiVersion;
 import org.symphonyoss.symphony.clients.model.SymUser;
 
+import javax.management.*;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import java.lang.management.ManagementFactory;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -326,9 +328,8 @@ public class SymphonyBasicClient implements SymphonyClient {
         timer.scheduleAtFixedRate(authRefreshTask, SYMAUTH_REFRESH_TIME, SYMAUTH_REFRESH_TIME);
 
         //Publish MBean via JMX
-        authRefreshTask.registerHealthMBean();
+        this.registerHealthMBean();
     }
-
 
     @Override
     public SymAuth getSymAuth() {
@@ -600,11 +601,43 @@ public class SymphonyBasicClient implements SymphonyClient {
 
 
             return httpClient;
-
-
-
     }
 
+    private void registerHealthMBean() {
+        logger.info("Exposing SymAgentHealthCheck as JMX MBean...");
+        AgentSystemClient agentSystemClient = AgentSystemClientFactory.getClient(this);
+        //SymAgentHealthCheck check = agentSystemClient.getAgentHealthCheck();
+        MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
+        try {
+            String mBeanName = "org.symphonyoss.client:type=HealthCheck";
+            ObjectName mBean = new ObjectName(mBeanName);
+            mbs.registerMBean(agentSystemClient, mBean);
+            System.out.println("Registered JMX Mbean...");
+            System.out.println(mbs.getMBeanInfo(mBean).getClassName());
+            System.out.println(mbs.getMBeanInfo(mBean).getOperations());
+        } catch (MalformedObjectNameException e) {
+            logger.error("Cannot expose MBean...", e);
+            e.printStackTrace();
+        } catch (NotCompliantMBeanException e) {
+            logger.error("Cannot expose MBean...", e);
+            e.printStackTrace();
+        } catch (InstanceAlreadyExistsException e) {
+            logger.error("Cannot expose MBean...", e);
+            e.printStackTrace();
+        } catch (MBeanRegistrationException e) {
+            logger.error("Cannot expose MBean...", e);
+            e.printStackTrace();
+        } catch (ReflectionException e) {
+            logger.error("Cannot fetch MBean...", e);
+            e.printStackTrace();
+        } catch (IntrospectionException e) {
+            logger.error("Cannot fetch MBean...", e);
+            e.printStackTrace();
+        } catch (InstanceNotFoundException e) {
+            logger.error("Cannot fetch MBean...", e);
+            e.printStackTrace();
+        }
+    }
 
 }
 
