@@ -37,6 +37,7 @@ import org.symphonyoss.client.model.CacheType;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.client.services.*;
 import org.symphonyoss.symphony.clients.*;
+import org.symphonyoss.symphony.clients.jmx.ClientCheck;
 import org.symphonyoss.symphony.clients.model.ApiVersion;
 import org.symphonyoss.symphony.clients.model.SymUser;
 
@@ -322,14 +323,17 @@ public class SymphonyBasicClient implements SymphonyClient {
         symUserCache = new DefaultUserCache(this);
 
         //Refresh token every so often..
-        AuthRefreshTask authRefreshTask = new AuthRefreshTask(this);
+        TimerTask authRefreshTask = new AuthRefreshTask(this);
         // running timer task as daemon thread
         timer = new Timer("AuthRefresh:" + this.getName(), true);
         timer.scheduleAtFixedRate(authRefreshTask, SYMAUTH_REFRESH_TIME, SYMAUTH_REFRESH_TIME);
 
+
+
         //Publish MBean via JMX
         this.registerHealthMBean();
     }
+
 
     @Override
     public SymAuth getSymAuth() {
@@ -601,41 +605,34 @@ public class SymphonyBasicClient implements SymphonyClient {
 
 
             return httpClient;
+
+
+
     }
 
     private void registerHealthMBean() {
         logger.info("Exposing SymAgentHealthCheck as JMX MBean...");
-        AgentSystemClient agentSystemClient = AgentSystemClientFactory.getClient(this);
-        //SymAgentHealthCheck check = agentSystemClient.getAgentHealthCheck();
+        ClientCheck clientCheck = new ClientCheck(this);
         MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
+        String mBeanName = "org.symphonyoss.client:type=ClientCheckMBean";
         try {
-            String mBeanName = "org.symphonyoss.client:type=HealthCheck";
             ObjectName mBean = new ObjectName(mBeanName);
-            mbs.registerMBean(agentSystemClient, mBean);
-            System.out.println("Registered JMX Mbean...");
-            System.out.println(mbs.getMBeanInfo(mBean).getClassName());
-            System.out.println(mbs.getMBeanInfo(mBean).getOperations());
-        } catch (MalformedObjectNameException e) {
-            logger.error("Cannot expose MBean...", e);
-            e.printStackTrace();
-        } catch (NotCompliantMBeanException e) {
-            logger.error("Cannot expose MBean...", e);
-            e.printStackTrace();
-        } catch (InstanceAlreadyExistsException e) {
-            logger.error("Cannot expose MBean...", e);
-            e.printStackTrace();
-        } catch (MBeanRegistrationException e) {
-            logger.error("Cannot expose MBean...", e);
-            e.printStackTrace();
+            mbs.registerMBean(clientCheck, mBean);
+            logger.info("Registered JMX Mbean: "+mbs.getMBeanInfo(mBean).getClassName());
         } catch (ReflectionException e) {
-            logger.error("Cannot fetch MBean...", e);
-            e.printStackTrace();
-        } catch (IntrospectionException e) {
-            logger.error("Cannot fetch MBean...", e);
-            e.printStackTrace();
+            logger.error("Cannot register JMX Mbean: "+mBeanName,e);
         } catch (InstanceNotFoundException e) {
-            logger.error("Cannot fetch MBean...", e);
-            e.printStackTrace();
+            logger.error("Cannot register JMX Mbean: "+mBeanName,e);
+        } catch (IntrospectionException e) {
+            logger.error("Cannot register JMX Mbean: "+mBeanName,e);
+        } catch (MBeanRegistrationException e) {
+            logger.error("Cannot register JMX Mbean: "+mBeanName,e);
+        } catch (MalformedObjectNameException e) {
+            logger.error("Cannot register JMX Mbean: "+mBeanName,e);
+        } catch (InstanceAlreadyExistsException e) {
+            logger.error("Cannot register JMX Mbean: "+mBeanName,e);
+        } catch (NotCompliantMBeanException e) {
+            logger.error("Cannot register JMX Mbean: "+mBeanName,e);
         }
     }
 
