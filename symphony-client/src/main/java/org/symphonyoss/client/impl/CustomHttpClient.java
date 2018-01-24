@@ -26,6 +26,10 @@
 package org.symphonyoss.client.impl;
 
 import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.jackson.JacksonFeature;
+import org.symphonyoss.client.SymphonyClientConfig;
+import org.symphonyoss.client.SymphonyClientConfigID;
+import org.symphonyoss.symphony.pod.invoker.JSON;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -68,13 +72,12 @@ public class CustomHttpClient {
     }
 
 
-
     /**
      * Create custom client with specific keystore.  This ignores the need for a truststore.
      *
      * @param clientKeyStore     Client (BOT) keystore file
      * @param clientKeyStorePass Client (BOT) keystore password
-     * @param clientConfig Client configuration to use when initializing client
+     * @param clientConfig       Client configuration to use when initializing client
      * @return Custom HttpClient
      * @throws Exception Generally IOExceptions thrown from instantiation.
      */
@@ -137,12 +140,10 @@ public class CustomHttpClient {
         loadKeyStore(tks, trustStore, trustStorePass);
 
 
-        return  getClient(cks, clientKeyStorePass, tks, trustStorePass, clientConfig);
+        return getClient(cks, clientKeyStorePass, tks, trustStorePass, clientConfig);
 
 
     }
-
-
 
 
     /**
@@ -170,7 +171,6 @@ public class CustomHttpClient {
 
 
     }
-
 
 
     /**
@@ -206,7 +206,7 @@ public class CustomHttpClient {
         java.io.FileInputStream fis = null;
         try {
             fis = new java.io.FileInputStream(ksFile);
-            loadKeyStore(ks,fis, ksPass);
+            loadKeyStore(ks, fis, ksPass);
         } finally {
             if (fis != null) {
                 fis.close();
@@ -219,18 +219,51 @@ public class CustomHttpClient {
     /**
      * Internal keystore loader
      *
-     * @param ks     Keystore object which defines the expected type (PKCS12, JKS)
+     * @param ks            Keystore object which defines the expected type (PKCS12, JKS)
      * @param ksInputStream Keystore InputStream  to process
-     * @param ksPass Keystore password for InputStream to process
+     * @param ksPass        Keystore password for InputStream to process
      * @throws Exception Generally IOExceptions generated from file read
      */
     //NOSONAR
     private static void loadKeyStore(KeyStore ks, InputStream ksInputStream, String ksPass) throws Exception {
 
-            ks.load(ksInputStream, ksPass.toCharArray());
+        ks.load(ksInputStream, ksPass.toCharArray());
 
     }
 
 
+    /**
+     * @param config SymphonyClientConfig
+     * @return Jersey Client
+     * @throws Exception from underlying REST API exceptions
+     */
+    public static Client getDefaultHttpClient(SymphonyClientConfig config) throws Exception {
+
+
+        Client httpClient;
+
+        ClientConfig clientConfig = new ClientConfig();
+        clientConfig.register(new JSON());
+        clientConfig.register(JacksonFeature.class);
+
+        //If a truststore file is provided..
+        if (config.get(SymphonyClientConfigID.TRUSTSTORE_FILE) != null) {
+            httpClient = CustomHttpClient.getClient(
+                    config.get(SymphonyClientConfigID.USER_CERT_FILE),
+                    config.get(SymphonyClientConfigID.USER_CERT_PASSWORD),
+                    config.get(SymphonyClientConfigID.TRUSTSTORE_FILE),
+                    config.get(SymphonyClientConfigID.TRUSTSTORE_PASSWORD), clientConfig);
+
+        } else {
+            httpClient = CustomHttpClient.getClient(
+                    config.get(SymphonyClientConfigID.USER_CERT_FILE),
+                    config.get(SymphonyClientConfigID.USER_CERT_PASSWORD), clientConfig);
+        }
+
+
+        return httpClient;
+
+
+    }
 
 }

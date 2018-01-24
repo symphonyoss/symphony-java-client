@@ -28,8 +28,8 @@ import org.symphonyoss.client.events.SymEvent;
 
 /**
  * Callback listener implemented for firehose events.
- * <p>
- * <p>
+ *
+ *
  * @author Frank Tarsillo
  */
 public interface FirehoseListener {
