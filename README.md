@@ -25,6 +25,7 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
     * Filters only on room messages
     * Real-time listeners on all room events
     * Enriches Room objects with associated system attributes
+    * Multilateral room support
     * X-Pod Support
 * Presence Service
     * Real-time notification of presence events and client functions
@@ -43,8 +44,14 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 
 ## Change log and notes
 
-## V1.1.2 (SNAPSHOT)
-* Focus on testing and implementing more APIs
+## V1.1.3 (SNAPSHOT)
+* Evaluate OBO Gateway implementation
+* Bug Fixes
+
+
+## V1.1.2
+* Bug fixes and implementation of 1.50 java binding
+* Support for multilateral chat rooms when available.
 
 ### V1.1.1 
 * Support for OBO workflow AuthenticationClient and MessagesClient modified

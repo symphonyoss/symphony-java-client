@@ -110,7 +110,7 @@ public class CreateRoomExample implements RoomServiceEventListener, RoomEventLis
             SymMessage aMessage = new SymMessage();
             aMessage.setMessageText("Hello master, I'm alive again in this room....");
 
-//If you want to see payloads debug
+            //If you want to see payloads debug
             symClient.getAgentHttpClient().property(LoggingFeature.LOGGING_FEATURE_VERBOSITY_CLIENT, LoggingFeature.Verbosity.PAYLOAD_ANY);
             symClient.getAgentHttpClient().property(LoggingFeature.LOGGING_FEATURE_LOGGER_LEVEL_CLIENT, "WARNING");
 
