@@ -245,6 +245,8 @@ public class SymphonyBasicClient implements SymphonyClient {
     @Override
     public void init(SymAuth symAuth, SymphonyClientConfig config) throws InitException {
 
+        logger.info("Initialising Symphony Java Client...");
+
         this.config = config;
         this.symAuth = symAuth;
 
@@ -328,7 +330,7 @@ public class SymphonyBasicClient implements SymphonyClient {
         timer = new Timer("AuthRefresh:" + this.getName(), true);
         timer.scheduleAtFixedRate(authRefreshTask, SYMAUTH_REFRESH_TIME, SYMAUTH_REFRESH_TIME);
 
-
+        logger.info("All Symphony Java Client services resolved and configured.");
 
         //Publish MBean via JMX
         this.registerHealthMBean();
