@@ -145,7 +145,14 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
     @Override
     public SymMessage sendMessage(SymStream stream, SymMessage message) throws MessagesException {
 
-        return (ApiVersion.V4 == message.getApiVersion()) ? sendMessageV4(stream, message) : sendMessageV2(stream, message);
+        switch (message.getApiVersion()) {
+            case V3:
+                return sendMessageV3(stream, message);
+            case V4:
+                return sendMessageV4(stream, message);
+            default:
+                return sendMessageV2(stream, message);
+        }
 
     }
 
@@ -313,7 +320,6 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
             sessionToken = altSymAuth.getSessionToken().getToken();
 
         MessagesApi messagesApi = new MessagesApi(apiClient);
-        V4Message v4Message;
         try {
 
 
@@ -354,14 +360,7 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
 
         MessagesApi messagesApi = new MessagesApi(apiClient);
 
-        V2MessageSubmission messageSubmission = new V2MessageSubmission();
-
-        messageSubmission.setMessage(message.getMessage());
-        messageSubmission.setFormat(
-
-                V2MessageSubmission.FormatEnum.MESSAGEML
-        );
-        messageSubmission.setAttachments(SymAttachmentInfo.toV2AttachmentsInfo(message.getAttachments()));
+        V2MessageSubmission messageSubmission = getV2MessageSubmission(message);
 
 
         try {
@@ -371,6 +370,45 @@ public class MessagesClientImpl implements org.symphonyoss.symphony.clients.Mess
                     new RestException(messagesApi.getApiClient().getBasePath(), e.getCode(), e));
         }
 
+    }
+
+    /**
+     * Send v3message to stream. It is similar to {@link #sendMessageV2(SymStream, SymMessage)} and should be used for OBO.
+     *
+     * @param stream  Stream to send message to
+     * @param message Message to send
+     * @return Message sent
+     * @throws MessagesException Exception caused by Symphony API calls
+     */
+    private SymMessage sendMessageV3(SymStream stream, SymMessage message) throws MessagesException {
+
+        if (stream == null || message == null) {
+            throw new NullPointerException("Stream or message submission was not provided..");
+        }
+
+        MessagesApi messagesApi = new MessagesApi(apiClient);
+
+        V2MessageSubmission messageSubmission = getV2MessageSubmission(message);
+
+        try {
+            return SymMessage.toSymMessage(messagesApi.v3StreamSidMessageCreatePost(stream.getStreamId(), symAuth.getSessionToken().getToken(), messageSubmission, symAuth.getKeyToken().getToken()));
+        } catch (ApiException e) {
+            throw new MessagesException("Failed to send message to stream: " + stream.getStreamId() + ": " + message.getMessage(),
+                new RestException(messagesApi.getApiClient().getBasePath(), e.getCode(), e));
+        }
+
+    }
+
+    private V2MessageSubmission getV2MessageSubmission(SymMessage message) {
+        V2MessageSubmission messageSubmission = new V2MessageSubmission();
+
+        messageSubmission.setMessage(message.getMessage());
+        messageSubmission.setFormat(
+
+            V2MessageSubmission.FormatEnum.MESSAGEML
+        );
+        messageSubmission.setAttachments(SymAttachmentInfo.toV2AttachmentsInfo(message.getAttachments()));
+        return messageSubmission;
     }
 
 
