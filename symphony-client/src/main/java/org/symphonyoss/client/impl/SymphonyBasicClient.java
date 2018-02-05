@@ -39,11 +39,14 @@ import org.symphonyoss.client.model.CacheType;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.client.services.*;
 import org.symphonyoss.symphony.clients.*;
+import org.symphonyoss.symphony.clients.jmx.ClientCheck;
 import org.symphonyoss.symphony.clients.model.ApiVersion;
 import org.symphonyoss.symphony.clients.model.SymUser;
 import org.symphonyoss.symphony.pod.invoker.JSON;
 
+import javax.management.*;
 import javax.ws.rs.client.Client;
+import java.lang.management.ManagementFactory;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -327,6 +330,10 @@ public class SymphonyBasicClient implements SymphonyClient {
         timer.scheduleAtFixedRate(authRefreshTask, SYMAUTH_REFRESH_TIME, SYMAUTH_REFRESH_TIME);
 
 
+        //Publish MBean via JMX
+        if (Boolean.getBoolean(config.get(SymphonyClientConfigID.HEALTHCHECK_JMX_ENABLED))) {
+            this.registerHealthMBean();
+        }
     }
 
 
@@ -579,6 +586,31 @@ public class SymphonyBasicClient implements SymphonyClient {
     }
 
 
+    private void registerHealthMBean() {
+        logger.info("Exposing SymAgentHealthCheck as JMX MBean...");
+        ClientCheck clientCheck = new ClientCheck(this);
+        MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
+        String mBeanName = "org.symphonyoss.client:type=ClientCheckMBean";
+        try {
+            ObjectName mBean = new ObjectName(mBeanName);
+            mbs.registerMBean(clientCheck, mBean);
+            logger.info("Registered JMX Mbean: "+mbs.getMBeanInfo(mBean).getClassName());
+        } catch (ReflectionException e) {
+            logger.error("Cannot register JMX Mbean: "+mBeanName,e);
+        } catch (InstanceNotFoundException e) {
+            logger.error("Cannot register JMX Mbean: "+mBeanName,e);
+        } catch (IntrospectionException e) {
+            logger.error("Cannot register JMX Mbean: "+mBeanName,e);
+        } catch (MBeanRegistrationException e) {
+            logger.error("Cannot register JMX Mbean: "+mBeanName,e);
+        } catch (MalformedObjectNameException e) {
+            logger.error("Cannot register JMX Mbean: "+mBeanName,e);
+        } catch (InstanceAlreadyExistsException e) {
+            logger.error("Cannot register JMX Mbean: "+mBeanName,e);
+        } catch (NotCompliantMBeanException e) {
+            logger.error("Cannot register JMX Mbean: "+mBeanName,e);
+        }
+    }
 
 }
 

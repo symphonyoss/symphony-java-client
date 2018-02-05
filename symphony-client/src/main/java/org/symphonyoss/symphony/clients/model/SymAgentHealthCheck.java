@@ -32,6 +32,26 @@ import org.symphonyoss.symphony.agent.model.V2HealthCheckResponse;
  */
 public class SymAgentHealthCheck {
 
+    @Override
+    public String toString() {
+        return  "OK? "+this.isUp()+"\n"+
+                "podConnectivity: "+this.podConnectivity+"\n"+
+                "podConnectivityError: "+this.podConnectivityError+"\n"+
+                "keyManagerConnectivity: "+this.keyManagerConnectivity+"\n"+
+                "keyManagerConnectivityError: "+this.keyManagerConnectivityError+"\n"+
+                "encryptDecryptSuccess: "+this.encryptDecryptSuccess+"\n"+
+                "encryptDecryptError: "+this.encryptDecryptError+"\n"+
+                "podVersion: "+this.podVersion+"\n"+
+                "agentVersion: "+this.agentVersion;
+    }
+
+    public Boolean isUp() {
+        return  this.podConnectivity &&
+                this.keyManagerConnectivity &&
+                this.encryptDecryptSuccess &&
+                !this.podVersion.isEmpty() &&
+                !this.agentVersion.isEmpty();
+    }
 
     private Boolean podConnectivity = null;
 
