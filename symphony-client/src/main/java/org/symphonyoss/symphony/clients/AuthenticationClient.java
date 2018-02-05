@@ -315,7 +315,15 @@ public class AuthenticationClient {
             AuthenticationApi authenticationApi = getAuthenticationApi();
             authenticationApi.getApiClient().setBasePath(sessionUrl);
 
-            return SymAuth.fromOboAuth(authenticationApi.v1AppUserUidAuthenticatePost(symUser.getId(), symAuth.getSessionToken().getToken()));
+            if(symUser.getId() != null) {
+
+                return SymAuth.fromOboAuth(authenticationApi.v1AppUserUidAuthenticatePost(symUser.getId(), symAuth.getSessionToken().getToken()));
+            }else if(symUser.getUsername() !=  null){
+
+                return SymAuth.fromOboAuth(authenticationApi.v1AppUsernameUsernameAuthenticatePost(symUser.getUsername(), symAuth.getSessionToken().getToken()));
+            }
+
+            return null;
 
 
         } catch (ApiException e) {

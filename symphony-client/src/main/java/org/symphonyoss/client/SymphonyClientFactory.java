@@ -22,6 +22,9 @@
 
 package org.symphonyoss.client;
 
+import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.jackson.JacksonFeature;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.exceptions.InitException;
@@ -29,6 +32,7 @@ import org.symphonyoss.client.exceptions.NetworkException;
 import org.symphonyoss.client.impl.CustomHttpClient;
 import org.symphonyoss.client.impl.SymphonyBasicClient;
 import org.symphonyoss.symphony.clients.model.ApiVersion;
+import org.symphonyoss.symphony.pod.invoker.JSON;
 
 import javax.ws.rs.client.Client;
 
@@ -66,10 +70,10 @@ public class SymphonyClientFactory {
      * Generate a new SymphonyClient and init it based on type
      *
      * @param type       The type of SymphonyClient.  Currently only BASIC is available.
-     * @param initParams SymphonyClientConfig to init
+     * @param config SymphonyClientConfig to init
      * @return A SymphonyClient instance based on type which is already instantiated.
      */
-    public static SymphonyClient getClient(TYPE type, SymphonyClientConfig initParams) {
+    public static SymphonyClient getClient(TYPE type, SymphonyClientConfig config) {
 
 
         try {
@@ -77,34 +81,21 @@ public class SymphonyClientFactory {
             //Create a basic client instance.
             SymphonyClient symClient = SymphonyClientFactory.getClient(type);
 
-            logger.debug("{} {}", initParams.get(SymphonyClientConfigID.SESSIONAUTH_URL),
-                    initParams.get(SymphonyClientConfigID.KEYAUTH_URL));
+            logger.debug("{} {}", config.get(SymphonyClientConfigID.SESSIONAUTH_URL),
+                    config.get(SymphonyClientConfigID.KEYAUTH_URL));
 
 
             try {
-                Client httpClient;
-                if (initParams.get(SymphonyClientConfigID.TRUSTSTORE_FILE) != null) {
-                    httpClient =CustomHttpClient.getClient(
-                            initParams.get(SymphonyClientConfigID.USER_CERT_FILE),
-                            initParams.get(SymphonyClientConfigID.USER_CERT_PASSWORD),
-                            initParams.get(SymphonyClientConfigID.TRUSTSTORE_FILE),
-                            initParams.get(SymphonyClientConfigID.TRUSTSTORE_PASSWORD));
 
-                }else{
-                    httpClient=CustomHttpClient.getClient(
-                            initParams.get(SymphonyClientConfigID.USER_CERT_FILE),
-                            initParams.get(SymphonyClientConfigID.USER_CERT_PASSWORD));
-                }
+                symClient.setDefaultHttpClient(CustomHttpClient.getDefaultHttpClient(config));
 
-
-                symClient.setDefaultHttpClient(httpClient);
             } catch (Exception e) {
                 logger.error("Failed to create custom http client", e);
                 return null;
             }
 
 
-            symClient.init(symClient.getDefaultHttpClient(), initParams);
+            symClient.init(symClient.getDefaultHttpClient(), config);
 
 
             return symClient;

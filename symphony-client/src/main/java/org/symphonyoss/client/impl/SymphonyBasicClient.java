@@ -23,6 +23,8 @@
 package org.symphonyoss.client.impl;
 
 
+import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.jackson.JacksonFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
@@ -40,10 +42,10 @@ import org.symphonyoss.symphony.clients.*;
 import org.symphonyoss.symphony.clients.jmx.ClientCheck;
 import org.symphonyoss.symphony.clients.model.ApiVersion;
 import org.symphonyoss.symphony.clients.model.SymUser;
+import org.symphonyoss.symphony.pod.invoker.JSON;
 
 import javax.management.*;
 import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import java.lang.management.ManagementFactory;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -106,7 +108,7 @@ public class SymphonyBasicClient implements SymphonyClient {
         this.config = config;
         try {
 
-            init(getDefaultHttpClient(config) , config);
+            init(CustomHttpClient.getDefaultHttpClient(config), config);
 
         } catch (Exception e) {
             throw new InitException("Failed to initialize network...", e);
@@ -255,11 +257,10 @@ public class SymphonyBasicClient implements SymphonyClient {
 
         try {
             if (defaultHttpClient == null)
-                defaultHttpClient = getDefaultHttpClient(config);
-        }catch(Exception e){
-            logger.error("Could not set default http client from config...",e);
+                defaultHttpClient = CustomHttpClient.getDefaultHttpClient(config);
+        } catch (Exception e) {
+            logger.error("Could not set default http client from config...", e);
         }
-
 
 
         if (podHttpClient == null)
@@ -505,7 +506,7 @@ public class SymphonyBasicClient implements SymphonyClient {
         if (getPresenceService() != null)
             getPresenceService().shutdown();
 
-        if(timer!=null)
+        if (timer != null)
             timer.cancel();
 
 
@@ -571,7 +572,6 @@ public class SymphonyBasicClient implements SymphonyClient {
         config.set(SymphonyClientConfigID.USER_EMAIL, userEmail);
 
 
-
     }
 
     /**
@@ -586,31 +586,6 @@ public class SymphonyBasicClient implements SymphonyClient {
 
     }
 
-    private Client getDefaultHttpClient(SymphonyClientConfig config) throws Exception{
-
-
-            Client httpClient;
-
-            //If a truststore file is provided..
-            if (config.get(SymphonyClientConfigID.TRUSTSTORE_FILE) != null) {
-                httpClient = CustomHttpClient.getClient(
-                        config.get(SymphonyClientConfigID.USER_CERT_FILE),
-                        config.get(SymphonyClientConfigID.USER_CERT_PASSWORD),
-                        config.get(SymphonyClientConfigID.TRUSTSTORE_FILE),
-                        config.get(SymphonyClientConfigID.TRUSTSTORE_PASSWORD));
-
-            } else {
-                httpClient = CustomHttpClient.getClient(
-                        config.get(SymphonyClientConfigID.USER_CERT_FILE),
-                        config.get(SymphonyClientConfigID.USER_CERT_PASSWORD));
-            }
-
-
-            return httpClient;
-
-
-
-    }
 
     private void registerHealthMBean() {
         logger.info("Exposing SymAgentHealthCheck as JMX MBean...");

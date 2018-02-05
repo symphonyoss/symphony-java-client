@@ -25,6 +25,7 @@
 package roomsession;
 
 
+import org.glassfish.jersey.logging.LoggingFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClient;
@@ -33,6 +34,7 @@ import org.symphonyoss.client.SymphonyClientFactory;
 import org.symphonyoss.client.events.*;
 import org.symphonyoss.client.exceptions.MessagesException;
 import org.symphonyoss.client.exceptions.RoomException;
+import org.symphonyoss.client.exceptions.StreamsException;
 import org.symphonyoss.client.model.Room;
 import org.symphonyoss.client.services.RoomEventListener;
 import org.symphonyoss.client.services.RoomService;
@@ -40,6 +42,8 @@ import org.symphonyoss.client.services.RoomServiceEventListener;
 import org.symphonyoss.symphony.agent.model.*;
 import org.symphonyoss.symphony.clients.model.SymMessage;
 import org.symphonyoss.symphony.clients.model.SymRoomAttributes;
+import org.symphonyoss.symphony.clients.model.SymRoomDetail;
+import org.symphonyoss.symphony.pod.invoker.JSON;
 
 
 /**
@@ -106,13 +110,19 @@ public class CreateRoomExample implements RoomServiceEventListener, RoomEventLis
             SymMessage aMessage = new SymMessage();
             aMessage.setMessageText("Hello master, I'm alive again in this room....");
 
+            //If you want to see payloads debug
+            symClient.getAgentHttpClient().property(LoggingFeature.LOGGING_FEATURE_VERBOSITY_CLIENT, LoggingFeature.Verbosity.PAYLOAD_ANY);
+            symClient.getAgentHttpClient().property(LoggingFeature.LOGGING_FEATURE_LOGGER_LEVEL_CLIENT, "WARNING");
+
+
 
             //Define the room to create
             SymRoomAttributes roomAttributes = new SymRoomAttributes();
-            roomAttributes.setName("TEST ROOM 1");
+            roomAttributes.setName("TEST ROOM 9");
             roomAttributes.setDescription("SJC Test room creation");
             roomAttributes.setDiscoverable(true);
             roomAttributes.setPublic(true);
+            roomAttributes.setMembersCanInvite(true);
 
             //Create the room
             Room room = symClient.getRoomService().createRoom(roomAttributes);

@@ -60,6 +60,8 @@ public class SymRoomAttributes {
 
     private Boolean viewHistory = null;
 
+    private Boolean multiLateralRoom = null;
+
 
     public SymUser getCreatorUser() {
         return creatorUser;
@@ -151,6 +153,14 @@ public class SymRoomAttributes {
         this.viewHistory = viewHistory;
     }
 
+    public Boolean getMultiLateralRoom() {
+        return multiLateralRoom;
+    }
+
+    public void setMultiLateralRoom(Boolean multiLateralRoom) {
+        this.multiLateralRoom = multiLateralRoom;
+    }
+
     public static SymRoomAttributes toSymRoomAttributes(V2RoomAttributes roomAttributes) {
 
         SymRoomAttributes symRoomAttributes = new SymRoomAttributes();
@@ -197,6 +207,9 @@ public class SymRoomAttributes {
         symRoomAttributes.setReadOnly(roomAttributes.getReadOnly());
         symRoomAttributes.setCrossPod(roomAttributes.getCrossPod());
         symRoomAttributes.setViewHistory(roomAttributes.getViewHistory());
+        if (roomAttributes.getMultiLateralRoom() != null)
+            symRoomAttributes.setMultiLateralRoom(roomAttributes.getMultiLateralRoom());
+
         return symRoomAttributes;
     }
 
@@ -213,6 +226,8 @@ public class SymRoomAttributes {
         v3RoomAttributes.setReadOnly(roomAttributes.getReadOnly());
         v3RoomAttributes.setCrossPod(roomAttributes.getCrossPod());
         v3RoomAttributes.setViewHistory(roomAttributes.getViewHistory());
+        if (roomAttributes.getMultiLateralRoom() != null)
+            v3RoomAttributes.setMultiLateralRoom(roomAttributes.getMultiLateralRoom());
 
         return v3RoomAttributes;
     }
@@ -232,7 +247,6 @@ public class SymRoomAttributes {
         symRoomAttributes.setName(roomProperties.getName());
         symRoomAttributes.setReadOnly(roomProperties.getReadOnly());
         symRoomAttributes.setCreatorUser(SymUser.toSymUser(roomProperties.getCreatorUser()));
-
 
 
         return symRoomAttributes;
