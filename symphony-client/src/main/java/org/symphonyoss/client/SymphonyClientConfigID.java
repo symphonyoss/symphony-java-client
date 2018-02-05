@@ -29,7 +29,7 @@ public enum SymphonyClientConfigID {
     USER_EMAIL,
     RECEIVER_EMAIL(false),
     DISABLE_SERVICES("False", false),
-    HEALTHCHECK_JMX_ENABLED("False", false);
+    HEALTHCHECK_JMX_ENABLED("True", true);
     
     private final String altName;
     private final String propName;

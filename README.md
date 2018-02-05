@@ -169,12 +169,15 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
        
 #### Exposing JMX HealthCheck endpoint
 
-By specifying `-Dhealthcheck.jmx.enabled`, the client will expose a JMX client called `org.symphonyoss
+The `-Dhealthcheck.jmx.enabled` option is enabled by default and exposes a JMX client called `org
+.symphonyoss
 .client:type=ClientCheckMBean`, with one operation called `isUp` that returns `true` if connections with
 pod/keymanager are successful and encryption/decryption works; otherwise, it will throw a `SystemException` with a
 detail of the failed checks.
 
-Using Jolokia, the URL to invoke the operation would be http://localhost:8778/jolokia/exec/org.symphonyoss.client:type=ClientCheckMBean/isUp
+Using Jolokia, the URL to invoke the operation would be http://localhost:8778/jolokia/exec/org.symphonyoss.client:type=ClientCheckMBean/isUp and can be configured as probe for application readiness and liveness (as with
+[Kubernetes](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/) and
+[OpenShift](https://docs.openshift.com/enterprise/3.0/dev_guide/application_health.html)
 
 #### Other key requirements: 
 
