@@ -331,9 +331,10 @@ public class SymphonyBasicClient implements SymphonyClient {
 
 
         //Publish MBean via JMX
-        if (Boolean.getBoolean(config.get(SymphonyClientConfigID.HEALTHCHECK_JMX_ENABLED))) {
+        // TODO - HEALTHCHECK_JMX_ENABLED config is not working right now, will be added as new feature later on
+        //if (Boolean.getBoolean(config.get(SymphonyClientConfigID.HEALTHCHECK_JMX_ENABLED))) {
             this.registerHealthMBean();
-        }
+        //}
     }
 
 
