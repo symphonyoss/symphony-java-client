@@ -257,7 +257,7 @@ public class MessageService implements DataFeedListener {
         logger.debug("{} event type received...", symEvent.getType());
 
 
-        if (symEvent.getId() == null && symEvent.getType() != null)
+        if (symEvent.getType() != null)
             return;
 
 
