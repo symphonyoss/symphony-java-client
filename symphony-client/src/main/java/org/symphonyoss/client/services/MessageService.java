@@ -264,6 +264,7 @@ public class MessageService implements DataFeedListener {
         SymEventTypes.Type type = SymEventTypes.Type.fromValue(symEvent.getType());
 
 
+        //All events require a Type
         if (type == null)
             return;
 
