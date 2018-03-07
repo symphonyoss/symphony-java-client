@@ -44,14 +44,16 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 
 ## Change log and notes
 
-## V1.1.4 (SNAPSHOT)
-* Bug Fixes
+## V1.1.5 (SNAPSHOT)
 
-## V1.1.3
+## V1.1.4
 * Major bug fix (1.50+) to accept real-time events that do not include event ids as this is now optional.
 * New SymphonyClientConfig builder added
 * Evaluate OBO Gateway implementation
 * Bug Fixes
+
+## V1.1.3 -(FAILED RELEASE)
+* DO NOT USE
 
 
 ## V1.1.2
