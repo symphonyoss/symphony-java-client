@@ -19,6 +19,7 @@ package org.symphonyoss.client;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class SymphonyClientConfigBuilderTest
 {
@@ -64,16 +65,16 @@ public class SymphonyClientConfigBuilderTest
             .withReceiverEmail(null)
             .build();
 
-        assertEquals(null, config.rawGet(SymphonyClientConfigID.SESSIONAUTH_URL));
-        assertEquals(null, config.rawGet(SymphonyClientConfigID.KEYAUTH_URL));
-        assertEquals(null, config.rawGet(SymphonyClientConfigID.POD_URL));
-        assertEquals(null, config.rawGet(SymphonyClientConfigID.AGENT_URL));
-        assertEquals(null, config.rawGet(SymphonyClientConfigID.TRUSTSTORE_FILE));
-        assertEquals(null, config.rawGet(SymphonyClientConfigID.TRUSTSTORE_PASSWORD));
-        assertEquals(null, config.rawGet(SymphonyClientConfigID.USER_EMAIL));
-        assertEquals(null, config.rawGet(SymphonyClientConfigID.USER_CERT_FILE));
-        assertEquals(null, config.rawGet(SymphonyClientConfigID.USER_CERT_PASSWORD));
-        assertEquals(null, config.rawGet(SymphonyClientConfigID.RECEIVER_EMAIL));
+        assertNull(config.get(SymphonyClientConfigID.SESSIONAUTH_URL));
+        assertNull(config.get(SymphonyClientConfigID.KEYAUTH_URL));
+        assertNull(config.get(SymphonyClientConfigID.POD_URL));
+        assertNull(config.get(SymphonyClientConfigID.AGENT_URL));
+        assertNull(config.get(SymphonyClientConfigID.TRUSTSTORE_FILE));
+        assertNull(config.get(SymphonyClientConfigID.TRUSTSTORE_PASSWORD));
+        assertNull(config.get(SymphonyClientConfigID.USER_EMAIL));
+        assertNull(config.get(SymphonyClientConfigID.USER_CERT_FILE));
+        assertNull(config.get(SymphonyClientConfigID.USER_CERT_PASSWORD));
+        assertNull(config.get(SymphonyClientConfigID.RECEIVER_EMAIL));
     }
 
     @Test
