@@ -33,6 +33,7 @@ import org.symphonyoss.symphony.agent.api.AttachmentsApi;
 import org.symphonyoss.symphony.agent.api.DatafeedApi;
 import org.symphonyoss.symphony.agent.api.MessagesApi;
 import org.symphonyoss.symphony.agent.api.ShareApi;
+import org.symphonyoss.symphony.agent.api.SignalsApi;
 import org.symphonyoss.symphony.clients.SymphonyApis;
 import org.symphonyoss.symphony.pod.api.*;
 
@@ -49,7 +50,7 @@ public class SymphonyApisImpl implements SymphonyApis {
 
     private final SymAuth symAuth;
     private org.symphonyoss.symphony.pod.invoker.ApiClient podApiClient;
-    private org.symphonyoss.symphony.agent.invoker.ApiClient agentApiCient;
+    private org.symphonyoss.symphony.agent.invoker.ApiClient agentApiClient;
 
 
     private final Logger logger = LoggerFactory.getLogger(SymphonyApisImpl.class);
@@ -87,10 +88,10 @@ public class SymphonyApisImpl implements SymphonyApis {
 
 
         //Get Service client to query for userID.
-        agentApiCient = org.symphonyoss.symphony.agent.invoker.Configuration.getDefaultApiClient();
+        agentApiClient = org.symphonyoss.symphony.agent.invoker.Configuration.getDefaultApiClient();
         if (agentHttpClient != null)
-            agentApiCient.setHttpClient(agentHttpClient);
-        agentApiCient.setBasePath(config.get(SymphonyClientConfigID.AGENT_URL));
+            agentApiClient.setHttpClient(agentHttpClient);
+        agentApiClient.setBasePath(config.get(SymphonyClientConfigID.AGENT_URL));
 
 
     }
@@ -98,7 +99,7 @@ public class SymphonyApisImpl implements SymphonyApis {
 
     @Override
     public AttachmentsApi getAttachmentsApi() {
-        return new AttachmentsApi(agentApiCient);
+        return new AttachmentsApi(agentApiClient);
     }
 
     @Override
@@ -109,12 +110,12 @@ public class SymphonyApisImpl implements SymphonyApis {
 
     @Override
     public DatafeedApi getDatafeedApi() {
-        return new DatafeedApi(agentApiCient);
+        return new DatafeedApi(agentApiClient);
     }
 
     @Override
     public MessagesApi getMessagesApi() {
-        return new MessagesApi(agentApiCient);
+        return new MessagesApi(agentApiClient);
     }
 
     @Override
@@ -144,7 +145,7 @@ public class SymphonyApisImpl implements SymphonyApis {
 
     @Override
     public ShareApi getShareApi() {
-        return new ShareApi(agentApiCient);
+        return new ShareApi(agentApiClient);
     }
 
 
@@ -155,7 +156,7 @@ public class SymphonyApisImpl implements SymphonyApis {
 
     @Override
     public org.symphonyoss.symphony.agent.api.SystemApi getAgentSystemApi() {
-        return new org.symphonyoss.symphony.agent.api.SystemApi(agentApiCient);
+        return new org.symphonyoss.symphony.agent.api.SystemApi(agentApiClient);
     }
 
 
@@ -194,6 +195,10 @@ public class SymphonyApisImpl implements SymphonyApis {
         return new SessionApi(podApiClient);
     }
 
+    @Override
+    public SignalsApi getSignalsApi() {
+    		return new SignalsApi(agentApiClient);
+    }
 
 }
 
