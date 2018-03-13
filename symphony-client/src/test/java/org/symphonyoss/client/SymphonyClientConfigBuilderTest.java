@@ -65,16 +65,16 @@ public class SymphonyClientConfigBuilderTest
             .withReceiverEmail(null)
             .build();
 
-        assertNull(config.get(SymphonyClientConfigID.SESSIONAUTH_URL));
-        assertNull(config.get(SymphonyClientConfigID.KEYAUTH_URL));
-        assertNull(config.get(SymphonyClientConfigID.POD_URL));
-        assertNull(config.get(SymphonyClientConfigID.AGENT_URL));
-        assertNull(config.get(SymphonyClientConfigID.TRUSTSTORE_FILE));
-        assertNull(config.get(SymphonyClientConfigID.TRUSTSTORE_PASSWORD));
-        assertNull(config.get(SymphonyClientConfigID.USER_EMAIL));
-        assertNull(config.get(SymphonyClientConfigID.USER_CERT_FILE));
-        assertNull(config.get(SymphonyClientConfigID.USER_CERT_PASSWORD));
-        assertNull(config.get(SymphonyClientConfigID.RECEIVER_EMAIL));
+        assertNull(config.rawGet(SymphonyClientConfigID.SESSIONAUTH_URL));
+        assertNull(config.rawGet(SymphonyClientConfigID.KEYAUTH_URL));
+        assertNull(config.rawGet(SymphonyClientConfigID.POD_URL));
+        assertNull(config.rawGet(SymphonyClientConfigID.AGENT_URL));
+        assertNull(config.rawGet(SymphonyClientConfigID.TRUSTSTORE_FILE));
+        assertNull(config.rawGet(SymphonyClientConfigID.TRUSTSTORE_PASSWORD));
+        assertNull(config.rawGet(SymphonyClientConfigID.USER_EMAIL));
+        assertNull(config.rawGet(SymphonyClientConfigID.USER_CERT_FILE));
+        assertNull(config.rawGet(SymphonyClientConfigID.USER_CERT_PASSWORD));
+        assertNull(config.rawGet(SymphonyClientConfigID.RECEIVER_EMAIL));
     }
 
     @Test
