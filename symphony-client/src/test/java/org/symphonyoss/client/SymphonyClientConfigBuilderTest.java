@@ -37,18 +37,18 @@ public class SymphonyClientConfigBuilderTest
                                                                  .withJMXHealthcheck(true)
                                                                  .build();
 
-        assertEquals("dummyValue-SessionAuthUrl",     config.get(SymphonyClientConfigID.SESSIONAUTH_URL));
-        assertEquals("dummyValue-KeyAuthUrl",         config.get(SymphonyClientConfigID.KEYAUTH_URL));
-        assertEquals("dummyValue-PodUrl",             config.get(SymphonyClientConfigID.POD_URL));
-        assertEquals("dummyValue-AgentUrl",           config.get(SymphonyClientConfigID.AGENT_URL));
-        assertEquals("dummyValue-TrustStoreFile",     config.get(SymphonyClientConfigID.TRUSTSTORE_FILE));
-        assertEquals("dummyValue-TrustStorePassword", config.get(SymphonyClientConfigID.TRUSTSTORE_PASSWORD));
-        assertEquals("dummyValue-UserEmail",          config.get(SymphonyClientConfigID.USER_EMAIL));
-        assertEquals("dummyValue-UserCertFile",       config.get(SymphonyClientConfigID.USER_CERT_FILE));
-        assertEquals("dummyValue-UserCertPassword",   config.get(SymphonyClientConfigID.USER_CERT_PASSWORD));
-        assertEquals("dummyValue-ReceiverEmail",      config.get(SymphonyClientConfigID.RECEIVER_EMAIL));
-        assertEquals(String.valueOf(false),                    config.get(SymphonyClientConfigID.DISABLE_SERVICES));
-        assertEquals(String.valueOf(true),                     config.get(SymphonyClientConfigID.HEALTHCHECK_JMX_ENABLED));
+        assertEquals("dummyValue-SessionAuthUrl",     config.rawGet(SymphonyClientConfigID.SESSIONAUTH_URL));
+        assertEquals("dummyValue-KeyAuthUrl",         config.rawGet(SymphonyClientConfigID.KEYAUTH_URL));
+        assertEquals("dummyValue-PodUrl",             config.rawGet(SymphonyClientConfigID.POD_URL));
+        assertEquals("dummyValue-AgentUrl",           config.rawGet(SymphonyClientConfigID.AGENT_URL));
+        assertEquals("dummyValue-TrustStoreFile",     config.rawGet(SymphonyClientConfigID.TRUSTSTORE_FILE));
+        assertEquals("dummyValue-TrustStorePassword", config.rawGet(SymphonyClientConfigID.TRUSTSTORE_PASSWORD));
+        assertEquals("dummyValue-UserEmail",          config.rawGet(SymphonyClientConfigID.USER_EMAIL));
+        assertEquals("dummyValue-UserCertFile",       config.rawGet(SymphonyClientConfigID.USER_CERT_FILE));
+        assertEquals("dummyValue-UserCertPassword",   config.rawGet(SymphonyClientConfigID.USER_CERT_PASSWORD));
+        assertEquals("dummyValue-ReceiverEmail",      config.rawGet(SymphonyClientConfigID.RECEIVER_EMAIL));
+        assertEquals(String.valueOf(false),                    config.rawGet(SymphonyClientConfigID.DISABLE_SERVICES));
+        assertEquals(String.valueOf(true),                     config.rawGet(SymphonyClientConfigID.HEALTHCHECK_JMX_ENABLED));
     }
 
     @Test
@@ -64,16 +64,16 @@ public class SymphonyClientConfigBuilderTest
             .withReceiverEmail(null)
             .build();
 
-        assertEquals(null, config.get(SymphonyClientConfigID.SESSIONAUTH_URL));
-        assertEquals(null, config.get(SymphonyClientConfigID.KEYAUTH_URL));
-        assertEquals(null, config.get(SymphonyClientConfigID.POD_URL));
-        assertEquals(null, config.get(SymphonyClientConfigID.AGENT_URL));
-        assertEquals(null, config.get(SymphonyClientConfigID.TRUSTSTORE_FILE));
-        assertEquals(null, config.get(SymphonyClientConfigID.TRUSTSTORE_PASSWORD));
-        assertEquals(null, config.get(SymphonyClientConfigID.USER_EMAIL));
-        assertEquals(null, config.get(SymphonyClientConfigID.USER_CERT_FILE));
-        assertEquals(null, config.get(SymphonyClientConfigID.USER_CERT_PASSWORD));
-        assertEquals(null, config.get(SymphonyClientConfigID.RECEIVER_EMAIL));
+        assertEquals(null, config.rawGet(SymphonyClientConfigID.SESSIONAUTH_URL));
+        assertEquals(null, config.rawGet(SymphonyClientConfigID.KEYAUTH_URL));
+        assertEquals(null, config.rawGet(SymphonyClientConfigID.POD_URL));
+        assertEquals(null, config.rawGet(SymphonyClientConfigID.AGENT_URL));
+        assertEquals(null, config.rawGet(SymphonyClientConfigID.TRUSTSTORE_FILE));
+        assertEquals(null, config.rawGet(SymphonyClientConfigID.TRUSTSTORE_PASSWORD));
+        assertEquals(null, config.rawGet(SymphonyClientConfigID.USER_EMAIL));
+        assertEquals(null, config.rawGet(SymphonyClientConfigID.USER_CERT_FILE));
+        assertEquals(null, config.rawGet(SymphonyClientConfigID.USER_CERT_PASSWORD));
+        assertEquals(null, config.rawGet(SymphonyClientConfigID.RECEIVER_EMAIL));
     }
 
     @Test
@@ -88,7 +88,7 @@ public class SymphonyClientConfigBuilderTest
             .withUserCreds(null, null, null)
             .build();
 
-        assertEquals(String.valueOf(false), config.get(SymphonyClientConfigID.DISABLE_SERVICES));
-        assertEquals(String.valueOf(true),  config.get(SymphonyClientConfigID.HEALTHCHECK_JMX_ENABLED));
+        assertEquals(String.valueOf(false), config.rawGet(SymphonyClientConfigID.DISABLE_SERVICES));
+        assertEquals(String.valueOf(true),  config.rawGet(SymphonyClientConfigID.HEALTHCHECK_JMX_ENABLED));
     }
 }

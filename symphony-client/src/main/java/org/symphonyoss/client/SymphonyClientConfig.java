@@ -104,8 +104,28 @@ public class SymphonyClientConfig {
     }
 
 
+    /**
+     * This method is intended for use in unit tests that need to be able to treat this class as a DTO.
+     *
+     * @param id The configuration parameter to retrieve.
+     * @return The value of that configuration parameter, as stored in memory.
+     */
+    public String rawGet(SymphonyClientConfigID id)
+    {
+        return(config.getProperty(id.getPropName()));
+    }
+
+
+    /**
+     * This method does some unusual shenanigans that probably belong elsewhere, so that this class can be a true DTO.
+     * A refactoring task for another day...
+     *
+     * @param id The configuration parameter to retrieve.
+     * @return The value of that configuration parameter, as stored in memory, or one of several Java "system properties"
+     * or environment variables with names vaguely similar to <code>id</code>.  Basically non-deterministic, so YMMV.
+     */
     public String get(SymphonyClientConfigID id) {
-        String value = config.getProperty(id.getPropName());
+        String value = rawGet(id);
 
         if (value == null)
             value = System.getProperty(id.getPropName());
