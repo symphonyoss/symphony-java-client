@@ -21,8 +21,11 @@ import static org.junit.Assert.fail;
 
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.symphonyoss.client.exceptions.ProgramFault;
 
@@ -31,6 +34,20 @@ public class SymphonyClientConfigTest {
 	private static final String SESSIONAUTH_NAME = "sessionauth.url";
 	private static final String SESSIONAUTH_URI = "https://corporate-api.symphony.com:8444/sessionauth";
 	private static final String OVERRIDE = "OVERRIDE";
+	
+	private Properties backup=null;
+	
+	@Before
+	public void backupProperties() {
+		backup=new Properties();
+		backup.putAll(System.getProperties());
+	}
+	
+	@After
+	public void restoreProperties() {
+		System.setProperties(backup);
+		backup=new Properties();
+	}
 	
 	@Test
     public void configTest() {
