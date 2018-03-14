@@ -242,6 +242,13 @@ public interface SymphonyClient {
     ShareClient getShareClient();
 
     /**
+     * Provides instance of the Signals client.  This client supports the management of signals.
+     *
+     * @return {@link SignalsClient}
+     */
+    SignalsClient getSignalsClient();
+
+    /**
      * If set, returns the custom http client set during initialization.
      *
      * @return {@link Client}
