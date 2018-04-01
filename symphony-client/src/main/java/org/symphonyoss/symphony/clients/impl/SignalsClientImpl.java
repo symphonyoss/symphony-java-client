@@ -21,7 +21,6 @@
  * under the License.
  *
  */
-
 /**
  * @author dovkatz on 03/13/2018
  */
@@ -90,6 +89,16 @@ public class SignalsClientImpl implements SignalsClient {
 		apiClient.setBasePath(config.get(SymphonyClientConfigID.AGENT_URL));
 	}
 
+	/**
+	 * Creates a signal based on a given query
+	 *
+	 * @param signal
+	 *            The Signal object containing the query, name, and
+	 *            visibility/company-wide settings to use
+	 *
+	 * @return the SymSignal object that was created, including the timestamp, and
+	 *         ID
+	 */
 	@Override
 	public SymSignal createSignal(SymSignal signal) throws SignalsException {
 		SignalsApi api = new SignalsApi(apiClient);
@@ -103,6 +112,18 @@ public class SignalsClientImpl implements SignalsClient {
 		}
 	}
 
+	/**
+	 * Updates an existing signal
+	 * 
+	 * @param id
+	 *            The ID of the signal to be updated
+	 * 
+	 * @param signal
+	 *            The SymSignal object containing the updated fields
+	 *
+	 * @return the SymSignal object that was updated
+	 * 
+	 */
 	@Override
 	public SymSignal updateSignal(String id, SymSignal signal) throws SignalsException {
 		SignalsApi api = new SignalsApi(apiClient);
@@ -116,6 +137,13 @@ public class SignalsClientImpl implements SignalsClient {
 		}
 	}
 
+	/**
+	 * Deletes an existing signal
+	 * 
+	 * @param id
+	 *            The ID of the signal to be deleted
+	 * 
+	 */
 	@Override
 	public void deleteSignal(String id) throws SignalsException {
 		SignalsApi api = new SignalsApi(apiClient);
@@ -126,6 +154,16 @@ public class SignalsClientImpl implements SignalsClient {
 		}
 	}
 
+	/**
+	 * Retrieves an existing signal. Can be public signals, or signals owned by the
+	 * current session owner
+	 * 
+	 * @param id
+	 *            The ID of the signal to be updated
+	 * 
+	 * @return the SymSignal object with that ID
+	 * 
+	 */
 	@Override
 	public SymSignal getSignal(String id) throws SignalsException {
 		SignalsApi api = new SignalsApi(apiClient);
@@ -138,6 +176,19 @@ public class SignalsClientImpl implements SignalsClient {
 		}
 	}
 
+	/**
+	 * Lists all signals owned by or subscribed to by the current session owner.
+	 * 
+	 * @param skip
+	 *            Offset - number of items to skip in the list
+	 * 
+	 * @param limit
+	 *            Maximum number of results to return (Hard maximum according to
+	 *            REST API is 500)
+	 * 
+	 * @return List of SymSignal instances
+	 * 
+	 */
 	@Override
 	public List<SymSignal> listSignals(int skip, int limit) throws SignalsException {
 		SignalsApi api = new SignalsApi(apiClient);
@@ -150,6 +201,22 @@ public class SignalsClientImpl implements SignalsClient {
 		}
 	}
 
+	/**
+	 * Lists all subscribers of a given signal
+	 * 
+	 * @param id
+	 *            ID of the signal
+	 * 
+	 * @param skip
+	 *            Offset - number of items to skip in the list
+	 * 
+	 * @param limit
+	 *            Maximum number of results to return (Hard maximum according to
+	 *            REST API is 500)
+	 * 
+	 * @return List of subscribers
+	 * 
+	 */
 	@Override
 	public SymChannelSubscriberResponse listSubscribers(String id, BigDecimal skip, BigDecimal limit)
 			throws SignalsException {
@@ -163,6 +230,15 @@ public class SignalsClientImpl implements SignalsClient {
 		}
 	}
 
+	/**
+	 * Subscribes the current session owner to a given signal
+	 * 
+	 * @param id
+	 *            ID of the signal
+	 * 
+	 * @return API response of subscription operation
+	 * 
+	 */
 	@Override
 	public ChannelSubscriptionResponse subscribe(String id) throws SignalsException {
 		SignalsApi api = new SignalsApi(apiClient);
@@ -174,6 +250,22 @@ public class SignalsClientImpl implements SignalsClient {
 		}
 	}
 
+	/**
+	 * Subscribes the set of specified users to a given symbol
+	 * 
+	 * @param id
+	 *            ID of the signal
+	 * 
+	 * @param pushed
+	 *            Force-push the signal (they cannot unsubscribe)
+	 * 
+	 * @param userIds
+	 *            List of userIDs to subscribe (maximum 100 per operation per REST
+	 *            API Docs)
+	 * 
+	 * @return API response of subscription operation
+	 * 
+	 */
 	@Override
 	public ChannelSubscriptionResponse bulkSubscribe(String id, boolean pushed, List<BigDecimal> userIds)
 			throws SignalsException {
@@ -186,6 +278,15 @@ public class SignalsClientImpl implements SignalsClient {
 		}
 	}
 
+	/**
+	 * Unsubscribes the session owner of specified users to a given symbol
+	 * 
+	 * @param id
+	 *            ID of the signal
+	 *            
+	 * @return API response of unsubscription operation
+	 * 
+	 */
 	@Override
 	public ChannelSubscriptionResponse unsubscribe(String id) throws SignalsException {
 		SignalsApi api = new SignalsApi(apiClient);
@@ -197,6 +298,19 @@ public class SignalsClientImpl implements SignalsClient {
 		}
 	}
 
+	/**
+	 * Unsubscribes the set of specified users to a given symbol
+	 * 
+	 * @param id
+	 *            ID of the signal
+	 * 
+	 * @param userIds
+	 *            List of userIDs to unsubscribe (maximum 100 per operation per REST
+	 *            API Docs)
+	 * 
+	 * @return API response of unsubscription operation
+	 * 
+	 */
 	@Override
 	public ChannelSubscriptionResponse bulkUnsubscribe(String id, List<BigDecimal> userIds) throws SignalsException {
 		SignalsApi api = new SignalsApi(apiClient);
