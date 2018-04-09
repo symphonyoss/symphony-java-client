@@ -101,7 +101,7 @@ public class SignalsClientImpl implements SignalsClient {
 	 */
 	@Override
 	public SymSignal createSignal(SymSignal signal) throws SignalsException {
-		SignalsApi api = new SignalsApi(apiClient);
+		SignalsApi api = createSignalsApi();
 		BaseSignal base = SymSignal.toBaseSignal(signal);
 		try {
 			Signal result = api.v1SignalsCreatePost(symAuth.getSessionToken().getToken(), base,
@@ -110,6 +110,14 @@ public class SignalsClientImpl implements SignalsClient {
 		} catch (ApiException ex) {
 			throw new SignalsException(ex);
 		}
+	}
+
+	/**
+	 * @return SignalsApi instance
+	 */
+	public SignalsApi createSignalsApi() {
+		SignalsApi api = new SignalsApi(apiClient);
+		return api;
 	}
 
 	/**
@@ -126,7 +134,7 @@ public class SignalsClientImpl implements SignalsClient {
 	 */
 	@Override
 	public SymSignal updateSignal(String id, SymSignal signal) throws SignalsException {
-		SignalsApi api = new SignalsApi(apiClient);
+		SignalsApi api = createSignalsApi();
 		BaseSignal base = SymSignal.toBaseSignal(signal);
 		try {
 			Signal result = api.v1SignalsIdUpdatePost(symAuth.getSessionToken().getToken(), id, base,
@@ -146,7 +154,7 @@ public class SignalsClientImpl implements SignalsClient {
 	 */
 	@Override
 	public void deleteSignal(String id) throws SignalsException {
-		SignalsApi api = new SignalsApi(apiClient);
+		SignalsApi api = createSignalsApi();
 		try {
 			api.v1SignalsIdDeletePost(symAuth.getSessionToken().getToken(), id, symAuth.getKeyToken().getToken());
 		} catch (ApiException ex) {
@@ -166,7 +174,7 @@ public class SignalsClientImpl implements SignalsClient {
 	 */
 	@Override
 	public SymSignal getSignal(String id) throws SignalsException {
-		SignalsApi api = new SignalsApi(apiClient);
+		SignalsApi api = createSignalsApi();
 		try {
 			Signal result = api.v1SignalsIdGetGet(symAuth.getSessionToken().getToken(), id,
 					symAuth.getKeyToken().getToken());
@@ -191,7 +199,7 @@ public class SignalsClientImpl implements SignalsClient {
 	 */
 	@Override
 	public List<SymSignal> listSignals(int skip, int limit) throws SignalsException {
-		SignalsApi api = new SignalsApi(apiClient);
+		SignalsApi api = createSignalsApi();
 		try {
 			SignalList result = api.v1SignalsListGet(symAuth.getSessionToken().getToken(),
 					symAuth.getKeyToken().getToken(), skip, limit);
@@ -220,7 +228,7 @@ public class SignalsClientImpl implements SignalsClient {
 	@Override
 	public SymChannelSubscriberResponse listSubscribers(String id, BigDecimal skip, BigDecimal limit)
 			throws SignalsException {
-		SignalsApi api = new SignalsApi(apiClient);
+		SignalsApi api = createSignalsApi();
 		try {
 			ChannelSubscriberResponse result = api.v1SignalsIdSubscribersGet(symAuth.getSessionToken().getToken(), id,
 					symAuth.getKeyToken().getToken(), skip, limit);
@@ -241,7 +249,7 @@ public class SignalsClientImpl implements SignalsClient {
 	 */
 	@Override
 	public ChannelSubscriptionResponse subscribe(String id) throws SignalsException {
-		SignalsApi api = new SignalsApi(apiClient);
+		SignalsApi api = createSignalsApi();
 		try {
 			return api.v1SignalsIdSubscribePost(symAuth.getSessionToken().getToken(), id,
 					symAuth.getKeyToken().getToken(), null, null);
@@ -269,7 +277,7 @@ public class SignalsClientImpl implements SignalsClient {
 	@Override
 	public ChannelSubscriptionResponse bulkSubscribe(String id, boolean pushed, List<BigDecimal> userIds)
 			throws SignalsException {
-		SignalsApi api = new SignalsApi(apiClient);
+		SignalsApi api = createSignalsApi();
 		try {
 			return api.v1SignalsIdSubscribePost(symAuth.getSessionToken().getToken(), id,
 					symAuth.getKeyToken().getToken(), pushed, userIds);
@@ -289,7 +297,7 @@ public class SignalsClientImpl implements SignalsClient {
 	 */
 	@Override
 	public ChannelSubscriptionResponse unsubscribe(String id) throws SignalsException {
-		SignalsApi api = new SignalsApi(apiClient);
+		SignalsApi api = createSignalsApi();
 		try {
 			return api.v1SignalsIdUnsubscribePost(symAuth.getSessionToken().getToken(), id,
 					symAuth.getKeyToken().getToken(), null);
@@ -313,7 +321,7 @@ public class SignalsClientImpl implements SignalsClient {
 	 */
 	@Override
 	public ChannelSubscriptionResponse bulkUnsubscribe(String id, List<BigDecimal> userIds) throws SignalsException {
-		SignalsApi api = new SignalsApi(apiClient);
+		SignalsApi api = createSignalsApi();
 		try {
 			return api.v1SignalsIdUnsubscribePost(symAuth.getSessionToken().getToken(), id,
 					symAuth.getKeyToken().getToken(), userIds);
