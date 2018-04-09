@@ -192,9 +192,9 @@ public class CopyChatRoom {
 
                     String userName = symClient.getUsersClient().getUserFromId(symMessage.getFromUserId()).getDisplayName();
 
-                    logger.debug("{}:{}:{}:{}", userName, new Date(Long.valueOf(symMessage.getTimestamp())).toString(), symMessage.getMessage(), symMessage.getAttachments().size());
+                    logger.debug("{}:{}:{}:{}", userName, new Date(Long.valueOf(symMessage.getTimestamp())).toString(), symMessage.getMessage());
 
-                    if (symMessage.getAttachments().size() > 0) {
+                    if (symMessage.getAttachments() != null && symMessage.getAttachments().size() > 0) {
                         symAttachmentInfos.addAll(symMessage.getAttachments());
 
 

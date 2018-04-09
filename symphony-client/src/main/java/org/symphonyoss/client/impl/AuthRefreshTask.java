@@ -99,7 +99,7 @@ public class AuthRefreshTask extends TimerTask {
 
             logger.info("Successfully refreshed SymAuth tokens...");
 
-        } catch (NetworkException e) {
+        } catch (NetworkException | RuntimeException e) {
             logger.error("Unable to refresh SymAuth keys...", e);
         }
 
