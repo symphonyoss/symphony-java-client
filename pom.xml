@@ -150,6 +150,11 @@
             <artifactId>jackson-jaxrs-json-provider</artifactId>
             <version>${jackson.version}</version>
         </dependency>
+        <dependency>
+          <groupId>com.diffblue</groupId>
+          <artifactId>deeptestutils</artifactId>
+          <version>1.1.0</version>
+        </dependency>
     </dependencies>
 
     <build>
