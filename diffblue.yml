@@ -2,4 +2,4 @@ buildCmd: cd symphony-client; mvn compile
 testCmd: cd symphony-client; mvn test
 ignoreExistingCoverage: true
 cbmcArguments:
-  slice-function-calls: "org\.slf4j\.Logger.*"
+  slice-function-calls: org\.slf4j\.Logger.*
