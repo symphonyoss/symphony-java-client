@@ -3,3 +3,39 @@ testCmd: cd symphony-client; mvn test
 ignoreExistingCoverage: true
 cbmcArguments:
   slice-function-calls: org\.slf4j\.Logger.*
+phases:
+-
+  timeout: 300
+  cbmcArguments:
+    depth: false
+    unwind: 2
+    classpath: '.'
+    string-max-length: 300
+    string-max-input-length: 10
+    java-max-vla-length: 3
+    java-max-input-array-length: 3
+    string-printable: true
+-
+  timeout: 300
+  cbmcArguments:
+    depth: false
+    unwind: 2
+    classpath: '/tools/cbmc/models-simple-overlay.jar:/tools/cbmc/models.jar:.'
+    string-max-length: 400
+    string-max-input-length: 100
+    java-max-vla-length: 20
+    java-max-input-array-length: 20
+    string-printable: false
+    java-throw-runtime-exceptions: false
+-
+  timeout: 300
+  cbmcArguments:
+    depth: false
+    unwind: 1
+    classpath: '/tools/cbmc/models-simple-overlay.jar:/tools/cbmc/models.jar:.'
+    string-max-length: 400
+    string-max-input-length: 10
+    java-max-vla-length: 10
+    java-max-input-array-length: 10
+    string-printable: false
+    java-throw-runtime-exceptions: true
