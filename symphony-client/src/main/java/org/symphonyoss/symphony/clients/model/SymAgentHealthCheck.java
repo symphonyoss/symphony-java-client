@@ -151,10 +151,10 @@ public class SymAgentHealthCheck {
 
         symAgentHealthCheck.setAgentVersion(v2HealthCheckResponse.getAgentVersion());
         symAgentHealthCheck.setEncryptDecryptError(v2HealthCheckResponse.getEncryptDecryptError());
-        symAgentHealthCheck.setEncryptDecryptSuccess(v2HealthCheckResponse.getEncryptDecryptSuccess());
-        symAgentHealthCheck.setKeyManagerConnectivity(v2HealthCheckResponse.getKeyManagerConnectivity());
+        symAgentHealthCheck.setEncryptDecryptSuccess(v2HealthCheckResponse.isEncryptDecryptSuccess());
+        symAgentHealthCheck.setKeyManagerConnectivity(v2HealthCheckResponse.isKeyManagerConnectivity());
         symAgentHealthCheck.setKeyManagerConnectivityError(v2HealthCheckResponse.getKeyManagerConnectivityError());
-        symAgentHealthCheck.setPodConnectivity(v2HealthCheckResponse.getPodConnectivity());
+        symAgentHealthCheck.setPodConnectivity(v2HealthCheckResponse.isPodConnectivity());
         symAgentHealthCheck.setPodConnectivityError(v2HealthCheckResponse.getPodConnectivityError());
         symAgentHealthCheck.setPodVersion(v2HealthCheckResponse.getPodVersion());
 

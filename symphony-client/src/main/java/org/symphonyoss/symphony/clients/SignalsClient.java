@@ -48,14 +48,14 @@ public interface SignalsClient {
 	
 	public List<SymSignal> listSignals(int skip, int limit)  throws SignalsException;
 	
-	public SymChannelSubscriberResponse listSubscribers(String id, BigDecimal skip, BigDecimal limit)  throws SignalsException;
+	public SymChannelSubscriberResponse listSubscribers(String id, Integer skip, Integer limit)  throws SignalsException;
 	
 	public ChannelSubscriptionResponse subscribe(String id)  throws SignalsException;
 	
-	public ChannelSubscriptionResponse bulkSubscribe(String id, boolean pushed, List<BigDecimal> userIds)  throws SignalsException;
+	public ChannelSubscriptionResponse bulkSubscribe(String id, boolean pushed, List<Long> userIds)  throws SignalsException;
 	
 	public ChannelSubscriptionResponse unsubscribe(String id)  throws SignalsException;
 	
-	public ChannelSubscriptionResponse bulkUnsubscribe(String id, List<BigDecimal> userIds)  throws SignalsException;
+	public ChannelSubscriptionResponse bulkUnsubscribe(String id, List<Long> userIds)  throws SignalsException;
 	
 }

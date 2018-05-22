@@ -78,7 +78,7 @@ public class SymRoomSystemInfo {
     public static SymRoomSystemInfo toSymRoomSystemInfo(RoomSystemInfo roomSystemInfo){
 
         SymRoomSystemInfo symRoomSystemInfo = new SymRoomSystemInfo();
-        symRoomSystemInfo.setActive(roomSystemInfo.getActive());
+        symRoomSystemInfo.setActive(roomSystemInfo.isActive());
         symRoomSystemInfo.setCreatedByUserId(roomSystemInfo.getCreatedByUserId());
         symRoomSystemInfo.setCreationDate(roomSystemInfo.getCreationDate());
         symRoomSystemInfo.setId(roomSystemInfo.getId());

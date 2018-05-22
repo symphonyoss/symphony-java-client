@@ -72,7 +72,7 @@ public class SymChannelSubscriberResponse {
 	
 	public static SymChannelSubscriberResponse toSymChannelSubscriberResponse(ChannelSubscriberResponse response) {
 		SymChannelSubscriberResponse symResponse=new SymChannelSubscriberResponse();
-		symResponse.setHasMore(response.getHasMore());
+		symResponse.setHasMore(response.isHasMore());
 		symResponse.setTotal(response.getTotal());
 		symResponse.setOffset(response.getOffset());
 		List<SymChannelSubscriber> list=new ArrayList<>();

@@ -164,14 +164,14 @@ public class SymRoomAttributes {
     public static SymRoomAttributes toSymRoomAttributes(V2RoomAttributes roomAttributes) {
 
         SymRoomAttributes symRoomAttributes = new SymRoomAttributes();
-        symRoomAttributes.setPublic(roomAttributes.getPublic());
-        symRoomAttributes.setCopyProtected(roomAttributes.getCopyProtected());
+        symRoomAttributes.setPublic(roomAttributes.isPublic());
+        symRoomAttributes.setCopyProtected(roomAttributes.isCopyProtected());
         symRoomAttributes.setDescription(roomAttributes.getDescription());
-        symRoomAttributes.setDiscoverable(roomAttributes.getDiscoverable());
+        symRoomAttributes.setDiscoverable(roomAttributes.isDiscoverable());
         symRoomAttributes.setKeywords(SymRoomTag.toSymRoomTagsV2(roomAttributes.getKeywords()));
-        symRoomAttributes.setMembersCanInvite(roomAttributes.getMembersCanInvite());
+        symRoomAttributes.setMembersCanInvite(roomAttributes.isMembersCanInvite());
         symRoomAttributes.setName(roomAttributes.getName());
-        symRoomAttributes.setReadOnly(roomAttributes.getReadOnly());
+        symRoomAttributes.setReadOnly(roomAttributes.isReadOnly());
         symRoomAttributes.setKeywords(SymRoomTag.toSymRoomTagsV2(roomAttributes.getKeywords()));
 
         return symRoomAttributes;
@@ -197,18 +197,18 @@ public class SymRoomAttributes {
     public static SymRoomAttributes toSymRoomAttributes(V3RoomAttributes roomAttributes) {
 
         SymRoomAttributes symRoomAttributes = new SymRoomAttributes();
-        symRoomAttributes.setPublic(roomAttributes.getPublic());
-        symRoomAttributes.setCopyProtected(roomAttributes.getCopyProtected());
+        symRoomAttributes.setPublic(roomAttributes.isPublic());
+        symRoomAttributes.setCopyProtected(roomAttributes.isCopyProtected());
         symRoomAttributes.setDescription(roomAttributes.getDescription());
-        symRoomAttributes.setDiscoverable(roomAttributes.getDiscoverable());
+        symRoomAttributes.setDiscoverable(roomAttributes.isDiscoverable());
         symRoomAttributes.setKeywords(SymRoomTag.toSymRoomTagsV2(roomAttributes.getKeywords()));
-        symRoomAttributes.setMembersCanInvite(roomAttributes.getMembersCanInvite());
+        symRoomAttributes.setMembersCanInvite(roomAttributes.isMembersCanInvite());
         symRoomAttributes.setName(roomAttributes.getName());
-        symRoomAttributes.setReadOnly(roomAttributes.getReadOnly());
-        symRoomAttributes.setCrossPod(roomAttributes.getCrossPod());
-        symRoomAttributes.setViewHistory(roomAttributes.getViewHistory());
-        if (roomAttributes.getMultiLateralRoom() != null)
-            symRoomAttributes.setMultiLateralRoom(roomAttributes.getMultiLateralRoom());
+        symRoomAttributes.setReadOnly(roomAttributes.isReadOnly());
+        symRoomAttributes.setCrossPod(roomAttributes.isCrossPod());
+        symRoomAttributes.setViewHistory(roomAttributes.isViewHistory());
+        if (roomAttributes.isMultiLateralRoom() != null)
+            symRoomAttributes.setMultiLateralRoom(roomAttributes.isMultiLateralRoom());
 
         return symRoomAttributes;
     }
@@ -237,15 +237,15 @@ public class SymRoomAttributes {
 
 
         SymRoomAttributes symRoomAttributes = new SymRoomAttributes();
-        symRoomAttributes.setPublic(roomProperties.getPublic());
-        symRoomAttributes.setCopyProtected(roomProperties.getCopyProtected());
+        symRoomAttributes.setPublic(roomProperties.isPublic());
+        symRoomAttributes.setCopyProtected(roomProperties.isCopyProtected());
         symRoomAttributes.setDescription(roomProperties.getDescription());
-        symRoomAttributes.setDiscoverable(roomProperties.getDiscoverable());
+        symRoomAttributes.setDiscoverable(roomProperties.isDiscoverable());
         //Seems like keywords is missing
         symRoomAttributes.setKeywords(SymRoomTag.toSymRoomTags(roomProperties.getKeywords()));
-        symRoomAttributes.setMembersCanInvite(roomProperties.getMembersCanInvite());
+        symRoomAttributes.setMembersCanInvite(roomProperties.isMembersCanInvite());
         symRoomAttributes.setName(roomProperties.getName());
-        symRoomAttributes.setReadOnly(roomProperties.getReadOnly());
+        symRoomAttributes.setReadOnly(roomProperties.isReadOnly());
         symRoomAttributes.setCreatorUser(SymUser.toSymUser(roomProperties.getCreatorUser()));
 
 

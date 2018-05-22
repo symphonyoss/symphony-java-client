@@ -20,15 +20,15 @@ public class SymSignalTest {
 		assertEquals(sig.getId(), symSig.getId());
 		assertEquals(sig.getName(), symSig.getName());
 		assertEquals(sig.getQuery(), symSig.getQuery());
-		assertEquals(sig.getCompanyWide(), symSig.getCompanyWide());
-		assertEquals(sig.getVisibleOnProfile(), symSig.getVisibleOnProfile());
+		assertEquals(sig.isCompanyWide(), symSig.getCompanyWide());
+		assertEquals(sig.isVisibleOnProfile(), symSig.getVisibleOnProfile());
 	}
 	
 	public void compareBaseSignalToSymSignal(BaseSignal sig, SymSignal symSig) {
 		assertEquals(sig.getName(), symSig.getName());
 		assertEquals(sig.getQuery(), symSig.getQuery());
-		assertEquals(sig.getCompanyWide(), symSig.getCompanyWide());
-		assertEquals(sig.getVisibleOnProfile(), symSig.getVisibleOnProfile());
+		assertEquals(sig.isCompanyWide(), symSig.getCompanyWide());
+		assertEquals(sig.isVisibleOnProfile(), symSig.getVisibleOnProfile());
 	}
 	
 	@Test

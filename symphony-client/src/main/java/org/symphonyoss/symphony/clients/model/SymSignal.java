@@ -115,11 +115,11 @@ public class SymSignal {
 	
 	public static SymSignal toSymSignal(Signal signal) {
 		SymSignal symSignal=new SymSignal();
-		symSignal.setCompanyWide(signal.getCompanyWide());
+		symSignal.setCompanyWide(signal.isCompanyWide());
 		symSignal.setId(signal.getId());
 		symSignal.setName(signal.getName());
 		symSignal.setQuery(signal.getQuery());
-		symSignal.setVisibleOnProfile(signal.getVisibleOnProfile());
+		symSignal.setVisibleOnProfile(signal.isVisibleOnProfile());
 		symSignal.setTimestamp(signal.getTimestamp());
 		return symSignal;
 	}

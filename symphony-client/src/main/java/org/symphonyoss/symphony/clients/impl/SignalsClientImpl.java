@@ -226,7 +226,7 @@ public class SignalsClientImpl implements SignalsClient {
 	 * 
 	 */
 	@Override
-	public SymChannelSubscriberResponse listSubscribers(String id, BigDecimal skip, BigDecimal limit)
+	public SymChannelSubscriberResponse listSubscribers(String id, Integer skip, Integer limit)
 			throws SignalsException {
 		SignalsApi api = createSignalsApi();
 		try {
@@ -275,7 +275,7 @@ public class SignalsClientImpl implements SignalsClient {
 	 * 
 	 */
 	@Override
-	public ChannelSubscriptionResponse bulkSubscribe(String id, boolean pushed, List<BigDecimal> userIds)
+	public ChannelSubscriptionResponse bulkSubscribe(String id, boolean pushed, List<Long> userIds)
 			throws SignalsException {
 		SignalsApi api = createSignalsApi();
 		try {
@@ -320,8 +320,8 @@ public class SignalsClientImpl implements SignalsClient {
 	 * 
 	 */
 	@Override
-	public ChannelSubscriptionResponse bulkUnsubscribe(String id, List<BigDecimal> userIds) throws SignalsException {
-		SignalsApi api = createSignalsApi();
+	public ChannelSubscriptionResponse bulkUnsubscribe(String id, List<Long> userIds) throws SignalsException {
+		SignalsApi api = new SignalsApi(apiClient);
 		try {
 			return api.v1SignalsIdUnsubscribePost(symAuth.getSessionToken().getToken(), id,
 					symAuth.getKeyToken().getToken(), userIds);

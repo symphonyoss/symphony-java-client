@@ -296,7 +296,9 @@ public class MlMessageParser extends DefaultHandler {
                 }
 
             }
-            updateMentionUidToEmail(symClient, node.childNodes());
+
+            if(node.childNodeSize() > 0)
+                updateMentionUidToEmail(symClient, node.childNodes());
         }
 
 

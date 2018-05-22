@@ -89,8 +89,8 @@ public class SymChannelSubscriber {
 	 
 	 public static SymChannelSubscriber toSymChannelSubscriber(ChannelSubscriber sub) {
 		 SymChannelSubscriber symSub=new SymChannelSubscriber();
-		 symSub.setOwner(sub.getOwner());
-		 symSub.setPushed(sub.getPushed());
+		 symSub.setOwner(sub.isOwner());
+		 symSub.setPushed(sub.isPushed());
 		 symSub.setSubscriberName(sub.getSubscriberName());
 		 symSub.setUserId(sub.getUserId());
 		 symSub.setTimestamp(sub.getTimestamp());
