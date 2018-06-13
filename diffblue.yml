@@ -1,4 +1,4 @@
-buildCmd: cd symphony-client; mvn compile
+buildCmd: cd symphony-client; mvn -e -X -Dmaven.test.skip=true compile
 testCmd: cd symphony-client; mvn test
 ignoreExistingCoverage: true
 cbmcArguments:
