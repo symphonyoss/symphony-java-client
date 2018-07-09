@@ -44,6 +44,8 @@ public class SymAuth {
     private String serverTruststorePassword;
     private String clientKeystorePassword;
     private Client httpClient;
+    private Client httpClientForSessionToken;
+    private Client httpClientForKeyToken;
 
 
     public String getServerTruststore() {
@@ -128,6 +130,22 @@ public class SymAuth {
 
     public void setKeyUrl(String keyUrl) {
         this.keyUrl = keyUrl;
+    }
+
+    public Client getHttpClientForSessionToken() {
+        return httpClientForSessionToken;
+    }
+
+    public void setHttpClientForSessionToken(Client httpClientForSessionToken) {
+        this.httpClientForSessionToken = httpClientForSessionToken;
+    }
+
+    public Client getHttpClientForKeyToken() {
+        return httpClientForKeyToken;
+    }
+
+    public void setHttpClientForKeyToken(Client httpClientForKeyToken) {
+        this.httpClientForKeyToken = httpClientForKeyToken;
     }
 
     public static SymAuth fromOboAuth(OboAuthResponse oboAuthResponse) {

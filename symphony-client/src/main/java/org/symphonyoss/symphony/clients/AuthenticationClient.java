@@ -149,6 +149,7 @@ public class AuthenticationClient {
 
             if (httpClientForSessionToken != null) {
                 Configuration.getDefaultApiClient().setHttpClient(httpClientForSessionToken);
+                symAuth.setHttpClientForSessionToken(httpClientForSessionToken);
             }
 
             symAuth.setSessionToken(authenticationApi.v1AuthenticatePost());
@@ -160,6 +161,7 @@ public class AuthenticationClient {
 
             if (httpClientForKeyToken != null) {
                 Configuration.getDefaultApiClient().setHttpClient(httpClientForKeyToken);
+                symAuth.setHttpClientForKeyToken(httpClientForKeyToken);
             }
 
             symAuth.setKeyToken(authenticationApi.v1AuthenticatePost());

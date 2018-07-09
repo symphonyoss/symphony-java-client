@@ -66,9 +66,16 @@ public class AuthRefreshTask extends TimerTask {
 
             AuthenticationClient authClient;
 
+
             //Init the Symphony authorization client, which requires both the key and session URL's.  In most cases,
-            //the same fqdn but different URLs.
-            if (symClient.getSymAuth() != null && symClient.getSymAuth().getHttpClient() != null) {
+            //the same fqdn but different URLs.  Also take into account if there are different HTTP clients being used between POD and key manager.
+            if (symClient.getSymAuth() != null && symClient.getSymAuth().getHttpClientForKeyToken() != null && symClient.getSymAuth().getHttpClientForSessionToken() != null) {
+
+                //Take the stored http client configuration with the pre-loaded keystores.
+                authClient = new AuthenticationClient(symClient.getSymAuth().getSessionUrl(), symClient.getSymAuth().getKeyUrl(), symClient.getSymAuth().getHttpClientForSessionToken(), symClient.getSymAuth().getHttpClientForKeyToken());
+
+
+            } else if (symClient.getSymAuth() != null && symClient.getSymAuth().getHttpClient() != null) {
 
                 //Take the stored http client configuration with the pre-loaded keystores.
                 authClient = new AuthenticationClient(symClient.getSymAuth().getSessionUrl(), symClient.getSymAuth().getKeyUrl(), symClient.getSymAuth().getHttpClient());
@@ -92,7 +99,7 @@ public class AuthRefreshTask extends TimerTask {
 
 
             //Create a SymAuth which holds both key and session tokens.  This will call the external service.
-             symAuth = authClient.authenticate();
+            symAuth = authClient.authenticate();
 
             symClient.getSymAuth().setKeyToken(symAuth.getKeyToken());
             symClient.getSymAuth().setSessionToken(symAuth.getSessionToken());

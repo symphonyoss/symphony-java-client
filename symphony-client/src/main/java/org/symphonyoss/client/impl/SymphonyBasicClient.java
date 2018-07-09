@@ -42,7 +42,7 @@ import org.symphonyoss.symphony.clients.*;
 import org.symphonyoss.symphony.clients.jmx.ClientCheck;
 import org.symphonyoss.symphony.clients.model.ApiVersion;
 import org.symphonyoss.symphony.clients.model.SymUser;
-import org.symphonyoss.symphony.pod.invoker.JSON;
+
 
 import javax.management.*;
 import javax.ws.rs.client.Client;
