@@ -1,5 +1,3 @@
-buildCmd: cd symphony-client; mvn -e -X -Dmaven.test.skip=true compile
-testCmd: cd symphony-client; mvn test
 ignoreExistingCoverage: true
 cbmcArguments:
   slice-function-calls: org\.slf4j\.Logger.*
