@@ -334,7 +334,7 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
                 userDetail = userApi.v1AdminUserUidGet(sessionToken, uid);
                 symUser.setRoles(new HashSet<>(userDetail.getRoles()));
                 
-                if (userDetail.getUserSystemInfo()) {
+                if (userDetail.getUserSystemInfo() != null) {
                 	symUser.setActive(UserSystemInfo.StatusEnum.ENABLED == userDetail.getUserSystemInfo().getStatus());
 					if (userDetail.getUserSystemInfo().getLastLoginDate() != null) {
 						symUser.setLastLoginDate(new Date(userDetail.getUserSystemInfo().getLastLoginDate()));
