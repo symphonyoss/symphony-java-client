@@ -333,15 +333,15 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
                 symUser.setFeatures(featureList);
                 userDetail = userApi.v1AdminUserUidGet(sessionToken, uid);
                 symUser.setRoles(new HashSet<>(userDetail.getRoles()));
-                
+
                 if (userDetail.getUserSystemInfo() != null) {
-                	symUser.setActive(UserSystemInfo.StatusEnum.ENABLED == userDetail.getUserSystemInfo().getStatus());
-					if (userDetail.getUserSystemInfo().getLastLoginDate() != null) {
-						symUser.setLastLoginDate(new Date(userDetail.getUserSystemInfo().getLastLoginDate()));
-					}
-					if (userDetail.getUserSystemInfo().getCreatedDate() != null) {
-						symUser.setCreatedDate(new Date(userDetail.getUserSystemInfo().getCreatedDate()));
-					}
+                    symUser.setActive(UserSystemInfo.StatusEnum.ENABLED == userDetail.getUserSystemInfo().getStatus());
+                    if (userDetail.getUserSystemInfo().getLastLoginDate() != null) {
+                        symUser.setLastLoginDate(new Date(userDetail.getUserSystemInfo().getLastLoginDate()));
+                    }
+                    if (userDetail.getUserSystemInfo().getCreatedDate() != null) {
+                        symUser.setCreatedDate(new Date(userDetail.getUserSystemInfo().getCreatedDate()));
+                    }
                 }
 
             }
