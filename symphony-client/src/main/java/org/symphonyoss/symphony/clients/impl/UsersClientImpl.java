@@ -23,6 +23,8 @@
 package org.symphonyoss.symphony.clients.impl;
 
 import com.google.common.base.Strings;
+
+import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClientConfig;
@@ -91,7 +93,7 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
 
         apiClient.setBasePath(config.get(SymphonyClientConfigID.POD_URL));
 
-        getAllUsersTimeout = Long.valueOf(System.getProperty("SYMPHONY_GET_ALL_USERS_TIMEOUT", "5")).longValue();
+        getAllUsersTimeout = NumberUtils.toLong(config.get(SymphonyClientConfigID.GET_ALL_USERS_TIMEOUT), 5);
     }
 
 
