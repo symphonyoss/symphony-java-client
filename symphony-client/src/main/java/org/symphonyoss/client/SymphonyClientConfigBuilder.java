@@ -81,6 +81,7 @@ public class SymphonyClientConfigBuilder
     public static interface BuildStep
     {
         BuildStep withReceiverEmail(String receiverEmail);
+        BuildStep withGetAllUsersTimeout(String getAllUsersTimeout);
         BuildStep withServices(boolean enabled);
         BuildStep withJMXHealthcheck(boolean enabled);
         SymphonyClientConfig build();
@@ -105,6 +106,7 @@ public class SymphonyClientConfigBuilder
         private String  userCertFilename      = null;
         private char[]  userCertPassword      = null;
         private String  receiverEmail         = null;
+        private String  getAllUsersTimeout    = null;
         private boolean servicesEnabled       = true;
         private boolean jmxHealthCheckEnabled = true;
 
@@ -161,6 +163,13 @@ public class SymphonyClientConfigBuilder
         }
 
         @Override
+        public BuildStep withGetAllUsersTimeout(String getAllUsersTimeout)
+        {
+            this.getAllUsersTimeout = getAllUsersTimeout;
+            return (this);
+        }
+
+        @Override
         public BuildStep withServices(boolean enabled)
         {
             this.servicesEnabled = enabled;
@@ -179,16 +188,17 @@ public class SymphonyClientConfigBuilder
         {
             SymphonyClientConfig result = new SymphonyClientConfig();
 
-            if (this.sessionAuthUrl     != null) result.set(SymphonyClientConfigID.SESSIONAUTH_URL,     this.sessionAuthUrl);
-            if (this.keyAuthUrl         != null) result.set(SymphonyClientConfigID.KEYAUTH_URL,         this.keyAuthUrl);
-            if (this.podUrl             != null) result.set(SymphonyClientConfigID.POD_URL,             this.podUrl);
-            if (this.agentUrl           != null) result.set(SymphonyClientConfigID.AGENT_URL,           this.agentUrl);
-            if (this.trustStoreFilename != null) result.set(SymphonyClientConfigID.TRUSTSTORE_FILE,     this.trustStoreFilename);
-            if (this.trustStorePassword != null) result.set(SymphonyClientConfigID.TRUSTSTORE_PASSWORD, new String(this.trustStorePassword));  // SECURITY HOLE DUE TO STRING INTERNING
-            if (this.userEmail          != null) result.set(SymphonyClientConfigID.USER_EMAIL,          this.userEmail);
-            if (this.userCertFilename   != null) result.set(SymphonyClientConfigID.USER_CERT_FILE,      this.userCertFilename);
-            if (this.userCertPassword   != null) result.set(SymphonyClientConfigID.USER_CERT_PASSWORD,  new String(this.userCertPassword));    // SECURITY HOLE DUE TO STRING INTERNING
-            if (this.receiverEmail      != null) result.set(SymphonyClientConfigID.RECEIVER_EMAIL,      this.receiverEmail);
+            if (this.sessionAuthUrl     != null) result.set(SymphonyClientConfigID.SESSIONAUTH_URL,       this.sessionAuthUrl);
+            if (this.keyAuthUrl         != null) result.set(SymphonyClientConfigID.KEYAUTH_URL,           this.keyAuthUrl);
+            if (this.podUrl             != null) result.set(SymphonyClientConfigID.POD_URL,               this.podUrl);
+            if (this.agentUrl           != null) result.set(SymphonyClientConfigID.AGENT_URL,             this.agentUrl);
+            if (this.trustStoreFilename != null) result.set(SymphonyClientConfigID.TRUSTSTORE_FILE,       this.trustStoreFilename);
+            if (this.trustStorePassword != null) result.set(SymphonyClientConfigID.TRUSTSTORE_PASSWORD,   new String(this.trustStorePassword));  // SECURITY HOLE DUE TO STRING INTERNING
+            if (this.userEmail          != null) result.set(SymphonyClientConfigID.USER_EMAIL,            this.userEmail);
+            if (this.userCertFilename   != null) result.set(SymphonyClientConfigID.USER_CERT_FILE,        this.userCertFilename);
+            if (this.userCertPassword   != null) result.set(SymphonyClientConfigID.USER_CERT_PASSWORD,    new String(this.userCertPassword));    // SECURITY HOLE DUE TO STRING INTERNING
+            if (this.receiverEmail      != null) result.set(SymphonyClientConfigID.RECEIVER_EMAIL,        this.receiverEmail);
+            if (this.getAllUsersTimeout != null) result.set(SymphonyClientConfigID.GET_ALL_USERS_TIMEOUT, this.getAllUsersTimeout);
 
             result.set(SymphonyClientConfigID.DISABLE_SERVICES, String.valueOf(!this.servicesEnabled));
             result.set(SymphonyClientConfigID.HEALTHCHECK_JMX_ENABLED, String.valueOf(this.jmxHealthCheckEnabled));

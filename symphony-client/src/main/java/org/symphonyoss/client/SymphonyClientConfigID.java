@@ -28,6 +28,7 @@ public enum SymphonyClientConfigID {
     USER_CERT_PASSWORD("javax.net.ssl.keyStorePassword"),
     USER_EMAIL,
     RECEIVER_EMAIL(false),
+    GET_ALL_USERS_TIMEOUT(false),
     DISABLE_SERVICES(false),
     HEALTHCHECK_JMX_ENABLED(false);
     
