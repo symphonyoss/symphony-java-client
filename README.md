@@ -1,7 +1,7 @@
 [![Maven Central](https://img.shields.io/maven-central/v/org.symphonyoss.symphony/symphony-client.svg)](http://search.maven.org/#search%7Cga%7C1%7Cg%3Aorg.symphonyoss.symphony%20a%3Asymphony-client)
 [![Build Status](https://travis-ci.org/symphonyoss/symphony-java-client.svg)](https://travis-ci.org/symphonyoss/symphony-java-client)
 [![Validation Status](https://scan.coverity.com/projects/9112/badge.svg?flat=1)](https://scan.coverity.com/projects/symphonyoss-symphony-java-client)
-[![FINOS - Archived](https://cdn.jsdelivr.net/gh/finos/contrib-toolbox@master/images/badge-archived.svg)](https://finosfoundation.atlassian.net/wiki/display/FINOS/Archived)
+[![FINOS - Incubating](https://cdn.jsdelivr.net/gh/finos/contrib-toolbox@master/images/badge-incubating.svg)](https://finosfoundation.atlassian.net/wiki/display/FINOS/Incubating)
 [![SonarCloud Quality gate](https://sonarcloud.io/api/badges/gate?key=org.symphonyoss.symphony%3Asymphony-java-client)](https://sonarcloud.io/dashboard?id=org.symphonyoss.symphony%3Asymphony-java-client)
 
 Symphony Java Client
