@@ -48,6 +48,7 @@ The Symphony java client provides a real-time wrapper around the Symphony REST A
 * Updated with latest 1.50 spec.  symphony-java-api v1.50.1
 * Implementation of signals
 
+
 ## V1.1.4
 * Major bug fix (1.50+) to accept real-time events that do not include event ids as this is now optional.
 * New SymphonyClientConfig builder added
