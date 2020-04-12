@@ -71,3 +71,4 @@ addons:
     build_command_prepend: "mvn clean"
     build_command:   "mvn -DskipTests=true compile install"
     branch_pattern: $COVERITY_BRANCH_PATTERN
+dist: trusty
