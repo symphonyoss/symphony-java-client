@@ -1,13 +1,16 @@
 [![Maven Central](https://img.shields.io/maven-central/v/org.symphonyoss.symphony/symphony-client.svg)](http://search.maven.org/#search%7Cga%7C1%7Cg%3Aorg.symphonyoss.symphony%20a%3Asymphony-client)
 [![Build Status](https://travis-ci.org/symphonyoss/symphony-java-client.svg)](https://travis-ci.org/symphonyoss/symphony-java-client)
 [![Validation Status](https://scan.coverity.com/projects/9112/badge.svg?flat=1)](https://scan.coverity.com/projects/symphonyoss-symphony-java-client)
-[![Symphony Software Foundation - Active](https://cdn.rawgit.com/symphonyoss/contrib-toolbox/master/images/ssf-badge-active.svg)](https://symphonyoss.atlassian.net/wiki/display/FM/Active)
+[![FINOS - Archived](https://github.com/finos/contrib-toolbox/raw/master/images/badge-archived.png)](https://finosfoundation.atlassian.net/wiki/spaces/FINOS/pages/75530367/Archived)
 [![SonarCloud Quality gate](https://sonarcloud.io/api/badges/gate?key=org.symphonyoss.symphony%3Asymphony-java-client)](https://sonarcloud.io/dashboard?id=org.symphonyoss.symphony%3Asymphony-java-client)
 
-Symphony Java Client
+Symphony Java Client (Archived)
 ====================
 
 The Symphony java client provides a real-time wrapper around the Symphony REST API's to simplify the creation of chat sessions, room access, presence, messaging and more...  The client provides a set of logical services representing supported features of the Symphony platform.  Services support real-time events through feature based listeners and communication objects.  Access is not limited to the services as all underlying Symphony client implementations are exposed for advanced use or creation of your own service.
+
+## NOTE: Project is Archived
+In August 2020, the Project was transitioned to [Archived](https://finosfoundation.atlassian.net/wiki/spaces/FINOS/pages/75530367/Archived) stage as its not currently maintained and it's superceded by other clients (e.g. [Symphony's Java Client](https://github.com/SymphonyPlatformSolutions/symphony-api-client-java) or [Deustche Bank Java Client](https://github.com/deutschebank/symphony-java-client-parent). 
 
 ## Features
 * Basic client:
