@@ -166,6 +166,7 @@ public class StreamsClientImpl implements org.symphonyoss.symphony.clients.Strea
         }
 
         StreamsApi streamsApi = new StreamsApi(apiClient);
+
         try {
             return SymStream.toSymStream(streamsApi.v1ImCreatePost(userIdList, symAuth.getSessionToken().getToken()));
         } catch (ApiException e) {

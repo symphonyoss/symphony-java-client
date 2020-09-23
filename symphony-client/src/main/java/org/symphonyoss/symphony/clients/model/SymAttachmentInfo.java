@@ -113,11 +113,16 @@ public class SymAttachmentInfo {
 
     public static List<SymAttachmentInfo> toAttachmentsInfo(List<AttachmentInfo> attachmentInfos) {
 
+        if(attachmentInfos==null)
+            return null;
+
         return attachmentInfos.stream().map(SymAttachmentInfo::toAttachmentInfo).collect(Collectors.toList());
 
     }
 
     public static List<SymAttachmentInfo> toAttachmentsInfos(List<V4AttachmentInfo> attachmentInfos) {
+        if(attachmentInfos==null)
+            return null;
 
         return attachmentInfos.stream().map(SymAttachmentInfo::toAttachmentInfo).collect(Collectors.toList());
 

@@ -205,9 +205,9 @@ public class SymAdminStreamInfo {
 
         SymAdminStreamInfo symAdminStreamInfo = new SymAdminStreamInfo();
         symAdminStreamInfo.setId(adminStreamInfo.getId());
-        symAdminStreamInfo.setIsActive(adminStreamInfo.getIsActive());
-        symAdminStreamInfo.setIsExternal(adminStreamInfo.getIsExternal());
-        symAdminStreamInfo.setIsPublic(adminStreamInfo.getIsPublic());
+        symAdminStreamInfo.setIsActive(adminStreamInfo.isIsActive());
+        symAdminStreamInfo.setIsExternal(adminStreamInfo.isIsExternal());
+        symAdminStreamInfo.setIsPublic(adminStreamInfo.isIsPublic());
         symAdminStreamInfo.setType(adminStreamInfo.getType());
         symAdminStreamInfo.setAttributes(SymAdminStreamAttributes.toAdminStreamAttributes(adminStreamInfo.getAttributes()));
         return symAdminStreamInfo;

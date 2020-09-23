@@ -56,6 +56,7 @@ public class SymStream {
         return streamId;
     }
 
+
     public void setStreamId(String streamId) {
         this.streamId = streamId;
     }
@@ -84,9 +85,16 @@ public class SymStream {
         this.members = members;
     }
 
+    /**
+     * @deprecated  Replaced by {{@link #isExternal()}}
+     * @return boolean external
+     */
     public Boolean getExternal() {
         return external;
     }
+
+
+    public Boolean isExternal() { return external; }
 
     public void setExternal(Boolean external) {
         this.external = external;
@@ -100,7 +108,8 @@ public class SymStream {
 
         SymStream symStream = new SymStream();
 
-        symStream.setExternal(stream.getExternal());
+        symStream.setExternal(stream.isExternal());
+
 
         if(stream.getMembers() != null)
         symStream.setMembers(stream.getMembers().stream().map(SymUser::toSymUser).collect(Collectors.toList()));

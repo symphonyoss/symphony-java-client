@@ -42,7 +42,7 @@ import org.symphonyoss.symphony.clients.*;
 import org.symphonyoss.symphony.clients.jmx.ClientCheck;
 import org.symphonyoss.symphony.clients.model.ApiVersion;
 import org.symphonyoss.symphony.clients.model.SymUser;
-import org.symphonyoss.symphony.pod.invoker.JSON;
+
 
 import javax.management.*;
 import javax.ws.rs.client.Client;
@@ -78,6 +78,7 @@ public class SymphonyBasicClient implements SymphonyClient {
     private UsersClient usersClient;
     private StreamsClient streamsClient;
     private PresenceClient presenceClient;
+    private SignalsClient signalsClient;
     private RoomMembershipClient roomMembershipClient;
     private AttachmentsClient attachmentsClient;
     private ConnectionsClient connectionsClient;
@@ -285,6 +286,7 @@ public class SymphonyBasicClient implements SymphonyClient {
         dataFeedClient = DataFeedFactory.getClient(this);
         messagesClient = MessagesFactory.getClient(this);
         presenceClient = PresenceFactory.getClient(this);
+        signalsClient  = SignalsFactory.getClient(this);
         streamsClient = StreamsFactory.getClient(this);
         usersClient = UsersFactory.getClient(this);
         shareClient = ShareFactory.getClient(this);
@@ -461,6 +463,10 @@ public class SymphonyBasicClient implements SymphonyClient {
         return shareClient;
     }
 
+    @Override 
+    public SignalsClient getSignalsClient() {
+    	    return signalsClient;
+    }
     /**
      * Provides the default http client if one is set.
      *

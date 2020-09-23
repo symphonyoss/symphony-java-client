@@ -116,7 +116,7 @@ public class SymStreamFilter {
 
         SymStreamFilter symStreamFilter = new SymStreamFilter();
 
-        symStreamFilter.setIncludeInactiveStreams(streamFilter.getIncludeInactiveStreams());
+        symStreamFilter.setIncludeInactiveStreams(streamFilter.isIncludeInactiveStreams());
 
         if (streamFilter.getStreamTypes() != null) {
 
