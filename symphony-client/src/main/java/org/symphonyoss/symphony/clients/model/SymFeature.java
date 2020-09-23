@@ -147,7 +147,7 @@ public class SymFeature {
     private static SymFeature toSymFeature(Feature feature) {
         SymFeature symFeature = new SymFeature();
         symFeature.setEntitlement(feature.getEntitlment());
-        symFeature.setEnabled(feature.getEnabled());
+        symFeature.setEnabled(feature.isEnabled());
         return symFeature;
     }
 

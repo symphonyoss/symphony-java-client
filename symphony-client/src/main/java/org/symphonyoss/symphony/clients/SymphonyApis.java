@@ -28,6 +28,7 @@ import org.symphonyoss.symphony.agent.api.AttachmentsApi;
 import org.symphonyoss.symphony.agent.api.DatafeedApi;
 import org.symphonyoss.symphony.agent.api.MessagesApi;
 import org.symphonyoss.symphony.agent.api.ShareApi;
+import org.symphonyoss.symphony.agent.api.SignalsApi;
 import org.symphonyoss.symphony.pod.api.*;
 
 /**
@@ -71,4 +72,6 @@ public interface SymphonyApis {
     SecurityApi getSecurityApi();
 
     SessionApi getSessionApi();
+    
+    SignalsApi getSignalsApi();
 }

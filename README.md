@@ -47,6 +47,8 @@ In August 2020, the Project was transitioned to [Archived](https://finosfoundati
 ## Change log and notes
 
 ## V1.1.5 (SNAPSHOT)
+* Updated with latest 1.50 spec.  symphony-java-api v1.50.1
+* Implementation of signals
 
 ## V1.1.4
 * Major bug fix (1.50+) to accept real-time events that do not include event ids as this is now optional.

@@ -68,6 +68,11 @@ public class SymMessage {
 
     private ApiVersion apiVersion = null;
 
+    private String userAgent = null;
+
+    private String originalFormat = null;
+
+
     public SymUser getSymUser() {
         return symUser;
     }
@@ -177,6 +182,21 @@ public class SymMessage {
         this.attachementThumbnail = attachementThumbnail;
     }
 
+    public String getUserAgent() {
+        return userAgent;
+    }
+
+    public void setUserAgent(String userAgent) {
+        this.userAgent = userAgent;
+    }
+
+    public String getOriginalFormat() {
+        return originalFormat;
+    }
+
+    public void setOriginalFormat(String originalFormat) {
+        this.originalFormat = originalFormat;
+    }
 
     public ApiVersion getApiVersion() {
 
@@ -221,6 +241,8 @@ public class SymMessage {
         symMessage.setSymUser(SymUser.toSymUser(v4Message.getUser()));
         symMessage.setMessage(v4Message.getMessage());
         symMessage.setStream(SymStream.toSymStream(v4Message.getStream()));
+        symMessage.setUserAgent(v4Message.getUserAgent());
+        symMessage.setOriginalFormat(v4Message.getOriginalFormat());
 
         if (v4Message.getAttachments() != null)
             symMessage.setAttachments(SymAttachmentInfo.toAttachmentsInfos(v4Message.getAttachments()));

@@ -101,8 +101,8 @@ public class SymStreamAttributes {
     public static SymStreamAttributes toStreamAttributes(StreamAttributes streamAttributes) {
 
         SymStreamAttributes symStreamAttributes = new SymStreamAttributes();
-        symStreamAttributes.setActive(streamAttributes.getActive());
-        symStreamAttributes.setCrossPod(streamAttributes.getCrossPod());
+        symStreamAttributes.setActive(streamAttributes.isActive());
+        symStreamAttributes.setCrossPod(streamAttributes.isCrossPod());
         symStreamAttributes.setId(streamAttributes.getId());
 
         SymRoomSpecificStreamAttributes symRoomSpecificStreamAttributes = new SymRoomSpecificStreamAttributes();

@@ -27,6 +27,8 @@ import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClientConfig;
 import org.symphonyoss.client.SymphonyClientConfigID;
 import org.symphonyoss.client.exceptions.AuthenticationException;
+import org.symphonyoss.client.exceptions.NetworkException;
+import org.symphonyoss.client.exceptions.SymFault;
 import org.symphonyoss.client.impl.CustomHttpClient;
 import org.symphonyoss.client.model.SymAuth;
 import org.symphonyoss.symphony.authenticator.api.AuthenticationApi;
@@ -37,6 +39,7 @@ import org.symphonyoss.symphony.authenticator.model.Token;
 import org.symphonyoss.symphony.clients.model.SymExtensionAppAuth;
 import org.symphonyoss.symphony.clients.model.SymUser;
 
+import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
 
 /**
@@ -146,6 +149,7 @@ public class AuthenticationClient {
 
             if (httpClientForSessionToken != null) {
                 Configuration.getDefaultApiClient().setHttpClient(httpClientForSessionToken);
+                symAuth.setHttpClientForSessionToken(httpClientForSessionToken);
             }
 
             symAuth.setSessionToken(authenticationApi.v1AuthenticatePost());
@@ -157,6 +161,7 @@ public class AuthenticationClient {
 
             if (httpClientForKeyToken != null) {
                 Configuration.getDefaultApiClient().setHttpClient(httpClientForKeyToken);
+                symAuth.setHttpClientForKeyToken(httpClientForKeyToken);
             }
 
             symAuth.setKeyToken(authenticationApi.v1AuthenticatePost());
@@ -167,6 +172,9 @@ public class AuthenticationClient {
 
             throw new AuthenticationException("Please check certificates, tokens and paths.. ", e.getCode(), e);
 
+        } catch(ProcessingException e){
+
+            throw new AuthenticationException("Network connection issues or bad API call.. ", 500, e);
         }
 
         loginStatus = true;

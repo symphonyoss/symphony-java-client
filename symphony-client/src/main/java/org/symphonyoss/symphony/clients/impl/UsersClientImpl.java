@@ -23,6 +23,8 @@
 package org.symphonyoss.symphony.clients.impl;
 
 import com.google.common.base.Strings;
+
+import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.symphonyoss.client.SymphonyClientConfig;
@@ -58,6 +60,7 @@ import java.util.concurrent.TimeUnit;
 public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersClient {
     private final SymAuth symAuth;
     private final ApiClient apiClient;
+    private final long getAllUsersTimeout;
 
     private final Logger logger = LoggerFactory.getLogger(UsersClientImpl.class);
 
@@ -68,10 +71,7 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
      * @param config  Symphony Client config
      */
     public UsersClientImpl(SymAuth symAuth, SymphonyClientConfig config) {
-
         this(symAuth, config, null);
-
-
     }
 
     /**
@@ -93,7 +93,7 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
 
         apiClient.setBasePath(config.get(SymphonyClientConfigID.POD_URL));
 
-
+        getAllUsersTimeout = NumberUtils.toLong(config.get(SymphonyClientConfigID.GET_ALL_USERS_TIMEOUT), 5);
     }
 
 
@@ -294,11 +294,12 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
             executor.shutdown();
 
 
-            executor.awaitTermination(5, TimeUnit.SECONDS);
-
-
-            logger.debug("Finished all threads. Total time retrieving users: {} sec", (System.currentTimeMillis() - startTime) / 1000);
-
+            final boolean processCompleted = executor.awaitTermination(getAllUsersTimeout, TimeUnit.SECONDS);
+            if (processCompleted) {
+            	logger.debug("Finished all threads. Total time retrieving users: {} sec", (System.currentTimeMillis() - startTime) / 1000);
+            } else {
+                logger.warn("Process timed-out waiting to getAllUsers(). Total time retrieving users: {} sec", (System.currentTimeMillis() - startTime) / 1000);
+            }
 
         } catch (ApiException e) {
             throw new UsersClientException("API Error communicating with POD, while retrieving all user details",
@@ -334,11 +335,16 @@ public class UsersClientImpl implements org.symphonyoss.symphony.clients.UsersCl
                 symUser.setFeatures(featureList);
                 userDetail = userApi.v1AdminUserUidGet(sessionToken, uid);
                 symUser.setRoles(new HashSet<>(userDetail.getRoles()));
-                if (userDetail.getUserSystemInfo().getLastLoginDate() != null)
-                    symUser.setLastLoginDate(new Date(userDetail.getUserSystemInfo().getLastLoginDate()));
 
-                if (userDetail.getUserSystemInfo().getCreatedDate() != null)
-                    symUser.setCreatedDate(new Date(userDetail.getUserSystemInfo().getCreatedDate()));
+                if (userDetail.getUserSystemInfo() != null) {
+                    symUser.setActive(UserSystemInfo.StatusEnum.ENABLED == userDetail.getUserSystemInfo().getStatus());
+                    if (userDetail.getUserSystemInfo().getLastLoginDate() != null) {
+                        symUser.setLastLoginDate(new Date(userDetail.getUserSystemInfo().getLastLoginDate()));
+                    }
+                    if (userDetail.getUserSystemInfo().getCreatedDate() != null) {
+                        symUser.setCreatedDate(new Date(userDetail.getUserSystemInfo().getCreatedDate()));
+                    }
+                }
 
             }
         } catch (ApiException e) {
